@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MoneyTracker.API.Database;
 using MoneyTracker.API.Models;
+using System.Net;
 
 namespace MoneyTracker.Controllers
 {
@@ -21,6 +22,12 @@ namespace MoneyTracker.Controllers
         {
             var budget = new Budget();
             return budget.GetBudget();
+        }
+
+        [HttpPost(Name = "AddBudget")]
+        public HttpStatusCode AddBudget()
+        {
+            return HttpStatusCode.OK;
         }
     }
 }
