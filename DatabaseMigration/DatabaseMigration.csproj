@@ -13,6 +13,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <None Remove="scripts\migrations\20240826211628_AddGroupAndCategoryConnection.sql" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <PackageReference Include="dbup-postgresql" Version="5.0.40" />
 	  <PackageReference Include="Microsoft.Extensions.Configuration" Version="8.0.0" />
 	  <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="8.0.0" />
