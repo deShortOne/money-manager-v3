@@ -9,11 +9,11 @@
   </PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="DbUp" Version="5.0.41" />
+		<EmbeddedResource Include="scripts/Migrations/*.sql" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<EmbeddedResource Include="scripts/Migrations/*.sql" />
+	  <PackageReference Include="dbup-postgresql" Version="5.0.40" />
 	</ItemGroup>
 
 </Project>
