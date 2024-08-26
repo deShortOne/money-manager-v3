@@ -1,13 +1,19 @@
 ﻿using DbUp;
+using Microsoft.Extensions.Configuration;
 using System.Reflection;
+using DatabaseMigration;
 
 class Program
 {
+    static IConfigurationRoot config = new ConfigurationBuilder()
+            .AddUserSecrets<SecretKey>()
+            .Build();
+
     static int Main(string[] args)
     {
         var connectionString =
             args.FirstOrDefault()
-            ?? "Server=(local)\\SqlExpress; Database=MyApp; Trusted_connection=true";
+            ?? config["Database:Paelagus_RO"];
 
         var upgrader =
             DeployChanges.To
