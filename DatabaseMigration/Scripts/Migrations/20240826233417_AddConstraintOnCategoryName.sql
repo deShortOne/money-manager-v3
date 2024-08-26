@@ -1,0 +1,1 @@
+ALTER TABLE Category ADD CONSTRAINT CategoryUniqueName UNIQUE (name);

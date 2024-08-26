@@ -62,5 +62,16 @@ namespace MoneyTracker.API.Database
 
             return res.Values.ToList();
         }
+
+        public void AddBudget()
+        {
+            var query = """
+
+                """;
+            var queryInsertIntoBudgetCategory = """
+                INSERT INTO budgetcategory VALUES
+                    (@budgetGroupId, @categoryId, @planned);
+                """;
+        }
     }
 }
