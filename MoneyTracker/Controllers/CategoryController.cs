@@ -7,7 +7,7 @@ using System.Net;
 namespace MoneyTracker.API.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("/api/category/")]
     public class CategoryController : ControllerBase
     {
 
@@ -19,8 +19,9 @@ namespace MoneyTracker.API.Controllers
         }
 
 
-        [HttpPost(Name = "AddCategory")]
-        public async Task<int> AddBudget(string categoryName)
+        [HttpPost]
+        [Route("add")]
+        public async Task<int> AddCategory(string categoryName)
         {
             return await new Category().AddCategory(categoryName);
         }

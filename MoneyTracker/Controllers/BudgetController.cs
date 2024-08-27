@@ -6,7 +6,7 @@ using System.Net;
 namespace MoneyTracker.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("/api/budget/")]
     public class BudgetController : ControllerBase
     {
 
@@ -17,14 +17,16 @@ namespace MoneyTracker.Controllers
             _logger = logger;
         }
 
-        [HttpGet(Name = "GetBudget")]
+        [HttpGet]
+        [Route("get")]
         public Task<IEnumerable<BudgetGroup>> Get()
         {
             var budget = new Budget();
             return budget.GetBudget();
         }
 
-        [HttpPost(Name = "AddBudget")]
+        [HttpPost]
+        [Route("add")]
         public HttpStatusCode AddBudget(int budgetGroupId, string categoryName, decimal planned)
         {
             new Budget().AddBudget(budgetGroupId, categoryName, planned);
