@@ -80,7 +80,9 @@ namespace MoneyTracker.API.Database
             };
             var queryInsertIntoBudgetCategory = """
                 INSERT INTO budgetcategory VALUES
-                    (@budgetGroupId, @categoryId, @planned);
+                    (@budgetGroupId, @categoryId, @planned)
+                ON CONFLICT (@budgetGroupId, @categoryId) DO UPDATE
+                    SET planned = @planned;
                 """;
             var queryInsertIntoBudgetCategoryParams = new List<NpgsqlParameter>()
             {
