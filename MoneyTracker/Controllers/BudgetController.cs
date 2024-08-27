@@ -19,7 +19,7 @@ namespace MoneyTracker.Controllers
 
         [HttpGet]
         [Route("get")]
-        public Task<IEnumerable<BudgetGroup>> Get()
+        public Task<IEnumerable<BudgetGroupDTO>> Get()
         {
             var budget = new Budget();
             return budget.GetBudget();

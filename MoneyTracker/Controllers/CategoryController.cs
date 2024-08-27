@@ -2,7 +2,6 @@
 using MoneyTracker.API.Database;
 using MoneyTracker.API.Models;
 using MoneyTracker.Controllers;
-using System.Net;
 
 namespace MoneyTracker.API.Controllers
 {
@@ -23,14 +22,14 @@ namespace MoneyTracker.API.Controllers
         [Route("add")]
         public async Task<int> AddCategory(string categoryName)
         {
-            return await new MoneyTracker.API.Database.Category().AddCategory(categoryName);
+            return await new Category().AddCategory(categoryName);
         }
 
         [HttpGet]
         [Route("get")]
-        public async Task<List<MoneyTracker.API.Models.Category>> GetCategories()
+        public async Task<List<CategoryDTO>> GetCategories()
         {
-            return await new MoneyTracker.API.Database.Category().GetAllCategories();
+            return await new Category().GetAllCategories();
         }
     }
 }

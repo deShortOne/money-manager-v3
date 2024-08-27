@@ -7,7 +7,7 @@ namespace MoneyTracker.API.Database
 {
     public class Budget
     {
-        public async Task<IEnumerable<BudgetGroup>> GetBudget()
+        public async Task<IEnumerable<BudgetGroupDTO>> GetBudget()
         {
             string query = """
                 SELECT bg.id,
@@ -33,13 +33,13 @@ namespace MoneyTracker.API.Database
 
             using var reader = await Helper.GetTable(query);
 
-            Dictionary<int, BudgetGroup> res = [];
+            Dictionary<int, BudgetGroupDTO> res = [];
             while (await reader.ReadAsync())
             {
                 var budgetId = reader.GetInt32("id");
-                if (!res.TryGetValue(budgetId, out BudgetGroup group))
+                if (!res.TryGetValue(budgetId, out BudgetGroupDTO group))
                 {
-                    group = new BudgetGroup()
+                    group = new BudgetGroupDTO()
                     {
                         Name = reader.GetString("name"),
                     };
@@ -52,7 +52,7 @@ namespace MoneyTracker.API.Database
                     var categoryName = reader.GetString("category_name");
                     var a = reader.GetDecimal("actual");
                     var b = reader.GetDecimal("planned");
-                    res[budgetId].Categories.Add(new BudgetCategory()
+                    res[budgetId].Categories.Add(new BudgetCategoryDTO()
                     {
                         Name = categoryName,
                         Actual = a,

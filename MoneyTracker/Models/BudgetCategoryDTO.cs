@@ -1,6 +1,6 @@
 ﻿namespace MoneyTracker.API.Models
 {
-    public class BudgetCategory : IBudget
+    public class BudgetCategoryDTO : IBudget
     {
         public string Name { get; set; }
         public decimal Planned { get; set; }
