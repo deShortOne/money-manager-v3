@@ -1,5 +1,6 @@
 ﻿
 using MoneyTracker.API.Models;
+using Npgsql;
 using System.Data;
 
 namespace MoneyTracker.API.Database
@@ -63,15 +64,38 @@ namespace MoneyTracker.API.Database
             return res.Values.ToList();
         }
 
-        public void AddBudget()
+        public async void AddBudget(int budgetGroupId, string categoryName, decimal planned)
         {
-            var query = """
-
+            // UPSERTS!! and gets id
+            var queryGetIdOfCategoryName = """
+                INSERT INTO category (name) VALUES
+                    (@categoryName)
+                ON CONFLICT (name) DO UPDATE
+                    SET name = @categoryName
+                RETURNING id;
                 """;
+            var queryGetIdOfCategoryNameParams = new List<NpgsqlParameter>()
+            {
+                new NpgsqlParameter("categoryName", categoryName),
+            };
             var queryInsertIntoBudgetCategory = """
                 INSERT INTO budgetcategory VALUES
                     (@budgetGroupId, @categoryId, @planned);
                 """;
+            var queryInsertIntoBudgetCategoryParams = new List<NpgsqlParameter>()
+            {
+                new NpgsqlParameter("budgetGroupId", budgetGroupId),
+                new NpgsqlParameter("planned", planned),
+            };
+
+            // get category id
+            using var readerId = await Helper.GetTable(queryGetIdOfCategoryName, queryGetIdOfCategoryNameParams);
+            await readerId.ReadAsync();
+            var categoryId = readerId.GetInt32(0);
+
+            // insert into budgetcategory
+            queryInsertIntoBudgetCategoryParams.Add(new NpgsqlParameter("categoryId", categoryId));
+            var rowsAffectedFromInsert = await Helper.UpdateTable(queryInsertIntoBudgetCategory, queryInsertIntoBudgetCategoryParams);
         }
     }
 }

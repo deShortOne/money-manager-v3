@@ -25,8 +25,9 @@ namespace MoneyTracker.Controllers
         }
 
         [HttpPost(Name = "AddBudget")]
-        public HttpStatusCode AddBudget()
+        public HttpStatusCode AddBudget(int budgetGroupId, string categoryName, decimal planned)
         {
+            new Budget().AddBudget(budgetGroupId, categoryName, planned);
             return HttpStatusCode.OK;
         }
     }
