@@ -23,7 +23,14 @@ namespace MoneyTracker.API.Controllers
         [Route("add")]
         public async Task<int> AddCategory(string categoryName)
         {
-            return await new Category().AddCategory(categoryName);
+            return await new MoneyTracker.API.Database.Category().AddCategory(categoryName);
+        }
+
+        [HttpGet]
+        [Route("get")]
+        public async Task<List<MoneyTracker.API.Models.Category>> GetCategories()
+        {
+            return await new MoneyTracker.API.Database.Category().GetAllCategories();
         }
     }
 }
