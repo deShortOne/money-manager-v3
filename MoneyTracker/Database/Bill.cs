@@ -134,5 +134,19 @@ namespace MoneyTracker.API.Database
             }
             return null; //throw error
         }
+
+        public async Task<bool> DeleteBill(DeleteBillDTO bill)
+        {
+            var query = """
+                DELETE FROM bill
+                WHERE id = @id
+                """;
+            var queryParams = new List<NpgsqlParameter>()
+            {
+                new NpgsqlParameter("id", bill.Id),
+            };
+            var reader = await Helper.UpdateTable(query, queryParams);
+            return reader == 1;
+        }
     }
 }
