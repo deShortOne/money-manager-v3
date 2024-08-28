@@ -5,6 +5,8 @@ using MoneyTracker.Controllers;
 
 namespace MoneyTracker.API.Controllers
 {
+    [ApiController]
+    [Route("/api/bill/")]
     public class BillController : ControllerBase
     {
 
@@ -17,9 +19,9 @@ namespace MoneyTracker.API.Controllers
 
         [HttpGet]
         [Route("get")]
-        public Task<IEnumerable<BillDTO>> Get()
+        public Task<List<BillDTO>> Get()
         {
-            return null;
+            return new Bill().GetAllBills();
         }
     }
 }
