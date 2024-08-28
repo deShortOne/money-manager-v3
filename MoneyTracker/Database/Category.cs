@@ -1,4 +1,4 @@
-﻿using MoneyTracker.API.Models;
+﻿using MoneyTracker.API.Models.Category;
 using Npgsql;
 using System.Data;
 

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MoneyTracker.API.Database;
-using MoneyTracker.API.Models;
+using MoneyTracker.API.Models.Category;
 using MoneyTracker.Controllers;
 
 namespace MoneyTracker.API.Controllers

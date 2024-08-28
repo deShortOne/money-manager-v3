@@ -1,11 +1,10 @@
-﻿namespace MoneyTracker.API.Models
+﻿namespace MoneyTracker.API.Models.Bill
 {
-    public class BillDTO
+    public class NewBillDTO
     {
-        public int Id { get; set; }
         public string Payee { get; set; }
         public decimal Amount { get; set; }
         public DateTime DatePaid { get; set; }
-        public string Category { get; set; }
+        public int Category { get; set; }
     }
 }

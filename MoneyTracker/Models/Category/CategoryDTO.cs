@@ -1,4 +1,4 @@
-﻿namespace MoneyTracker.API.Models
+﻿namespace MoneyTracker.API.Models.Category
 {
     public class CategoryDTO
     {
