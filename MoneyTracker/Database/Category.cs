@@ -55,5 +55,33 @@ namespace MoneyTracker.API.Database
             }
             return null; // throw error
         }
+
+        public async Task<CategoryDTO> EditCategory(EditCategoryDTO editCategoryDTO)
+        {
+            // UPSERTS!! and gets id
+            var queryGetIdOfCategoryName = """
+                UPDATE category
+                    SET name = @categoryName
+                WHERE id = @id
+                RETURNING (id), (name);
+                """;
+            var queryGetIdOfCategoryNameParams = new List<NpgsqlParameter>()
+            {
+                new NpgsqlParameter("id", editCategoryDTO.Id),
+                new NpgsqlParameter("categoryName", editCategoryDTO.Name),
+            };
+
+            // get category id
+            using var reader = await Helper.GetTable(queryGetIdOfCategoryName, queryGetIdOfCategoryNameParams);
+            if (await reader.ReadAsync())
+            {
+                return new CategoryDTO()
+                {
+                    Id = reader.GetInt32("id"),
+                    Name = reader.GetString("name"),
+                };
+            }
+            return null; // throw error
+        }
     }
 }

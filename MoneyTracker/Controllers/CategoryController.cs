@@ -36,7 +36,7 @@ namespace MoneyTracker.API.Controllers
         [Route("edit")]
         public async Task<CategoryDTO> EditCategory([FromBody] EditCategoryDTO editCategory)
         {
-            return null;
+            return await new Category().EditCategory(editCategory);
         }
     }
 }
