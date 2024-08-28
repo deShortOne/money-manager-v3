@@ -36,5 +36,12 @@ namespace MoneyTracker.API.Controllers
         {
             return new Bill().EditBill(editBillDTO);
         }
+
+        [HttpDelete]
+        [Route("delete")]
+        public Task<bool> Delete([FromBody] DeleteBillDTO billId)
+        {
+            return null;
+        }
     }
 }
