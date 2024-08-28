@@ -34,7 +34,7 @@ namespace MoneyTracker.API.Controllers
         [Route("edit")]
         public Task<BillDTO> Edit([FromBody] EditBillDTO editBillDTO)
         {
-            return null;
+            return new Bill().EditBill(editBillDTO);
         }
     }
 }
