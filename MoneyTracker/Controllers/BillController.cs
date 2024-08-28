@@ -28,7 +28,7 @@ namespace MoneyTracker.API.Controllers
         [Route("add")]
         public Task<BillDTO> Add([FromBody] NewBillDTO newBillDTO)
         {
-            return null;
+            return new Bill().AddNewBill(newBillDTO);
         }
     }
 }
