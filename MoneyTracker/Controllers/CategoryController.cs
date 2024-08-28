@@ -20,7 +20,7 @@ namespace MoneyTracker.API.Controllers
 
         [HttpPost]
         [Route("add")]
-        public async Task<int> AddCategory(string categoryName)
+        public async Task<CategoryDTO> AddCategory([FromBody] NewCategoryDTO categoryName)
         {
             return await new Category().AddCategory(categoryName);
         }

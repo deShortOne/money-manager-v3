@@ -29,28 +29,31 @@ namespace MoneyTracker.API.Database
             return res;
         }
 
-        public async Task<int> AddCategory(string categoryName)
+        public async Task<CategoryDTO> AddCategory(NewCategoryDTO categoryName)
         {
             // UPSERTS!! and gets id
             var queryGetIdOfCategoryName = """
                 INSERT INTO category (name) VALUES
                     (@categoryName)
                 ON CONFLICT (name) DO NOTHING
-                RETURNING id;
+                RETURNING (id), (name);
                 """;
             var queryGetIdOfCategoryNameParams = new List<NpgsqlParameter>()
             {
-                new NpgsqlParameter("categoryName", categoryName),
+                new NpgsqlParameter("categoryName", categoryName.Name),
             };
 
             // get category id
-            using var readerId = await Helper.GetTable(queryGetIdOfCategoryName, queryGetIdOfCategoryNameParams);
-            await readerId.ReadAsync();
-            if (readerId == null || !readerId.HasRows)
+            using var reader = await Helper.GetTable(queryGetIdOfCategoryName, queryGetIdOfCategoryNameParams);
+            while (await reader.ReadAsync())
             {
-                throw new InvalidOperationException("Category name already exists");
+                return new CategoryDTO()
+                {
+                    Id = reader.GetInt32("id"),
+                    Name = reader.GetString("name"),
+                };
             }
-            return readerId.GetInt32(0);
+            return null; // throw error
         }
     }
 }
