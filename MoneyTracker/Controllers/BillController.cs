@@ -17,7 +17,7 @@ namespace MoneyTracker.API.Controllers
 
         [HttpGet]
         [Route("get")]
-        public Task<IEnumerable<BudgetGroupDTO>> Get()
+        public Task<IEnumerable<BillDTO>> Get()
         {
             return null;
         }
