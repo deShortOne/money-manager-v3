@@ -63,40 +63,34 @@ namespace MoneyTracker.API.Database
             return res.Values.ToList();
         }
 
-        public async void AddBudget(int budgetGroupId, string categoryName, decimal planned)
+        public async Task<BudgetCategoryDTO> AddBudget(int budgetGroupId, int categoryId, decimal planned)
         {
-            // UPSERTS!! and gets id
-            var queryGetIdOfCategoryName = """
-                INSERT INTO category (name) VALUES
-                    (@categoryName)
-                ON CONFLICT (name) DO UPDATE
-                    SET name = @categoryName
-                RETURNING id;
-                """;
-            var queryGetIdOfCategoryNameParams = new List<NpgsqlParameter>()
-            {
-                new NpgsqlParameter("categoryName", categoryName),
-            };
             var queryInsertIntoBudgetCategory = """
                 INSERT INTO budgetcategory VALUES
                     (@budgetGroupId, @categoryId, @planned)
                 ON CONFLICT (@budgetGroupId, @categoryId) DO UPDATE
-                    SET planned = @planned;
+                    SET planned = @planned
+                RETURNING;
                 """;
             var queryInsertIntoBudgetCategoryParams = new List<NpgsqlParameter>()
             {
                 new NpgsqlParameter("budgetGroupId", budgetGroupId),
                 new NpgsqlParameter("planned", planned),
+                new NpgsqlParameter("categoryId", categoryId),
             };
 
-            // get category id
-            using var readerId = await Helper.GetTable(queryGetIdOfCategoryName, queryGetIdOfCategoryNameParams);
-            await readerId.ReadAsync();
-            var categoryId = readerId.GetInt32(0);
+            var reader = await Helper.GetTable(queryInsertIntoBudgetCategory, queryInsertIntoBudgetCategoryParams);
+            if (await reader.ReadAsync())
+            {
+                return new BudgetCategoryDTO()
+                {
+                    Name = reader.GetString("name"),
+                    Planned = reader.GetDecimal("planned"),
+                    Actual = reader.GetDecimal("actual"),
+                };
+            }
 
-            // insert into budgetcategory
-            queryInsertIntoBudgetCategoryParams.Add(new NpgsqlParameter("categoryId", categoryId));
-            var rowsAffectedFromInsert = await Helper.UpdateTable(queryInsertIntoBudgetCategory, queryInsertIntoBudgetCategoryParams);
+            return null;
         }
     }
 }

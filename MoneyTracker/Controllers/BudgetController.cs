@@ -27,10 +27,9 @@ namespace MoneyTracker.Controllers
 
         [HttpPost]
         [Route("add")]
-        public HttpStatusCode AddBudget(int budgetGroupId, string categoryName, decimal planned)
+        public async Task<BudgetCategoryDTO> AddBudget(int budgetGroupId, int categoryId, decimal planned)
         {
-            new Budget().AddBudget(budgetGroupId, categoryName, planned);
-            return HttpStatusCode.OK;
+            return await new Budget().AddBudget(budgetGroupId, categoryId, planned);
         }
     }
 }
