@@ -83,5 +83,22 @@ namespace MoneyTracker.API.Database
             }
             return null; // throw error
         }
+
+        public async Task<bool> DeleteCategory(DeleteCategoryDTO deleteCategoryDTO)
+        {
+            // UPSERTS!! and gets id
+            var query = """
+                DELETE FROM category
+                WHERE id = @id;
+                """;
+            var queryParams = new List<NpgsqlParameter>()
+            {
+                new NpgsqlParameter("id", deleteCategoryDTO.Id),
+            };
+
+            // get category id
+            var reader = await Helper.UpdateTable(query, queryParams);
+            return reader == 1;
+        }
     }
 }

@@ -40,9 +40,9 @@ namespace MoneyTracker.API.Controllers
 
         [HttpDelete]
         [Route("delete")]
-        public async Task<bool> DeleteCategory([FromBody] DeleteCategoryDTO DeleteCategory)
+        public async Task<bool> DeleteCategory([FromBody] DeleteCategoryDTO deleteCategory)
         {
-            return false;
+            return await new Category().DeleteCategory(deleteCategory);
         }
     }
 }
