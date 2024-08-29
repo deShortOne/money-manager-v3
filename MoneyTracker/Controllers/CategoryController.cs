@@ -17,6 +17,12 @@ namespace MoneyTracker.API.Controllers
             _logger = logger;
         }
 
+        [HttpGet]
+        [Route("get")]
+        public async Task<List<CategoryDTO>> GetCategories()
+        {
+            return await new Category().GetAllCategories();
+        }
 
         [HttpPost]
         [Route("add")]
@@ -25,18 +31,18 @@ namespace MoneyTracker.API.Controllers
             return await new Category().AddCategory(categoryName);
         }
 
-        [HttpGet]
-        [Route("get")]
-        public async Task<List<CategoryDTO>> GetCategories()
-        {
-            return await new Category().GetAllCategories();
-        }
-
         [HttpPut]
         [Route("edit")]
         public async Task<CategoryDTO> EditCategory([FromBody] EditCategoryDTO editCategory)
         {
             return await new Category().EditCategory(editCategory);
+        }
+
+        [HttpDelete]
+        [Route("delete")]
+        public async Task<bool> DeleteCategory([FromBody] DeleteCategoryDTO DeleteCategory)
+        {
+            return false;
         }
     }
 }
