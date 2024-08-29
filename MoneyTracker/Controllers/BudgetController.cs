@@ -26,10 +26,10 @@ namespace MoneyTracker.Controllers
         }
 
         [HttpPost]
-        [Route("add")]
-        public async Task<BudgetCategoryDTO> AddBudget(int budgetGroupId, int categoryId, decimal planned)
+        [Route("category/add")]
+        public async Task<BudgetCategoryDTO> AddBudgetCategory([FromBody] NewBudgetCategoryDTO newBudget)
         {
-            return await new Budget().AddBudget(budgetGroupId, categoryId, planned);
+            return await new Budget().AddBudgetCategory(newBudget);
         }
     }
 }

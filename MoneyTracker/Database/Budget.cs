@@ -63,7 +63,7 @@ namespace MoneyTracker.API.Database
             return res.Values.ToList();
         }
 
-        public async Task<BudgetCategoryDTO> AddBudget(int budgetGroupId, int categoryId, decimal planned)
+        public async Task<BudgetCategoryDTO> AddBudgetCategory(NewBudgetCategoryDTO newBudget)
         {
             var queryInsertIntoBudgetCategory = """
                 INSERT INTO budgetcategory VALUES
@@ -74,9 +74,9 @@ namespace MoneyTracker.API.Database
                 """;
             var queryInsertIntoBudgetCategoryParams = new List<NpgsqlParameter>()
             {
-                new NpgsqlParameter("budgetGroupId", budgetGroupId),
-                new NpgsqlParameter("planned", planned),
-                new NpgsqlParameter("categoryId", categoryId),
+                new NpgsqlParameter("budgetGroupId", newBudget.BudgetGroupId),
+                new NpgsqlParameter("planned", newBudget.Planned),
+                new NpgsqlParameter("categoryId", newBudget.CategoryId),
             };
 
             var reader = await Helper.GetTable(queryInsertIntoBudgetCategory, queryInsertIntoBudgetCategoryParams);
