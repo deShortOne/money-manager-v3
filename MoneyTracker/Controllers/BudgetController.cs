@@ -31,5 +31,12 @@ namespace MoneyTracker.Controllers
         {
             return await new Budget().AddBudgetCategory(newBudget);
         }
+
+        [HttpPut]
+        [Route("category/edit")]
+        public async Task<IEnumerable<BudgetGroupDTO>> EditBudgetCategory([FromBody] EditBudgetCategory editBudgetCategory)
+        {
+            return null;
+        }
     }
 }
