@@ -7,9 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoneyTracker.API", "MoneyTr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DatabaseMigration", "DatabaseMigration\DatabaseMigration.csproj", "{FDA3723A-FCCB-40F4-8FB7-3FEE8890921C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoneyTracker.Data", "MoneyTracker.Data\MoneyTracker.Data.csproj", "{F2AFF46F-A8E1-46D2-A20D-715762A9ECB3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoneyTracker.Data", "MoneyTracker.Data\MoneyTracker.Data.csproj", "{F2AFF46F-A8E1-46D2-A20D-715762A9ECB3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoneyTracker.Shared", "MoneyTracker.Shared\MoneyTracker.Shared.csproj", "{7D28492B-39EB-4A4E-99F4-A385F250C35A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoneyTracker.Shared", "MoneyTracker.Shared\MoneyTracker.Shared.csproj", "{7D28492B-39EB-4A4E-99F4-A385F250C35A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
