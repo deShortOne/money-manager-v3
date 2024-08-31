@@ -92,5 +92,37 @@ namespace MoneyTracker.API.Database
 
             return null;
         }
+
+        public async Task<IEnumerable<BudgetGroupDTO>> EditBudgetCategory(EditBudgetCategory editBudgetCateogry)
+        {
+            var setParamsLis = new List<string>();
+            var queryParams = new List<NpgsqlParameter>()
+            {
+                new NpgsqlParameter("id", editBudgetCateogry.BudgetCategoryId),
+            };
+            if (editBudgetCateogry.BudgetCategoryPlanned != null)
+            {
+                setParamsLis.Add("planned = @planned");
+                queryParams.Add(new NpgsqlParameter("planned", editBudgetCateogry.BudgetCategoryPlanned));
+            }
+            if (editBudgetCateogry.BudgetGroupId != null)
+            {
+                setParamsLis.Add("budget_group_id = @budget_group_id");
+                queryParams.Add(new NpgsqlParameter("budget_group_id", editBudgetCateogry.BudgetGroupId));
+            }
+
+            var query = $"""
+                UPDATE budgetcategory
+                SET {string.Join(",", setParamsLis)}
+                WHERE category_id = @id;
+                """;
+            var reader = await Helper.UpdateTable(query, queryParams);
+            if (reader != 1)
+            {
+                throw new Exception("Unknown error");
+            }
+
+            return await GetBudget();
+        }
     }
 }
