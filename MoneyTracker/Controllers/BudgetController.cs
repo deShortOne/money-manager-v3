@@ -43,7 +43,7 @@ namespace MoneyTracker.Controllers
         [Route("category/delete")]
         public async Task<bool> DeleteBudgetCategory([FromBody] DeleteBudgetCategory deleteBudgetCategory)
         {
-            return false;
+            return await new Budget().DeleteBudgetCategory(deleteBudgetCategory);
         }
     }
 }

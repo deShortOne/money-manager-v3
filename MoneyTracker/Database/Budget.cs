@@ -124,5 +124,19 @@ namespace MoneyTracker.API.Database
 
             return await GetBudget();
         }
+
+        public async Task<bool> DeleteBudgetCategory(DeleteBudgetCategory deleteBudgetCategory)
+        {
+            var query = """
+                DELETE FROM budgetcategory
+                WHERE category_id = @id;
+                """;
+            var queryParams = new List<NpgsqlParameter>()
+            {
+                new NpgsqlParameter("id", deleteBudgetCategory.BudgetCategoryId),
+            };
+            var reader = await Helper.UpdateTable(query, queryParams);
+            return reader == 1;
+        }
     }
 }
