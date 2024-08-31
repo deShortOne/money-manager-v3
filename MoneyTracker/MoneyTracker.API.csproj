@@ -7,9 +7,13 @@
     <UserSecretsId>e4c38ffc-e613-42d8-8da1-eb1fa22ca270</UserSecretsId>
   </PropertyGroup>
 
+	<ItemGroup>
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+	</ItemGroup>
+
   <ItemGroup>
-    <PackageReference Include="Npgsql" Version="8.0.3" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    <ProjectReference Include="..\MoneyTracker.Data\MoneyTracker.Data.csproj" />
+    <ProjectReference Include="..\MoneyTracker.Shared\MoneyTracker.Shared.csproj" />
   </ItemGroup>
 
 </Project>

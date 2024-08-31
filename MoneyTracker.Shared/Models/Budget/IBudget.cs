@@ -1,4 +1,4 @@
-﻿namespace MoneyTracker.API.Models.Budget
+﻿namespace MoneyTracker.Shared.Models.Budget
 {
     public interface IBudget
     {

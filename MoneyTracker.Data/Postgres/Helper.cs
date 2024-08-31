@@ -1,6 +1,7 @@
-﻿using Npgsql;
+﻿using Microsoft.Extensions.Configuration;
+using Npgsql;
 
-namespace MoneyTracker.API.Database
+namespace MoneyTracker.Data.Postgres
 {
     public class Helper
     {

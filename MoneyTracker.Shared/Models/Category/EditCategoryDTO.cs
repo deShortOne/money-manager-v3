@@ -1,6 +1,6 @@
-﻿namespace MoneyTracker.API.Models.Category
+﻿namespace MoneyTracker.Shared.Models.Category
 {
-    public class CategoryDTO
+    public class EditCategoryDTO
     {
         public int Id { get; set; }
         public string Name { get; set; }

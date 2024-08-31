@@ -1,8 +1,8 @@
-﻿using MoneyTracker.API.Models.Budget;
+﻿using MoneyTracker.Shared.Models.Budget;
 using Npgsql;
 using System.Data;
 
-namespace MoneyTracker.API.Database
+namespace MoneyTracker.Data.Postgres
 {
     public class Budget
     {

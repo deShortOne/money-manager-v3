@@ -1,8 +1,8 @@
-﻿using MoneyTracker.API.Models.Category;
+﻿using MoneyTracker.Shared.Models.Category;
 using Npgsql;
 using System.Data;
 
-namespace MoneyTracker.API.Database
+namespace MoneyTracker.Data.Postgres
 {
     public class Category
     {

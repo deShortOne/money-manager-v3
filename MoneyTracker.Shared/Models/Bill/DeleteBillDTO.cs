@@ -1,4 +1,4 @@
-﻿namespace MoneyTracker.API.Models.Bill
+﻿namespace MoneyTracker.Shared.Models.Bill
 {
     public class DeleteBillDTO
     {

@@ -1,4 +1,4 @@
-﻿namespace MoneyTracker.API.Database
+﻿namespace MoneyTracker.Data.Postgres
 {
     internal class SecretKey
     {

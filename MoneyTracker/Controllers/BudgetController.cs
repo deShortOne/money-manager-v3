@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using MoneyTracker.API.Database;
-using MoneyTracker.API.Models.Budget;
-using System.Net;
+using MoneyTracker.Data.Postgres;
+using MoneyTracker.Shared.Models.Budget;
 
 namespace MoneyTracker.Controllers
 {
@@ -10,9 +9,9 @@ namespace MoneyTracker.Controllers
     public class BudgetController : ControllerBase
     {
 
-        private readonly ILogger<WeatherForecastController> _logger;
+        private readonly ILogger<BudgetController> _logger;
 
-        public BudgetController(ILogger<WeatherForecastController> logger)
+        public BudgetController(ILogger<BudgetController> logger)
         {
             _logger = logger;
         }

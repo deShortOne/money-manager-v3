@@ -1,8 +1,8 @@
-﻿using MoneyTracker.API.Models.Bill;
+﻿using MoneyTracker.Shared.Models.Bill;
 using Npgsql;
 using System.Data;
 
-namespace MoneyTracker.API.Database
+namespace MoneyTracker.Data.Postgres
 {
     public class Bill
     {
@@ -18,7 +18,6 @@ namespace MoneyTracker.API.Database
                 INNER JOIN category c
                 	ON bill.category_id = c.id
                 ORDER BY datePaid DESC;
-                
                 """;
 
             // get category id
