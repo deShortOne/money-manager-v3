@@ -1,10 +1,11 @@
 ﻿using MoneyTracker.Shared.Models.Budget;
+using MoneyTracker.Data.Global;
 using Npgsql;
 using System.Data;
 
 namespace MoneyTracker.Data.Postgres
 {
-    public class Budget
+    public class Budget : IBudget
     {
         public async Task<IEnumerable<BudgetGroupDTO>> GetBudget()
         {
@@ -17,7 +18,7 @@ namespace MoneyTracker.Data.Postgres
                 FROM (
                 	SELECT category_id,
                 		sum(amount) AS amount
-                	FROM transaction
+                	FROM register
                 	GROUP BY category_id
                 	) category_sum
                 INNER JOIN category c
@@ -72,7 +73,7 @@ namespace MoneyTracker.Data.Postgres
                     SET planned = @planned
                 RETURNING (SELECT name FROM category WHERE id = @categoryId),
                     (planned),
-                    (SELECT SUM(amount) actual FROM transaction WHERE category_id = @categoryId);
+                    (SELECT SUM(amount) actual FROM register WHERE category_id = @categoryId);
                 """;
             var queryInsertIntoBudgetCategoryParams = new List<NpgsqlParameter>()
             {

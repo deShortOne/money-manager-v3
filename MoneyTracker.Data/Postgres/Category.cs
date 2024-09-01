@@ -1,10 +1,11 @@
-﻿using MoneyTracker.Shared.Models.Category;
+﻿using MoneyTracker.Data.Global;
+using MoneyTracker.Shared.Models.Category;
 using Npgsql;
 using System.Data;
 
 namespace MoneyTracker.Data.Postgres
 {
-    public class Category
+    public class Category : ICategory
     {
         public async Task<List<CategoryDTO>> GetAllCategories()
         {

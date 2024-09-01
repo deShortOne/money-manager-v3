@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using MoneyTracker.Data.Postgres;
+using MoneyTracker.Data.Global;
 using MoneyTracker.Shared.Models.Budget;
 
 namespace MoneyTracker.Controllers
@@ -10,39 +10,40 @@ namespace MoneyTracker.Controllers
     {
 
         private readonly ILogger<BudgetController> _logger;
+        private readonly IBudget _database;
 
-        public BudgetController(ILogger<BudgetController> logger)
+        public BudgetController(ILogger<BudgetController> logger, IBudget db)
         {
             _logger = logger;
+            _database = db;
         }
 
         [HttpGet]
         [Route("get")]
         public Task<IEnumerable<BudgetGroupDTO>> Get()
         {
-            var budget = new Budget();
-            return budget.GetBudget();
+            return _database.GetBudget();
         }
 
         [HttpPost]
         [Route("category/add")]
-        public async Task<BudgetCategoryDTO> AddBudgetCategory([FromBody] NewBudgetCategoryDTO newBudget)
+        public Task<BudgetCategoryDTO> AddBudgetCategory([FromBody] NewBudgetCategoryDTO newBudget)
         {
-            return await new Budget().AddBudgetCategory(newBudget);
+            return _database.AddBudgetCategory(newBudget);
         }
 
         [HttpPut]
         [Route("category/edit")]
-        public async Task<IEnumerable<BudgetGroupDTO>> EditBudgetCategory([FromBody] EditBudgetCategory editBudgetCategory)
+        public Task<IEnumerable<BudgetGroupDTO>> EditBudgetCategory([FromBody] EditBudgetCategory editBudgetCategory)
         {
-            return await new Budget().EditBudgetCategory(editBudgetCategory);
+            return _database.EditBudgetCategory(editBudgetCategory);
         }
 
         [HttpDelete]
         [Route("category/delete")]
-        public async Task<bool> DeleteBudgetCategory([FromBody] DeleteBudgetCategory deleteBudgetCategory)
+        public Task<bool> DeleteBudgetCategory([FromBody] DeleteBudgetCategory deleteBudgetCategory)
         {
-            return await new Budget().DeleteBudgetCategory(deleteBudgetCategory);
+            return _database.DeleteBudgetCategory(deleteBudgetCategory);
         }
     }
 }

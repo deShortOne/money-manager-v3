@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MoneyTracker.Data.Postgres;
+using MoneyTracker.Data.Global;
 using MoneyTracker.Shared.Models.Category;
 
 namespace MoneyTracker.API.Controllers
@@ -10,38 +10,40 @@ namespace MoneyTracker.API.Controllers
     {
 
         private readonly ILogger<CategoryController> _logger;
+        private readonly ICategory _database;
 
-        public CategoryController(ILogger<CategoryController> logger)
+        public CategoryController(ILogger<CategoryController> logger, ICategory db)
         {
             _logger = logger;
+            _database = db;
         }
 
         [HttpGet]
         [Route("get")]
-        public async Task<List<CategoryDTO>> GetCategories()
+        public Task<List<CategoryDTO>> GetCategories()
         {
-            return await new Category().GetAllCategories();
+            return _database.GetAllCategories();
         }
 
         [HttpPost]
         [Route("add")]
-        public async Task<CategoryDTO> AddCategory([FromBody] NewCategoryDTO categoryName)
+        public Task<CategoryDTO> AddCategory([FromBody] NewCategoryDTO categoryName)
         {
-            return await new Category().AddCategory(categoryName);
+            return _database.AddCategory(categoryName);
         }
 
         [HttpPut]
         [Route("edit")]
-        public async Task<CategoryDTO> EditCategory([FromBody] EditCategoryDTO editCategory)
+        public Task<CategoryDTO> EditCategory([FromBody] EditCategoryDTO editCategory)
         {
-            return await new Category().EditCategory(editCategory);
+            return _database.EditCategory(editCategory);
         }
 
         [HttpDelete]
         [Route("delete")]
-        public async Task<bool> DeleteCategory([FromBody] DeleteCategoryDTO deleteCategory)
+        public Task<bool> DeleteCategory([FromBody] DeleteCategoryDTO deleteCategory)
         {
-            return await new Category().DeleteCategory(deleteCategory);
+            return _database.DeleteCategory(deleteCategory);
         }
     }
 }

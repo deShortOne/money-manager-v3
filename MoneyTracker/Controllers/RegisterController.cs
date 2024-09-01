@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MoneyTracker.Data.Postgres;
+using MoneyTracker.Data.Global;
 using MoneyTracker.Shared.Models.Transaction;
 
 namespace MoneyTracker.API.Controllers
@@ -10,38 +10,40 @@ namespace MoneyTracker.API.Controllers
     {
 
         private readonly ILogger<RegisterController> _logger;
+        private readonly IRegister _database;
 
-        public RegisterController(ILogger<RegisterController> logger)
+        public RegisterController(ILogger<RegisterController> logger, IRegister db)
         {
             _logger = logger;
+            _database = db;
         }
 
         [HttpGet]
         [Route("get")]
         public Task<List<TransactionDTO>> Get()
         {
-            return new Register().GetAllTransactions();
+            return _database.GetAllTransactions();
         }
 
         [HttpPost]
         [Route("add")]
         public Task<TransactionDTO> Add([FromBody] NewTransactionDTO newRegisterDTO)
         {
-            return new Register().AddNewTransaction(newRegisterDTO);
+            return _database.AddNewTransaction(newRegisterDTO);
         }
 
         [HttpPut]
         [Route("edit")]
         public Task<TransactionDTO> Edit([FromBody] EditTransactionDTO editRegisterDTO)
         {
-            return new Register().EditTransaction(editRegisterDTO);
+            return _database.EditTransaction(editRegisterDTO);
         }
 
         [HttpDelete]
         [Route("delete")]
         public Task<bool> Delete([FromBody] DeleteTransactionDTO deleteTransaction)
         {
-            return new Register().DeleteTransaction(deleteTransaction);
+            return _database.DeleteTransaction(deleteTransaction);
         }
     }
 }

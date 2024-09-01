@@ -1,10 +1,11 @@
-﻿using MoneyTracker.Shared.Models.Transaction;
+﻿using MoneyTracker.Data.Global;
+using MoneyTracker.Shared.Models.Transaction;
 using Npgsql;
 using System.Data;
 
 namespace MoneyTracker.Data.Postgres
 {
-    public class Register
+    public class Register : IRegister
     {
         public async Task<List<TransactionDTO>> GetAllTransactions()
         {
