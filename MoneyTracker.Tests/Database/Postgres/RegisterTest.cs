@@ -5,7 +5,7 @@ using Testcontainers.PostgreSql;
 
 namespace MoneyTracker.Tests
 {
-    public sealed class UnitTest1 : IAsyncLifetime
+    public sealed class RegisterTest : IAsyncLifetime
     {
         private readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder()
             .WithDockerEndpoint("tcp://localhost:2375")
