@@ -1,0 +1,1 @@
+ALTER TABLE bill RENAME TO register;

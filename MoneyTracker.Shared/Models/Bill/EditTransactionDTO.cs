@@ -1,6 +1,6 @@
-﻿namespace MoneyTracker.Shared.Models.Bill
+﻿namespace MoneyTracker.Shared.Models.Transaction
 {
-    public class EditBillDTO
+    public class EditTransactionDTO
     {
         public int Id { get; set; }
         public string Payee { get; set; } = null;

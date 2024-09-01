@@ -1,32 +1,32 @@
-﻿using MoneyTracker.Shared.Models.Bill;
+﻿using MoneyTracker.Shared.Models.Transaction;
 using Npgsql;
 using System.Data;
 
 namespace MoneyTracker.Data.Postgres
 {
-    public class Bill
+    public class Register
     {
-        public async Task<List<BillDTO>> GetAllBills()
+        public async Task<List<TransactionDTO>> GetAllTransactions()
         {
             var query = """
-                SELECT bill.id,
+                SELECT register.id,
                 	payee,
                 	amount,
                 	datePaid,
                 	c.name
-                FROM bill
+                FROM register
                 INNER JOIN category c
-                	ON bill.category_id = c.id
+                	ON register.category_id = c.id
                 ORDER BY datePaid DESC;
                 """;
 
             // get category id
             using var reader = await Helper.GetTable(query);
 
-            var res = new List<BillDTO>();
+            var res = new List<TransactionDTO>();
             while (await reader.ReadAsync())
             {
-                res.Add(new BillDTO()
+                res.Add(new TransactionDTO()
                 {
                     Id = reader.GetInt32("id"),
                     Payee = reader.GetString("payee"),
@@ -38,10 +38,10 @@ namespace MoneyTracker.Data.Postgres
             return res;
         }
 
-        public async Task<BillDTO> AddNewBill(NewBillDTO bill)
+        public async Task<TransactionDTO> AddNewTransaction(NewTransactionDTO transaction)
         {
             var query = """
-                INSERT INTO bill (payee, amount, datePaid, category_id) VALUES
+                INSERT INTO register (payee, amount, datePaid, category_id) VALUES
                     (@payee, @amount, @datePaid, @category_id)
                 RETURNING (id),
                     (payee), 
@@ -53,15 +53,15 @@ namespace MoneyTracker.Data.Postgres
                 """;
             var queryParams = new List<NpgsqlParameter>()
             {
-                new NpgsqlParameter("payee", bill.Payee),
-                new NpgsqlParameter("amount", bill.Amount),
-                new NpgsqlParameter("datePaid", bill.DatePaid),
-                new NpgsqlParameter("category_id", bill.Category),
+                new NpgsqlParameter("payee", transaction.Payee),
+                new NpgsqlParameter("amount", transaction.Amount),
+                new NpgsqlParameter("datePaid", transaction.DatePaid),
+                new NpgsqlParameter("category_id", transaction.Category),
             };
             using var reader = await Helper.GetTable(query, queryParams);
             if (await reader.ReadAsync())
             {
-                return new BillDTO()
+                return new TransactionDTO()
                 {
                     Id = reader.GetInt32("id"),
                     Payee = reader.GetString("payee"),
@@ -73,32 +73,32 @@ namespace MoneyTracker.Data.Postgres
             return null; //throw error
         }
 
-        public async Task<BillDTO> EditBill(EditBillDTO bill)
+        public async Task<TransactionDTO> EditTransaction(EditTransactionDTO tramsaction)
         {
             var setParamsLis = new List<string>();
             var queryParams = new List<NpgsqlParameter>()
             {
-                new NpgsqlParameter("id", bill.Id),
+                new NpgsqlParameter("id", tramsaction.Id),
             };
-            if (bill.Payee != null)
+            if (tramsaction.Payee != null)
             {
                 setParamsLis.Add("payee = @payee");
-                queryParams.Add(new NpgsqlParameter("payee", bill.Payee));
+                queryParams.Add(new NpgsqlParameter("payee", tramsaction.Payee));
             }
-            if (bill.Amount != null)
+            if (tramsaction.Amount != null)
             {
                 setParamsLis.Add("amount = @amount");
-                queryParams.Add(new NpgsqlParameter("amount", bill.Amount));
+                queryParams.Add(new NpgsqlParameter("amount", tramsaction.Amount));
             }
-            if (bill.DatePaid != null)
+            if (tramsaction.DatePaid != null)
             {
                 setParamsLis.Add("datePaid = @datePaid");
-                queryParams.Add(new NpgsqlParameter("datePaid", bill.DatePaid));
+                queryParams.Add(new NpgsqlParameter("datePaid", tramsaction.DatePaid));
             }
-            if (bill.Category != null)
+            if (tramsaction.Category != null)
             {
                 setParamsLis.Add("category_id = @category_id");
-                queryParams.Add(new NpgsqlParameter("category_id", bill.Category));
+                queryParams.Add(new NpgsqlParameter("category_id", tramsaction.Category));
             }
 
             if (setParamsLis.Count == 0)
@@ -107,7 +107,7 @@ namespace MoneyTracker.Data.Postgres
             }
 
             var query = $"""
-                UPDATE bill 
+                UPDATE register 
                     SET {string.Join(",", setParamsLis)}
                 WHERE id = @id
                 RETURNING (id),
@@ -122,7 +122,7 @@ namespace MoneyTracker.Data.Postgres
             using var reader = await Helper.GetTable(query, queryParams);
             if (await reader.ReadAsync())
             {
-                return new BillDTO()
+                return new TransactionDTO()
                 {
                     Id = reader.GetInt32("id"),
                     Payee = reader.GetString("payee"),
@@ -134,15 +134,15 @@ namespace MoneyTracker.Data.Postgres
             return null; //throw error
         }
 
-        public async Task<bool> DeleteBill(DeleteBillDTO bill)
+        public async Task<bool> DeleteTransaction(DeleteTransactionDTO transaction)
         {
             var query = """
-                DELETE FROM bill
+                DELETE FROM register
                 WHERE id = @id
                 """;
             var queryParams = new List<NpgsqlParameter>()
             {
-                new NpgsqlParameter("id", bill.Id),
+                new NpgsqlParameter("id", transaction.Id),
             };
             var reader = await Helper.UpdateTable(query, queryParams);
             return reader == 1;

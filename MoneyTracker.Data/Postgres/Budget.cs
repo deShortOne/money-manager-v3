@@ -17,7 +17,7 @@ namespace MoneyTracker.Data.Postgres
                 FROM (
                 	SELECT category_id,
                 		sum(amount) AS amount
-                	FROM bill
+                	FROM transaction
                 	GROUP BY category_id
                 	) category_sum
                 INNER JOIN category c
@@ -72,7 +72,7 @@ namespace MoneyTracker.Data.Postgres
                     SET planned = @planned
                 RETURNING (SELECT name FROM category WHERE id = @categoryId),
                     (planned),
-                    (SELECT SUM(amount) actual FROM bill WHERE category_id = @categoryId);
+                    (SELECT SUM(amount) actual FROM transaction WHERE category_id = @categoryId);
                 """;
             var queryInsertIntoBudgetCategoryParams = new List<NpgsqlParameter>()
             {

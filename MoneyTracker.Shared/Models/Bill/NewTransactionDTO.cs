@@ -1,6 +1,6 @@
-﻿namespace MoneyTracker.Shared.Models.Bill
+﻿namespace MoneyTracker.Shared.Models.Transaction
 {
-    public class NewBillDTO
+    public class NewTransactionDTO
     {
         public string Payee { get; set; }
         public decimal Amount { get; set; }

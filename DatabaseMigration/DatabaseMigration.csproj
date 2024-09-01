@@ -16,6 +16,7 @@
 	  <None Remove="scripts\migrations\20240826211628_AddGroupAndCategoryConnection.sql" />
 	  <None Remove="scripts\migrations\20240826233417_AddConstraintOnCategoryName.sql" />
 	  <None Remove="scripts\Migrations\20240827075013_AlterConstraintToBudgetCategory.sql" />
+	  <None Remove="scripts\migrations\20240901003215_ChangeTableBillToTransaction.sql" />
 	</ItemGroup>
 
 	<ItemGroup>
