@@ -5,9 +5,9 @@ namespace MoneyTracker.Data.Global
 {
     public interface IBudget
     {
-        public Task<IEnumerable<BudgetGroupDTO>> GetBudget();
+        public Task<List<BudgetGroupDTO>> GetBudget();
         public Task<BudgetCategoryDTO> AddBudgetCategory(NewBudgetCategoryDTO newBudget);
-        public Task<IEnumerable<BudgetGroupDTO>> EditBudgetCategory(EditBudgetCategory editBudgetCateogry);
+        public Task<List<BudgetGroupDTO>> EditBudgetCategory(EditBudgetCategory editBudgetCateogry);
         public Task<bool> DeleteBudgetCategory(DeleteBudgetCategory deleteBudgetCategory);
     }
 }

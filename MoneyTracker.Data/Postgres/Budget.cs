@@ -14,7 +14,7 @@ namespace MoneyTracker.Data.Postgres
             _database = (Helper)db;
         }
 
-        public async Task<IEnumerable<BudgetGroupDTO>> GetBudget()
+        public async Task<List<BudgetGroupDTO>> GetBudget()
         {
             string query = """
                 SELECT bg.id,
@@ -103,7 +103,7 @@ namespace MoneyTracker.Data.Postgres
             return null;
         }
 
-        public async Task<IEnumerable<BudgetGroupDTO>> EditBudgetCategory(EditBudgetCategory editBudgetCateogry)
+        public async Task<List<BudgetGroupDTO>> EditBudgetCategory(EditBudgetCategory editBudgetCateogry)
         {
             var setParamsLis = new List<string>();
             var queryParams = new List<DbParameter>()

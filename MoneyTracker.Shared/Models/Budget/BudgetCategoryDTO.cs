@@ -5,6 +5,18 @@
         public string Name { get; set; }
         public decimal Planned { get; set; }
         public decimal Actual { get; set; }
-        public decimal Difference => Planned - Actual;
+        public decimal Difference
+        {
+            get
+            {
+                return _difference;
+            }
+            protected set
+            {
+                _difference = Planned - Actual;
+            }
+        }
+
+        private decimal _difference;
     }
 }
