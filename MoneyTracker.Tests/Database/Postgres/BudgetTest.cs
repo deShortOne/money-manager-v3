@@ -2,6 +2,7 @@
 using MoneyTracker.Data.Postgres;
 using MoneyTracker.Shared.Models.Budget;
 using MoneyTracker.Tests.Database.Postgres.TestModels;
+using Newtonsoft.Json;
 using Testcontainers.PostgreSql;
 
 namespace MoneyTracker.Tests.Database.Postgres
@@ -36,7 +37,7 @@ namespace MoneyTracker.Tests.Database.Postgres
             var db = new Helper(_postgres.GetConnectionString());
             var budget = new Budget(db);
 
-            var expected = new List<BudgetGroupDTO>()
+            var expected = new List<TestBudgetGroupDTO>()
             {
                 new TestBudgetGroupDTO() {
                     Name = "Income",
@@ -115,7 +116,35 @@ namespace MoneyTracker.Tests.Database.Postgres
                   },
             };
             var actual = await budget.GetBudget();
-            TestHelper.CompareLists(expected, actual);
+            for (int i = 0; i < actual.Count; i++)
+            {
+                var a = expected[i];
+                var b = actual[i];
+                if (a.Planned != b.Planned || a.Actual != b.Actual || a.Difference != b.Difference)
+                {
+                    Assert.Fail($"{i}\n{JsonConvert.SerializeObject(expected[i])}\n{JsonConvert.SerializeObject(actual[i])}");
+                }
+            }
+        }
+
+        private static bool CompareLists(List<TestBudgetCategoryDTO> expected, List<BudgetCategoryDTO> actual)
+        {
+
+            if (expected.Count != actual.Count)
+            {
+                return false;
+            }
+            for (int i = 0; i < expected.Count; i++)
+            {
+                if (expected[i].Actual != actual[i].Actual ||
+                    expected[i].Name != actual[i].Name ||
+                    expected[i].Planned != actual[i].Planned ||
+                    expected[i].Difference != actual[i].Difference)
+                {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }

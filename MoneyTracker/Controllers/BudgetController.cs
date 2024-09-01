@@ -20,7 +20,7 @@ namespace MoneyTracker.Controllers
 
         [HttpGet]
         [Route("get")]
-        public Task<IEnumerable<BudgetGroupDTO>> Get()
+        public Task<List<BudgetGroupDTO>> Get()
         {
             return _database.GetBudget();
         }
@@ -34,7 +34,7 @@ namespace MoneyTracker.Controllers
 
         [HttpPut]
         [Route("category/edit")]
-        public Task<IEnumerable<BudgetGroupDTO>> EditBudgetCategory([FromBody] EditBudgetCategory editBudgetCategory)
+        public Task<List<BudgetGroupDTO>> EditBudgetCategory([FromBody] EditBudgetCategory editBudgetCategory)
         {
             return _database.EditBudgetCategory(editBudgetCategory);
         }
