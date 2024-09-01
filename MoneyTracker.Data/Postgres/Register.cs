@@ -2,11 +2,19 @@
 using MoneyTracker.Shared.Models.Transaction;
 using Npgsql;
 using System.Data;
+using System.Data.Common;
 
 namespace MoneyTracker.Data.Postgres
 {
     public class Register : IRegister
     {
+        private readonly Helper _database;
+
+        public Register(IHelper db)
+        {
+            _database = (Helper)db;
+        }
+
         public async Task<List<TransactionDTO>> GetAllTransactions()
         {
             var query = """
@@ -22,7 +30,7 @@ namespace MoneyTracker.Data.Postgres
                 """;
 
             // get category id
-            using var reader = await Helper.GetTable(query);
+            using var reader = await _database.GetTable(query);
 
             var res = new List<TransactionDTO>();
             while (await reader.ReadAsync())
@@ -52,14 +60,14 @@ namespace MoneyTracker.Data.Postgres
                     FROM category
                     WHERE id = @category_id);
                 """;
-            var queryParams = new List<NpgsqlParameter>()
+            var queryParams = new List<DbParameter>()
             {
                 new NpgsqlParameter("payee", transaction.Payee),
                 new NpgsqlParameter("amount", transaction.Amount),
                 new NpgsqlParameter("datePaid", transaction.DatePaid),
                 new NpgsqlParameter("category_id", transaction.Category),
             };
-            using var reader = await Helper.GetTable(query, queryParams);
+            using var reader = await _database.GetTable(query, queryParams);
             if (await reader.ReadAsync())
             {
                 return new TransactionDTO()
@@ -77,7 +85,7 @@ namespace MoneyTracker.Data.Postgres
         public async Task<TransactionDTO> EditTransaction(EditTransactionDTO tramsaction)
         {
             var setParamsLis = new List<string>();
-            var queryParams = new List<NpgsqlParameter>()
+            var queryParams = new List<DbParameter>()
             {
                 new NpgsqlParameter("id", tramsaction.Id),
             };
@@ -120,7 +128,7 @@ namespace MoneyTracker.Data.Postgres
                     WHERE id = @category_id);
                 """;
 
-            using var reader = await Helper.GetTable(query, queryParams);
+            using var reader = await _database.GetTable(query, queryParams);
             if (await reader.ReadAsync())
             {
                 return new TransactionDTO()
@@ -141,11 +149,11 @@ namespace MoneyTracker.Data.Postgres
                 DELETE FROM register
                 WHERE id = @id
                 """;
-            var queryParams = new List<NpgsqlParameter>()
+            var queryParams = new List<DbParameter>()
             {
                 new NpgsqlParameter("id", transaction.Id),
             };
-            var reader = await Helper.UpdateTable(query, queryParams);
+            var reader = await _database.UpdateTable(query, queryParams);
             return reader == 1;
         }
     }

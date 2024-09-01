@@ -2,11 +2,18 @@
 using MoneyTracker.Data.Global;
 using Npgsql;
 using System.Data;
+using System.Data.Common;
 
 namespace MoneyTracker.Data.Postgres
 {
     public class Budget : IBudget
     {
+        private readonly Helper _database;
+        public Budget(IHelper db)
+        {
+            _database = (Helper)db;
+        }
+
         public async Task<IEnumerable<BudgetGroupDTO>> GetBudget()
         {
             string query = """
@@ -31,7 +38,7 @@ namespace MoneyTracker.Data.Postgres
                 	bg."name";
                 """;
 
-            using var reader = await Helper.GetTable(query);
+            using var reader = await _database.GetTable(query);
 
             Dictionary<int, BudgetGroupDTO> res = [];
             while (await reader.ReadAsync())
@@ -75,14 +82,14 @@ namespace MoneyTracker.Data.Postgres
                     (planned),
                     (SELECT SUM(amount) actual FROM register WHERE category_id = @categoryId);
                 """;
-            var queryInsertIntoBudgetCategoryParams = new List<NpgsqlParameter>()
+            var queryInsertIntoBudgetCategoryParams = new List<DbParameter>()
             {
                 new NpgsqlParameter("budgetGroupId", newBudget.BudgetGroupId),
                 new NpgsqlParameter("planned", newBudget.Planned),
                 new NpgsqlParameter("categoryId", newBudget.CategoryId),
             };
 
-            var reader = await Helper.GetTable(queryInsertIntoBudgetCategory, queryInsertIntoBudgetCategoryParams);
+            var reader = await _database.GetTable(queryInsertIntoBudgetCategory, queryInsertIntoBudgetCategoryParams);
             if (await reader.ReadAsync())
             {
                 return new BudgetCategoryDTO()
@@ -99,7 +106,7 @@ namespace MoneyTracker.Data.Postgres
         public async Task<IEnumerable<BudgetGroupDTO>> EditBudgetCategory(EditBudgetCategory editBudgetCateogry)
         {
             var setParamsLis = new List<string>();
-            var queryParams = new List<NpgsqlParameter>()
+            var queryParams = new List<DbParameter>()
             {
                 new NpgsqlParameter("id", editBudgetCateogry.BudgetCategoryId),
             };
@@ -119,7 +126,7 @@ namespace MoneyTracker.Data.Postgres
                 SET {string.Join(",", setParamsLis)}
                 WHERE category_id = @id;
                 """;
-            var reader = await Helper.UpdateTable(query, queryParams);
+            var reader = await _database.UpdateTable(query, queryParams);
             if (reader != 1)
             {
                 throw new Exception("Unknown error");
@@ -134,11 +141,11 @@ namespace MoneyTracker.Data.Postgres
                 DELETE FROM budgetcategory
                 WHERE category_id = @id;
                 """;
-            var queryParams = new List<NpgsqlParameter>()
+            var queryParams = new List<DbParameter>()
             {
                 new NpgsqlParameter("id", deleteBudgetCategory.BudgetCategoryId),
             };
-            var reader = await Helper.UpdateTable(query, queryParams);
+            var reader = await _database.UpdateTable(query, queryParams);
             return reader == 1;
         }
     }

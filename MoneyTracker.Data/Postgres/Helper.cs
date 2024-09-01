@@ -1,23 +1,32 @@
 ﻿using Microsoft.Extensions.Configuration;
+using MoneyTracker.Data.Global;
 using Npgsql;
+using System.Data.Common;
 
 namespace MoneyTracker.Data.Postgres
 {
-    public class Helper
+    public class Helper : IHelper
     {
-        static IConfigurationRoot config = new ConfigurationBuilder()
-                .AddUserSecrets<SecretKey>()
-                .Build();
+        private readonly NpgsqlDataSource dataSource_rw;
 
-        static readonly NpgsqlDataSourceBuilder dataSourceBuilder_ro = new NpgsqlDataSourceBuilder(config["Database:Paelagus_RO"]);
-        static readonly NpgsqlDataSource dataSource_ro = dataSourceBuilder_ro.Build();
-
-        static readonly NpgsqlDataSourceBuilder dataSourceBuilder_rw = new NpgsqlDataSourceBuilder(config["Database:Paelagus_RO"]);
-        static readonly NpgsqlDataSource dataSource_rw = dataSourceBuilder_rw.Build();
-
-        public static async Task<NpgsqlDataReader> GetTable(string query, List<NpgsqlParameter> parameters = null)
+        // TODO: have ro and rw strings
+        public Helper(string connectionString)
         {
-            var conn = await dataSource_ro.OpenConnectionAsync();
+            if (connectionString == null || connectionString == string.Empty)
+            {
+                IConfigurationRoot config = new ConfigurationBuilder()
+                    .AddUserSecrets<SecretKey>()
+                    .Build();
+                connectionString = config["Database:Paelagus_RO"];
+            }
+
+            NpgsqlDataSourceBuilder dataSourceBuilder_ro = new NpgsqlDataSourceBuilder(connectionString);
+            dataSource_rw = dataSourceBuilder_ro.Build();
+        }
+
+        public async Task<DbDataReader> GetTable(string query, List<DbParameter> parameters = null)
+        {
+            var conn = await dataSource_rw.OpenConnectionAsync();
 
             await using (var cmd = new NpgsqlCommand(query, conn))
             {
@@ -32,7 +41,7 @@ namespace MoneyTracker.Data.Postgres
             }
         }
 
-        public static async Task<int> UpdateTable(string query, List<NpgsqlParameter> parameters = null)
+        public async Task<int> UpdateTable(string query, List<DbParameter> parameters = null)
         {
             var conn = await dataSource_rw.OpenConnectionAsync();
 

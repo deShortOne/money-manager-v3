@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using MoneyTracker.Data.Global;
 using MoneyTracker.Data.Postgres;
 
@@ -9,6 +10,8 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddSingleton<IHelper>(_ => new Helper(""));
 builder.Services.AddTransient<IRegister, Register>()
     .AddTransient<ICategory, Category>()
     .AddTransient<IBudget, Budget>();
