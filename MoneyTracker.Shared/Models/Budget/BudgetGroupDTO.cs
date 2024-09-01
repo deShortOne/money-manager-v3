@@ -1,7 +1,7 @@
 ﻿
 namespace MoneyTracker.Shared.Models.Budget
 {
-    public class BudgetGroupDTO : IBudget
+    public class BudgetGroupDTO : IBudgetDTO
     {
         public string Name { get; set; }
         public List<BudgetCategoryDTO> Categories { get; set; } = [];

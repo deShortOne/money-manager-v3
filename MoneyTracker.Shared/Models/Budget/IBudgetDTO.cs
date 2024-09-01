@@ -1,6 +1,6 @@
 ﻿namespace MoneyTracker.Shared.Models.Budget
 {
-    public interface IBudget
+    public interface IBudgetDTO
     {
         string Name { get; }
         decimal Planned { get; }
