@@ -18,6 +18,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MoneyTracker.Data\MoneyTracker.Data.csproj" />
+    <ProjectReference Include="..\MoneyTracker.Shared\MoneyTracker.Shared.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
 
