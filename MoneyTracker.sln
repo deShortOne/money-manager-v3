@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoneyTracker.Data", "MoneyT
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoneyTracker.Shared", "MoneyTracker.Shared\MoneyTracker.Shared.csproj", "{7D28492B-39EB-4A4E-99F4-A385F250C35A}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoneyTracker.Tests", "MoneyTracker.Tests\MoneyTracker.Tests.csproj", "{4DC9448B-4DEA-4AA9-A57C-07CFA548F4DA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{7D28492B-39EB-4A4E-99F4-A385F250C35A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D28492B-39EB-4A4E-99F4-A385F250C35A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7D28492B-39EB-4A4E-99F4-A385F250C35A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4DC9448B-4DEA-4AA9-A57C-07CFA548F4DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DC9448B-4DEA-4AA9-A57C-07CFA548F4DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DC9448B-4DEA-4AA9-A57C-07CFA548F4DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DC9448B-4DEA-4AA9-A57C-07CFA548F4DA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
