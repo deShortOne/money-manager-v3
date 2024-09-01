@@ -2,7 +2,6 @@
 using DatabaseMigration;
 using MoneyTracker.Data.Postgres;
 using MoneyTracker.Shared.Models.Category;
-using Newtonsoft.Json;
 using Testcontainers.PostgreSql;
 
 namespace MoneyTracker.Tests.Database.Postgres
@@ -58,7 +57,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                 },
             };
             var actual = await category.GetAllCategories();
-            CompareLists(expected, actual);
+            TestHelper.CompareLists(expected, actual);
         }
 
         [Fact]
@@ -101,7 +100,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                 categoryToAdd,
             };
             var actual = await category.GetAllCategories();
-            CompareLists(expected, actual);
+            TestHelper.CompareLists(expected, actual);
         }
 
         [Fact]
@@ -143,7 +142,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                 },
             };
             var actual = await category.GetAllCategories();
-            CompareLists(expected, actual);
+            TestHelper.CompareLists(expected, actual);
         }
 
         [Fact]
@@ -181,7 +180,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                 },
             };
             var actual = await category.GetAllCategories();
-            CompareLists(expected, actual);
+            TestHelper.CompareLists(expected, actual);
         }
 
         [Fact]
@@ -221,7 +220,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                 },
             };
             var actual = await category.GetAllCategories();
-            CompareLists(expected, actual);
+            TestHelper.CompareLists(expected, actual);
         }
 
         [Fact]
@@ -229,23 +228,6 @@ namespace MoneyTracker.Tests.Database.Postgres
         {
             // Why would someone want to delete categories?
             // Also constraint prevents deletion
-        }
-
-        private void CompareLists(List<CategoryDTO> expected, List<CategoryDTO> actual)
-        {
-
-            if (expected.Count != actual.Count)
-            {
-                Assert.Fail("Length not equal!");
-            }
-            for (int i = 0; i < expected.Count; i++)
-            {
-                if (JsonConvert.SerializeObject(expected[i]) != JsonConvert.SerializeObject(actual[i]))
-                {
-                    Assert.Fail($"Item #{i} failed\nExpected:\n{JsonConvert.SerializeObject(expected[i])}\n" +
-                        $"but got:\n{JsonConvert.SerializeObject(actual[i])}");
-                }
-            }
         }
     }
 }

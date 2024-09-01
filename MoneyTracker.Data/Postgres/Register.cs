@@ -19,14 +19,15 @@ namespace MoneyTracker.Data.Postgres
         {
             var query = """
                 SELECT register.id,
-                	payee,
-                	amount,
-                	datePaid,
-                	c.name
+                       payee,
+                       amount,
+                       datePaid,
+                       c.name
                 FROM register
                 INNER JOIN category c
-                	ON register.category_id = c.id
-                ORDER BY datePaid DESC;
+                    	ON register.category_id = c.id
+                ORDER BY datePaid DESC,
+                	c.id ASC;
                 """;
 
             // get category id
