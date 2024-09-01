@@ -1,8 +1,8 @@
-﻿using MoneyTracker.Data.Global;
+﻿using System.Data;
+using System.Data.Common;
+using MoneyTracker.Data.Global;
 using MoneyTracker.Shared.Models.Category;
 using Npgsql;
-using System.Data;
-using System.Data.Common;
 
 namespace MoneyTracker.Data.Postgres
 {
@@ -12,7 +12,7 @@ namespace MoneyTracker.Data.Postgres
 
         public Category(IHelper db)
         {
-            _database = (Helper) db;
+            _database = (Helper)db;
         }
 
         public async Task<List<CategoryDTO>> GetAllCategories()

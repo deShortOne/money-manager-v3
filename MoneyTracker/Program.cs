@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.DataProtection.KeyManagement;
+﻿using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using MoneyTracker.Data.Global;
 using MoneyTracker.Data.Postgres;
 

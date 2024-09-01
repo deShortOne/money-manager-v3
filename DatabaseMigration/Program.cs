@@ -1,7 +1,7 @@
-﻿using DbUp;
-using Microsoft.Extensions.Configuration;
-using System.Reflection;
+﻿using System.Reflection;
 using DatabaseMigration;
+using DbUp;
+using Microsoft.Extensions.Configuration;
 
 public class Program
 {
@@ -13,7 +13,7 @@ public class Program
 
         var connectionString =
             args.FirstOrDefault()
-            ?? config["Database:Paelagus_RO"] 
+            ?? config["Database:Paelagus_RO"]
             ?? "ERROR CONNECTION STRING NOT FOUND";
 
         return Migration.CheckMigration(connectionString);

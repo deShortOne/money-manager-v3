@@ -10,4 +10,3 @@ namespace MoneyTracker.Data.Global
         public Task<int> UpdateTable(string query, List<DbParameter> parameters = null);
     }
 }
- 

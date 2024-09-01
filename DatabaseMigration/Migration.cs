@@ -1,5 +1,5 @@
-﻿using DbUp;
-using System.Reflection;
+﻿using System.Reflection;
+using DbUp;
 namespace DatabaseMigration
 {
     public class Migration

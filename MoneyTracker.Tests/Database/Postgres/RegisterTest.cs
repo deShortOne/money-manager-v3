@@ -1,4 +1,4 @@
-using DatabaseMigration;
+﻿using DatabaseMigration;
 using MoneyTracker.Data.Postgres;
 using MoneyTracker.Shared.Models.Transaction;
 using Newtonsoft.Json;
@@ -104,6 +104,7 @@ namespace MoneyTracker.Tests.Database.Postgres
         }
 
         //[Fact]
+        [Fact]
         public async void AddItemAfterFirstLoad()
         {
             var db = new Helper(_postgres.GetConnectionString());

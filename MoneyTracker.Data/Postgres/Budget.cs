@@ -1,8 +1,8 @@
-﻿using MoneyTracker.Shared.Models.Budget;
-using MoneyTracker.Data.Global;
-using Npgsql;
-using System.Data;
+﻿using System.Data;
 using System.Data.Common;
+using MoneyTracker.Data.Global;
+using MoneyTracker.Shared.Models.Budget;
+using Npgsql;
 
 namespace MoneyTracker.Data.Postgres
 {
