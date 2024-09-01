@@ -105,6 +105,48 @@ namespace MoneyTracker.Tests.Database.Postgres
         }
 
         [Fact]
+        public async void AddDuplicateCategory()
+        {
+            var db = new Helper(_postgres.GetConnectionString());
+            var category = new Category(db);
+
+            var categoryToAdd = new CategoryDTO()
+            {
+                Id = 6,
+                Name = "Hobby",
+            };
+            await category.AddCategory(new NewCategoryDTO()
+            {
+                Name = categoryToAdd.Name,
+            });
+
+            var expected = new List<CategoryDTO>() {
+                new CategoryDTO() {
+                    Id = 1,
+                    Name = "Wages & Salary : Net Pay"
+                },
+                new CategoryDTO() {
+                    Id = 2,
+                    Name = "Bills : Cell Phone"
+                },
+                new CategoryDTO() {
+                    Id = 3,
+                    Name = "Bills : Rent"
+                },
+                new CategoryDTO() {
+                    Id = 4,
+                    Name = "Groceries"
+                },
+                new CategoryDTO() {
+                    Id = 5,
+                    Name = "Hobby"
+                },
+            };
+            var actual = await category.GetAllCategories();
+            CompareLists(expected, actual);
+        }
+
+        [Fact]
         public async void EditCategory()
         {
             var db = new Helper(_postgres.GetConnectionString());
@@ -136,6 +178,46 @@ namespace MoneyTracker.Tests.Database.Postgres
                 new CategoryDTO() {
                     Id = 5,
                     Name = "Something funky"
+                },
+            };
+            var actual = await category.GetAllCategories();
+            CompareLists(expected, actual);
+        }
+
+        [Fact]
+        public async void EditIntoDuplicateCategory()
+        {
+            var db = new Helper(_postgres.GetConnectionString());
+            var category = new Category(db);
+
+            await Assert.ThrowsAsync<Npgsql.PostgresException>(async () =>
+                await category.EditCategory(new EditCategoryDTO()
+                {
+                    Id = 4,
+                    Name = "Hobby",
+                })
+            );
+
+            var expected = new List<CategoryDTO>() {
+                new CategoryDTO() {
+                    Id = 1,
+                    Name = "Wages & Salary : Net Pay"
+                },
+                new CategoryDTO() {
+                    Id = 2,
+                    Name = "Bills : Cell Phone"
+                },
+                new CategoryDTO() {
+                    Id = 3,
+                    Name = "Bills : Rent"
+                },
+                new CategoryDTO() {
+                    Id = 4,
+                    Name = "Groceries"
+                },
+                new CategoryDTO() {
+                    Id = 5,
+                    Name = "Hobby"
                 },
             };
             var actual = await category.GetAllCategories();
