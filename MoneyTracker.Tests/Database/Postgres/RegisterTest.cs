@@ -1,3 +1,4 @@
+using DatabaseMigration;
 using MoneyTracker.Data.Postgres;
 using MoneyTracker.Shared.Models.Transaction;
 using Newtonsoft.Json;
@@ -18,7 +19,9 @@ namespace MoneyTracker.Tests.Database.Postgres
         public async Task InitializeAsync()
         {
             await _postgres.StartAsync();
-            Program.Main([_postgres.GetConnectionString()]);
+
+            Migration.CheckMigration(_postgres.GetConnectionString());
+
             return;
         }
 

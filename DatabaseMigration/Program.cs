@@ -5,39 +5,17 @@ using DatabaseMigration;
 
 public class Program
 {
-    static IConfigurationRoot config = new ConfigurationBuilder()
+    public static int Main(string[] args)
+    {
+        IConfigurationRoot config = new ConfigurationBuilder()
             .AddUserSecrets<SecretKey>()
             .Build();
 
-    public static int Main(string[] args)
-    {
         var connectionString =
             args.FirstOrDefault()
-            ?? config["Database:Paelagus_RO"];
+            ?? config["Database:Paelagus_RO"] 
+            ?? "ERROR CONNECTION STRING NOT FOUND";
 
-        var upgrader =
-            DeployChanges.To
-                .PostgresqlDatabase(connectionString)
-                .WithScriptsEmbeddedInAssembly(Assembly.GetExecutingAssembly())
-                .LogToConsole()
-                .Build();
-
-        var result = upgrader.PerformUpgrade();
-
-        if (!result.Successful)
-        {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine(result.Error);
-            Console.ResetColor();
-#if DEBUG
-        Console.ReadLine();
-#endif
-            return -1;
-        }
-
-        Console.ForegroundColor = ConsoleColor.Green;
-        Console.WriteLine("Success!");
-        Console.ResetColor();
-        return 0;
+        return Migration.CheckMigration(connectionString);
     }
 }
