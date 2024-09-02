@@ -2,8 +2,15 @@
 {
     public class NewBudgetCategoryDTO
     {
-        public int BudgetGroupId { get; set; }
-        public int CategoryId { get; set; }
-        public decimal Planned { get; set; }
+        public NewBudgetCategoryDTO(int budgetGroupId, int categoryId, decimal planned)
+        {
+            BudgetGroupId = budgetGroupId;
+            CategoryId = categoryId;
+            Planned = planned;
+        }
+
+        public int BudgetGroupId { get; private set; }
+        public int CategoryId { get; private set; }
+        public decimal Planned { get; private set; }
     }
 }

@@ -2,6 +2,11 @@
 {
     public class DeleteBudgetCategory
     {
-        public int BudgetCategoryId { get; set; }
+        public DeleteBudgetCategory(int id)
+        {
+            BudgetCategoryId = id;
+        }
+
+        public int BudgetCategoryId { get; private set; }
     }
 }
