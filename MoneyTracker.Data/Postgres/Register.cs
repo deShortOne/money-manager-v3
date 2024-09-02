@@ -36,14 +36,13 @@ namespace MoneyTracker.Data.Postgres
             var res = new List<TransactionDTO>();
             while (await reader.ReadAsync())
             {
-                res.Add(new TransactionDTO()
-                {
-                    Id = reader.GetInt32("id"),
-                    Payee = reader.GetString("payee"),
-                    Amount = reader.GetDecimal("amount"),
-                    DatePaid = reader.GetDateTime("datePaid"),
-                    Category = reader.GetString("name"),
-                });
+                res.Add(new TransactionDTO(
+                    reader.GetInt32("id"),
+                    reader.GetString("payee"),
+                    reader.GetDecimal("amount"),
+                    reader.GetDateTime("datePaid"),
+                    reader.GetString("name")
+                ));
             }
             return res;
         }
@@ -71,14 +70,13 @@ namespace MoneyTracker.Data.Postgres
             using var reader = await _database.GetTable(query, queryParams);
             if (await reader.ReadAsync())
             {
-                return new TransactionDTO()
-                {
-                    Id = reader.GetInt32("id"),
-                    Payee = reader.GetString("payee"),
-                    Amount = reader.GetDecimal("amount"),
-                    DatePaid = reader.GetDateTime("datePaid"),
-                    Category = reader.GetString("name"),
-                };
+                return new TransactionDTO(
+                    reader.GetInt32("id"),
+                    reader.GetString("payee"),
+                    reader.GetDecimal("amount"),
+                    reader.GetDateTime("datePaid"),
+                    reader.GetString("name")
+                );
             }
             return null; //throw error
         }
@@ -132,14 +130,13 @@ namespace MoneyTracker.Data.Postgres
             using var reader = await _database.GetTable(query, queryParams);
             if (await reader.ReadAsync())
             {
-                return new TransactionDTO()
-                {
-                    Id = reader.GetInt32("id"),
-                    Payee = reader.GetString("payee"),
-                    Amount = reader.GetDecimal("amount"),
-                    DatePaid = reader.GetDateTime("datePaid"),
-                    Category = reader.GetString("name"),
-                };
+                return new TransactionDTO(
+                    reader.GetInt32("id"),
+                    reader.GetString("payee"),
+                    reader.GetDecimal("amount"),
+                    reader.GetDateTime("datePaid"),
+                     reader.GetString("name")
+                );
             }
             return null; //throw error
         }
