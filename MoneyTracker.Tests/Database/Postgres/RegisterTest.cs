@@ -103,13 +103,12 @@ namespace MoneyTracker.Tests.Database.Postgres
                 DateTime.Parse("2024-09-01T00:00:00Z").ToUniversalTime(),
                 "Hobby" // which is 5
             );
-            await register.AddNewTransaction(new NewTransactionDTO()
-            {
-                Amount = transactionToAdd.Amount,
-                Category = 5, // id correlate to hobby
-                DatePaid = transactionToAdd.DatePaid,
-                Payee = transactionToAdd.Payee,
-            });
+            await register.AddNewTransaction(new NewTransactionDTO(
+                transactionToAdd.Payee,
+                transactionToAdd.Amount,
+                transactionToAdd.DatePaid,
+                5 // id correlate to hobby
+            ));
 
             var expected = new List<TransactionDTO>()
             {
@@ -174,12 +173,11 @@ namespace MoneyTracker.Tests.Database.Postgres
             var db = new Helper(_postgres.GetConnectionString());
             var register = new Register(db);
 
-            await register.EditTransaction(new EditTransactionDTO()
-            {
-                Id = 6,
-                Payee = "Bar",
-                Category = 5, // "Hobby"
-            });
+            await register.EditTransaction(new EditTransactionDTO(
+                6,
+                "Bar",
+                category: 5 // "Hobby"
+            ));
 
             var expected = new List<TransactionDTO>()
             {

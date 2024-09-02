@@ -2,10 +2,20 @@
 {
     public class EditTransactionDTO
     {
-        public int Id { get; set; }
-        public string Payee { get; set; } = null;
-        public decimal? Amount { get; set; } = null;
-        public DateTime? DatePaid { get; set; } = null;
-        public int? Category { get; set; } = null;
+        public EditTransactionDTO(int id, string payee, decimal? amount = null,
+            DateTime? datePaid = null, int? category = null)
+        {
+            Id = id;
+            Payee = payee;
+            Amount = amount;
+            DatePaid = datePaid;
+            Category = category;
+        }
+
+        public int Id { get; private set; }
+        public string Payee { get; private set; }
+        public decimal? Amount { get; private set; } = null;
+        public DateTime? DatePaid { get; private set; } = null;
+        public int? Category { get; private set; } = null;
     }
 }
