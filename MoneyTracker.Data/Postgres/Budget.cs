@@ -52,16 +52,10 @@ namespace MoneyTracker.Data.Postgres
 
                 if (!reader.IsDBNull("category_name"))
                 {
-                    var categoryName = reader.GetString("category_name");
-                    var a = reader.GetDecimal("actual");
-                    var b = reader.GetDecimal("planned");
-
-                    res[budgetId].AddBudgetCategoryDTO(new BudgetCategoryDTO()
-                    {
-                        Name = categoryName,
-                        Actual = a,
-                        Planned = b,
-                    });
+                    res[budgetId].AddBudgetCategoryDTO(new BudgetCategoryDTO(
+                        reader.GetString("category_name"),
+                        reader.GetDecimal("planned"),
+                        reader.GetDecimal("actual")));
                 }
             }
 
@@ -89,12 +83,8 @@ namespace MoneyTracker.Data.Postgres
             var reader = await _database.GetTable(queryInsertIntoBudgetCategory, queryInsertIntoBudgetCategoryParams);
             if (await reader.ReadAsync())
             {
-                return new BudgetCategoryDTO()
-                {
-                    Name = reader.GetString("name"),
-                    Planned = reader.GetDecimal("planned"),
-                    Actual = reader.GetDecimal("actual"),
-                };
+                return new BudgetCategoryDTO(reader.GetString("name"),
+                    reader.GetDecimal("planned"), reader.GetDecimal("actual"));
             }
 
             return null;

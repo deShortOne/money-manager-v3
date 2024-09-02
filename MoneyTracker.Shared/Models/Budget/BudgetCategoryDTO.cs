@@ -2,9 +2,17 @@
 {
     public class BudgetCategoryDTO
     {
-        public string Name { get; set; }
-        public decimal Planned { get; set; }
-        public decimal Actual { get; set; }
-        public decimal Difference => Planned - Actual;
+        public BudgetCategoryDTO(string name, decimal planned, decimal actual)
+        {
+            Name = name;
+            Planned = planned;
+            Actual = actual;
+            Difference = planned - Actual;
+        }
+
+        public string Name { get; private set; }
+        public decimal Planned { get; private set; }
+        public decimal Actual { get; private set; }
+        public decimal Difference { get; private set; }
     }
 }
