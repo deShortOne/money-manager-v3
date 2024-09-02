@@ -1,6 +1,4 @@
 ﻿
-using MoneyTracker.Shared.Models.Budget;
-
 namespace MoneyTracker.Tests.Database.Postgres.TestModels;
 
 public class TestBudgetGroupDTO
@@ -11,4 +9,3 @@ public class TestBudgetGroupDTO
     public decimal Actual { get; set; }
     public decimal Difference { get; set; }
 }
-
