@@ -52,10 +52,7 @@ namespace MoneyTracker.Tests.Database.Postgres
             var category = new Category(db);
 
             var categoryToAdd = new CategoryDTO(6, "Speeding tickets");
-            await category.AddCategory(new NewCategoryDTO()
-            {
-                Name = categoryToAdd.Name,
-            });
+            await category.AddCategory(new NewCategoryDTO(categoryToAdd.Name));
 
             var expected = new List<CategoryDTO>() {
                 new CategoryDTO(1, "Wages & Salary : Net Pay"),
@@ -76,10 +73,7 @@ namespace MoneyTracker.Tests.Database.Postgres
             var category = new Category(db);
 
             var categoryToAdd = new CategoryDTO(6, "Hobby");
-            await category.AddCategory(new NewCategoryDTO()
-            {
-                Name = categoryToAdd.Name,
-            });
+            await category.AddCategory(new NewCategoryDTO(categoryToAdd.Name));
 
             var expected = new List<CategoryDTO>() {
                 new CategoryDTO(1, "Wages & Salary : Net Pay"),
@@ -98,11 +92,7 @@ namespace MoneyTracker.Tests.Database.Postgres
             var db = new Helper(_postgres.GetConnectionString());
             var category = new Category(db);
 
-            await category.EditCategory(new EditCategoryDTO()
-            {
-                Id = 5,
-                Name = "Something funky",
-            });
+            await category.EditCategory(new EditCategoryDTO(5, "Something funky"));
 
             var expected = new List<CategoryDTO>() {
                 new CategoryDTO(1, "Wages & Salary : Net Pay"),
@@ -122,11 +112,7 @@ namespace MoneyTracker.Tests.Database.Postgres
             var category = new Category(db);
 
             await Assert.ThrowsAsync<Npgsql.PostgresException>(async () =>
-                await category.EditCategory(new EditCategoryDTO()
-                {
-                    Id = 4,
-                    Name = "Hobby",
-                })
+                await category.EditCategory(new EditCategoryDTO(4, "Hobby"))
             );
 
             var expected = new List<CategoryDTO>() {

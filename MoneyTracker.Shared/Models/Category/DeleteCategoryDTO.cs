@@ -2,6 +2,10 @@
 {
     public class DeleteCategoryDTO
     {
-        public int Id { get; set; }
+        public DeleteCategoryDTO(int id)
+        {
+            Id = id;
+        }
+        public int Id { get; private set; }
     }
 }
