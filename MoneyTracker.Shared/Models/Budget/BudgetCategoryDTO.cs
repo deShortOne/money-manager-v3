@@ -1,6 +1,6 @@
 ﻿namespace MoneyTracker.Shared.Models.Budget
 {
-    public class BudgetCategoryDTO : IBudgetDTO
+    public class BudgetCategoryDTO
     {
         public string Name { get; set; }
         public decimal Planned { get; set; }

@@ -46,20 +46,17 @@ namespace MoneyTracker.Data.Postgres
                 var budgetId = reader.GetInt32("id");
                 if (!res.TryGetValue(budgetId, out BudgetGroupDTO group))
                 {
-                    group = new BudgetGroupDTO()
-                    {
-                        Name = reader.GetString("name"),
-                    };
+                    group = new BudgetGroupDTO(reader.GetString("name"));
                     res.Add(budgetId, group);
                 }
-
 
                 if (!reader.IsDBNull("category_name"))
                 {
                     var categoryName = reader.GetString("category_name");
                     var a = reader.GetDecimal("actual");
                     var b = reader.GetDecimal("planned");
-                    res[budgetId].Categories.Add(new BudgetCategoryDTO()
+
+                    res[budgetId].AddBudgetCategoryDTO(new BudgetCategoryDTO()
                     {
                         Name = categoryName,
                         Actual = a,

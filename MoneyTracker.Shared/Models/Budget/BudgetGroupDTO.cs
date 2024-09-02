@@ -1,14 +1,35 @@
-﻿namespace MoneyTracker.Shared.Models.Budget
+﻿using System.Collections.ObjectModel;
+
+namespace MoneyTracker.Shared.Models.Budget
 {
-    public class BudgetGroupDTO : IBudgetDTO
+    public class BudgetGroupDTO
     {
-        public string Name { get; set; }
-        public List<BudgetCategoryDTO> Categories { get; set; } = [];
-        public decimal Planned => (from category in Categories
-                                   select category.Planned).Sum();
-        public decimal Actual => (from category in Categories
-                                  select category.Actual).Sum();
-        public virtual decimal Difference => (from category in Categories
-                                              select category.Difference).Sum();
+        private IList<BudgetCategoryDTO> _categories;
+
+        public BudgetGroupDTO(string name)
+        {
+            Name = name;
+            _categories = [];
+        }
+
+        public void AddBudgetCategoryDTO(BudgetCategoryDTO newBudgetCategory)
+        {
+            _categories.Add(newBudgetCategory);
+            Planned += newBudgetCategory.Planned;
+            Actual += newBudgetCategory.Actual;
+            Difference += newBudgetCategory.Difference;
+        }
+
+        public string Name { get; private set; }
+        public IList<BudgetCategoryDTO> Categories
+        {
+            get => new ReadOnlyCollection<BudgetCategoryDTO>(_categories);
+            private set => _categories = value;
+        }
+
+        public decimal Planned { get; private set; }
+        public decimal Actual { get; private set; }
+        public virtual decimal Difference { get; private set; }
+
     }
 }
