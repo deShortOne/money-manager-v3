@@ -3,7 +3,7 @@ using MoneyTracker.Shared.Models.Category;
 
 namespace MoneyTracker.Data.Global
 {
-    public interface ICategory
+    public interface ICategoryDatabase
     {
         public Task<List<CategoryDTO>> GetAllCategories();
         public Task<CategoryDTO> AddCategory(NewCategoryDTO categoryName);

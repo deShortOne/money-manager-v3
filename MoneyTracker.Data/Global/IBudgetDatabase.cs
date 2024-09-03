@@ -3,7 +3,7 @@ using MoneyTracker.Shared.Models.Budget;
 
 namespace MoneyTracker.Data.Global
 {
-    public interface IBudget
+    public interface IBudgetDatabase
     {
         public Task<List<BudgetGroupDTO>> GetBudget();
         public Task<BudgetCategoryDTO> AddBudgetCategory(NewBudgetCategoryDTO newBudget);

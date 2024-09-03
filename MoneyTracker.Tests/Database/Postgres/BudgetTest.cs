@@ -35,7 +35,7 @@ namespace MoneyTracker.Tests.Database.Postgres
         public async void FirstLoadCheckTablesThatDataAreThere()
         {
             var db = new PostgresDatabase(_postgres.GetConnectionString());
-            var budget = new Budget(db);
+            var budget = new BudgetDatabase(db);
 
             var expected = new List<TestBudgetGroupDTO>()
             {

@@ -32,7 +32,7 @@ namespace MoneyTracker.Tests.Database.Postgres
         public async void FirstLoadCheckTablesThatDataAreThere()
         {
             var db = new PostgresDatabase(_postgres.GetConnectionString());
-            var category = new Category(db);
+            var category = new CategoryDatabase(db);
 
             var expected = new List<CategoryDTO>() {
                 new CategoryDTO(1, "Wages & Salary : Net Pay"),
@@ -49,7 +49,7 @@ namespace MoneyTracker.Tests.Database.Postgres
         public async void AddCategory()
         {
             var db = new PostgresDatabase(_postgres.GetConnectionString());
-            var category = new Category(db);
+            var category = new CategoryDatabase(db);
 
             var categoryToAdd = new CategoryDTO(6, "Speeding tickets");
             await category.AddCategory(new NewCategoryDTO(categoryToAdd.Name));
@@ -70,7 +70,7 @@ namespace MoneyTracker.Tests.Database.Postgres
         public async void AddDuplicateCategory()
         {
             var db = new PostgresDatabase(_postgres.GetConnectionString());
-            var category = new Category(db);
+            var category = new CategoryDatabase(db);
 
             var categoryToAdd = new CategoryDTO(6, "Hobby");
             await category.AddCategory(new NewCategoryDTO(categoryToAdd.Name));
@@ -90,7 +90,7 @@ namespace MoneyTracker.Tests.Database.Postgres
         public async void EditCategory()
         {
             var db = new PostgresDatabase(_postgres.GetConnectionString());
-            var category = new Category(db);
+            var category = new CategoryDatabase(db);
 
             await category.EditCategory(new EditCategoryDTO(5, "Something funky"));
 
@@ -109,7 +109,7 @@ namespace MoneyTracker.Tests.Database.Postgres
         public async void EditIntoDuplicateCategory()
         {
             var db = new PostgresDatabase(_postgres.GetConnectionString());
-            var category = new Category(db);
+            var category = new CategoryDatabase(db);
 
             await Assert.ThrowsAsync<Npgsql.PostgresException>(async () =>
                 await category.EditCategory(new EditCategoryDTO(4, "Hobby"))

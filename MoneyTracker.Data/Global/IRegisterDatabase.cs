@@ -3,7 +3,7 @@ using MoneyTracker.Shared.Models.Transaction;
 
 namespace MoneyTracker.Data.Global
 {
-    public interface IRegister
+    public interface IRegisterDatabase
     {
         public Task<List<TransactionDTO>> GetAllTransactions();
         public Task<TransactionDTO> AddNewTransaction(NewTransactionDTO transaction);

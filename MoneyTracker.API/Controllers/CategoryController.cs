@@ -10,9 +10,9 @@ namespace MoneyTracker.API.Controllers
     {
 
         private readonly ILogger<CategoryController> _logger;
-        private readonly ICategory _database;
+        private readonly ICategoryDatabase _database;
 
-        public CategoryController(ILogger<CategoryController> logger, ICategory db)
+        public CategoryController(ILogger<CategoryController> logger, ICategoryDatabase db)
         {
             _logger = logger;
             _database = db;

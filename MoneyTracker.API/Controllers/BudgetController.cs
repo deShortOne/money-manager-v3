@@ -10,9 +10,9 @@ namespace MoneyTracker.Controllers
     {
 
         private readonly ILogger<BudgetController> _logger;
-        private readonly IBudget _database;
+        private readonly IBudgetDatabase _database;
 
-        public BudgetController(ILogger<BudgetController> logger, IBudget db)
+        public BudgetController(ILogger<BudgetController> logger, IBudgetDatabase db)
         {
             _logger = logger;
             _database = db;

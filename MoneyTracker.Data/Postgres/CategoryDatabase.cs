@@ -6,11 +6,11 @@ using Npgsql;
 
 namespace MoneyTracker.Data.Postgres
 {
-    public class Category : ICategory
+    public class CategoryDatabase : ICategoryDatabase
     {
         private readonly PostgresDatabase _database;
 
-        public Category(IDatabase db)
+        public CategoryDatabase(IDatabase db)
         {
             _database = (PostgresDatabase)db;
         }

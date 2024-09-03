@@ -6,11 +6,11 @@ using Npgsql;
 
 namespace MoneyTracker.Data.Postgres
 {
-    public class Register : IRegister
+    public class RegisterDatabase : IRegisterDatabase
     {
         private readonly PostgresDatabase _database;
 
-        public Register(IDatabase db)
+        public RegisterDatabase(IDatabase db)
         {
             _database = (PostgresDatabase)db;
         }

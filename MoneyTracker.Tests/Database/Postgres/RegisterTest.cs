@@ -34,7 +34,7 @@ namespace MoneyTracker.Tests.Database.Postgres
         public async void FirstLoadCheckTablesThatDataAreThere()
         {
             var db = new PostgresDatabase(_postgres.GetConnectionString());
-            var register = new Register(db);
+            var register = new RegisterDatabase(db);
 
             var expected = new List<TransactionDTO>()
             {
@@ -96,7 +96,7 @@ namespace MoneyTracker.Tests.Database.Postgres
         public async void AddItemAfterFirstLoad()
         {
             var db = new PostgresDatabase(_postgres.GetConnectionString());
-            var register = new Register(db);
+            var register = new RegisterDatabase(db);
             var transactionToAdd = new TransactionDTO(
                 8,
                 "Super star",
@@ -172,7 +172,7 @@ namespace MoneyTracker.Tests.Database.Postgres
         public async void EditATransaction()
         {
             var db = new PostgresDatabase(_postgres.GetConnectionString());
-            var register = new Register(db);
+            var register = new RegisterDatabase(db);
 
             await register.EditTransaction(new EditTransactionDTO(
                 6,
@@ -240,7 +240,7 @@ namespace MoneyTracker.Tests.Database.Postgres
         public async void DeleteTransaction()
         {
             var db = new PostgresDatabase(_postgres.GetConnectionString());
-            var register = new Register(db);
+            var register = new RegisterDatabase(db);
 
             await register.DeleteTransaction(new DeleteTransactionDTO()
             {

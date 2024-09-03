@@ -10,9 +10,9 @@ namespace MoneyTracker.API.Controllers
     {
 
         private readonly ILogger<RegisterController> _logger;
-        private readonly IRegister _database;
+        private readonly IRegisterDatabase _database;
 
-        public RegisterController(ILogger<RegisterController> logger, IRegister db)
+        public RegisterController(ILogger<RegisterController> logger, IRegisterDatabase db)
         {
             _logger = logger;
             _database = db;

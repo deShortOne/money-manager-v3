@@ -6,10 +6,10 @@ using Npgsql;
 
 namespace MoneyTracker.Data.Postgres
 {
-    public class Budget : IBudget
+    public class BudgetDatabase : IBudgetDatabase
     {
         private readonly PostgresDatabase _database;
-        public Budget(IDatabase db)
+        public BudgetDatabase(IDatabase db)
         {
             _database = (PostgresDatabase)db;
         }
