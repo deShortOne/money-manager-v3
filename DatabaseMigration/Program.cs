@@ -16,6 +16,23 @@ public class Program
             ?? config["Database:Paelagus_RO"]
             ?? "ERROR CONNECTION STRING NOT FOUND";
 
-        return Migration.CheckMigration(connectionString);
+        var result = Migration.CheckMigration(connectionString);
+        if (result.Successful)
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Success!");
+            Console.ResetColor();
+            return 0;
+        }
+        else
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(result.Error);
+            Console.ResetColor();
+#if DEBUG
+            Console.ReadLine();
+#endif
+            return -1;
+        }
     }
 }

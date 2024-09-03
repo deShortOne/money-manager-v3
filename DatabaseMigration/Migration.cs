@@ -1,10 +1,11 @@
 ﻿using System.Reflection;
 using DbUp;
+using DbUp.Engine;
 namespace DatabaseMigration
 {
     public class Migration
     {
-        public static int CheckMigration(string connectionString)
+        public static DatabaseUpgradeResult CheckMigration(string connectionString)
         {
             var upgrader =
             DeployChanges.To
@@ -13,23 +14,7 @@ namespace DatabaseMigration
                 .LogToConsole()
                 .Build();
 
-            var result = upgrader.PerformUpgrade();
-
-            if (!result.Successful)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(result.Error);
-                Console.ResetColor();
-#if DEBUG
-                Console.ReadLine();
-#endif
-                return -1;
-            }
-
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine("Success!");
-            Console.ResetColor();
-            return 0;
+            return upgrader.PerformUpgrade();
         }
     }
 }
