@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.DataProtection.KeyManagement;
-using MoneyTracker.Data.Global;
+﻿using MoneyTracker.Data.Global;
 using MoneyTracker.Data.Postgres;
+using MoneyTracker.DatabaseMigration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +16,12 @@ builder.Services.AddSingleton<IDatabase>(_ => new PostgresDatabase(dbConnString)
 builder.Services.AddTransient<IRegister, Register>()
     .AddTransient<ICategory, Category>()
     .AddTransient<IBudget, Budget>();
+
+var dbResult = Migration.CheckMigration(dbConnString);
+if (!dbResult.Successful)
+{
+    throw new InvalidOperationException("Database failed to update, exception: " + dbResult.Error);
+}
 
 var app = builder.Build();
 
