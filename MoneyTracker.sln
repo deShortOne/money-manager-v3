@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.35013.160
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoneyTracker.API", "MoneyTracker\MoneyTracker.API.csproj", "{928CB6A0-6C97-47ED-B8C4-7F1AB1D8AA0E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoneyTracker.API", "MoneyTracker.API\MoneyTracker.API.csproj", "{928CB6A0-6C97-47ED-B8C4-7F1AB1D8AA0E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DatabaseMigration", "DatabaseMigration\DatabaseMigration.csproj", "{FDA3723A-FCCB-40F4-8FB7-3FEE8890921C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoneyTracker.DatabaseMigration", "MoneyTracker.DatabaseMigration\MoneyTracker.DatabaseMigration.csproj", "{FDA3723A-FCCB-40F4-8FB7-3FEE8890921C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoneyTracker.Data", "MoneyTracker.Data\MoneyTracker.Data.csproj", "{F2AFF46F-A8E1-46D2-A20D-715762A9ECB3}"
 EndProject

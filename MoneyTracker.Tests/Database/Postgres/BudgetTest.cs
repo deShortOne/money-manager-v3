@@ -1,5 +1,5 @@
-﻿using DatabaseMigration;
-using MoneyTracker.Data.Postgres;
+﻿using MoneyTracker.Data.Postgres;
+using MoneyTracker.DatabaseMigration;
 using MoneyTracker.Shared.Models.Budget;
 using MoneyTracker.Tests.Database.Postgres.TestModels;
 using Newtonsoft.Json;
@@ -34,7 +34,7 @@ namespace MoneyTracker.Tests.Database.Postgres
         [Fact]
         public async void FirstLoadCheckTablesThatDataAreThere()
         {
-            var db = new Helper(_postgres.GetConnectionString());
+            var db = new PostgresDatabase(_postgres.GetConnectionString());
             var budget = new Budget(db);
 
             var expected = new List<TestBudgetGroupDTO>()
@@ -52,68 +52,68 @@ namespace MoneyTracker.Tests.Database.Postgres
                     Planned = 1800,
                     Actual = 1800,
                     Difference = 0
-                  },
-                  new TestBudgetGroupDTO() {
+                },
+                new TestBudgetGroupDTO() {
                     Name = "Committed Expenses",
                     Categories = [
-                      new TestBudgetCategoryDTO() {
-                        Name = "Bills : Cell Phone",
-                        Planned = 10,
-                        Actual = 10,
-                        Difference = 0
-                      },
-                      new TestBudgetCategoryDTO() {
-                        Name = "Groceries",
-                        Planned = 100,
-                        Actual = 75,
-                        Difference = 25
-                      },
-                      new TestBudgetCategoryDTO() {
-                        Name = "Bills : Rent",
-                        Planned = 500,
-                        Actual = 500,
-                        Difference = 0
-                      }
+                        new TestBudgetCategoryDTO() {
+                            Name = "Bills : Cell Phone",
+                            Planned = 10,
+                            Actual = 10,
+                            Difference = 0
+                            },
+                        new TestBudgetCategoryDTO() {
+                            Name = "Groceries",
+                            Planned = 100,
+                            Actual = 75,
+                            Difference = 25
+                            },
+                        new TestBudgetCategoryDTO() {
+                            Name = "Bills : Rent",
+                            Planned = 500,
+                            Actual = 500,
+                            Difference = 0
+                            }
                     ],
                     Planned = 610,
                     Actual = 585,
                     Difference = 25
-                  },
-                  new TestBudgetGroupDTO() {
+                },
+                new TestBudgetGroupDTO() {
                     Name = "Fun",
                     Categories = [],
                     Planned = 0,
                     Actual = 0,
                     Difference = 0
-                  },
-                  new TestBudgetGroupDTO() {
+                },
+                new TestBudgetGroupDTO() {
                     Name = "Irregular Expenses",
                     Categories = [
-                      new TestBudgetCategoryDTO() {
+                        new TestBudgetCategoryDTO() {
                         Name = "Hobby",
                         Planned = 50,
                         Actual = 150,
                         Difference = -100
-                      }
+                    }
                     ],
                     Planned = 50,
                     Actual = 150,
                     Difference = -100
-                  },
-                  new TestBudgetGroupDTO() {
+                },
+                new TestBudgetGroupDTO() {
                     Name = "Savings & Debt",
                     Categories = [],
                     Planned = 0,
                     Actual = 0,
                     Difference = 0
-                  },
-                  new TestBudgetGroupDTO() {
+                },
+                new TestBudgetGroupDTO() {
                     Name = "Retirement",
                     Categories = [],
                     Planned = 0,
                     Actual = 0,
                     Difference = 0
-                  },
+                },
             };
             var actual = await budget.GetBudget();
             for (int i = 0; i < actual.Count; i++)

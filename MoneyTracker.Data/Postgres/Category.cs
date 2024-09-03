@@ -8,11 +8,11 @@ namespace MoneyTracker.Data.Postgres
 {
     public class Category : ICategory
     {
-        private readonly Helper _database;
+        private readonly PostgresDatabase _database;
 
-        public Category(IHelper db)
+        public Category(IDatabase db)
         {
-            _database = (Helper)db;
+            _database = (PostgresDatabase)db;
         }
 
         public async Task<List<CategoryDTO>> GetAllCategories()
@@ -29,11 +29,7 @@ namespace MoneyTracker.Data.Postgres
             var res = new List<CategoryDTO>();
             while (await reader.ReadAsync())
             {
-                res.Add(new CategoryDTO()
-                {
-                    Id = reader.GetInt32("id"),
-                    Name = reader.GetString("name"),
-                });
+                res.Add(new CategoryDTO(reader.GetInt32("id"), reader.GetString("name")));
             }
             return res;
         }
@@ -54,13 +50,9 @@ namespace MoneyTracker.Data.Postgres
 
             // get category id
             using var reader = await _database.GetTable(queryGetIdOfCategoryName, queryGetIdOfCategoryNameParams);
-            while (await reader.ReadAsync())
+            if (await reader.ReadAsync())
             {
-                return new CategoryDTO()
-                {
-                    Id = reader.GetInt32("id"),
-                    Name = reader.GetString("name"),
-                };
+                return new CategoryDTO(reader.GetInt32("id"), reader.GetString("name"));
             }
             return null; // throw error
         }
@@ -84,11 +76,7 @@ namespace MoneyTracker.Data.Postgres
             using var reader = await _database.GetTable(queryGetIdOfCategoryName, queryGetIdOfCategoryNameParams);
             if (await reader.ReadAsync())
             {
-                return new CategoryDTO()
-                {
-                    Id = reader.GetInt32("id"),
-                    Name = reader.GetString("name"),
-                };
+                return new CategoryDTO(reader.GetInt32("id"), reader.GetString("name"));
             }
             return null; // throw error
         }

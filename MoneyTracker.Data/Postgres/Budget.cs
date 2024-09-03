@@ -8,10 +8,10 @@ namespace MoneyTracker.Data.Postgres
 {
     public class Budget : IBudget
     {
-        private readonly Helper _database;
-        public Budget(IHelper db)
+        private readonly PostgresDatabase _database;
+        public Budget(IDatabase db)
         {
-            _database = (Helper)db;
+            _database = (PostgresDatabase)db;
         }
 
         public async Task<List<BudgetGroupDTO>> GetBudget()
@@ -46,25 +46,16 @@ namespace MoneyTracker.Data.Postgres
                 var budgetId = reader.GetInt32("id");
                 if (!res.TryGetValue(budgetId, out BudgetGroupDTO group))
                 {
-                    group = new BudgetGroupDTO()
-                    {
-                        Name = reader.GetString("name"),
-                    };
+                    group = new BudgetGroupDTO(reader.GetString("name"));
                     res.Add(budgetId, group);
                 }
 
-
                 if (!reader.IsDBNull("category_name"))
                 {
-                    var categoryName = reader.GetString("category_name");
-                    var a = reader.GetDecimal("actual");
-                    var b = reader.GetDecimal("planned");
-                    res[budgetId].Categories.Add(new BudgetCategoryDTO()
-                    {
-                        Name = categoryName,
-                        Actual = a,
-                        Planned = b,
-                    });
+                    res[budgetId].AddBudgetCategoryDTO(new BudgetCategoryDTO(
+                        reader.GetString("category_name"),
+                        reader.GetDecimal("planned"),
+                        reader.GetDecimal("actual")));
                 }
             }
 
@@ -92,12 +83,8 @@ namespace MoneyTracker.Data.Postgres
             var reader = await _database.GetTable(queryInsertIntoBudgetCategory, queryInsertIntoBudgetCategoryParams);
             if (await reader.ReadAsync())
             {
-                return new BudgetCategoryDTO()
-                {
-                    Name = reader.GetString("name"),
-                    Planned = reader.GetDecimal("planned"),
-                    Actual = reader.GetDecimal("actual"),
-                };
+                return new BudgetCategoryDTO(reader.GetString("name"),
+                    reader.GetDecimal("planned"), reader.GetDecimal("actual"));
             }
 
             return null;

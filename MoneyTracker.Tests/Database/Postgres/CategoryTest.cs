@@ -1,6 +1,6 @@
 ﻿
-using DatabaseMigration;
 using MoneyTracker.Data.Postgres;
+using MoneyTracker.DatabaseMigration;
 using MoneyTracker.Shared.Models.Category;
 using Testcontainers.PostgreSql;
 
@@ -31,30 +31,15 @@ namespace MoneyTracker.Tests.Database.Postgres
         [Fact]
         public async void FirstLoadCheckTablesThatDataAreThere()
         {
-            var db = new Helper(_postgres.GetConnectionString());
+            var db = new PostgresDatabase(_postgres.GetConnectionString());
             var category = new Category(db);
 
             var expected = new List<CategoryDTO>() {
-                new CategoryDTO() {
-                    Id = 1,
-                    Name = "Wages & Salary : Net Pay"
-                },
-                new CategoryDTO() {
-                    Id = 2,
-                    Name = "Bills : Cell Phone"
-                },
-                new CategoryDTO() {
-                    Id = 3,
-                    Name = "Bills : Rent"
-                },
-                new CategoryDTO() {
-                    Id = 4,
-                    Name = "Groceries"
-                },
-                new CategoryDTO() {
-                    Id = 5,
-                    Name = "Hobby"
-                },
+                new CategoryDTO(1, "Wages & Salary : Net Pay"),
+                new CategoryDTO(2, "Bills : Cell Phone"),
+                new CategoryDTO(3, "Bills : Rent"),
+                new CategoryDTO(4, "Groceries"),
+                new CategoryDTO(5, "Hobby"),
             };
             var actual = await category.GetAllCategories();
             TestHelper.CompareLists(expected, actual);
@@ -63,40 +48,18 @@ namespace MoneyTracker.Tests.Database.Postgres
         [Fact]
         public async void AddCategory()
         {
-            var db = new Helper(_postgres.GetConnectionString());
+            var db = new PostgresDatabase(_postgres.GetConnectionString());
             var category = new Category(db);
 
-            var categoryToAdd = new CategoryDTO()
-            {
-                Id = 6,
-                Name = "Speeding tickets",
-            };
-            await category.AddCategory(new NewCategoryDTO()
-            {
-                Name = categoryToAdd.Name,
-            });
+            var categoryToAdd = new CategoryDTO(6, "Speeding tickets");
+            await category.AddCategory(new NewCategoryDTO(categoryToAdd.Name));
 
             var expected = new List<CategoryDTO>() {
-                new CategoryDTO() {
-                    Id = 1,
-                    Name = "Wages & Salary : Net Pay"
-                },
-                new CategoryDTO() {
-                    Id = 2,
-                    Name = "Bills : Cell Phone"
-                },
-                new CategoryDTO() {
-                    Id = 3,
-                    Name = "Bills : Rent"
-                },
-                new CategoryDTO() {
-                    Id = 4,
-                    Name = "Groceries"
-                },
-                new CategoryDTO() {
-                    Id = 5,
-                    Name = "Hobby"
-                },
+                new CategoryDTO(1, "Wages & Salary : Net Pay"),
+                new CategoryDTO(2, "Bills : Cell Phone"),
+                new CategoryDTO(3, "Bills : Rent"),
+                new CategoryDTO(4, "Groceries"),
+                new CategoryDTO(5, "Hobby"),
                 categoryToAdd,
             };
             var actual = await category.GetAllCategories();
@@ -106,40 +69,18 @@ namespace MoneyTracker.Tests.Database.Postgres
         [Fact]
         public async void AddDuplicateCategory()
         {
-            var db = new Helper(_postgres.GetConnectionString());
+            var db = new PostgresDatabase(_postgres.GetConnectionString());
             var category = new Category(db);
 
-            var categoryToAdd = new CategoryDTO()
-            {
-                Id = 6,
-                Name = "Hobby",
-            };
-            await category.AddCategory(new NewCategoryDTO()
-            {
-                Name = categoryToAdd.Name,
-            });
+            var categoryToAdd = new CategoryDTO(6, "Hobby");
+            await category.AddCategory(new NewCategoryDTO(categoryToAdd.Name));
 
             var expected = new List<CategoryDTO>() {
-                new CategoryDTO() {
-                    Id = 1,
-                    Name = "Wages & Salary : Net Pay"
-                },
-                new CategoryDTO() {
-                    Id = 2,
-                    Name = "Bills : Cell Phone"
-                },
-                new CategoryDTO() {
-                    Id = 3,
-                    Name = "Bills : Rent"
-                },
-                new CategoryDTO() {
-                    Id = 4,
-                    Name = "Groceries"
-                },
-                new CategoryDTO() {
-                    Id = 5,
-                    Name = "Hobby"
-                },
+                new CategoryDTO(1, "Wages & Salary : Net Pay"),
+                new CategoryDTO(2, "Bills : Cell Phone"),
+                new CategoryDTO(3, "Bills : Rent"),
+                new CategoryDTO(4, "Groceries"),
+                new CategoryDTO(5, "Hobby"),
             };
             var actual = await category.GetAllCategories();
             TestHelper.CompareLists(expected, actual);
@@ -148,36 +89,17 @@ namespace MoneyTracker.Tests.Database.Postgres
         [Fact]
         public async void EditCategory()
         {
-            var db = new Helper(_postgres.GetConnectionString());
+            var db = new PostgresDatabase(_postgres.GetConnectionString());
             var category = new Category(db);
 
-            await category.EditCategory(new EditCategoryDTO()
-            {
-                Id = 5,
-                Name = "Something funky",
-            });
+            await category.EditCategory(new EditCategoryDTO(5, "Something funky"));
 
             var expected = new List<CategoryDTO>() {
-                new CategoryDTO() {
-                    Id = 1,
-                    Name = "Wages & Salary : Net Pay"
-                },
-                new CategoryDTO() {
-                    Id = 2,
-                    Name = "Bills : Cell Phone"
-                },
-                new CategoryDTO() {
-                    Id = 3,
-                    Name = "Bills : Rent"
-                },
-                new CategoryDTO() {
-                    Id = 4,
-                    Name = "Groceries"
-                },
-                new CategoryDTO() {
-                    Id = 5,
-                    Name = "Something funky"
-                },
+                new CategoryDTO(1, "Wages & Salary : Net Pay"),
+                new CategoryDTO(2, "Bills : Cell Phone"),
+                new CategoryDTO(3, "Bills : Rent"),
+                new CategoryDTO(4, "Groceries"),
+                new CategoryDTO(5, "Something funky"),
             };
             var actual = await category.GetAllCategories();
             TestHelper.CompareLists(expected, actual);
@@ -186,38 +108,19 @@ namespace MoneyTracker.Tests.Database.Postgres
         [Fact]
         public async void EditIntoDuplicateCategory()
         {
-            var db = new Helper(_postgres.GetConnectionString());
+            var db = new PostgresDatabase(_postgres.GetConnectionString());
             var category = new Category(db);
 
             await Assert.ThrowsAsync<Npgsql.PostgresException>(async () =>
-                await category.EditCategory(new EditCategoryDTO()
-                {
-                    Id = 4,
-                    Name = "Hobby",
-                })
+                await category.EditCategory(new EditCategoryDTO(4, "Hobby"))
             );
 
             var expected = new List<CategoryDTO>() {
-                new CategoryDTO() {
-                    Id = 1,
-                    Name = "Wages & Salary : Net Pay"
-                },
-                new CategoryDTO() {
-                    Id = 2,
-                    Name = "Bills : Cell Phone"
-                },
-                new CategoryDTO() {
-                    Id = 3,
-                    Name = "Bills : Rent"
-                },
-                new CategoryDTO() {
-                    Id = 4,
-                    Name = "Groceries"
-                },
-                new CategoryDTO() {
-                    Id = 5,
-                    Name = "Hobby"
-                },
+                new CategoryDTO(1, "Wages & Salary : Net Pay"),
+                new CategoryDTO(2, "Bills : Cell Phone"),
+                new CategoryDTO(3, "Bills : Rent"),
+                new CategoryDTO(4, "Groceries"),
+                new CategoryDTO(5, "Hobby"),
             };
             var actual = await category.GetAllCategories();
             TestHelper.CompareLists(expected, actual);

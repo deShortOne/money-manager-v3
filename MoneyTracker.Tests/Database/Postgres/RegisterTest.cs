@@ -1,5 +1,6 @@
-﻿using DatabaseMigration;
+﻿
 using MoneyTracker.Data.Postgres;
+using MoneyTracker.DatabaseMigration;
 using MoneyTracker.Shared.Models.Transaction;
 using Testcontainers.PostgreSql;
 
@@ -32,60 +33,60 @@ namespace MoneyTracker.Tests.Database.Postgres
         [Fact]
         public async void FirstLoadCheckTablesThatDataAreThere()
         {
-            var db = new Helper(_postgres.GetConnectionString());
+            var db = new PostgresDatabase(_postgres.GetConnectionString());
             var register = new Register(db);
 
             var expected = new List<TransactionDTO>()
             {
-                new TransactionDTO() {
-                    Id = 1,
-                    Payee = "Company A",
-                    Amount = 1800,
-                    DatePaid = DateTime.Parse("2024-08-28T00:00:00Z").ToUniversalTime(),
-                    Category = "Wages & Salary : Net Pay",
-                },
-                new TransactionDTO() {
-                    Id = 6,
-                    Payee = "Supermarket",
-                    Amount = 27,
-                    DatePaid = DateTime.Parse("2024-08-15T00:00:00Z").ToUniversalTime(),
-                    Category = "Groceries",
-                },
-                new TransactionDTO() {
-                    Id = 7,
-                    Payee = "Hobby item",
-                    Amount = 150,
-                    DatePaid = DateTime.Parse("2024-08-09T00:00:00Z").ToUniversalTime(),
-                    Category = "Hobby",
-                },
-                new TransactionDTO() {
-                    Id = 5,
-                    Payee = "Supermarket",
-                    Amount = 23,
-                    DatePaid = DateTime.Parse("2024-08-08T00:00:00Z").ToUniversalTime(),
-                    Category = "Groceries",
-                },
-                new TransactionDTO() {
-                    Id = 2,
-                    Payee = "Phone company",
-                    Amount = 10,
-                    DatePaid = DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
-                    Category = "Bills : Cell Phone",
-                },
-                new TransactionDTO() {
-                    Id = 3,
-                    Payee = "Landlord A",
-                    Amount = 500,
-                    DatePaid = DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
-                    Category = "Bills : Rent",
-                },
-                new TransactionDTO() {
-                    Id = 4,
-                    Payee = "Supermarket",
-                    Amount = 25,
-                    DatePaid = DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
-                    Category = "Groceries",
-                },
+                new TransactionDTO(
+                    1,
+                    "Company A",
+                    1800,
+                    DateTime.Parse("2024-08-28T00:00:00Z").ToUniversalTime(),
+                    "Wages & Salary : Net Pay"
+                ),
+                new TransactionDTO(
+                    6,
+                    "Supermarket",
+                    27,
+                    DateTime.Parse("2024-08-15T00:00:00Z").ToUniversalTime(),
+                    "Groceries"
+                ),
+                new TransactionDTO(
+                    7,
+                    "Hobby item",
+                    150,
+                    DateTime.Parse("2024-08-09T00:00:00Z").ToUniversalTime(),
+                    "Hobby"
+                ),
+                new TransactionDTO(
+                    5,
+                    "Supermarket",
+                    23,
+                    DateTime.Parse("2024-08-08T00:00:00Z").ToUniversalTime(),
+                    "Groceries"
+                ),
+                new TransactionDTO(
+                    2,
+                    "Phone company",
+                    10,
+                    DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
+                    "Bills : Cell Phone"
+                ),
+                new TransactionDTO(
+                    3,
+                    "Landlord A",
+                    500,
+                    DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
+                    "Bills : Rent"
+                ),
+                new TransactionDTO(
+                    4,
+                    "Supermarket",
+                    25,
+                    DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
+                    "Groceries"
+                ),
             };
             var actual = await register.GetAllTransactions();
             TestHelper.CompareLists(expected, actual);
@@ -94,76 +95,74 @@ namespace MoneyTracker.Tests.Database.Postgres
         [Fact]
         public async void AddItemAfterFirstLoad()
         {
-            var db = new Helper(_postgres.GetConnectionString());
+            var db = new PostgresDatabase(_postgres.GetConnectionString());
             var register = new Register(db);
-            var transactionToAdd = new TransactionDTO()
-            {
-                Id = 8,
-                Payee = "Super star",
-                Amount = 2300,
-                DatePaid = DateTime.Parse("2024-09-01T00:00:00Z").ToUniversalTime(),
-                Category = "Hobby", // which is 5
-            };
-            await register.AddNewTransaction(new NewTransactionDTO()
-            {
-                Amount = transactionToAdd.Amount,
-                Category = 5, // id correlate to hobby
-                DatePaid = transactionToAdd.DatePaid,
-                Payee = transactionToAdd.Payee,
-            });
+            var transactionToAdd = new TransactionDTO(
+                8,
+                "Super star",
+                2300,
+                DateTime.Parse("2024-09-01T00:00:00Z").ToUniversalTime(),
+                "Hobby" // which is 5
+            );
+            await register.AddNewTransaction(new NewTransactionDTO(
+                transactionToAdd.Payee,
+                transactionToAdd.Amount,
+                transactionToAdd.DatePaid,
+                5 // id correlate to hobby
+            ));
 
             var expected = new List<TransactionDTO>()
             {
                 transactionToAdd,
-                new TransactionDTO() {
-                    Id = 1,
-                    Payee = "Company A",
-                    Amount = 1800,
-                    DatePaid = DateTime.Parse("2024-08-28T00:00:00Z").ToUniversalTime(),
-                    Category = "Wages & Salary : Net Pay",
-                },
-                new TransactionDTO() {
-                    Id = 6,
-                    Payee = "Supermarket",
-                    Amount = 27,
-                    DatePaid = DateTime.Parse("2024-08-15T00:00:00Z").ToUniversalTime(),
-                    Category = "Groceries",
-                },
-                new TransactionDTO() {
-                    Id = 7,
-                    Payee = "Hobby item",
-                    Amount = 150,
-                    DatePaid = DateTime.Parse("2024-08-09T00:00:00Z").ToUniversalTime(),
-                    Category = "Hobby",
-                },
-                new TransactionDTO() {
-                    Id = 5,
-                    Payee = "Supermarket",
-                    Amount = 23,
-                    DatePaid = DateTime.Parse("2024-08-08T00:00:00Z").ToUniversalTime(),
-                    Category = "Groceries",
-                },
-                new TransactionDTO() {
-                    Id = 2,
-                    Payee = "Phone company",
-                    Amount = 10,
-                    DatePaid = DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
-                    Category = "Bills : Cell Phone",
-                },
-                new TransactionDTO() {
-                    Id = 3,
-                    Payee = "Landlord A",
-                    Amount = 500,
-                    DatePaid = DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
-                    Category = "Bills : Rent",
-                },
-                new TransactionDTO() {
-                    Id = 4,
-                    Payee = "Supermarket",
-                    Amount = 25,
-                    DatePaid = DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
-                    Category = "Groceries",
-                },
+                new TransactionDTO(
+                    1,
+                    "Company A",
+                    1800,
+                    DateTime.Parse("2024-08-28T00:00:00Z").ToUniversalTime(),
+                    "Wages & Salary : Net Pay"
+                ),
+                new TransactionDTO(
+                    6,
+                    "Supermarket",
+                    27,
+                    DateTime.Parse("2024-08-15T00:00:00Z").ToUniversalTime(),
+                    "Groceries"
+                ),
+                new TransactionDTO(
+                    7,
+                    "Hobby item",
+                    150,
+                    DateTime.Parse("2024-08-09T00:00:00Z").ToUniversalTime(),
+                    "Hobby"
+                ),
+                new TransactionDTO(
+                    5,
+                    "Supermarket",
+                    23,
+                    DateTime.Parse("2024-08-08T00:00:00Z").ToUniversalTime(),
+                    "Groceries"
+                ),
+                new TransactionDTO(
+                    2,
+                    "Phone company",
+                    10,
+                    DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
+                    "Bills : Cell Phone"
+                ),
+                new TransactionDTO(
+                    3,
+                    "Landlord A",
+                    500,
+                    DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
+                    "Bills : Rent"
+                ),
+                new TransactionDTO(
+                    4,
+                    "Supermarket",
+                    25,
+                    DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
+                    "Groceries"
+                ),
             };
             var actual = await register.GetAllTransactions();
             TestHelper.CompareLists(expected, actual);
@@ -172,67 +171,66 @@ namespace MoneyTracker.Tests.Database.Postgres
         [Fact]
         public async void EditATransaction()
         {
-            var db = new Helper(_postgres.GetConnectionString());
+            var db = new PostgresDatabase(_postgres.GetConnectionString());
             var register = new Register(db);
 
-            await register.EditTransaction(new EditTransactionDTO()
-            {
-                Id = 6,
-                Payee = "Bar",
-                Category = 5, // "Hobby"
-            });
+            await register.EditTransaction(new EditTransactionDTO(
+                6,
+                "Bar",
+                category: 5 // "Hobby"
+            ));
 
             var expected = new List<TransactionDTO>()
             {
-                new TransactionDTO() {
-                    Id = 1,
-                    Payee = "Company A",
-                    Amount = 1800,
-                    DatePaid = DateTime.Parse("2024-08-28T00:00:00Z").ToUniversalTime(),
-                    Category = "Wages & Salary : Net Pay",
-                },
-                new TransactionDTO() {
-                    Id = 6,
-                    Payee = "Bar",
-                    Amount = 27,
-                    DatePaid = DateTime.Parse("2024-08-15T00:00:00Z").ToUniversalTime(),
-                    Category = "Hobby",
-                },
-                new TransactionDTO() {
-                    Id = 7,
-                    Payee = "Hobby item",
-                    Amount = 150,
-                    DatePaid = DateTime.Parse("2024-08-09T00:00:00Z").ToUniversalTime(),
-                    Category = "Hobby",
-                },
-                new TransactionDTO() {
-                    Id = 5,
-                    Payee = "Supermarket",
-                    Amount = 23,
-                    DatePaid = DateTime.Parse("2024-08-08T00:00:00Z").ToUniversalTime(),
-                    Category = "Groceries",
-                },
-                new TransactionDTO() {
-                    Id = 2,
-                    Payee = "Phone company",
-                    Amount = 10,
-                    DatePaid = DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
-                    Category = "Bills : Cell Phone",
-                },
-                new TransactionDTO() {
-                    Id = 3,
-                    Payee = "Landlord A",
-                    Amount = 500,
-                    DatePaid = DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
-                    Category = "Bills : Rent",
-                },
-                new TransactionDTO() {
-                    Id = 4,
-                    Payee = "Supermarket",
-                    Amount = 25,
-                    DatePaid = DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
-                    Category = "Groceries",
-                },
+                new TransactionDTO(
+                    1,
+                    "Company A",
+                    1800,
+                    DateTime.Parse("2024-08-28T00:00:00Z").ToUniversalTime(),
+                    "Wages & Salary : Net Pay"
+                ),
+                new TransactionDTO(
+                    6,
+                    "Bar",
+                    27,
+                    DateTime.Parse("2024-08-15T00:00:00Z").ToUniversalTime(),
+                    "Hobby"
+                ),
+                new TransactionDTO(
+                    7,
+                    "Hobby item",
+                    150,
+                    DateTime.Parse("2024-08-09T00:00:00Z").ToUniversalTime(),
+                    "Hobby"
+                ),
+                new TransactionDTO(
+                    5,
+                    "Supermarket",
+                    23,
+                    DateTime.Parse("2024-08-08T00:00:00Z").ToUniversalTime(),
+                    "Groceries"
+                ),
+                new TransactionDTO(
+                    2,
+                    "Phone company",
+                    10,
+                    DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
+                    "Bills : Cell Phone"
+                ),
+                new TransactionDTO(
+                    3,
+                    "Landlord A",
+                    500,
+                    DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
+                    "Bills : Rent"
+                ),
+                new TransactionDTO(
+                    4,
+                    "Supermarket",
+                    25,
+                    DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
+                    "Groceries"
+                ),
             };
             var actual = await register.GetAllTransactions();
             TestHelper.CompareLists(expected, actual);
@@ -241,7 +239,7 @@ namespace MoneyTracker.Tests.Database.Postgres
         [Fact]
         public async void DeleteTransaction()
         {
-            var db = new Helper(_postgres.GetConnectionString());
+            var db = new PostgresDatabase(_postgres.GetConnectionString());
             var register = new Register(db);
 
             await register.DeleteTransaction(new DeleteTransactionDTO()
@@ -251,48 +249,48 @@ namespace MoneyTracker.Tests.Database.Postgres
 
             var expected = new List<TransactionDTO>()
             {
-                new TransactionDTO() {
-                    Id = 1,
-                    Payee = "Company A",
-                    Amount = 1800,
-                    DatePaid = DateTime.Parse("2024-08-28T00:00:00Z").ToUniversalTime(),
-                    Category = "Wages & Salary : Net Pay",
-                },
-                new TransactionDTO() {
-                    Id = 7,
-                    Payee = "Hobby item",
-                    Amount = 150,
-                    DatePaid = DateTime.Parse("2024-08-09T00:00:00Z").ToUniversalTime(),
-                    Category = "Hobby",
-                },
-                new TransactionDTO() {
-                    Id = 5,
-                    Payee = "Supermarket",
-                    Amount = 23,
-                    DatePaid = DateTime.Parse("2024-08-08T00:00:00Z").ToUniversalTime(),
-                    Category = "Groceries",
-                },
-                new TransactionDTO() {
-                    Id = 2,
-                    Payee = "Phone company",
-                    Amount = 10,
-                    DatePaid = DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
-                    Category = "Bills : Cell Phone",
-                },
-                new TransactionDTO() {
-                    Id = 3,
-                    Payee = "Landlord A",
-                    Amount = 500,
-                    DatePaid = DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
-                    Category = "Bills : Rent",
-                },
-                new TransactionDTO() {
-                    Id = 4,
-                    Payee = "Supermarket",
-                    Amount = 25,
-                    DatePaid = DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
-                    Category = "Groceries",
-                },
+                new TransactionDTO(
+                    1,
+                    "Company A",
+                    1800,
+                    DateTime.Parse("2024-08-28T00:00:00Z").ToUniversalTime(),
+                    "Wages & Salary : Net Pay"
+                ),
+                new TransactionDTO(
+                    7,
+                    "Hobby item",
+                    150,
+                    DateTime.Parse("2024-08-09T00:00:00Z").ToUniversalTime(),
+                    "Hobby"
+                ),
+                new TransactionDTO(
+                    5,
+                    "Supermarket",
+                    23,
+                    DateTime.Parse("2024-08-08T00:00:00Z").ToUniversalTime(),
+                    "Groceries"
+                ),
+                new TransactionDTO(
+                    2,
+                    "Phone company",
+                    10,
+                    DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
+                    "Bills : Cell Phone"
+                ),
+                new TransactionDTO(
+                    3,
+                    "Landlord A",
+                    500,
+                    DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
+                    "Bills : Rent"
+                ),
+                new TransactionDTO(
+                    4,
+                    "Supermarket",
+                    25,
+                    DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
+                    "Groceries"
+                ),
             };
             var actual = await register.GetAllTransactions();
             TestHelper.CompareLists(expected, actual);
