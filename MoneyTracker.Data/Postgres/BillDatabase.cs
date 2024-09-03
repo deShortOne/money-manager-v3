@@ -1,7 +1,9 @@
 ﻿
 using System.Data;
+using System.Data.Common;
 using MoneyTracker.Data.Global;
 using MoneyTracker.Shared.Models.Bill;
+using Npgsql;
 
 namespace MoneyTracker.Data.Postgres;
 public class BillDatabase : IBillDatabase
@@ -43,5 +45,25 @@ public class BillDatabase : IBillDatabase
         }
 
         return res;
+    }
+
+    public async Task<List<BillDTO>> AddBill(NewBillDTO newBillDTO)
+    {
+        string query = """
+            INSERT INTO bill (payee, amount, nextduedate, frequency, categoryid)
+            VALUES (@payee, @amount, @nextduedate, @frequency, @categoryid);
+            """;
+        var queryParams = new List<DbParameter>()
+            {
+                new NpgsqlParameter("payee", newBillDTO.Payee),
+                new NpgsqlParameter("amount", newBillDTO.Amount),
+                new NpgsqlParameter("nextduedate", newBillDTO.NextDueDate),
+                new NpgsqlParameter("frequency", newBillDTO.Frequency),
+                new NpgsqlParameter("categoryid", newBillDTO.Category),
+            };
+
+        await _database.UpdateTable(query, queryParams);
+
+        return await GetBill();
     }
 }

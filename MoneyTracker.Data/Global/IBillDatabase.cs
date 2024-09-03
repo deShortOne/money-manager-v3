@@ -5,4 +5,5 @@ namespace MoneyTracker.Data.Global;
 public interface IBillDatabase
 {
     public Task<List<BillDTO>> GetBill();
+    public Task<List<BillDTO>> AddBill(NewBillDTO bill);
 }

@@ -21,4 +21,11 @@ public class BillController : ControllerBase
     {
         return _database.GetBill();
     }
+
+    [HttpPost]
+    [Route("add")]
+    public Task<List<BillDTO>> AddBill([FromBody] NewBillDTO newBill)
+    {
+        return _database.AddBill(newBill);
+    }
 }
