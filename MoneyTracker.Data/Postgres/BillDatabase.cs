@@ -3,6 +3,7 @@ using System.Data;
 using System.Data.Common;
 using MoneyTracker.Data.Global;
 using MoneyTracker.Shared.Models.Bill;
+using MoneyTracker.Shared.Models.Budget;
 using Npgsql;
 
 namespace MoneyTracker.Data.Postgres;
@@ -61,6 +62,51 @@ public class BillDatabase : IBillDatabase
                 new NpgsqlParameter("frequency", newBillDTO.Frequency),
                 new NpgsqlParameter("categoryid", newBillDTO.Category),
             };
+
+        await _database.UpdateTable(query, queryParams);
+
+        return await GetBill();
+    }
+
+    public async Task<List<BillDTO>> EditBill(EditBillDTO editBillDTO)
+    {
+        var setParamsLis = new List<string>();
+        var queryParams = new List<DbParameter>()
+        {
+                new NpgsqlParameter("id", editBillDTO.Id),
+        };
+
+        if (editBillDTO.Payee != null)
+        {
+            setParamsLis.Add("payee = @payee");
+            queryParams.Add(new NpgsqlParameter("payee", editBillDTO.Payee));
+        }
+        if (editBillDTO.Amount != null)
+        {
+            setParamsLis.Add("amount = @amount");
+            queryParams.Add(new NpgsqlParameter("amount", editBillDTO.Amount));
+        }
+        if (editBillDTO.NextDueDate != null)
+        {
+            setParamsLis.Add("nextduedate = @nextduedate");
+            queryParams.Add(new NpgsqlParameter("nextduedate", editBillDTO.NextDueDate));
+        }
+        if (editBillDTO.Frequency != null)
+        {
+            setParamsLis.Add("frequency = @frequency");
+            queryParams.Add(new NpgsqlParameter("frequency", editBillDTO.Frequency));
+        }
+        if (editBillDTO.Category != null)
+        {
+            setParamsLis.Add("categoryid = @category");
+            queryParams.Add(new NpgsqlParameter("category", editBillDTO.Category));
+        }
+
+        string query = $"""
+            UPDATE bill
+            SET {string.Join(",", setParamsLis)}
+            WHERE id = @id;
+            """;
 
         await _database.UpdateTable(query, queryParams);
 

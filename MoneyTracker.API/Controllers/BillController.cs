@@ -28,4 +28,11 @@ public class BillController : ControllerBase
     {
         return _database.AddBill(newBill);
     }
+
+    [HttpPut]
+    [Route("edit")]
+    public Task<List<BillDTO>> EditBill([FromBody] EditBillDTO editBill)
+    {
+        return _database.EditBill(editBill);
+    }
 }
