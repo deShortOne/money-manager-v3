@@ -35,4 +35,11 @@ public class BillController : ControllerBase
     {
         return _database.EditBill(editBill);
     }
+
+    [HttpDelete]
+    [Route("delete")]
+    public Task<List<BillDTO>> DeleteBill([FromBody] DeleteBillDTO deleteBill)
+    {
+        return _database.DeleteBill(deleteBill);
+    }
 }

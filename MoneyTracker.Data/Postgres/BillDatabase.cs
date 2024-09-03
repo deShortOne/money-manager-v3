@@ -112,4 +112,20 @@ public class BillDatabase : IBillDatabase
 
         return await GetBill();
     }
+
+    public async Task<List<BillDTO>> DeleteBill(DeleteBillDTO deleteBillDTO)
+    {
+        string query = """
+            DELETE FROM bill
+            WHERE id = @id;
+            """;
+        var queryParams = new List<DbParameter>()
+            {
+                new NpgsqlParameter("id", deleteBillDTO.Id),
+            };
+
+        await _database.UpdateTable(query, queryParams);
+
+        return await GetBill();
+    }
 }
