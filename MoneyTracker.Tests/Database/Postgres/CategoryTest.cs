@@ -31,7 +31,7 @@ namespace MoneyTracker.Tests.Database.Postgres
         [Fact]
         public async void FirstLoadCheckTablesThatDataAreThere()
         {
-            var db = new Helper(_postgres.GetConnectionString());
+            var db = new PostgresDatabase(_postgres.GetConnectionString());
             var category = new Category(db);
 
             var expected = new List<CategoryDTO>() {
@@ -48,7 +48,7 @@ namespace MoneyTracker.Tests.Database.Postgres
         [Fact]
         public async void AddCategory()
         {
-            var db = new Helper(_postgres.GetConnectionString());
+            var db = new PostgresDatabase(_postgres.GetConnectionString());
             var category = new Category(db);
 
             var categoryToAdd = new CategoryDTO(6, "Speeding tickets");
@@ -69,7 +69,7 @@ namespace MoneyTracker.Tests.Database.Postgres
         [Fact]
         public async void AddDuplicateCategory()
         {
-            var db = new Helper(_postgres.GetConnectionString());
+            var db = new PostgresDatabase(_postgres.GetConnectionString());
             var category = new Category(db);
 
             var categoryToAdd = new CategoryDTO(6, "Hobby");
@@ -89,7 +89,7 @@ namespace MoneyTracker.Tests.Database.Postgres
         [Fact]
         public async void EditCategory()
         {
-            var db = new Helper(_postgres.GetConnectionString());
+            var db = new PostgresDatabase(_postgres.GetConnectionString());
             var category = new Category(db);
 
             await category.EditCategory(new EditCategoryDTO(5, "Something funky"));
@@ -108,7 +108,7 @@ namespace MoneyTracker.Tests.Database.Postgres
         [Fact]
         public async void EditIntoDuplicateCategory()
         {
-            var db = new Helper(_postgres.GetConnectionString());
+            var db = new PostgresDatabase(_postgres.GetConnectionString());
             var category = new Category(db);
 
             await Assert.ThrowsAsync<Npgsql.PostgresException>(async () =>

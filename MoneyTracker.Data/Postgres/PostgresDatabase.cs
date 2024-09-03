@@ -5,12 +5,12 @@ using Npgsql;
 
 namespace MoneyTracker.Data.Postgres
 {
-    public class Helper : IHelper
+    public class PostgresDatabase : IDatabase
     {
         private readonly NpgsqlDataSource dataSource_rw;
 
         // TODO: have ro and rw strings
-        public Helper(string connectionString)
+        public PostgresDatabase(string connectionString)
         {
             if (connectionString == null || connectionString == string.Empty)
             {

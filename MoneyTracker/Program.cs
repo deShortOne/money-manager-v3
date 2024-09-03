@@ -11,7 +11,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddSingleton<IHelper>(_ => new Helper(""));
+builder.Services.AddSingleton<IDatabase>(_ => new PostgresDatabase(""));
 builder.Services.AddTransient<IRegister, Register>()
     .AddTransient<ICategory, Category>()
     .AddTransient<IBudget, Budget>();

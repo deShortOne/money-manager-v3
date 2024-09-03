@@ -8,11 +8,11 @@ namespace MoneyTracker.Data.Postgres
 {
     public class Category : ICategory
     {
-        private readonly Helper _database;
+        private readonly PostgresDatabase _database;
 
-        public Category(IHelper db)
+        public Category(IDatabase db)
         {
-            _database = (Helper)db;
+            _database = (PostgresDatabase)db;
         }
 
         public async Task<List<CategoryDTO>> GetAllCategories()

@@ -8,10 +8,10 @@ namespace MoneyTracker.Data.Postgres
 {
     public class Budget : IBudget
     {
-        private readonly Helper _database;
-        public Budget(IHelper db)
+        private readonly PostgresDatabase _database;
+        public Budget(IDatabase db)
         {
-            _database = (Helper)db;
+            _database = (PostgresDatabase)db;
         }
 
         public async Task<List<BudgetGroupDTO>> GetBudget()
