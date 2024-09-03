@@ -1,7 +1,7 @@
-﻿using System.Reflection;
-using DatabaseMigration;
-using DbUp;
+﻿
 using Microsoft.Extensions.Configuration;
+
+namespace MoneyTracker.DatabaseMigration;
 
 public class Program
 {

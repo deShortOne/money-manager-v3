@@ -1,6 +1,6 @@
 ﻿
-using DatabaseMigration;
 using MoneyTracker.Data.Postgres;
+using MoneyTracker.DatabaseMigration;
 using MoneyTracker.Shared.Models.Category;
 using Testcontainers.PostgreSql;
 

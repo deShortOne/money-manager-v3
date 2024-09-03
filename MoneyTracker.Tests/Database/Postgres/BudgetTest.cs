@@ -1,5 +1,5 @@
-﻿using DatabaseMigration;
-using MoneyTracker.Data.Postgres;
+﻿using MoneyTracker.Data.Postgres;
+using MoneyTracker.DatabaseMigration;
 using MoneyTracker.Shared.Models.Budget;
 using MoneyTracker.Tests.Database.Postgres.TestModels;
 using Newtonsoft.Json;
