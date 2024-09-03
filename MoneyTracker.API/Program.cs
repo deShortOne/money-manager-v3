@@ -14,6 +14,7 @@ builder.Services.AddSwaggerGen();
 var dbConnString = builder.Configuration["Database:Paelagus_RO"];
 builder.Services.AddSingleton<IDatabase>(_ => new PostgresDatabase(dbConnString));
 builder.Services.AddTransient<IRegisterDatabase, RegisterDatabase>()
+    .AddTransient<IBillDatabase, BillDatabase>()
     .AddTransient<ICategoryDatabase, CategoryDatabase>()
     .AddTransient<IBudgetDatabase, BudgetDatabase>();
 
