@@ -47,4 +47,21 @@ public class BillTest : IAsyncLifetime
 
         Assert.Equal(expected, actual);
     }
+
+    [Fact]
+    public async void DeleteBill()
+    {
+        var db = new PostgresDatabase(_postgres.GetConnectionString());
+        var bill = new BillDatabase(db);
+        await bill.DeleteBill(new DeleteBillDTO(1));
+
+        var expected = new List<BillDTO>()
+        {
+            new BillDTO(2, "company a", 100, DateOnly.Parse("2024-08-30"), "monthly", "Wages & Salary : Net Pay"),
+        };
+
+        var actual = await bill.GetBill();
+
+        Assert.Equal(expected, actual);
+    }
 }
