@@ -82,4 +82,23 @@ public class BillTest : IAsyncLifetime
 
         Assert.Equal(expected, actual);
     }
+
+    [Fact]
+    public async void AddBill()
+    {
+        var db = new PostgresDatabase(_postgres.GetConnectionString());
+        var bill = new BillDatabase(db);
+        await bill.AddBill(new NewBillDTO("flight sim", 420, DateOnly.Parse("2024-09-05"), "daily", 5));
+
+        var expected = new List<BillDTO>()
+        {
+            new BillDTO(2, "company a", 100, DateOnly.Parse("2024-08-30"), "monthly", "Wages & Salary : Net Pay"),
+            new BillDTO(1, "supermarket a", 23, DateOnly.Parse("2024-09-03"), "weekly", "Groceries"),
+            new BillDTO(3, "flight sim", 420, DateOnly.Parse("2024-09-05"), "daily", "Hobby"),
+        };
+
+        var actual = await bill.GetBill();
+
+        Assert.Equal(expected, actual);
+    }
 }
