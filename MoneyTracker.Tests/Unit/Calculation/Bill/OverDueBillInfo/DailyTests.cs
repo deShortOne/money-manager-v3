@@ -1,6 +1,6 @@
 ﻿
 namespace MoneyTracker.Tests.Unit.Calculation.Bill.OverDueBillInfo;
-public sealed class Daily
+public sealed class DailyTests
 {
     [Fact]
     public void NoOverDue()
