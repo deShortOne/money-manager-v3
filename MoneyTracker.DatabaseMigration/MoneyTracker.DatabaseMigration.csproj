@@ -19,6 +19,7 @@
 	  <None Remove="scripts\migrations\20240901003215_ChangeTableBillToTransaction.sql" />
 	  <None Remove="scripts\migrations\20240901162333_SetDatePaidCorrectly.sql" />
 	  <None Remove="scripts\migrations\20240903195037_AddBillTable.sql" />
+	  <None Remove="scripts\migrations\20240904235440_SeedSomeBillData.sql" />
 	</ItemGroup>
 
 	<ItemGroup>
