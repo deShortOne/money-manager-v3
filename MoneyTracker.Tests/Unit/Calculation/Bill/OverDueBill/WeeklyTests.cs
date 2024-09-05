@@ -1,6 +1,7 @@
 ﻿
 using MoneyTracker.Calculation.Bill.Frequencies;
 using MoneyTracker.Shared.DateManager;
+using MoneyTracker.Shared.Models.Bill;
 using MoneyTracker.Tests.Local;
 
 namespace MoneyTracker.Tests.Unit.Calculation.Bill.OverDueBill;
@@ -23,5 +24,22 @@ public sealed class WeeklyTests
         Assert.Null(week.Calculate(new DateOnly(2024, 8, 26), currentDay));
         Assert.Null(week.Calculate(new DateOnly(2024, 8, 28), currentDay));
         Assert.Null(week.Calculate(new DateOnly(2024, 8, 30), currentDay));
+    }
+
+    [Fact]
+    public void CalculateOverDueBillInfo_WithinOneWeekAfter_ReturnsOneIterationLate()
+    {
+        IDateTimeProvider currentDay = TestHelper.CreateMockDateTimeProvider(new DateTime(2024, 8, 24, 0, 0, 0));
+
+        var week = new Weekly();
+
+        var oneDayBeforeResult = week.Calculate(new DateOnly(2024, 8, 23), currentDay);
+        Assert.Equal(new OverDueBillInfo(1, 1), oneDayBeforeResult);
+
+        var threeDaysBeforeResult = week.Calculate(new DateOnly(2024, 8, 21), currentDay);
+        Assert.Equal(new OverDueBillInfo(3, 1), threeDaysBeforeResult);
+
+        var sixDaysBeforeResult = week.Calculate(new DateOnly(2024, 8, 18), currentDay);
+        Assert.Equal(new OverDueBillInfo(6, 1), sixDaysBeforeResult);
     }
 }

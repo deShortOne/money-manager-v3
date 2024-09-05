@@ -14,7 +14,7 @@ internal class Weekly : IFrequency
         {
             return null;
         }
-        throw new NotImplementedException();
+        return new OverDueBillInfo(numberOfDaysOverdue, numberOfDaysOverdue / 7 + 1);
     }
 
     public bool MatchCommand(string frequency) => frequency == "Weekly";
