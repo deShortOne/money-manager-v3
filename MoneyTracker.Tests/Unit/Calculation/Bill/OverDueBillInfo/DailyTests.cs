@@ -10,10 +10,7 @@ public sealed class DailyTests
     [Fact]
     public void CalculateOverDueBillInfo_SameDay_Null()
     {
-        var mockDateTime = new Mock<IDateTimeProvider>();
-        mockDateTime.Setup(dateTime => dateTime.Now).Returns(new DateTime(2024, 8, 24, 0, 0, 0));
-
-        IDateTimeProvider dateTimeProvider = mockDateTime.Object;
+        IDateTimeProvider dateTimeProvider = CreateMockDateTimeProvider(new DateTime(2024, 8, 24, 0, 0, 0));
 
         var day = new Daily();
 
@@ -23,10 +20,7 @@ public sealed class DailyTests
     [Fact]
     public void CalculateOverDueBillInfo_CurrentDayBeforeNextDueDate_Null()
     {
-        var mockDateTime = new Mock<IDateTimeProvider>();
-        mockDateTime.Setup(dateTime => dateTime.Now).Returns(new DateTime(2024, 8, 24, 0, 0, 0));
-
-        IDateTimeProvider dateTimeProvider = mockDateTime.Object;
+        IDateTimeProvider dateTimeProvider = CreateMockDateTimeProvider(new DateTime(2024, 8, 24, 0, 0, 0));
 
         var day = new Daily();
 
@@ -36,14 +30,19 @@ public sealed class DailyTests
     [Fact]
     public void CalculateOverDueBillInfo_CurrentDayOneDayAfterNextDueDate_ReturnsOneIterationLate()
     {
-        var mockDateTime = new Mock<IDateTimeProvider>();
-        mockDateTime.Setup(dateTime => dateTime.Now).Returns(new DateTime(2024, 8, 24, 0, 0, 0));
-
-        IDateTimeProvider dateTimeProvider = mockDateTime.Object;
+        IDateTimeProvider dateTimeProvider = CreateMockDateTimeProvider(new DateTime(2024, 8, 24, 0, 0, 0));
 
         var day = new Daily();
         var overdueBillInfo = day.Calculate(new DateOnly(2024, 8, 23), dateTimeProvider);
 
         Assert.Equal(new MoneyTracker.Shared.Models.Bill.OverDueBillInfo(1, 1), overdueBillInfo);
+    }
+
+    private static IDateTimeProvider CreateMockDateTimeProvider(DateTime dateTime)
+    {
+        var mockDateTime = new Mock<IDateTimeProvider>();
+        mockDateTime.Setup(dateTimeTmp => dateTimeTmp.Now).Returns(dateTime);
+
+        return mockDateTime.Object;
     }
 }
