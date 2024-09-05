@@ -8,7 +8,7 @@ namespace MoneyTracker.Tests.Unit.Calculation.Bill.OverDueBillInfo;
 public sealed class DailyTests
 {
     [Fact]
-    public void NoOverDue()
+    public void CalculateOverDueBillInfo_SameDay_Null()
     {
         // Given
         var mockDateTime = new Mock<IDateTimeProvider>();
