@@ -4,7 +4,7 @@ using MoneyTracker.Shared.DateManager;
 using MoneyTracker.Shared.Models.Bill;
 using Moq;
 
-namespace MoneyTracker.Tests.Unit.Calculation.Bill.OverDueBillInfo;
+namespace MoneyTracker.Tests.Unit.Calculation.Bill.OverDueBill;
 public sealed class DailyTests
 {
     [Fact]
@@ -35,7 +35,7 @@ public sealed class DailyTests
         var day = new Daily();
         var overdueBillInfo = day.Calculate(new DateOnly(2024, 8, 23), dateTimeProvider);
 
-        Assert.Equal(new MoneyTracker.Shared.Models.Bill.OverDueBillInfo(1, 1), overdueBillInfo);
+        Assert.Equal(new OverDueBillInfo(1, 1), overdueBillInfo);
     }
 
     private static IDateTimeProvider CreateMockDateTimeProvider(DateTime dateTime)
