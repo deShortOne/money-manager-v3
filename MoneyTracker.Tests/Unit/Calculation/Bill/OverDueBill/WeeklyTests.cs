@@ -42,4 +42,21 @@ public sealed class WeeklyTests
         var sixDaysBeforeResult = week.Calculate(new DateOnly(2024, 8, 18), currentDay);
         Assert.Equal(new OverDueBillInfo(6, 1), sixDaysBeforeResult);
     }
+
+    [Fact]
+    public void CalculateOverDueBillInfo_BetweenOneAndTwoWeeksAfter_ReturnsTwoIterationsLate()
+    {
+        IDateTimeProvider currentDay = TestHelper.CreateMockDateTimeProvider(new DateTime(2024, 8, 24, 0, 0, 0));
+
+        var week = new Weekly();
+
+        var oneDayBeforeResult = week.Calculate(new DateOnly(2024, 8, 16), currentDay);
+        Assert.Equal(new OverDueBillInfo(8, 2), oneDayBeforeResult);
+
+        var threeDaysBeforeResult = week.Calculate(new DateOnly(2024, 8, 14), currentDay);
+        Assert.Equal(new OverDueBillInfo(10, 2), threeDaysBeforeResult);
+
+        var sixDaysBeforeResult = week.Calculate(new DateOnly(2024, 8, 11), currentDay);
+        Assert.Equal(new OverDueBillInfo(13, 2), sixDaysBeforeResult);
+    }
 }
