@@ -59,4 +59,14 @@ public sealed class WeeklyTests
         var sixDaysBeforeResult = week.Calculate(new DateOnly(2024, 8, 11), currentDay);
         Assert.Equal(new OverDueBillInfo(13, 2), sixDaysBeforeResult);
     }
+
+    [Fact]
+    public void CalculateOverDueBillInfo_BetweenOneAndTwoWeeksBefore_Null()
+    {
+        IDateTimeProvider currentDay = TestHelper.CreateMockDateTimeProvider(new DateTime(2024, 8, 24, 0, 0, 0));
+
+        var week = new Weekly();
+
+        Assert.Null(week.Calculate(new DateOnly(2024, 9, 5), currentDay));
+    }
 }
