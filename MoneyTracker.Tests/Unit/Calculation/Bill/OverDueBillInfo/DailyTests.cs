@@ -9,7 +9,6 @@ public sealed class DailyTests
     [Fact]
     public void CalculateOverDueBillInfo_SameDay_Null()
     {
-        // Given
         var mockDateTime = new Mock<IDateTimeProvider>();
         mockDateTime.Setup(dateTime => dateTime.Now).Returns(new DateTime(2024, 8, 24, 0, 0, 0));
 
@@ -17,7 +16,19 @@ public sealed class DailyTests
 
         var day = new Daily();
 
-        // Then
+        Assert.Null(day.Calculate(new DateOnly(2024, 8, 24), dateTimeProvider));
+    }
+
+    [Fact]
+    public void CalculateOverDueBillInfo_CurrentDayBeforeNextDueDate_Null()
+    {
+        var mockDateTime = new Mock<IDateTimeProvider>();
+        mockDateTime.Setup(dateTime => dateTime.Now).Returns(new DateTime(2024, 8, 24, 0, 0, 0));
+
+        IDateTimeProvider dateTimeProvider = mockDateTime.Object;
+
+        var day = new Daily();
+
         Assert.Null(day.Calculate(new DateOnly(2024, 8, 24), dateTimeProvider));
     }
 }
