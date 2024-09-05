@@ -2,8 +2,8 @@
 namespace MoneyTracker.Shared.Models.Bill;
 public class OverDueBillInfo(int daysOverDue, int numberOfBillsOverDue)
 {
-    public int daysOverDue { get; private set; } = daysOverDue;
-    public int numberOfBillsOverDue { get; private set; } = numberOfBillsOverDue;
+    public int DaysOverDue { get; private set; } = daysOverDue;
+    public int NumberOfBillsOverDue { get; private set; } = numberOfBillsOverDue;
 
     public override bool Equals(System.Object obj)
     {
@@ -14,11 +14,11 @@ public class OverDueBillInfo(int daysOverDue, int numberOfBillsOverDue)
             return false;
         }
 
-        return numberOfBillsOverDue == other.numberOfBillsOverDue;
+        return NumberOfBillsOverDue == other.NumberOfBillsOverDue;
     }
 
     public override int GetHashCode()
     {
-        return daysOverDue;
+        return DaysOverDue;
     }
 }
