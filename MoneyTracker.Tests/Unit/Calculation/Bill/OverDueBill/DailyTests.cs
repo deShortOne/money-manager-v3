@@ -8,6 +8,12 @@ namespace MoneyTracker.Tests.Unit.Calculation.Bill.OverDueBill;
 public sealed class DailyTests
 {
     [Fact]
+    public void CalculateOverDueBillInfo_NameMatch_True()
+    {
+        Assert.True(new Daily().MatchCommand("Daily"));
+    }
+
+    [Fact]
     public void CalculateOverDueBillInfo_SameDay_Null()
     {
         IDateTimeProvider dateTimeProvider = TestHelper.CreateMockDateTimeProvider(new DateTime(2024, 8, 24, 0, 0, 0));
