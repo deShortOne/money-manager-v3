@@ -38,6 +38,17 @@ public sealed class DailyTests
         Assert.Equal(new OverDueBillInfo(1, 1), overdueBillInfo);
     }
 
+    [Fact]
+    public void CalculateOverDueBillInfo_CurrentDayTwoDaysAfterNextDueDate_ReturnsTwoIterationsLate()
+    {
+        IDateTimeProvider dateTimeProvider = CreateMockDateTimeProvider(new DateTime(2024, 8, 24, 0, 0, 0));
+
+        var day = new Daily();
+        var overdueBillInfo = day.Calculate(new DateOnly(2024, 8, 22), dateTimeProvider);
+
+        Assert.Equal(new OverDueBillInfo(2, 2), overdueBillInfo);
+    }
+
     private static IDateTimeProvider CreateMockDateTimeProvider(DateTime dateTime)
     {
         var mockDateTime = new Mock<IDateTimeProvider>();

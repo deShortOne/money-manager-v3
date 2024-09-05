@@ -13,7 +13,7 @@ internal class Daily : IFrequency
             return null;
         }
 
-        int numberOfDaysOverdue = today.CompareTo(nextDueDate);
+        int numberOfDaysOverdue = today.DayNumber - nextDueDate.DayNumber;
         return new OverDueBillInfo(numberOfDaysOverdue, numberOfDaysOverdue);
     }
     public bool MatchCommand(string frequency) => frequency.Equals("Daily");
