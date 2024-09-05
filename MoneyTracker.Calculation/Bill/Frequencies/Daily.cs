@@ -8,12 +8,13 @@ internal class Daily : IFrequency
     public OverDueBillInfo? Calculate(DateOnly nextDueDate, IDateTimeProvider dateTimeProvider)
     {
         var today = DateOnly.FromDateTime(dateTimeProvider.Now);
-        if (today == nextDueDate)
+        int numberOfDaysOverdue = today.DayNumber - nextDueDate.DayNumber;
+
+        if (numberOfDaysOverdue <= 0)
         {
             return null;
         }
 
-        int numberOfDaysOverdue = today.DayNumber - nextDueDate.DayNumber;
         return new OverDueBillInfo(numberOfDaysOverdue, numberOfDaysOverdue);
     }
     public bool MatchCommand(string frequency) => frequency.Equals("Daily");

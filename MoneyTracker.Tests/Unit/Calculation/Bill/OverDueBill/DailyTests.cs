@@ -24,7 +24,7 @@ public sealed class DailyTests
 
         var day = new Daily();
 
-        Assert.Null(day.Calculate(new DateOnly(2024, 8, 24), dateTimeProvider));
+        Assert.Null(day.Calculate(new DateOnly(2024, 8, 25), dateTimeProvider));
     }
 
     [Fact]
