@@ -1,6 +1,7 @@
 ﻿
 using MoneyTracker.Calculation.Bill.Frequencies;
 using MoneyTracker.Shared.DateManager;
+using MoneyTracker.Shared.Models.Bill;
 using MoneyTracker.Tests.Local;
 
 namespace MoneyTracker.Tests.Unit.Calculation.Bill.OverDueBill;
@@ -30,5 +31,28 @@ public sealed class MonthlyTests
         var month = new Monthly();
 
         Assert.Null(month.Calculate(new DateOnly(2024, 8, 30), dateTimeProvider));
+    }
+
+    [Fact]
+    public void CalculateOverDueBillInfo_OneIterationAfterNextDueDate_ReturnOneIteration()
+    {
+        IDateTimeProvider dateTimeProvider = TestHelper.CreateMockDateTimeProvider(new DateTime(2024, 8, 24, 0, 0, 0));
+
+        var month = new Monthly();
+
+        var fiveDaysBeforeIteration = month.Calculate(new DateOnly(2024, 8, 19), dateTimeProvider);
+        Assert.Equal(new OverDueBillInfo(5, 1), fiveDaysBeforeIteration);
+
+        var tenDaysBeforeIteration = month.Calculate(new DateOnly(2024, 8, 14), dateTimeProvider);
+        Assert.Equal(new OverDueBillInfo(10, 1), tenDaysBeforeIteration);
+
+        var fifteenDaysBeforeIteration = month.Calculate(new DateOnly(2024, 8, 9), dateTimeProvider);
+        Assert.Equal(new OverDueBillInfo(15, 1), fifteenDaysBeforeIteration);
+
+        var twentyThreeDaysBeforeIteration = month.Calculate(new DateOnly(2024, 8, 1), dateTimeProvider);
+        Assert.Equal(new OverDueBillInfo(23, 1), twentyThreeDaysBeforeIteration);
+
+        var thirtyDaysBeforeIteration = month.Calculate(new DateOnly(2024, 8, 1), dateTimeProvider);
+        Assert.Equal(new OverDueBillInfo(30, 1), thirtyDaysBeforeIteration);
     }
 }
