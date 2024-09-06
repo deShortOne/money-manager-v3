@@ -58,7 +58,7 @@ public sealed class DailyTests
     [Fact]
     public void CalculateOverDueBillInfo_LeapYearCurrentDayTwoDaysAfterNextDueDate_ReturnsTwoIterationsLate()
     {
-        IDateTimeProvider dateTimeProvider = TestHelper.CreateMockDateTimeProvider(new DateTime(2023, 3, 1, 0, 0, 0));
+        IDateTimeProvider dateTimeProvider = TestHelper.CreateMockDateTimeProvider(new DateTime(2024, 3, 1, 0, 0, 0));
 
         var day = new Daily();
         var overdueBillInfo = day.Calculate(new DateOnly(2024, 2, 28), dateTimeProvider);
