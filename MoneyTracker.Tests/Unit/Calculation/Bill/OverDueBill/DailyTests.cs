@@ -20,7 +20,7 @@ public sealed class DailyTests
 
         var day = new Daily();
 
-        Assert.Null(day.Calculate(new DateOnly(2024, 8, 24), dateTimeProvider));
+        Assert.Null(day.CalculateOverDueBill(new DateOnly(2024, 8, 24), dateTimeProvider));
     }
 
     [Fact]
@@ -30,7 +30,7 @@ public sealed class DailyTests
 
         var day = new Daily();
 
-        Assert.Null(day.Calculate(new DateOnly(2024, 8, 25), dateTimeProvider));
+        Assert.Null(day.CalculateOverDueBill(new DateOnly(2024, 8, 25), dateTimeProvider));
     }
 
     [Fact]
@@ -39,7 +39,7 @@ public sealed class DailyTests
         IDateTimeProvider dateTimeProvider = TestHelper.CreateMockDateTimeProvider(new DateTime(2024, 8, 24, 0, 0, 0));
 
         var day = new Daily();
-        var overdueBillInfo = day.Calculate(new DateOnly(2024, 8, 23), dateTimeProvider);
+        var overdueBillInfo = day.CalculateOverDueBill(new DateOnly(2024, 8, 23), dateTimeProvider);
 
         Assert.Equal(new OverDueBillInfo(1, 1), overdueBillInfo);
     }
@@ -50,7 +50,7 @@ public sealed class DailyTests
         IDateTimeProvider dateTimeProvider = TestHelper.CreateMockDateTimeProvider(new DateTime(2024, 8, 24, 0, 0, 0));
 
         var day = new Daily();
-        var overdueBillInfo = day.Calculate(new DateOnly(2024, 8, 22), dateTimeProvider);
+        var overdueBillInfo = day.CalculateOverDueBill(new DateOnly(2024, 8, 22), dateTimeProvider);
 
         Assert.Equal(new OverDueBillInfo(2, 2), overdueBillInfo);
     }
@@ -61,7 +61,7 @@ public sealed class DailyTests
         IDateTimeProvider dateTimeProvider = TestHelper.CreateMockDateTimeProvider(new DateTime(2024, 3, 1, 0, 0, 0));
 
         var day = new Daily();
-        var overdueBillInfo = day.Calculate(new DateOnly(2024, 2, 28), dateTimeProvider);
+        var overdueBillInfo = day.CalculateOverDueBill(new DateOnly(2024, 2, 28), dateTimeProvider);
 
         Assert.Equal(new OverDueBillInfo(2, 2), overdueBillInfo);
     }
@@ -72,7 +72,7 @@ public sealed class DailyTests
         IDateTimeProvider dateTimeProvider = TestHelper.CreateMockDateTimeProvider(new DateTime(2023, 3, 1, 0, 0, 0));
 
         var day = new Daily();
-        var overdueBillInfo = day.Calculate(new DateOnly(2023, 2, 28), dateTimeProvider);
+        var overdueBillInfo = day.CalculateOverDueBill(new DateOnly(2023, 2, 28), dateTimeProvider);
 
         Assert.Equal(new OverDueBillInfo(1, 1), overdueBillInfo);
     }

@@ -19,7 +19,7 @@ public class BillCalculation
         {
             if (f.MatchCommand(frequency))
             {
-                return f.Calculate(nextDueDate, dateTimeProvider);
+                return f.CalculateOverDueBill(nextDueDate, dateTimeProvider);
             }
         }
         throw new NotImplementedException("Frequency type \"{frequency}\" not found");
