@@ -83,4 +83,18 @@ public sealed class MonthlyTests
         var thrityOneDaysBeforeIteration = month.Calculate(new DateOnly(2024, 6, 30), dateTimeProvider);
         Assert.Equal(new OverDueBillInfo(31, 2), thrityOneDaysBeforeIteration);
     }
+
+    [Fact]
+    public void CalculateOverDueBillInfo_OneIterationAfterNextDueDateMonthOf30EndOfMonth_ReturnXIterations()
+    {
+        IDateTimeProvider dateTimeProvider = TestHelper.CreateMockDateTimeProvider(new DateTime(2024, 6, 30, 0, 0, 0));
+
+        var month = new Monthly();
+
+        var twentyNineDaysBeforeIteration = month.Calculate(new DateOnly(2024, 6, 1), dateTimeProvider);
+        Assert.Equal(new OverDueBillInfo(29, 1), twentyNineDaysBeforeIteration);
+
+        var thrityDaysBeforeIteration = month.Calculate(new DateOnly(2024, 5, 31), dateTimeProvider);
+        Assert.Equal(new OverDueBillInfo(30, 2), thrityDaysBeforeIteration);
+    }
 }
