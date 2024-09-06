@@ -14,11 +14,6 @@ public class OverDueBillInfo(int daysOverDue, int numberOfBillsOverDue)
             return false;
         }
 
-        return NumberOfBillsOverDue == other.NumberOfBillsOverDue;
-    }
-
-    public override int GetHashCode()
-    {
-        return DaysOverDue;
+        return DaysOverDue == other.DaysOverDue && NumberOfBillsOverDue == other.NumberOfBillsOverDue;
     }
 }
