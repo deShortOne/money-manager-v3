@@ -5,6 +5,8 @@ using MoneyTracker.Shared.Models.Bill;
 namespace MoneyTracker.Calculation.Bill.Frequencies;
 internal class Daily : IFrequency
 {
+    public DateOnly CalculateNextDueDate(int monthDay, DateOnly currNextDueDate, IDateTimeProvider dateTimeProvider) => throw new NotImplementedException();
+
     public OverDueBillInfo? CalculateOverDueBill(DateOnly nextDueDate, IDateTimeProvider dateTimeProvider)
     {
         var today = DateOnly.FromDateTime(dateTimeProvider.Now);
