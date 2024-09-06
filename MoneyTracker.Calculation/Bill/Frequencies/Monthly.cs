@@ -15,7 +15,9 @@ internal class Monthly : IFrequency
             return null;
         }
 
-        return new OverDueBillInfo(numberOfDaysOverdue, numberOfDaysOverdue / 30 + 1);
+        int numberOfMonthsDifference = today.Month - nextDueDate.Month;
+
+        return new OverDueBillInfo(numberOfDaysOverdue, numberOfMonthsDifference + 1);
     }
 
     public bool MatchCommand(string frequency) => frequency == "Monthly";
