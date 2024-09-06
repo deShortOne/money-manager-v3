@@ -6,7 +6,13 @@ namespace MoneyTracker.Calculation.Bill;
 
 public class BillCalculation
 {
-    private static readonly List<IFrequency> Frequencies = [];
+    private static readonly List<IFrequency> Frequencies = [
+        new Daily(),
+        new Weekly(),
+        new BiWeekly(),
+        new Monthly(),
+    ];
+
     public static OverDueBillInfo? CalculateOverDueBillInfo(DateOnly nextDueDate, string frequency, IDateTimeProvider dateTimeProvider)
     {
         foreach (var f in Frequencies)
