@@ -13,7 +13,7 @@ public class BillCalculation
         new Monthly(),
     ];
 
-    public static OverDueBillInfo? CalculateOverDueBillInfo(DateOnly nextDueDate, string frequency, IDateTimeProvider dateTimeProvider)
+    public static OverDueBillInfo? CalculateOverDueBillInfo(string frequency, DateOnly nextDueDate, IDateTimeProvider dateTimeProvider)
     {
         foreach (var f in Frequencies)
         {
