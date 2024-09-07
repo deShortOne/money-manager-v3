@@ -9,7 +9,7 @@ public class BillDTO(int id, string payee, decimal amount, DateOnly nextDueDate,
     public string Frequency { get; private set; } = frequency;
     public string Category { get; private set; } = category;
 
-    public override bool Equals(System.Object obj)
+    public override bool Equals(object? obj)
     {
         var other = obj as BillDTO;
 
@@ -18,8 +18,9 @@ public class BillDTO(int id, string payee, decimal amount, DateOnly nextDueDate,
             return false;
         }
 
-        // Instances are considered equal if the ReferenceId matches.
-        return Payee == other.Payee && Amount == other.Amount && NextDueDate == other.NextDueDate && Frequency == other.Frequency && Category == other.Category;
+        return Id == other.Id && Payee == other.Payee && Amount == other.Amount &&
+            NextDueDate == other.NextDueDate && Frequency == other.Frequency &&
+            Category == other.Category;
     }
 
     public override int GetHashCode()
