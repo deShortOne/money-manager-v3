@@ -40,6 +40,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                 new CategoryDTO(3, "Bills : Rent"),
                 new CategoryDTO(4, "Groceries"),
                 new CategoryDTO(5, "Hobby"),
+                new CategoryDTO(6, "Pet Care"),
             };
             var actual = await category.GetAllCategories();
             Assert.Equal(expected, actual);
@@ -51,7 +52,7 @@ namespace MoneyTracker.Tests.Database.Postgres
             var db = new PostgresDatabase(_postgres.GetConnectionString());
             var category = new CategoryDatabase(db);
 
-            var categoryToAdd = new CategoryDTO(6, "Speeding tickets");
+            var categoryToAdd = new CategoryDTO(7, "Speeding tickets");
             await category.AddCategory(new NewCategoryDTO(categoryToAdd.Name));
 
             var expected = new List<CategoryDTO>() {
@@ -60,6 +61,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                 new CategoryDTO(3, "Bills : Rent"),
                 new CategoryDTO(4, "Groceries"),
                 new CategoryDTO(5, "Hobby"),
+                new CategoryDTO(6, "Pet Care"),
                 categoryToAdd,
             };
             var actual = await category.GetAllCategories();
@@ -72,7 +74,7 @@ namespace MoneyTracker.Tests.Database.Postgres
             var db = new PostgresDatabase(_postgres.GetConnectionString());
             var category = new CategoryDatabase(db);
 
-            var categoryToAdd = new CategoryDTO(6, "Hobby");
+            var categoryToAdd = new CategoryDTO(7, "Hobby");
             await category.AddCategory(new NewCategoryDTO(categoryToAdd.Name));
 
             var expected = new List<CategoryDTO>() {
@@ -81,6 +83,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                 new CategoryDTO(3, "Bills : Rent"),
                 new CategoryDTO(4, "Groceries"),
                 new CategoryDTO(5, "Hobby"),
+                new CategoryDTO(6, "Pet Care"),
             };
             var actual = await category.GetAllCategories();
             Assert.Equal(expected, actual);
@@ -99,6 +102,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                 new CategoryDTO(2, "Bills : Cell Phone"),
                 new CategoryDTO(3, "Bills : Rent"),
                 new CategoryDTO(4, "Groceries"),
+                new CategoryDTO(6, "Pet Care"),
                 new CategoryDTO(5, "Something funky"),
             };
             var actual = await category.GetAllCategories();
@@ -121,6 +125,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                 new CategoryDTO(3, "Bills : Rent"),
                 new CategoryDTO(4, "Groceries"),
                 new CategoryDTO(5, "Hobby"),
+                new CategoryDTO(6, "Pet Care"),
             };
             var actual = await category.GetAllCategories();
             Assert.Equal(expected, actual);
