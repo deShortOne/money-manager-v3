@@ -7,7 +7,15 @@ internal class Monthly : IFrequency
 {
     public DateOnly CalculateNextDueDate(int monthDay, DateOnly currNextDueDate, IDateTimeProvider dateTimeProvider)
     {
-        return currNextDueDate.AddMonths(1);
+        var tmpNextDueDate = currNextDueDate.AddMonths(1);
+        if (tmpNextDueDate.Day < monthDay)
+        {
+            if (tmpNextDueDate.Month == tmpNextDueDate.AddDays(1).Month)
+            {
+                tmpNextDueDate = tmpNextDueDate.AddDays(1);
+            }
+        }
+        return tmpNextDueDate;
     }
 
     public OverDueBillInfo? CalculateOverDueBill(DateOnly nextDueDate, IDateTimeProvider dateTimeProvider)
