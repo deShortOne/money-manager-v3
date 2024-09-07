@@ -110,15 +110,15 @@ public class BillTest : IAsyncLifetime
     public async void FirstLoadCheckButCurrentDateIsOneIterationAfterDueDate()
     {
         var db = new PostgresDatabase(_postgres.GetConnectionString());
-        IDateTimeProvider dateTimeProvider = TestHelper.CreateMockDateTimeProvider(new DateTime(2024, 9, 14, 0, 0, 0));
+        IDateTimeProvider dateTimeProvider = TestHelper.CreateMockDateTimeProvider(new DateTime(2024, 9, 7, 0, 0, 0));
         var bill = new BillDatabase(db, dateTimeProvider);
 
         var expected = new List<BillDTO>()
         {
             new BillDTO(2, "company a", 100, DateOnly.Parse("2024-08-30"), "Monthly", "Wages & Salary : Net Pay",
-                new OverDueBillInfo(15, 1)),
+                new OverDueBillInfo(8, 1)),
             new BillDTO(1, "supermarket a", 23, DateOnly.Parse("2024-09-03"), "Weekly", "Groceries",
-                new OverDueBillInfo(11, 1)),
+                new OverDueBillInfo(4, 1)),
         };
 
         var actual = await bill.GetBill();
@@ -138,7 +138,7 @@ public class BillTest : IAsyncLifetime
             new BillDTO(2, "company a", 100, DateOnly.Parse("2024-08-30"), "Monthly", "Wages & Salary : Net Pay",
                 new OverDueBillInfo(35, 2)),
             new BillDTO(1, "supermarket a", 23, DateOnly.Parse("2024-09-03"), "Weekly", "Groceries",
-                new OverDueBillInfo(31, 4)),
+                new OverDueBillInfo(31, 5)),
         };
 
         var actual = await bill.GetBill();
@@ -158,7 +158,7 @@ public class BillTest : IAsyncLifetime
             new BillDTO(2, "company a", 100, DateOnly.Parse("2024-08-30"), "Monthly", "Wages & Salary : Net Pay",
                 new OverDueBillInfo(34, 2)),
             new BillDTO(1, "supermarket a", 23, DateOnly.Parse("2024-09-03"), "Weekly", "Groceries",
-                new OverDueBillInfo(30, 3)),
+                new OverDueBillInfo(30, 5)),
         };
 
         var actual = await bill.GetBill();

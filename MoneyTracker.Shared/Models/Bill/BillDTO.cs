@@ -20,17 +20,20 @@ public class BillDTO(int id, string payee, decimal amount, DateOnly nextDueDate,
             return false;
         }
 
-        var currOverDueBill = OverDueBill as OverDueBillInfo;
-        var otherOverDueBill = OverDueBill as OverDueBillInfo;
-
-        if ((currOverDueBill == null) != (otherOverDueBill == null))
+        if ((OverDueBill == null) != (other.OverDueBill == null))
         {
             return false;
         }
 
+        bool isOverDueBillSame = OverDueBill == null;
+        if (OverDueBill != null)
+        {
+            isOverDueBillSame = OverDueBill.Equals(other.OverDueBill);
+        }
+
         return Id == other.Id && Payee == other.Payee && Amount == other.Amount &&
             NextDueDate == other.NextDueDate && Frequency == other.Frequency &&
-            Category == other.Category && currOverDueBill == otherOverDueBill;
+            Category == other.Category && isOverDueBillSame;
     }
 
     public override int GetHashCode()
