@@ -47,7 +47,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                             Planned = 1800,
                             Actual = 1800,
                             Difference = 0
-                        }
+                        },
                     ],
                     Planned = 1800,
                     Actual = 1800,
@@ -63,17 +63,17 @@ namespace MoneyTracker.Tests.Database.Postgres
                             Difference = 0
                             },
                         new TestBudgetCategoryDTO() {
+                            Name = "Bills : Rent",
+                            Planned = 500,
+                            Actual = 500,
+                            Difference = 0
+                            },
+                        new TestBudgetCategoryDTO() {
                             Name = "Groceries",
                             Planned = 100,
                             Actual = 75,
                             Difference = 25
                             },
-                        new TestBudgetCategoryDTO() {
-                            Name = "Bills : Rent",
-                            Planned = 500,
-                            Actual = 500,
-                            Difference = 0
-                            }
                     ],
                     Planned = 610,
                     Actual = 585,

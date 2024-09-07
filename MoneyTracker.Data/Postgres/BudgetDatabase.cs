@@ -35,7 +35,8 @@ namespace MoneyTracker.Data.Postgres
                 RIGHT JOIN budgetgroup bg
                 	ON bg.id = bc.budget_group_id
                 ORDER BY bg.id,
-                	bg."name";
+                	bg."name",
+                    c.name;
                 """;
 
             using var reader = await _database.GetTable(query);
