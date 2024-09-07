@@ -5,7 +5,7 @@ using MoneyTracker.Shared.Models.Bill;
 namespace MoneyTracker.Calculation.Bill.Frequencies;
 internal class Monthly : IFrequency
 {
-    public DateOnly CalculateNextDueDate(int monthDay, DateOnly currNextDueDate, IDateTimeProvider dateTimeProvider)
+    public DateOnly CalculateNextDueDate(int monthDay, DateOnly currNextDueDate)
     {
         var tmpNextDueDate = currNextDueDate.AddMonths(1);
         if (tmpNextDueDate.Day < monthDay)
