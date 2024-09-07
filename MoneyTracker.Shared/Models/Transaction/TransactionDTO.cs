@@ -1,4 +1,6 @@
-﻿namespace MoneyTracker.Shared.Models.Transaction
+﻿using MoneyTracker.Shared.Models.Bill;
+
+namespace MoneyTracker.Shared.Models.Transaction
 {
     public class TransactionDTO
     {
@@ -16,5 +18,22 @@
         public decimal Amount { get; private set; }
         public DateTime DatePaid { get; private set; }
         public string Category { get; private set; }
+        public override bool Equals(object? obj)
+        {
+            var other = obj as TransactionDTO;
+
+            if (other == null)
+            {
+                return false;
+            }
+
+            return Id == other.Id && Payee == other.Payee && Amount == other.Amount &&
+                DatePaid == other.DatePaid && Category == other.Category;
+        }
+
+        public override int GetHashCode()
+        {
+            return Id;
+        }
     }
 }
