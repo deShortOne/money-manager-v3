@@ -42,7 +42,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                 new CategoryDTO(5, "Hobby"),
             };
             var actual = await category.GetAllCategories();
-            TestHelper.CompareLists(expected, actual);
+            Assert.Equal(expected, actual);
         }
 
         [Fact]
@@ -63,7 +63,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                 categoryToAdd,
             };
             var actual = await category.GetAllCategories();
-            TestHelper.CompareLists(expected, actual);
+            Assert.Equal(expected, actual);
         }
 
         [Fact]
@@ -83,7 +83,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                 new CategoryDTO(5, "Hobby"),
             };
             var actual = await category.GetAllCategories();
-            TestHelper.CompareLists(expected, actual);
+            Assert.Equal(expected, actual);
         }
 
         [Fact]
@@ -102,7 +102,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                 new CategoryDTO(5, "Something funky"),
             };
             var actual = await category.GetAllCategories();
-            TestHelper.CompareLists(expected, actual);
+            Assert.Equal(expected, actual);
         }
 
         [Fact]
@@ -123,7 +123,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                 new CategoryDTO(5, "Hobby"),
             };
             var actual = await category.GetAllCategories();
-            TestHelper.CompareLists(expected, actual);
+            Assert.Equal(expected, actual);
         }
 
         [Fact]
