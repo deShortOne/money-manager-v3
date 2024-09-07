@@ -63,7 +63,7 @@ namespace MoneyTracker.Data.Postgres
             return res.Values.ToList();
         }
 
-        public async Task<BudgetCategoryDTO> AddBudgetCategory(NewBudgetCategoryDTO newBudget)
+        public async Task<BudgetCategoryDTO> AddBudgetCategory(EditBudgetCategoryDTO newBudget)
         {
             var queryInsertIntoBudgetCategory = """
                 INSERT INTO budgetcategory VALUES

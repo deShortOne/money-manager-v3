@@ -27,7 +27,7 @@ namespace MoneyTracker.Controllers
 
         [HttpPost]
         [Route("category/add")]
-        public Task<BudgetCategoryDTO> AddBudgetCategory([FromBody] NewBudgetCategoryDTO newBudget)
+        public Task<BudgetCategoryDTO> AddBudgetCategory([FromBody] EditBudgetCategoryDTO newBudget)
         {
             return _database.AddBudgetCategory(newBudget);
         }
