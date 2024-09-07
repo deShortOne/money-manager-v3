@@ -120,31 +120,11 @@ namespace MoneyTracker.Tests.Database.Postgres
             {
                 var a = expected[i];
                 var b = actual[i];
-                if (a.Planned != b.Planned || a.Actual != b.Actual || a.Difference != b.Difference)
+                if (!a.Equals(b))
                 {
                     Assert.Fail($"{i}\n{JsonConvert.SerializeObject(expected[i])}\n{JsonConvert.SerializeObject(actual[i])}");
                 }
             }
-        }
-
-        private static bool CompareLists(List<TestBudgetCategoryDTO> expected, List<BudgetCategoryDTO> actual)
-        {
-
-            if (expected.Count != actual.Count)
-            {
-                return false;
-            }
-            for (int i = 0; i < expected.Count; i++)
-            {
-                if (expected[i].Actual != actual[i].Actual ||
-                    expected[i].Name != actual[i].Name ||
-                    expected[i].Planned != actual[i].Planned ||
-                    expected[i].Difference != actual[i].Difference)
-                {
-                    return false;
-                }
-            }
-            return true;
         }
     }
 }

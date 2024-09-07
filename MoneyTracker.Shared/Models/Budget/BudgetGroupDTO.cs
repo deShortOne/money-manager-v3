@@ -31,5 +31,24 @@ namespace MoneyTracker.Shared.Models.Budget
         public decimal Actual { get; private set; }
         public virtual decimal Difference { get; private set; }
 
+        public override bool Equals(object? obj)
+        {
+            var other = obj as BudgetGroupDTO;
+
+            if (other == null)
+            {
+                return false;
+            }
+
+            return Name == other.Name && Planned == other.Planned &&
+                Actual == other.Actual && Difference == other.Difference &&
+                Categories == other.Categories;
+        }
+
+        public override int GetHashCode()
+        {
+            return (from c in Name
+                    select (int)c).Sum();
+        }
     }
 }
