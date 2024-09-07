@@ -1,6 +1,7 @@
 ﻿using MoneyTracker.Data.Postgres;
 using MoneyTracker.DatabaseMigration;
 using MoneyTracker.Shared.Models.Budget;
+using MoneyTracker.Shared.Models.Transaction;
 using MoneyTracker.Tests.Database.Postgres.TestModels;
 using Newtonsoft.Json;
 using Testcontainers.PostgreSql;
@@ -185,6 +186,105 @@ namespace MoneyTracker.Tests.Database.Postgres
                     Planned = 610 + budgetToBePutIntoExpected.Planned,
                     Actual = 585 + budgetToBePutIntoExpected.Actual,
                     Difference = 25 + budgetToBePutIntoExpected.Difference,
+                },
+                new TestBudgetGroupDTO() {
+                    Name = "Fun",
+                    Categories = [],
+                    Planned = 0,
+                    Actual = 0,
+                    Difference = 0
+                },
+                new TestBudgetGroupDTO() {
+                    Name = "Irregular Expenses",
+                    Categories = [
+                        new TestBudgetCategoryDTO() {
+                            Name = "Hobby",
+                            Planned = 50,
+                            Actual = 150,
+                            Difference = -100
+                        }
+                    ],
+                    Planned = 50,
+                    Actual = 150,
+                    Difference = -100
+                },
+                new TestBudgetGroupDTO() {
+                    Name = "Savings & Debt",
+                    Categories = [],
+                    Planned = 0,
+                    Actual = 0,
+                    Difference = 0
+                },
+                new TestBudgetGroupDTO() {
+                    Name = "Retirement",
+                    Categories = [],
+                    Planned = 0,
+                    Actual = 0,
+                    Difference = 0
+                },
+            };
+            var actual = await budget.GetBudget();
+            for (int i = 0; i < actual.Count; i++)
+            {
+                var a = expected[i];
+                var b = actual[i];
+                if (!a.Equals(b))
+                {
+                    Assert.Fail($"{i}\n{JsonConvert.SerializeObject(expected[i])}\n{JsonConvert.SerializeObject(actual[i])}");
+                }
+            }
+        }
+
+        [Fact]
+        public async void FirstLoad_AddBillUpdatesBudgetInCategory()
+        {
+            var db = new PostgresDatabase(_postgres.GetConnectionString());
+            var transaction = new RegisterDatabase(db);
+            await transaction.AddNewTransaction(new NewTransactionDTO("bob", 17, new DateTime(2024, 08, 29), 4));
+
+            var budget = new BudgetDatabase(db);
+
+            var expected = new List<TestBudgetGroupDTO>()
+            {
+                new TestBudgetGroupDTO() {
+                    Name = "Income",
+                    Categories = [
+                        new TestBudgetCategoryDTO() {
+                            Name = "Wages & Salary : Net Pay",
+                            Planned = 1800,
+                            Actual = 1800,
+                            Difference = 0
+                        },
+                    ],
+                    Planned = 1800,
+                    Actual = 1800,
+                    Difference = 0
+                },
+                new TestBudgetGroupDTO() {
+                    Name = "Committed Expenses",
+                    Categories = [
+                        new TestBudgetCategoryDTO() {
+                            Name = "Bills : Cell Phone",
+                            Planned = 10,
+                            Actual = 10,
+                            Difference = 0
+                        },
+                        new TestBudgetCategoryDTO() {
+                            Name = "Bills : Rent",
+                            Planned = 500,
+                            Actual = 500,
+                            Difference = 0
+                        },
+                        new TestBudgetCategoryDTO() {
+                            Name = "Groceries",
+                            Planned = 100,
+                            Actual = 92,
+                            Difference = 8
+                        },
+                    ],
+                    Planned = 610,
+                    Actual = 602,
+                    Difference = 8,
                 },
                 new TestBudgetGroupDTO() {
                     Name = "Fun",
