@@ -27,14 +27,14 @@ namespace MoneyTracker.Controllers
 
         [HttpPost]
         [Route("category/add")]
-        public Task<BudgetCategoryDTO> AddBudgetCategory([FromBody] EditBudgetCategoryDTO newBudget)
+        public Task<BudgetCategoryDTO> AddBudgetCategory([FromBody] NewBudgetCategoryDTO newBudget)
         {
             return _database.AddBudgetCategory(newBudget);
         }
 
         [HttpPut]
         [Route("category/edit")]
-        public Task<List<BudgetGroupDTO>> EditBudgetCategory([FromBody] EditBudgetCategory editBudgetCategory)
+        public Task<List<BudgetGroupDTO>> EditBudgetCategory([FromBody] EditBudgetCategoryDTO editBudgetCategory)
         {
             return _database.EditBudgetCategory(editBudgetCategory);
         }

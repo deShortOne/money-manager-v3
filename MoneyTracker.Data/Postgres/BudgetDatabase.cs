@@ -63,7 +63,7 @@ namespace MoneyTracker.Data.Postgres
             return res.Values.ToList();
         }
 
-        public async Task<BudgetCategoryDTO> AddBudgetCategory(EditBudgetCategoryDTO newBudget)
+        public async Task<BudgetCategoryDTO> AddBudgetCategory(NewBudgetCategoryDTO newBudget)
         {
             var queryInsertIntoBudgetCategory = """
                 INSERT INTO budgetcategory VALUES
@@ -93,7 +93,7 @@ namespace MoneyTracker.Data.Postgres
             return null;
         }
 
-        public async Task<List<BudgetGroupDTO>> EditBudgetCategory(EditBudgetCategory editBudgetCateogry)
+        public async Task<List<BudgetGroupDTO>> EditBudgetCategory(EditBudgetCategoryDTO editBudgetCateogry)
         {
             var setParamsLis = new List<string>();
             var queryParams = new List<DbParameter>()

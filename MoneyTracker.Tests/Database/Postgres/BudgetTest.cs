@@ -133,7 +133,7 @@ namespace MoneyTracker.Tests.Database.Postgres
         {
             var db = new PostgresDatabase(_postgres.GetConnectionString());
             var budget = new BudgetDatabase(db);
-            var newBudget = new EditBudgetCategoryDTO(2, 6, 180);
+            var newBudget = new NewBudgetCategoryDTO(2, 6, 180);
             await budget.AddBudgetCategory(newBudget);
 
             var budgetToBePutIntoExpected = new TestBudgetCategoryDTO()
@@ -339,7 +339,7 @@ namespace MoneyTracker.Tests.Database.Postgres
         {
             var db = new PostgresDatabase(_postgres.GetConnectionString());
             var budget = new BudgetDatabase(db);
-            var newBudget = new EditBudgetCategoryDTO(2, 4, 150);
+            var newBudget = new NewBudgetCategoryDTO(2, 4, 150);
             await budget.AddBudgetCategory(newBudget);
 
             var expected = new List<TestBudgetGroupDTO>()
@@ -437,7 +437,7 @@ namespace MoneyTracker.Tests.Database.Postgres
         {
             var db = new PostgresDatabase(_postgres.GetConnectionString());
             var budget = new BudgetDatabase(db);
-            var newBudget = new EditBudgetCategory(4, budgetCategoryPlanned: 150);
+            var newBudget = new EditBudgetCategoryDTO(4, budgetCategoryPlanned: 150);
             await budget.EditBudgetCategory(newBudget);
 
             var expected = new List<TestBudgetGroupDTO>()
