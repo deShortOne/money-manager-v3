@@ -89,7 +89,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                 ),
             };
             var actual = await register.GetAllTransactions();
-            TestHelper.CompareLists(expected, actual);
+            Assert.Equal(expected, actual);
         }
 
         [Fact]
@@ -165,7 +165,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                 ),
             };
             var actual = await register.GetAllTransactions();
-            TestHelper.CompareLists(expected, actual);
+            Assert.Equal(expected, actual);
         }
 
         [Fact]
@@ -233,7 +233,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                 ),
             };
             var actual = await register.GetAllTransactions();
-            TestHelper.CompareLists(expected, actual);
+            Assert.Equal(expected, actual);
         }
 
         [Fact]
@@ -293,7 +293,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                 ),
             };
             var actual = await register.GetAllTransactions();
-            TestHelper.CompareLists(expected, actual);
+            Assert.Equal(expected, actual);
         }
     }
 }
