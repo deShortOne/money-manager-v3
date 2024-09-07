@@ -22,7 +22,7 @@ public class BillCalculation
                 return f.CalculateOverDueBill(nextDueDate, dateTimeProvider);
             }
         }
-        throw new NotImplementedException("Frequency type \"{frequency}\" not found");
+        throw new NotImplementedException($"Frequency type \"{frequency}\" not found");
     }
 
     public static DateOnly CalculateNextDueDate(string frequency, int monthDay, DateOnly currDueDate)

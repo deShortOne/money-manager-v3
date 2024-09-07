@@ -1,6 +1,7 @@
 ﻿
 namespace MoneyTracker.Shared.Models.Bill;
-public class BillDTO(int id, string payee, decimal amount, DateOnly nextDueDate, string frequency, string category)
+public class BillDTO(int id, string payee, decimal amount, DateOnly nextDueDate,
+    string frequency, string category, OverDueBillInfo? overDueBill)
 {
     public int Id { get; private set; } = id;
     public string Payee { get; private set; } = payee;
@@ -8,6 +9,7 @@ public class BillDTO(int id, string payee, decimal amount, DateOnly nextDueDate,
     public DateOnly NextDueDate { get; private set; } = nextDueDate;
     public string Frequency { get; private set; } = frequency;
     public string Category { get; private set; } = category;
+    public OverDueBillInfo? OverDueBill { get; private set; } = overDueBill;
 
     public override bool Equals(object? obj)
     {

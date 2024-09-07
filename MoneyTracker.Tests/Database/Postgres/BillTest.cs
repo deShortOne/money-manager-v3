@@ -1,9 +1,9 @@
 ﻿
 using MoneyTracker.Data.Postgres;
 using MoneyTracker.DatabaseMigration;
+using MoneyTracker.Shared.DateManager;
 using MoneyTracker.Shared.Models.Bill;
-using MoneyTracker.Tests.Database.Postgres.TestModels;
-using Newtonsoft.Json;
+using MoneyTracker.Tests.Local;
 using Testcontainers.PostgreSql;
 
 namespace MoneyTracker.Tests.Database.Postgres;
@@ -35,12 +35,13 @@ public class BillTest : IAsyncLifetime
     public async void FirstLoadCheckTablesThatDataAreThere()
     {
         var db = new PostgresDatabase(_postgres.GetConnectionString());
-        var bill = new BillDatabase(db);
+        IDateTimeProvider dateTimeProvider = TestHelper.CreateMockDateTimeProvider(new DateTime(2024, 8, 24, 0, 0, 0));
+        var bill = new BillDatabase(db, dateTimeProvider);
 
         var expected = new List<BillDTO>()
         {
-            new BillDTO(2, "company a", 100, DateOnly.Parse("2024-08-30"), "monthly", "Wages & Salary : Net Pay"),
-            new BillDTO(1, "supermarket a", 23, DateOnly.Parse("2024-09-03"), "weekly", "Groceries"),
+            new BillDTO(2, "company a", 100, DateOnly.Parse("2024-08-30"), "Monthly", "Wages & Salary : Net Pay", null),
+            new BillDTO(1, "supermarket a", 23, DateOnly.Parse("2024-09-03"), "Weekly", "Groceries", null),
         };
 
         var actual = await bill.GetBill();
@@ -52,12 +53,13 @@ public class BillTest : IAsyncLifetime
     public async void DeleteBill()
     {
         var db = new PostgresDatabase(_postgres.GetConnectionString());
-        var bill = new BillDatabase(db);
+        IDateTimeProvider dateTimeProvider = TestHelper.CreateMockDateTimeProvider(new DateTime(2024, 8, 24, 0, 0, 0));
+        var bill = new BillDatabase(db, dateTimeProvider);
         await bill.DeleteBill(new DeleteBillDTO(1));
 
         var expected = new List<BillDTO>()
         {
-            new BillDTO(2, "company a", 100, DateOnly.Parse("2024-08-30"), "monthly", "Wages & Salary : Net Pay"),
+            new BillDTO(2, "company a", 100, DateOnly.Parse("2024-08-30"), "Monthly", "Wages & Salary : Net Pay", null),
         };
 
         var actual = await bill.GetBill();
@@ -69,13 +71,14 @@ public class BillTest : IAsyncLifetime
     public async void EditBill()
     {
         var db = new PostgresDatabase(_postgres.GetConnectionString());
-        var bill = new BillDatabase(db);
+        IDateTimeProvider dateTimeProvider = TestHelper.CreateMockDateTimeProvider(new DateTime(2024, 8, 24, 0, 0, 0));
+        var bill = new BillDatabase(db, dateTimeProvider);
         await bill.EditBill(new EditBillDTO(1, payee: "supermarket b"));
 
         var expected = new List<BillDTO>()
         {
-            new BillDTO(2, "company a", 100, DateOnly.Parse("2024-08-30"), "monthly", "Wages & Salary : Net Pay"),
-            new BillDTO(1, "supermarket b", 23, DateOnly.Parse("2024-09-03"), "weekly", "Groceries"),
+            new BillDTO(2, "company a", 100, DateOnly.Parse("2024-08-30"), "Monthly", "Wages & Salary : Net Pay", null),
+            new BillDTO(1, "supermarket b", 23, DateOnly.Parse("2024-09-03"), "Weekly", "Groceries", null),
         };
 
         var actual = await bill.GetBill();
@@ -87,14 +90,15 @@ public class BillTest : IAsyncLifetime
     public async void AddBill()
     {
         var db = new PostgresDatabase(_postgres.GetConnectionString());
-        var bill = new BillDatabase(db);
-        await bill.AddBill(new NewBillDTO("flight sim", 420, DateOnly.Parse("2024-09-05"), "daily", 5));
+        IDateTimeProvider dateTimeProvider = TestHelper.CreateMockDateTimeProvider(new DateTime(2024, 8, 24, 0, 0, 0));
+        var bill = new BillDatabase(db, dateTimeProvider);
+        await bill.AddBill(new NewBillDTO("flight sim", 420, DateOnly.Parse("2024-09-05"), "Daily", 5));
 
         var expected = new List<BillDTO>()
         {
-            new BillDTO(2, "company a", 100, DateOnly.Parse("2024-08-30"), "monthly", "Wages & Salary : Net Pay"),
-            new BillDTO(1, "supermarket a", 23, DateOnly.Parse("2024-09-03"), "weekly", "Groceries"),
-            new BillDTO(3, "flight sim", 420, DateOnly.Parse("2024-09-05"), "daily", "Hobby"),
+            new BillDTO(2, "company a", 100, DateOnly.Parse("2024-08-30"), "Monthly", "Wages & Salary : Net Pay", null),
+            new BillDTO(1, "supermarket a", 23, DateOnly.Parse("2024-09-03"), "Weekly", "Groceries", null),
+            new BillDTO(3, "flight sim", 420, DateOnly.Parse("2024-09-05"), "Daily", "Hobby", null),
         };
 
         var actual = await bill.GetBill();
