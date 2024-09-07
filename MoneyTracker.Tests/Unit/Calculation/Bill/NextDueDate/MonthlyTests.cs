@@ -48,4 +48,15 @@ public sealed class MonthlyTests
         var nextDueDate = month.CalculateNextDueDate(31, new DateOnly(2024, 6, 30), timeProvider);
         Assert.Equal(new DateOnly(2024, 7, 31), nextDueDate);
     }
+
+    [Fact]
+    public void GetNextDueDate_30thTo30th()
+    {
+        var timeProvider = TestHelper.CreateMockDateTimeProvider(new DateTime(2024, 08, 24, 0, 0, 0));
+
+        var month = new Monthly();
+
+        var nextDueDate = month.CalculateNextDueDate(30, new DateOnly(2024, 7, 30), timeProvider);
+        Assert.Equal(new DateOnly(2024, 8, 30), nextDueDate);
+    }
 }
