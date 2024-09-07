@@ -35,10 +35,10 @@ internal class Monthly : IFrequency
         }
         else
         {
-            numberOfMonthsDifference = today.Month - nextDueDate.Month + 1;
-            if (nextDueDate.AddMonths(1) >= today)
+            numberOfMonthsDifference = today.Month - nextDueDate.Month;
+            if (nextDueDate.AddMonths(numberOfMonthsDifference) < today)
             {
-                numberOfMonthsDifference--;
+                numberOfMonthsDifference++;
             }
         }
 

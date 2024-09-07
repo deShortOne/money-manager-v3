@@ -137,4 +137,15 @@ public sealed class MonthlyTests
         var threeDaysBeforeIterationButOneMonthDiff = month.CalculateOverDueBill(new DateOnly(2024, 6, 29), dateTimeProvider);
         Assert.Equal(new OverDueBillInfo(2, 1), threeDaysBeforeIterationButOneMonthDiff);
     }
+
+    [Fact]
+    public void CalculateOverDueBillInfo_CurrDateDayNumberLessThanNextDueDateDayNumber()
+    {
+        IDateTimeProvider dateTimeProvider = TestHelper.CreateMockDateTimeProvider(new DateTime(2024, 10, 4, 0, 0, 0));
+
+        var month = new Monthly();
+
+        var nextDueDate = month.CalculateOverDueBill(new DateOnly(2024, 8, 30), dateTimeProvider);
+        Assert.Equal(new OverDueBillInfo(35, 2), nextDueDate);
+    }
 }
