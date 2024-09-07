@@ -129,7 +129,7 @@ namespace MoneyTracker.Tests.Database.Postgres
         }
 
         [Fact]
-        public async void FirstLoad_AddCategory()
+        public async void AddBudgetCategory_AddCategory_ReturnsBudgetWithNewCategory()
         {
             var db = new PostgresDatabase(_postgres.GetConnectionString());
             var budget = new BudgetDatabase(db);
@@ -236,7 +236,7 @@ namespace MoneyTracker.Tests.Database.Postgres
         }
 
         [Fact]
-        public async void FirstLoad_AddBillUpdatesBudgetInCategory()
+        public async void GetBudget_AddBillUpdatesBudgetInCategory_ReturnsSameBudgetButWithActualUpdated()
         {
             var db = new PostgresDatabase(_postgres.GetConnectionString());
             var transaction = new RegisterDatabase(db);
@@ -333,8 +333,9 @@ namespace MoneyTracker.Tests.Database.Postgres
                 }
             }
         }
+
         [Fact]
-        public async void FirstLoad_AddDuplicateCategory()
+        public async void AddBudgetCategory_AddDuplicateCategory_UpdatesCategory()
         {
             var db = new PostgresDatabase(_postgres.GetConnectionString());
             var budget = new BudgetDatabase(db);
