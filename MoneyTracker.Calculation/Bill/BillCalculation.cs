@@ -24,4 +24,16 @@ public class BillCalculation
         }
         throw new NotImplementedException("Frequency type \"{frequency}\" not found");
     }
+
+    public static DateOnly CalculateNextDueDate(string frequency, int monthDay, DateOnly currDueDate)
+    {
+        foreach (var f in Frequencies)
+        {
+            if (f.MatchCommand(frequency))
+            {
+                return f.CalculateNextDueDate(monthDay, currDueDate);
+            }
+        }
+        throw new NotImplementedException("Frequency type \"{frequency}\" not found");
+    }
 }
