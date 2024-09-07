@@ -20,8 +20,9 @@ namespace MoneyTracker.Data.Postgres
             // UPSERTS!! and gets id
             var queryGetAllCategories = """
                 SELECT id, name
-                FROM category;
-                """;
+                FROM category
+                ORDER BY name;
+             """;
 
             // get category id
             using var reader = await _database.GetTable(queryGetAllCategories);
