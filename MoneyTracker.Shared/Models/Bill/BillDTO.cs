@@ -22,7 +22,7 @@ public class BillDTO(int id, string payee, decimal amount, DateOnly nextDueDate,
 
         return Id == other.Id && Payee == other.Payee && Amount == other.Amount &&
             NextDueDate == other.NextDueDate && Frequency == other.Frequency &&
-            Category == other.Category;
+            Category == other.Category && OverDueBill == other.OverDueBill;
     }
 
     public override int GetHashCode()
