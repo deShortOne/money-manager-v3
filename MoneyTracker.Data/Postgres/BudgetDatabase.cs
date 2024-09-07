@@ -20,23 +20,23 @@ namespace MoneyTracker.Data.Postgres
                 SELECT bg.id,
                 	bg."name",
                 	c.name AS category_name,
-                	category_sum.amount AS actual,
+                	COALESCE(category_sum.amount, 0) AS actual,
                 	bc.planned
-                FROM (
+                FROM budgetcategory bc
+                LEFT JOIN (
                 	SELECT category_id,
                 		sum(amount) AS amount
                 	FROM register
                 	GROUP BY category_id
                 	) category_sum
-                INNER JOIN category c
-                	ON category_sum.category_id = c.id
-                INNER JOIN budgetcategory bc
                 	ON category_sum.category_id = bc.category_id
+                INNER JOIN category c
+                	ON bc.category_id = c.id
                 RIGHT JOIN budgetgroup bg
                 	ON bg.id = bc.budget_group_id
                 ORDER BY bg.id,
                 	bg."name",
-                    c.name;
+                	c.name;
                 """;
 
             using var reader = await _database.GetTable(query);
@@ -72,7 +72,7 @@ namespace MoneyTracker.Data.Postgres
                     SET planned = @planned
                 RETURNING (SELECT name FROM category WHERE id = @categoryId),
                     (planned),
-                    (SELECT SUM(amount) actual FROM register WHERE category_id = @categoryId);
+                    (coalesce((SELECT SUM(amount) actual FROM register WHERE category_id = @categoryId), 0)) actual;
                 """;
             var queryInsertIntoBudgetCategoryParams = new List<DbParameter>()
             {
@@ -84,8 +84,10 @@ namespace MoneyTracker.Data.Postgres
             var reader = await _database.GetTable(queryInsertIntoBudgetCategory, queryInsertIntoBudgetCategoryParams);
             if (await reader.ReadAsync())
             {
-                return new BudgetCategoryDTO(reader.GetString("name"),
-                    reader.GetDecimal("planned"), reader.GetDecimal("actual"));
+                var name = reader.GetString("name");
+                var planned = reader.GetDecimal("planned");
+                var actual = reader.GetDecimal("actual");
+                return new BudgetCategoryDTO(name, planned, actual);
             }
 
             return null;
