@@ -2,6 +2,7 @@
 using MoneyTracker.Data.Global;
 using MoneyTracker.Data.Postgres;
 using MoneyTracker.DatabaseMigration;
+using MoneyTracker.Shared.DateManager;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,10 +22,11 @@ builder.Services.AddSwaggerGen(c =>
 
 var dbConnString = builder.Configuration["Database:Paelagus_RO"];
 builder.Services.AddSingleton<IDatabase>(_ => new PostgresDatabase(dbConnString));
-builder.Services.AddTransient<IRegisterDatabase, RegisterDatabase>()
-    .AddTransient<IBillDatabase, BillDatabase>()
-    .AddTransient<ICategoryDatabase, CategoryDatabase>()
-    .AddTransient<IBudgetDatabase, BudgetDatabase>();
+builder.Services.AddSingleton<IRegisterDatabase, RegisterDatabase>()
+    .AddSingleton<IBillDatabase, BillDatabase>()
+    .AddSingleton<ICategoryDatabase, CategoryDatabase>()
+    .AddSingleton<IBudgetDatabase, BudgetDatabase>()
+    .AddSingleton<IDateTimeProvider, DateTimeProvider>();
 
 var dbResult = Migration.CheckMigration(dbConnString);
 if (!dbResult.Successful)
