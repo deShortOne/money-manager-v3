@@ -105,4 +105,64 @@ public class BillTest : IAsyncLifetime
 
         Assert.Equal(expected, actual);
     }
+
+    [Fact]
+    public async void FirstLoadCheckButCurrentDateIsOneIterationAfterDueDate()
+    {
+        var db = new PostgresDatabase(_postgres.GetConnectionString());
+        IDateTimeProvider dateTimeProvider = TestHelper.CreateMockDateTimeProvider(new DateTime(2024, 9, 14, 0, 0, 0));
+        var bill = new BillDatabase(db, dateTimeProvider);
+
+        var expected = new List<BillDTO>()
+        {
+            new BillDTO(2, "company a", 100, DateOnly.Parse("2024-08-30"), "Monthly", "Wages & Salary : Net Pay",
+                new OverDueBillInfo(15, 1)),
+            new BillDTO(1, "supermarket a", 23, DateOnly.Parse("2024-09-03"), "Weekly", "Groceries",
+                new OverDueBillInfo(11, 1)),
+        };
+
+        var actual = await bill.GetBill();
+
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public async void FirstLoadCheckButCurrentDateIsMultipleIterationsAfterDueDate()
+    {
+        var db = new PostgresDatabase(_postgres.GetConnectionString());
+        IDateTimeProvider dateTimeProvider = TestHelper.CreateMockDateTimeProvider(new DateTime(2024, 10, 4, 0, 0, 0));
+        var bill = new BillDatabase(db, dateTimeProvider);
+
+        var expected = new List<BillDTO>()
+        {
+            new BillDTO(2, "company a", 100, DateOnly.Parse("2024-08-30"), "Monthly", "Wages & Salary : Net Pay",
+                new OverDueBillInfo(35, 2)),
+            new BillDTO(1, "supermarket a", 23, DateOnly.Parse("2024-09-03"), "Weekly", "Groceries",
+                new OverDueBillInfo(31, 4)),
+        };
+
+        var actual = await bill.GetBill();
+
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public async void FirstLoadCheckButCurrentDateIsMultipleIterationsAfterDueDate2()
+    {
+        var db = new PostgresDatabase(_postgres.GetConnectionString());
+        IDateTimeProvider dateTimeProvider = TestHelper.CreateMockDateTimeProvider(new DateTime(2024, 10, 3, 0, 0, 0));
+        var bill = new BillDatabase(db, dateTimeProvider);
+
+        var expected = new List<BillDTO>()
+        {
+            new BillDTO(2, "company a", 100, DateOnly.Parse("2024-08-30"), "Monthly", "Wages & Salary : Net Pay",
+                new OverDueBillInfo(34, 2)),
+            new BillDTO(1, "supermarket a", 23, DateOnly.Parse("2024-09-03"), "Weekly", "Groceries",
+                new OverDueBillInfo(30, 3)),
+        };
+
+        var actual = await bill.GetBill();
+
+        Assert.Equal(expected, actual);
+    }
 }
