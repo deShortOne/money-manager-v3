@@ -27,7 +27,7 @@ builder.Services.AddSingleton<IRegisterDatabase, RegisterDatabase>()
     .AddSingleton<IBillDatabase, BillDatabase>()
     .AddSingleton<ICategoryDatabase, CategoryDatabase>()
     .AddSingleton<IBudgetDatabase, BudgetDatabase>()
-    .AddSingleton<IDateTimeProvider, DateTimeProvider>();
+    .AddSingleton<IDateProvider, DateProvider>();
 
 var dbResult = Migration.CheckMigration(dbConnString, new MigrationOption(false));
 if (!dbResult.Successful)

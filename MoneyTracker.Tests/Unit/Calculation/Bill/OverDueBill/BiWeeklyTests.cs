@@ -16,7 +16,7 @@ public sealed class BiWeeklyTests
     [Fact]
     public void CalculateOverDueBillInfo_WithinOneIterationBefore_Null()
     {
-        IDateTimeProvider currentDay = TestHelper.CreateMockDateTimeProvider(new DateTime(2024, 8, 24, 0, 0, 0));
+        IDateProvider currentDay = TestHelper.CreateMockdateProvider(new DateOnly(2024, 8, 24));
 
         var week = new BiWeekly();
 
@@ -29,7 +29,7 @@ public sealed class BiWeeklyTests
     [Fact]
     public void CalculateOverDueBillInfo_WithinOneWeekAfter_ReturnsOneIterationLate()
     {
-        IDateTimeProvider currentDay = TestHelper.CreateMockDateTimeProvider(new DateTime(2024, 8, 24, 0, 0, 0));
+        IDateProvider currentDay = TestHelper.CreateMockdateProvider(new DateOnly(2024, 8, 24));
 
         var week = new BiWeekly();
 
@@ -46,7 +46,7 @@ public sealed class BiWeeklyTests
     [Fact]
     public void CalculateOverDueBillInfo_BetweenOneAndTwoWeeksAfter_ReturnsTwoIterationsLate()
     {
-        IDateTimeProvider currentDay = TestHelper.CreateMockDateTimeProvider(new DateTime(2024, 8, 24, 0, 0, 0));
+        IDateProvider currentDay = TestHelper.CreateMockdateProvider(new DateOnly(2024, 8, 24));
 
         var week = new BiWeekly();
 
@@ -63,7 +63,7 @@ public sealed class BiWeeklyTests
     [Fact]
     public void CalculateOverDueBillInfo_BetweenOneAndTwoWeeksBefore_Null()
     {
-        IDateTimeProvider currentDay = TestHelper.CreateMockDateTimeProvider(new DateTime(2024, 8, 24, 0, 0, 0));
+        IDateProvider currentDay = TestHelper.CreateMockdateProvider(new DateOnly(2024, 8, 24));
 
         var week = new BiWeekly();
 

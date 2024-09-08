@@ -5,9 +5,9 @@ using Moq;
 namespace MoneyTracker.Tests.Local;
 internal class TestHelper
 {
-    public static IDateTimeProvider CreateMockDateTimeProvider(DateTime dateTime)
+    public static IDateProvider CreateMockdateProvider(DateOnly dateTime)
     {
-        var mockDateTime = new Mock<IDateTimeProvider>();
+        var mockDateTime = new Mock<IDateProvider>();
         mockDateTime.Setup(dateTimeTmp => dateTimeTmp.Now).Returns(dateTime);
 
         return mockDateTime.Object;

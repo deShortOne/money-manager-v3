@@ -16,30 +16,30 @@ public sealed class DailyTests
     [Fact]
     public void CalculateOverDueBillInfo_SameDay_Null()
     {
-        IDateTimeProvider dateTimeProvider = TestHelper.CreateMockDateTimeProvider(new DateTime(2024, 8, 24, 0, 0, 0));
+        IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 8, 24));
 
         var day = new Daily();
 
-        Assert.Null(day.CalculateOverDueBill(new DateOnly(2024, 8, 24), dateTimeProvider));
+        Assert.Null(day.CalculateOverDueBill(new DateOnly(2024, 8, 24), dateProvider));
     }
 
     [Fact]
     public void CalculateOverDueBillInfo_CurrentDayBeforeNextDueDate_Null()
     {
-        IDateTimeProvider dateTimeProvider = TestHelper.CreateMockDateTimeProvider(new DateTime(2024, 8, 24, 0, 0, 0));
+        IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 8, 24));
 
         var day = new Daily();
 
-        Assert.Null(day.CalculateOverDueBill(new DateOnly(2024, 8, 25), dateTimeProvider));
+        Assert.Null(day.CalculateOverDueBill(new DateOnly(2024, 8, 25), dateProvider));
     }
 
     [Fact]
     public void CalculateOverDueBillInfo_CurrentDayOneDayAfterNextDueDate_ReturnsOneIterationLate()
     {
-        IDateTimeProvider dateTimeProvider = TestHelper.CreateMockDateTimeProvider(new DateTime(2024, 8, 24, 0, 0, 0));
+        IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 8, 24));
 
         var day = new Daily();
-        var overdueBillInfo = day.CalculateOverDueBill(new DateOnly(2024, 8, 23), dateTimeProvider);
+        var overdueBillInfo = day.CalculateOverDueBill(new DateOnly(2024, 8, 23), dateProvider);
 
         Assert.Equal(new OverDueBillInfo(1, 1), overdueBillInfo);
     }
@@ -47,10 +47,10 @@ public sealed class DailyTests
     [Fact]
     public void CalculateOverDueBillInfo_CurrentDayTwoDaysAfterNextDueDate_ReturnsTwoIterationsLate()
     {
-        IDateTimeProvider dateTimeProvider = TestHelper.CreateMockDateTimeProvider(new DateTime(2024, 8, 24, 0, 0, 0));
+        IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 8, 24));
 
         var day = new Daily();
-        var overdueBillInfo = day.CalculateOverDueBill(new DateOnly(2024, 8, 22), dateTimeProvider);
+        var overdueBillInfo = day.CalculateOverDueBill(new DateOnly(2024, 8, 22), dateProvider);
 
         Assert.Equal(new OverDueBillInfo(2, 2), overdueBillInfo);
     }
@@ -58,10 +58,10 @@ public sealed class DailyTests
     [Fact]
     public void CalculateOverDueBillInfo_LeapYearCurrentDayTwoDaysAfterNextDueDate_ReturnsTwoIterationsLate()
     {
-        IDateTimeProvider dateTimeProvider = TestHelper.CreateMockDateTimeProvider(new DateTime(2024, 3, 1, 0, 0, 0));
+        IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 3, 1));
 
         var day = new Daily();
-        var overdueBillInfo = day.CalculateOverDueBill(new DateOnly(2024, 2, 28), dateTimeProvider);
+        var overdueBillInfo = day.CalculateOverDueBill(new DateOnly(2024, 2, 28), dateProvider);
 
         Assert.Equal(new OverDueBillInfo(2, 2), overdueBillInfo);
     }
@@ -69,10 +69,10 @@ public sealed class DailyTests
     [Fact]
     public void CalculateOverDueBillInfo_NotLeapYearCurrentDayOneDayAfterNextDueDate_ReturnsOneIterationLate()
     {
-        IDateTimeProvider dateTimeProvider = TestHelper.CreateMockDateTimeProvider(new DateTime(2023, 3, 1, 0, 0, 0));
+        IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2023, 3, 1));
 
         var day = new Daily();
-        var overdueBillInfo = day.CalculateOverDueBill(new DateOnly(2023, 2, 28), dateTimeProvider);
+        var overdueBillInfo = day.CalculateOverDueBill(new DateOnly(2023, 2, 28), dateProvider);
 
         Assert.Equal(new OverDueBillInfo(1, 1), overdueBillInfo);
     }

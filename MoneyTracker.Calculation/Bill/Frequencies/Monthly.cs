@@ -18,9 +18,9 @@ internal class Monthly : IFrequency
         return tmpNextDueDate;
     }
 
-    public OverDueBillInfo? CalculateOverDueBill(DateOnly nextDueDate, IDateTimeProvider dateTimeProvider)
+    public OverDueBillInfo? CalculateOverDueBill(DateOnly nextDueDate, IDateProvider dateProvider)
     {
-        var today = DateOnly.FromDateTime(dateTimeProvider.Now);
+        var today = dateProvider.Now;
         int numberOfDaysOverdue = today.DayNumber - nextDueDate.DayNumber;
 
         if (numberOfDaysOverdue <= 0)

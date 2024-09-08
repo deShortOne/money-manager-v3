@@ -11,11 +11,11 @@ namespace MoneyTracker.Data.Postgres;
 public class BillDatabase : IBillDatabase
 {
     private readonly PostgresDatabase _database;
-    private readonly IDateTimeProvider _dateTimeProvider;
-    public BillDatabase(IDatabase db, IDateTimeProvider dateTimeProvider)
+    private readonly IDateProvider _dateProvider;
+    public BillDatabase(IDatabase db, IDateProvider dateProvider)
     {
         _database = (PostgresDatabase)db;
-        _dateTimeProvider = dateTimeProvider;
+        _dateProvider = dateProvider;
     }
 
     public async Task<List<BillDTO>> GetBill()
@@ -49,7 +49,7 @@ public class BillDatabase : IBillDatabase
                 frequency,
                 reader.GetString("name"),
                 BillCalculation.CalculateOverDueBillInfo(frequency, nextDueDate,
-                    _dateTimeProvider)
+                    _dateProvider)
             ));
         }
 

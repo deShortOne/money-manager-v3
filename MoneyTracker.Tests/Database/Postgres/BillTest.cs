@@ -36,8 +36,8 @@ public class BillTest : IAsyncLifetime
     public async void FirstLoadCheckTablesThatDataAreThere()
     {
         var db = new PostgresDatabase(_postgres.GetConnectionString());
-        IDateTimeProvider dateTimeProvider = TestHelper.CreateMockDateTimeProvider(new DateTime(2024, 8, 24, 0, 0, 0));
-        var bill = new BillDatabase(db, dateTimeProvider);
+        IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 8, 24));
+        var bill = new BillDatabase(db, dateProvider);
 
         var expected = new List<BillDTO>()
         {
@@ -54,8 +54,8 @@ public class BillTest : IAsyncLifetime
     public async void DeleteBill()
     {
         var db = new PostgresDatabase(_postgres.GetConnectionString());
-        IDateTimeProvider dateTimeProvider = TestHelper.CreateMockDateTimeProvider(new DateTime(2024, 8, 24, 0, 0, 0));
-        var bill = new BillDatabase(db, dateTimeProvider);
+        IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 8, 24));
+        var bill = new BillDatabase(db, dateProvider);
         await bill.DeleteBill(new DeleteBillDTO(1));
 
         var expected = new List<BillDTO>()
@@ -72,8 +72,8 @@ public class BillTest : IAsyncLifetime
     public async void EditBill()
     {
         var db = new PostgresDatabase(_postgres.GetConnectionString());
-        IDateTimeProvider dateTimeProvider = TestHelper.CreateMockDateTimeProvider(new DateTime(2024, 8, 24, 0, 0, 0));
-        var bill = new BillDatabase(db, dateTimeProvider);
+        IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 8, 24));
+        var bill = new BillDatabase(db, dateProvider);
         await bill.EditBill(new EditBillDTO(1, payee: "supermarket b"));
 
         var expected = new List<BillDTO>()
@@ -91,8 +91,8 @@ public class BillTest : IAsyncLifetime
     public async void AddBill()
     {
         var db = new PostgresDatabase(_postgres.GetConnectionString());
-        IDateTimeProvider dateTimeProvider = TestHelper.CreateMockDateTimeProvider(new DateTime(2024, 8, 24, 0, 0, 0));
-        var bill = new BillDatabase(db, dateTimeProvider);
+        IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 8, 24));
+        var bill = new BillDatabase(db, dateProvider);
         await bill.AddBill(new NewBillDTO("flight sim", 420, DateOnly.Parse("2024-09-05"), "Daily", 5));
 
         var expected = new List<BillDTO>()
@@ -111,8 +111,8 @@ public class BillTest : IAsyncLifetime
     public async void FirstLoadCheckButCurrentDateIsOneIterationAfterDueDate()
     {
         var db = new PostgresDatabase(_postgres.GetConnectionString());
-        IDateTimeProvider dateTimeProvider = TestHelper.CreateMockDateTimeProvider(new DateTime(2024, 9, 7, 0, 0, 0));
-        var bill = new BillDatabase(db, dateTimeProvider);
+        IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 9, 7));
+        var bill = new BillDatabase(db, dateProvider);
 
         var expected = new List<BillDTO>()
         {
@@ -131,8 +131,8 @@ public class BillTest : IAsyncLifetime
     public async void FirstLoadCheckButCurrentDateIsMultipleIterationsAfterDueDate()
     {
         var db = new PostgresDatabase(_postgres.GetConnectionString());
-        IDateTimeProvider dateTimeProvider = TestHelper.CreateMockDateTimeProvider(new DateTime(2024, 10, 4, 0, 0, 0));
-        var bill = new BillDatabase(db, dateTimeProvider);
+        IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 10, 4));
+        var bill = new BillDatabase(db, dateProvider);
 
         var expected = new List<BillDTO>()
         {
@@ -151,8 +151,8 @@ public class BillTest : IAsyncLifetime
     public async void FirstLoadCheckButCurrentDateIsMultipleIterationsAfterDueDate2()
     {
         var db = new PostgresDatabase(_postgres.GetConnectionString());
-        IDateTimeProvider dateTimeProvider = TestHelper.CreateMockDateTimeProvider(new DateTime(2024, 10, 3, 0, 0, 0));
-        var bill = new BillDatabase(db, dateTimeProvider);
+        IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 10, 3));
+        var bill = new BillDatabase(db, dateProvider);
 
         var expected = new List<BillDTO>()
         {

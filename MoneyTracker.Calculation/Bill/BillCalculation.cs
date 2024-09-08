@@ -13,13 +13,13 @@ public class BillCalculation
         new Monthly(),
     ];
 
-    public static OverDueBillInfo? CalculateOverDueBillInfo(string frequency, DateOnly nextDueDate, IDateTimeProvider dateTimeProvider)
+    public static OverDueBillInfo? CalculateOverDueBillInfo(string frequency, DateOnly nextDueDate, IDateProvider dateProvider)
     {
         foreach (var f in Frequencies)
         {
             if (f.MatchCommand(frequency))
             {
-                return f.CalculateOverDueBill(nextDueDate, dateTimeProvider);
+                return f.CalculateOverDueBill(nextDueDate, dateProvider);
             }
         }
         throw new NotImplementedException($"Frequency type \"{frequency}\" not found");
