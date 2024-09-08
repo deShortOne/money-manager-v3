@@ -1,5 +1,6 @@
 ﻿
 using Microsoft.Extensions.Configuration;
+using MoneyTracker.DatabaseMigration.Models;
 
 namespace MoneyTracker.DatabaseMigration;
 
@@ -16,7 +17,7 @@ public class Program
             ?? config["Database:Paelagus_RO"]
             ?? "ERROR CONNECTION STRING NOT FOUND";
 
-        var result = Migration.CheckMigration(connectionString);
+        var result = Migration.CheckMigration(connectionString, new MigrationOption(true));
         if (result.Successful)
         {
             Console.ForegroundColor = ConsoleColor.Green;

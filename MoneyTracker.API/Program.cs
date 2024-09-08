@@ -2,6 +2,7 @@
 using MoneyTracker.Data.Global;
 using MoneyTracker.Data.Postgres;
 using MoneyTracker.DatabaseMigration;
+using MoneyTracker.DatabaseMigration.Models;
 using MoneyTracker.Shared.DateManager;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,7 +29,7 @@ builder.Services.AddSingleton<IRegisterDatabase, RegisterDatabase>()
     .AddSingleton<IBudgetDatabase, BudgetDatabase>()
     .AddSingleton<IDateTimeProvider, DateTimeProvider>();
 
-var dbResult = Migration.CheckMigration(dbConnString);
+var dbResult = Migration.CheckMigration(dbConnString, new MigrationOption(false));
 if (!dbResult.Successful)
 {
     throw new InvalidOperationException("Database failed to update, exception: " + dbResult.Error);

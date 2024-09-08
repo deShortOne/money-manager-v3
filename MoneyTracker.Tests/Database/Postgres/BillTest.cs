@@ -1,6 +1,7 @@
 ﻿
 using MoneyTracker.Data.Postgres;
 using MoneyTracker.DatabaseMigration;
+using MoneyTracker.DatabaseMigration.Models;
 using MoneyTracker.Shared.DateManager;
 using MoneyTracker.Shared.Models.Bill;
 using MoneyTracker.Tests.Local;
@@ -21,7 +22,7 @@ public class BillTest : IAsyncLifetime
     {
         await _postgres.StartAsync();
 
-        Migration.CheckMigration(_postgres.GetConnectionString());
+        Migration.CheckMigration(_postgres.GetConnectionString(), new MigrationOption(true));
 
         return;
     }

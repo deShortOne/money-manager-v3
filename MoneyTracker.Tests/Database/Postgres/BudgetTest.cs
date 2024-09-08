@@ -1,5 +1,6 @@
 ﻿using MoneyTracker.Data.Postgres;
 using MoneyTracker.DatabaseMigration;
+using MoneyTracker.DatabaseMigration.Models;
 using MoneyTracker.Shared.Models.Budget;
 using MoneyTracker.Shared.Models.Transaction;
 using MoneyTracker.Tests.Database.Postgres.TestModels;
@@ -22,7 +23,7 @@ namespace MoneyTracker.Tests.Database.Postgres
         {
             await _postgres.StartAsync();
 
-            Migration.CheckMigration(_postgres.GetConnectionString());
+            Migration.CheckMigration(_postgres.GetConnectionString(), new MigrationOption(true));
 
             return;
         }

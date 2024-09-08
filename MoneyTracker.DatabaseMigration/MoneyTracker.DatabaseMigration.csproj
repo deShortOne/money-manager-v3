@@ -21,6 +21,13 @@
 	  <None Remove="scripts\migrations\20240903195037_AddBillTable.sql" />
 	  <None Remove="scripts\migrations\20240904235440_SeedSomeBillData.sql" />
 	  <None Remove="scripts\migrations\20240907151913_UpdateFrequencyToCorrectNames.sql" />
+	  <None Remove="scripts\migrations\20240908172659_RemoveAllSeedData.sql" />
+	  <None Remove="Scripts\Migrations\20240908173619_SetTableReigsterColumnDatePaidToDateOnly.sql" />
+	  <None Remove="Scripts\Seed.sql" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Include="Scripts\Seed.sql" />
 	</ItemGroup>
 
 	<ItemGroup>

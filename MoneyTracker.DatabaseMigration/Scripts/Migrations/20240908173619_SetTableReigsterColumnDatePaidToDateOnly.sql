@@ -1,0 +1,5 @@
+
+ALTER TABLE register 
+ALTER COLUMN datePaid SET DATA TYPE DATE
+    USING CAST(datePaid as DATE),
+ALTER COLUMN datePaid SET NOT NULL;
