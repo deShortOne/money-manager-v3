@@ -54,10 +54,14 @@ namespace MoneyTracker.Data.Postgres
 
                 if (!reader.IsDBNull("category_name"))
                 {
+                    decimal planned = reader.GetDecimal("planned");
+                    decimal actual = reader.GetDecimal("actual");
                     res[budgetId].AddBudgetCategoryDTO(new BudgetCategoryDTO(
                         reader.GetString("category_name"),
-                        reader.GetDecimal("planned"),
-                        reader.GetDecimal("actual")));
+                        planned,
+                        actual,
+                        planned - actual)
+                    );
                 }
             }
 
@@ -88,7 +92,7 @@ namespace MoneyTracker.Data.Postgres
                 var name = reader.GetString("name");
                 var planned = reader.GetDecimal("planned");
                 var actual = reader.GetDecimal("actual");
-                return new BudgetCategoryDTO(name, planned, actual);
+                return new BudgetCategoryDTO(name, planned, actual, planned - actual);
             }
 
             return null;

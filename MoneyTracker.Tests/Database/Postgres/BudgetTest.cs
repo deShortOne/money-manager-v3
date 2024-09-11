@@ -3,8 +3,6 @@ using MoneyTracker.DatabaseMigration;
 using MoneyTracker.DatabaseMigration.Models;
 using MoneyTracker.Shared.Models.Budget;
 using MoneyTracker.Shared.Models.Transaction;
-using MoneyTracker.Tests.Database.Postgres.TestModels;
-using Newtonsoft.Json;
 using Testcontainers.PostgreSql;
 
 namespace MoneyTracker.Tests.Database.Postgres
@@ -39,94 +37,29 @@ namespace MoneyTracker.Tests.Database.Postgres
             var db = new PostgresDatabase(_postgres.GetConnectionString());
             var budget = new BudgetDatabase(db);
 
-            var expected = new List<TestBudgetGroupDTO>()
+            var expected = new List<BudgetGroupDTO>()
             {
-                new TestBudgetGroupDTO() {
-                    Name = "Income",
-                    Categories = [
-                        new TestBudgetCategoryDTO() {
-                            Name = "Wages & Salary : Net Pay",
-                            Planned = 1800,
-                            Actual = 1800,
-                            Difference = 0
-                        },
-                    ],
-                    Planned = 1800,
-                    Actual = 1800,
-                    Difference = 0
-                },
-                new TestBudgetGroupDTO() {
-                    Name = "Committed Expenses",
-                    Categories = [
-                        new TestBudgetCategoryDTO() {
-                            Name = "Bills : Cell Phone",
-                            Planned = 10,
-                            Actual = 10,
-                            Difference = 0
-                        },
-                        new TestBudgetCategoryDTO() {
-                            Name = "Bills : Rent",
-                            Planned = 500,
-                            Actual = 500,
-                            Difference = 0
-                        },
-                        new TestBudgetCategoryDTO() {
-                            Name = "Groceries",
-                            Planned = 100,
-                            Actual = 75,
-                            Difference = 25
-                        },
-                    ],
-                    Planned = 610,
-                    Actual = 585,
-                    Difference = 25
-                },
-                new TestBudgetGroupDTO() {
-                    Name = "Fun",
-                    Categories = [],
-                    Planned = 0,
-                    Actual = 0,
-                    Difference = 0
-                },
-                new TestBudgetGroupDTO() {
-                    Name = "Irregular Expenses",
-                    Categories = [
-                        new TestBudgetCategoryDTO() {
-                            Name = "Hobby",
-                            Planned = 50,
-                            Actual = 150,
-                            Difference = -100
-                        }
-                    ],
-                    Planned = 50,
-                    Actual = 150,
-                    Difference = -100
-                },
-                new TestBudgetGroupDTO() {
-                    Name = "Savings & Debt",
-                    Categories = [],
-                    Planned = 0,
-                    Actual = 0,
-                    Difference = 0
-                },
-                new TestBudgetGroupDTO() {
-                    Name = "Retirement",
-                    Categories = [],
-                    Planned = 0,
-                    Actual = 0,
-                    Difference = 0
-                },
+                new BudgetGroupDTO("Income", 1800, 1800, 0, [
+                        new BudgetCategoryDTO("Wages & Salary : Net Pay", 1800, 1800, 0),
+                    ]
+                ),
+                new BudgetGroupDTO("Committed Expenses", 610, 585, 25, [
+                        new BudgetCategoryDTO("Bills : Cell Phone", 10, 10, 0),
+                        new BudgetCategoryDTO("Bills : Rent", 500, 500, 0),
+                        new BudgetCategoryDTO("Groceries", 100, 75, 25),
+                    ]
+                ),
+                new BudgetGroupDTO("Fun", 0, 0, 0, []),
+                new BudgetGroupDTO("Irregular Expenses", 50, 150, -100, [
+                        new BudgetCategoryDTO("Hobby", 50, 150, -100),
+                    ]
+                ),
+                new BudgetGroupDTO("Savings & Debt", 0, 0, 0, []),
+                new BudgetGroupDTO("Retirement", 0, 0, 0, []),
             };
+
             var actual = await budget.GetBudget();
-            for (int i = 0; i < actual.Count; i++)
-            {
-                var a = expected[i];
-                var b = actual[i];
-                if (!a.Equals(b))
-                {
-                    Assert.Fail($"{i}\n{JsonConvert.SerializeObject(expected[i])}\n{JsonConvert.SerializeObject(actual[i])}");
-                }
-            }
+            Assert.Equal(expected, actual);
         }
 
         [Fact]
@@ -137,103 +70,36 @@ namespace MoneyTracker.Tests.Database.Postgres
             var newBudget = new NewBudgetCategoryDTO(2, 6, 180);
             await budget.AddBudgetCategory(newBudget);
 
-            var budgetToBePutIntoExpected = new TestBudgetCategoryDTO()
+            var budgetToBePutIntoExpected = new BudgetCategoryDTO("Pet Care", 180, 0, 180);
+
+            var expected = new List<BudgetGroupDTO>()
             {
-                Name = "Pet Care",
-                Planned = 180,
-                Actual = 0,
-                Difference = 180,
+                new BudgetGroupDTO("Income", 1800, 1800, 0, [
+                        new BudgetCategoryDTO("Wages & Salary : Net Pay", 1800, 1800, 0),
+                    ]
+                ),
+                new BudgetGroupDTO("Committed Expenses",
+                    610 + budgetToBePutIntoExpected.Planned,
+                    585 + budgetToBePutIntoExpected.Actual,
+                    25 + budgetToBePutIntoExpected.Difference,
+                    [
+                        new BudgetCategoryDTO("Bills : Cell Phone", 10, 10, 0),
+                        new BudgetCategoryDTO("Bills : Rent", 500, 500, 0),
+                        new BudgetCategoryDTO("Groceries", 100, 75, 25),
+                        budgetToBePutIntoExpected,
+                    ]
+                ),
+                new BudgetGroupDTO("Fun", 0, 0, 0, []),
+                new BudgetGroupDTO("Irregular Expenses", 50, 150, -100, [
+                        new BudgetCategoryDTO("Hobby", 50, 150, -100),
+                    ]
+                ),
+                new BudgetGroupDTO("Savings & Debt", 0, 0, 0, []),
+                new BudgetGroupDTO("Retirement", 0, 0, 0, []),
             };
 
-            var expected = new List<TestBudgetGroupDTO>()
-            {
-                new TestBudgetGroupDTO() {
-                    Name = "Income",
-                    Categories = [
-                        new TestBudgetCategoryDTO() {
-                            Name = "Wages & Salary : Net Pay",
-                            Planned = 1800,
-                            Actual = 1800,
-                            Difference = 0
-                        },
-                    ],
-                    Planned = 1800,
-                    Actual = 1800,
-                    Difference = 0
-                },
-                new TestBudgetGroupDTO() {
-                    Name = "Committed Expenses",
-                    Categories = [
-                        new TestBudgetCategoryDTO() {
-                            Name = "Bills : Cell Phone",
-                            Planned = 10,
-                            Actual = 10,
-                            Difference = 0
-                        },
-                        new TestBudgetCategoryDTO() {
-                            Name = "Bills : Rent",
-                            Planned = 500,
-                            Actual = 500,
-                            Difference = 0
-                        },
-                        new TestBudgetCategoryDTO() {
-                            Name = "Groceries",
-                            Planned = 100,
-                            Actual = 75,
-                            Difference = 25
-                        },
-                        budgetToBePutIntoExpected,
-                    ],
-                    Planned = 610 + budgetToBePutIntoExpected.Planned,
-                    Actual = 585 + budgetToBePutIntoExpected.Actual,
-                    Difference = 25 + budgetToBePutIntoExpected.Difference,
-                },
-                new TestBudgetGroupDTO() {
-                    Name = "Fun",
-                    Categories = [],
-                    Planned = 0,
-                    Actual = 0,
-                    Difference = 0
-                },
-                new TestBudgetGroupDTO() {
-                    Name = "Irregular Expenses",
-                    Categories = [
-                        new TestBudgetCategoryDTO() {
-                            Name = "Hobby",
-                            Planned = 50,
-                            Actual = 150,
-                            Difference = -100
-                        }
-                    ],
-                    Planned = 50,
-                    Actual = 150,
-                    Difference = -100
-                },
-                new TestBudgetGroupDTO() {
-                    Name = "Savings & Debt",
-                    Categories = [],
-                    Planned = 0,
-                    Actual = 0,
-                    Difference = 0
-                },
-                new TestBudgetGroupDTO() {
-                    Name = "Retirement",
-                    Categories = [],
-                    Planned = 0,
-                    Actual = 0,
-                    Difference = 0
-                },
-            };
             var actual = await budget.GetBudget();
-            for (int i = 0; i < actual.Count; i++)
-            {
-                var a = expected[i];
-                var b = actual[i];
-                if (!a.Equals(b))
-                {
-                    Assert.Fail($"{i}\n{JsonConvert.SerializeObject(expected[i])}\n{JsonConvert.SerializeObject(actual[i])}");
-                }
-            }
+            Assert.Equal(expected, actual);
         }
 
         [Fact]
@@ -245,94 +111,29 @@ namespace MoneyTracker.Tests.Database.Postgres
 
             var budget = new BudgetDatabase(db);
 
-            var expected = new List<TestBudgetGroupDTO>()
+            var expected = new List<BudgetGroupDTO>()
             {
-                new TestBudgetGroupDTO() {
-                    Name = "Income",
-                    Categories = [
-                        new TestBudgetCategoryDTO() {
-                            Name = "Wages & Salary : Net Pay",
-                            Planned = 1800,
-                            Actual = 1800,
-                            Difference = 0
-                        },
-                    ],
-                    Planned = 1800,
-                    Actual = 1800,
-                    Difference = 0
-                },
-                new TestBudgetGroupDTO() {
-                    Name = "Committed Expenses",
-                    Categories = [
-                        new TestBudgetCategoryDTO() {
-                            Name = "Bills : Cell Phone",
-                            Planned = 10,
-                            Actual = 10,
-                            Difference = 0
-                        },
-                        new TestBudgetCategoryDTO() {
-                            Name = "Bills : Rent",
-                            Planned = 500,
-                            Actual = 500,
-                            Difference = 0
-                        },
-                        new TestBudgetCategoryDTO() {
-                            Name = "Groceries",
-                            Planned = 100,
-                            Actual = 92,
-                            Difference = 8
-                        },
-                    ],
-                    Planned = 610,
-                    Actual = 602,
-                    Difference = 8,
-                },
-                new TestBudgetGroupDTO() {
-                    Name = "Fun",
-                    Categories = [],
-                    Planned = 0,
-                    Actual = 0,
-                    Difference = 0
-                },
-                new TestBudgetGroupDTO() {
-                    Name = "Irregular Expenses",
-                    Categories = [
-                        new TestBudgetCategoryDTO() {
-                            Name = "Hobby",
-                            Planned = 50,
-                            Actual = 150,
-                            Difference = -100
-                        }
-                    ],
-                    Planned = 50,
-                    Actual = 150,
-                    Difference = -100
-                },
-                new TestBudgetGroupDTO() {
-                    Name = "Savings & Debt",
-                    Categories = [],
-                    Planned = 0,
-                    Actual = 0,
-                    Difference = 0
-                },
-                new TestBudgetGroupDTO() {
-                    Name = "Retirement",
-                    Categories = [],
-                    Planned = 0,
-                    Actual = 0,
-                    Difference = 0
-                },
+                new BudgetGroupDTO("Income", 1800, 1800, 0, [
+                        new BudgetCategoryDTO("Wages & Salary : Net Pay", 1800, 1800, 0),
+                    ]
+                ),
+                new BudgetGroupDTO("Committed Expenses", 610, 602, 8, [ // EDITED
+                        new BudgetCategoryDTO("Bills : Cell Phone", 10, 10, 0),
+                        new BudgetCategoryDTO("Bills : Rent", 500, 500, 0),
+                        new BudgetCategoryDTO("Groceries", 100, 92, 8),// EDITED
+                    ]
+                ),
+                new BudgetGroupDTO("Fun", 0, 0, 0, []),
+                new BudgetGroupDTO("Irregular Expenses", 50, 150, -100, [
+                        new BudgetCategoryDTO("Hobby", 50, 150, -100),
+                    ]
+                ),
+                new BudgetGroupDTO("Savings & Debt", 0, 0, 0, []),
+                new BudgetGroupDTO("Retirement", 0, 0, 0, []),
             };
+
             var actual = await budget.GetBudget();
-            for (int i = 0; i < actual.Count; i++)
-            {
-                var a = expected[i];
-                var b = actual[i];
-                if (!a.Equals(b))
-                {
-                    Assert.Fail($"{i}\n{JsonConvert.SerializeObject(expected[i])}\n{JsonConvert.SerializeObject(actual[i])}");
-                }
-            }
+            Assert.Equal(expected, actual);
         }
 
         [Fact]
@@ -343,94 +144,29 @@ namespace MoneyTracker.Tests.Database.Postgres
             var newBudget = new NewBudgetCategoryDTO(2, 4, 150);
             await budget.AddBudgetCategory(newBudget);
 
-            var expected = new List<TestBudgetGroupDTO>()
+            var expected = new List<BudgetGroupDTO>()
             {
-                new TestBudgetGroupDTO() {
-                    Name = "Income",
-                    Categories = [
-                        new TestBudgetCategoryDTO() {
-                            Name = "Wages & Salary : Net Pay",
-                            Planned = 1800,
-                            Actual = 1800,
-                            Difference = 0
-                        },
-                    ],
-                    Planned = 1800,
-                    Actual = 1800,
-                    Difference = 0
-                },
-                new TestBudgetGroupDTO() {
-                    Name = "Committed Expenses",
-                    Categories = [
-                        new TestBudgetCategoryDTO() {
-                            Name = "Bills : Cell Phone",
-                            Planned = 10,
-                            Actual = 10,
-                            Difference = 0
-                        },
-                        new TestBudgetCategoryDTO() {
-                            Name = "Bills : Rent",
-                            Planned = 500,
-                            Actual = 500,
-                            Difference = 0
-                        },
-                        new TestBudgetCategoryDTO() {
-                            Name = "Groceries",
-                            Planned = 150,
-                            Actual = 75,
-                            Difference = 75
-                        },
-                    ],
-                    Planned = 660,
-                    Actual = 585,
-                    Difference = 75,
-                },
-                new TestBudgetGroupDTO() {
-                    Name = "Fun",
-                    Categories = [],
-                    Planned = 0,
-                    Actual = 0,
-                    Difference = 0
-                },
-                new TestBudgetGroupDTO() {
-                    Name = "Irregular Expenses",
-                    Categories = [
-                        new TestBudgetCategoryDTO() {
-                            Name = "Hobby",
-                            Planned = 50,
-                            Actual = 150,
-                            Difference = -100
-                        }
-                    ],
-                    Planned = 50,
-                    Actual = 150,
-                    Difference = -100
-                },
-                new TestBudgetGroupDTO() {
-                    Name = "Savings & Debt",
-                    Categories = [],
-                    Planned = 0,
-                    Actual = 0,
-                    Difference = 0
-                },
-                new TestBudgetGroupDTO() {
-                    Name = "Retirement",
-                    Categories = [],
-                    Planned = 0,
-                    Actual = 0,
-                    Difference = 0
-                },
+                new BudgetGroupDTO("Income", 1800, 1800, 0, [
+                        new BudgetCategoryDTO("Wages & Salary : Net Pay", 1800, 1800, 0),
+                    ]
+                ),
+                new BudgetGroupDTO("Committed Expenses", 660, 585, 75, [
+                        new BudgetCategoryDTO("Bills : Cell Phone", 10, 10, 0),
+                        new BudgetCategoryDTO("Bills : Rent", 500, 500, 0),
+                        new BudgetCategoryDTO("Groceries", 150, 75, 75),
+                    ]
+                ),
+                new BudgetGroupDTO("Fun", 0, 0, 0, []),
+                new BudgetGroupDTO("Irregular Expenses", 50, 150, -100, [
+                        new BudgetCategoryDTO("Hobby", 50, 150, -100),
+                    ]
+                ),
+                new BudgetGroupDTO("Savings & Debt", 0, 0, 0, []),
+                new BudgetGroupDTO("Retirement", 0, 0, 0, []),
             };
+
             var actual = await budget.GetBudget();
-            for (int i = 0; i < actual.Count; i++)
-            {
-                var a = expected[i];
-                var b = actual[i];
-                if (!a.Equals(b))
-                {
-                    Assert.Fail($"{i}\n{JsonConvert.SerializeObject(expected[i])}\n{JsonConvert.SerializeObject(actual[i])}");
-                }
-            }
+            Assert.Equal(expected, actual);
         }
 
         [Fact]
@@ -441,94 +177,29 @@ namespace MoneyTracker.Tests.Database.Postgres
             var newBudget = new EditBudgetCategoryDTO(4, budgetCategoryPlanned: 150);
             await budget.EditBudgetCategory(newBudget);
 
-            var expected = new List<TestBudgetGroupDTO>()
+            var expected = new List<BudgetGroupDTO>()
             {
-                new TestBudgetGroupDTO() {
-                    Name = "Income",
-                    Categories = [
-                        new TestBudgetCategoryDTO() {
-                            Name = "Wages & Salary : Net Pay",
-                            Planned = 1800,
-                            Actual = 1800,
-                            Difference = 0
-                        },
-                    ],
-                    Planned = 1800,
-                    Actual = 1800,
-                    Difference = 0
-                },
-                new TestBudgetGroupDTO() {
-                    Name = "Committed Expenses",
-                    Categories = [
-                        new TestBudgetCategoryDTO() {
-                            Name = "Bills : Cell Phone",
-                            Planned = 10,
-                            Actual = 10,
-                            Difference = 0
-                        },
-                        new TestBudgetCategoryDTO() {
-                            Name = "Bills : Rent",
-                            Planned = 500,
-                            Actual = 500,
-                            Difference = 0
-                        },
-                        new TestBudgetCategoryDTO() {
-                            Name = "Groceries",
-                            Planned = 150,
-                            Actual = 75,
-                            Difference = 75
-                        },
-                    ],
-                    Planned = 660,
-                    Actual = 585,
-                    Difference = 75,
-                },
-                new TestBudgetGroupDTO() {
-                    Name = "Fun",
-                    Categories = [],
-                    Planned = 0,
-                    Actual = 0,
-                    Difference = 0
-                },
-                new TestBudgetGroupDTO() {
-                    Name = "Irregular Expenses",
-                    Categories = [
-                        new TestBudgetCategoryDTO() {
-                            Name = "Hobby",
-                            Planned = 50,
-                            Actual = 150,
-                            Difference = -100
-                        }
-                    ],
-                    Planned = 50,
-                    Actual = 150,
-                    Difference = -100
-                },
-                new TestBudgetGroupDTO() {
-                    Name = "Savings & Debt",
-                    Categories = [],
-                    Planned = 0,
-                    Actual = 0,
-                    Difference = 0
-                },
-                new TestBudgetGroupDTO() {
-                    Name = "Retirement",
-                    Categories = [],
-                    Planned = 0,
-                    Actual = 0,
-                    Difference = 0
-                },
+                new BudgetGroupDTO("Income", 1800, 1800, 0, [
+                        new BudgetCategoryDTO("Wages & Salary : Net Pay", 1800, 1800, 0),
+                    ]
+                ),
+                new BudgetGroupDTO("Committed Expenses", 660, 585, 75, [
+                        new BudgetCategoryDTO("Bills : Cell Phone", 10, 10, 0),
+                        new BudgetCategoryDTO("Bills : Rent", 500, 500, 0),
+                        new BudgetCategoryDTO("Groceries", 150, 75, 75),
+                    ]
+                ),
+                new BudgetGroupDTO("Fun", 0, 0, 0, []),
+                new BudgetGroupDTO("Irregular Expenses", 50, 150, -100, [
+                        new BudgetCategoryDTO("Hobby", 50, 150, -100),
+                    ]
+                ),
+                new BudgetGroupDTO("Savings & Debt", 0, 0, 0, []),
+                new BudgetGroupDTO("Retirement", 0, 0, 0, []),
             };
+
             var actual = await budget.GetBudget();
-            for (int i = 0; i < actual.Count; i++)
-            {
-                var a = expected[i];
-                var b = actual[i];
-                if (!a.Equals(b))
-                {
-                    Assert.Fail($"{i}\n{JsonConvert.SerializeObject(expected[i])}\n{JsonConvert.SerializeObject(actual[i])}");
-                }
-            }
+            Assert.Equal(expected, actual);
         }
     }
 }

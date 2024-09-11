@@ -3,12 +3,12 @@ namespace MoneyTracker.Shared.Models.Budget
 {
     public class BudgetCategoryDTO
     {
-        public BudgetCategoryDTO(string name, decimal planned, decimal actual)
+        public BudgetCategoryDTO(string name, decimal planned, decimal actual, decimal difference)
         {
             Name = name;
             Planned = planned;
             Actual = actual;
-            Difference = planned - Actual;
+            Difference = difference;
         }
 
         public string Name { get; private set; }

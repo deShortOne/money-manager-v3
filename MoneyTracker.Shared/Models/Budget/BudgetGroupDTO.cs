@@ -6,10 +6,17 @@ namespace MoneyTracker.Shared.Models.Budget
     {
         private IList<BudgetCategoryDTO> _categories;
 
-        public BudgetGroupDTO(string name)
+        public BudgetGroupDTO(string name) : this(name, 0, 0, 0, [])
+        {
+        }
+
+        public BudgetGroupDTO(string name, decimal planned, decimal actual, decimal difference, IList<BudgetCategoryDTO> categories)
         {
             Name = name;
-            _categories = [];
+            Planned = planned;
+            Actual = actual;
+            Difference = difference;
+            _categories = categories;
         }
 
         public void AddBudgetCategoryDTO(BudgetCategoryDTO newBudgetCategory)
@@ -29,7 +36,7 @@ namespace MoneyTracker.Shared.Models.Budget
 
         public decimal Planned { get; private set; }
         public decimal Actual { get; private set; }
-        public virtual decimal Difference { get; private set; }
+        public decimal Difference { get; private set; }
 
         public override bool Equals(object? obj)
         {
@@ -42,7 +49,7 @@ namespace MoneyTracker.Shared.Models.Budget
 
             return Name == other.Name && Planned == other.Planned &&
                 Actual == other.Actual && Difference == other.Difference &&
-                Categories == other.Categories;
+                _categories.SequenceEqual(other._categories);
         }
 
         public override int GetHashCode()
