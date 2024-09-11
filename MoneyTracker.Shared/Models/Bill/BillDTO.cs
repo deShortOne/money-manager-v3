@@ -1,7 +1,7 @@
 ﻿
 namespace MoneyTracker.Shared.Models.Bill;
 public class BillDTO(int id, string payee, decimal amount, DateOnly nextDueDate,
-    string frequency, string category, OverDueBillInfo? overDueBill)
+    string frequency, string category, OverDueBillInfo? overDueBill = null)
 {
     public int Id { get; private set; } = id;
     public string Payee { get; private set; } = payee;
