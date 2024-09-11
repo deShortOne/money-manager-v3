@@ -1,9 +1,9 @@
 ﻿using Microsoft.OpenApi.Models;
+using MoneyTracker.API;
 using MoneyTracker.Data.Global;
 using MoneyTracker.Data.Postgres;
 using MoneyTracker.DatabaseMigration;
 using MoneyTracker.DatabaseMigration.Models;
-using MoneyTracker.Shared.Data;
 using MoneyTracker.Shared.DateManager;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,12 +23,13 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 var dbConnString = builder.Configuration["Database:Paelagus_RO"];
-builder.Services.AddSingleton<IDatabase>(_ => new PostgresDatabase(dbConnString));
-builder.Services.AddSingleton<IRegisterDatabase, RegisterDatabase>()
-    .AddSingleton<IBillDatabase, BillDatabase>()
-    .AddSingleton<ICategoryDatabase, CategoryDatabase>()
-    .AddSingleton<IBudgetDatabase, BudgetDatabase>()
+builder.Services.AddSingleton<IDatabase>(_ => new PostgresDatabase(dbConnString))
     .AddSingleton<IDateProvider, DateProvider>();
+
+Startup.SetBillDependencyInjection(builder.Services);
+Startup.SetBudgetDependencyInjection(builder.Services);
+Startup.SetCategoryDependencyInjection(builder.Services);
+Startup.SetRegisterDependencyInjection(builder.Services);
 
 var dbResult = Migration.CheckMigration(dbConnString, new MigrationOption(false));
 if (!dbResult.Successful)
