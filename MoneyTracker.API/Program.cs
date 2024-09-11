@@ -5,7 +5,6 @@ using MoneyTracker.DatabaseMigration;
 using MoneyTracker.DatabaseMigration.Models;
 using MoneyTracker.Shared.Data;
 using MoneyTracker.Shared.DateManager;
-using MoneyTracker.Shared.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 

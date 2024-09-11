@@ -105,7 +105,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                 DateTime.Parse("2024-09-01T00:00:00Z").ToUniversalTime(),
                 "Hobby" // which is 5
             );
-            await register.AddNewTransaction(new NewTransactionDTO(
+            await register.AddTransaction(new NewTransactionDTO(
                 transactionToAdd.Payee,
                 transactionToAdd.Amount,
                 transactionToAdd.DatePaid,

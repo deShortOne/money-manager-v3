@@ -48,7 +48,7 @@ namespace MoneyTracker.Data.Postgres
             return res;
         }
 
-        public async Task<TransactionDTO> AddNewTransaction(NewTransactionDTO transaction)
+        public async Task<TransactionDTO> AddTransaction(NewTransactionDTO transaction)
         {
             var query = """
                 INSERT INTO register (payee, amount, datePaid, category_id) VALUES

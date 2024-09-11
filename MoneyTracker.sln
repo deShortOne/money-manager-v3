@@ -15,9 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoneyTracker.Tests", "Money
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoneyTracker.Calculation", "MoneyTracker.Calculation\MoneyTracker.Calculation.csproj", "{764AD3A9-0A6D-46B4-BA3F-AC9AFC31F527}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoneyTracker.Core", "MoneyTracker.Core\MoneyTracker.Core.csproj", "{6EF8F1B1-4DB4-4598-8337-EFBF55951E1A}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoneyTracker.Infrastructure", "MoneyTracker.Infrastructure\MoneyTracker.Infrastructure.csproj", "{B5B05EE4-5F04-4ABD-BCC1-33A80F31DD85}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoneyTracker.Core", "MoneyTracker.Core\MoneyTracker.Core.csproj", "{6EF8F1B1-4DB4-4598-8337-EFBF55951E1A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,10 +51,6 @@ Global
 		{6EF8F1B1-4DB4-4598-8337-EFBF55951E1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6EF8F1B1-4DB4-4598-8337-EFBF55951E1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6EF8F1B1-4DB4-4598-8337-EFBF55951E1A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B5B05EE4-5F04-4ABD-BCC1-33A80F31DD85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B5B05EE4-5F04-4ABD-BCC1-33A80F31DD85}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B5B05EE4-5F04-4ABD-BCC1-33A80F31DD85}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B5B05EE4-5F04-4ABD-BCC1-33A80F31DD85}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
