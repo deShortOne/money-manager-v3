@@ -12,9 +12,17 @@ public class BillService : IBillService
         _dbService = dbService;
     }
 
-    public Task<List<BillDTO>> GetAllBills()
+    public async Task<List<BillDTO>> GetAllBills()
     {
-        return _dbService.GetAllBills();
+        var databaseBills = await _dbService.GetAllBills();
+
+        List<BillDTO> res = [];
+        foreach (var bill in databaseBills)
+        {
+            res.Add(bill);
+        }
+
+        return res;
     }
 
     public Task<List<BillDTO>> AddBill(NewBillDTO newBill)
