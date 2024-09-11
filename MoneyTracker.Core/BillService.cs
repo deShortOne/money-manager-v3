@@ -1,4 +1,5 @@
-﻿using MoneyTracker.Shared.Core;
+﻿using MoneyTracker.Calculation.Bill;
+using MoneyTracker.Shared.Core;
 using MoneyTracker.Shared.Data;
 using MoneyTracker.Shared.DateManager;
 using MoneyTracker.Shared.Models.Bill;
@@ -22,7 +23,17 @@ public class BillService : IBillService
         List<BillDTO> res = [];
         foreach (var bill in databaseBills)
         {
-            res.Add(bill);
+
+            res.Add(new BillDTO(
+               bill.Id,
+               bill.Payee,
+               bill.Amount,
+               bill.NextDueDate,
+               bill.Frequency,
+               bill.Category,
+               BillCalculation.CalculateOverDueBillInfo(bill.Frequency, bill.NextDueDate,
+                   _dateProvider)
+           ));
         }
 
         return res;
