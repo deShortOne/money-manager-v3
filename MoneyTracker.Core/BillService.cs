@@ -1,15 +1,18 @@
 ﻿using MoneyTracker.Shared.Core;
 using MoneyTracker.Shared.Data;
+using MoneyTracker.Shared.DateManager;
 using MoneyTracker.Shared.Models.Bill;
 
 namespace MoneyTracker.Core;
 public class BillService : IBillService
 {
     private readonly IBillDatabase _dbService;
+    private readonly IDateProvider _dateProvider;
 
-    public BillService(IBillDatabase dbService)
+    public BillService(IBillDatabase dbService, IDateProvider dateProvider)
     {
         _dbService = dbService;
+        _dateProvider = dateProvider;
     }
 
     public async Task<List<BillDTO>> GetAllBills()

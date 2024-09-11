@@ -38,7 +38,7 @@ public class BillServiceTest : IAsyncLifetime
         IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 8, 24));
         var bill = new BillDatabase(db, dateProvider);
 
-        var billService = new BillService(bill);
+        var billService = new BillService(bill, dateProvider);
 
         var expected = new List<BillDTO>()
         {
