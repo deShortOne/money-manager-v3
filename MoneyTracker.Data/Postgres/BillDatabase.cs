@@ -1,10 +1,7 @@
-﻿
-using System.Data;
+﻿using System.Data;
 using System.Data.Common;
-using MoneyTracker.Calculation.Bill;
 using MoneyTracker.Data.Global;
 using MoneyTracker.Shared.Data;
-using MoneyTracker.Shared.DateManager;
 using MoneyTracker.Shared.Models.Bill;
 using Npgsql;
 
@@ -12,11 +9,9 @@ namespace MoneyTracker.Data.Postgres;
 public class BillDatabase : IBillDatabase
 {
     private readonly PostgresDatabase _database;
-    private readonly IDateProvider _dateProvider;
-    public BillDatabase(IDatabase db, IDateProvider dateProvider)
+    public BillDatabase(IDatabase db)
     {
         _database = (PostgresDatabase)db;
-        _dateProvider = dateProvider;
     }
 
     public async Task<List<BillDTO>> GetAllBills()
@@ -48,9 +43,7 @@ public class BillDatabase : IBillDatabase
                 reader.GetDecimal("amount"),
                 nextDueDate,
                 frequency,
-                reader.GetString("name"),
-                BillCalculation.CalculateOverDueBillInfo(frequency, nextDueDate,
-                    _dateProvider)
+                reader.GetString("name")
             ));
         }
 

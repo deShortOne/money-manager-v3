@@ -36,8 +36,7 @@ public class BillTest : IAsyncLifetime
     public async void FirstLoadCheckTablesThatDataAreThere()
     {
         var db = new PostgresDatabase(_postgres.GetConnectionString());
-        IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 8, 24));
-        var bill = new BillDatabase(db, dateProvider);
+        var bill = new BillDatabase(db);
 
         var expected = new List<BillDTO>()
         {
@@ -54,8 +53,7 @@ public class BillTest : IAsyncLifetime
     public async void DeleteBill()
     {
         var db = new PostgresDatabase(_postgres.GetConnectionString());
-        IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 8, 24));
-        var bill = new BillDatabase(db, dateProvider);
+        var bill = new BillDatabase(db);
         await bill.DeleteBill(new DeleteBillDTO(1));
 
         var expected = new List<BillDTO>()
@@ -72,8 +70,7 @@ public class BillTest : IAsyncLifetime
     public async void EditBill()
     {
         var db = new PostgresDatabase(_postgres.GetConnectionString());
-        IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 8, 24));
-        var bill = new BillDatabase(db, dateProvider);
+        var bill = new BillDatabase(db);
         await bill.EditBill(new EditBillDTO(1, payee: "supermarket b"));
 
         var expected = new List<BillDTO>()
@@ -91,8 +88,7 @@ public class BillTest : IAsyncLifetime
     public async void AddBill()
     {
         var db = new PostgresDatabase(_postgres.GetConnectionString());
-        IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 8, 24));
-        var bill = new BillDatabase(db, dateProvider);
+        var bill = new BillDatabase(db);
         await bill.AddBill(new NewBillDTO("flight sim", 420, DateOnly.Parse("2024-09-05"), "Daily", 5));
 
         var expected = new List<BillDTO>()
@@ -100,66 +96,6 @@ public class BillTest : IAsyncLifetime
             new BillDTO(2, "company a", 100, DateOnly.Parse("2024-08-30"), "Monthly", "Wages & Salary : Net Pay", null),
             new BillDTO(1, "supermarket a", 23, DateOnly.Parse("2024-09-03"), "Weekly", "Groceries", null),
             new BillDTO(3, "flight sim", 420, DateOnly.Parse("2024-09-05"), "Daily", "Hobby", null),
-        };
-
-        var actual = await bill.GetAllBills();
-
-        Assert.Equal(expected, actual);
-    }
-
-    [Fact]
-    public async void FirstLoadCheckButCurrentDateIsOneIterationAfterDueDate()
-    {
-        var db = new PostgresDatabase(_postgres.GetConnectionString());
-        IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 9, 7));
-        var bill = new BillDatabase(db, dateProvider);
-
-        var expected = new List<BillDTO>()
-        {
-            new BillDTO(2, "company a", 100, DateOnly.Parse("2024-08-30"), "Monthly", "Wages & Salary : Net Pay",
-                new OverDueBillInfo(8, 1)),
-            new BillDTO(1, "supermarket a", 23, DateOnly.Parse("2024-09-03"), "Weekly", "Groceries",
-                new OverDueBillInfo(4, 1)),
-        };
-
-        var actual = await bill.GetAllBills();
-
-        Assert.Equal(expected, actual);
-    }
-
-    [Fact]
-    public async void FirstLoadCheckButCurrentDateIsMultipleIterationsAfterDueDate()
-    {
-        var db = new PostgresDatabase(_postgres.GetConnectionString());
-        IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 10, 4));
-        var bill = new BillDatabase(db, dateProvider);
-
-        var expected = new List<BillDTO>()
-        {
-            new BillDTO(2, "company a", 100, DateOnly.Parse("2024-08-30"), "Monthly", "Wages & Salary : Net Pay",
-                new OverDueBillInfo(35, 2)),
-            new BillDTO(1, "supermarket a", 23, DateOnly.Parse("2024-09-03"), "Weekly", "Groceries",
-                new OverDueBillInfo(31, 5)),
-        };
-
-        var actual = await bill.GetAllBills();
-
-        Assert.Equal(expected, actual);
-    }
-
-    [Fact]
-    public async void FirstLoadCheckButCurrentDateIsMultipleIterationsAfterDueDate2()
-    {
-        var db = new PostgresDatabase(_postgres.GetConnectionString());
-        IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 10, 3));
-        var bill = new BillDatabase(db, dateProvider);
-
-        var expected = new List<BillDTO>()
-        {
-            new BillDTO(2, "company a", 100, DateOnly.Parse("2024-08-30"), "Monthly", "Wages & Salary : Net Pay",
-                new OverDueBillInfo(34, 2)),
-            new BillDTO(1, "supermarket a", 23, DateOnly.Parse("2024-09-03"), "Weekly", "Groceries",
-                new OverDueBillInfo(30, 5)),
         };
 
         var actual = await bill.GetAllBills();

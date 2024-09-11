@@ -12,7 +12,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\MoneyTracker.Calculation\MoneyTracker.Calculation.csproj" />
 		<ProjectReference Include="..\MoneyTracker.Shared\MoneyTracker.Shared.csproj" />
 	</ItemGroup>
 

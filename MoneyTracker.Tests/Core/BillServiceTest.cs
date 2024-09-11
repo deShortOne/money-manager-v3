@@ -36,7 +36,7 @@ public class BillServiceTest : IAsyncLifetime
     {
         var db = new PostgresDatabase(_postgres.GetConnectionString());
         IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 8, 24));
-        var bill = new BillDatabase(db, dateProvider);
+        var bill = new BillDatabase(db);
 
         var expected = new List<BillDTO>()
         {
@@ -54,7 +54,7 @@ public class BillServiceTest : IAsyncLifetime
     {
         var db = new PostgresDatabase(_postgres.GetConnectionString());
         IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 8, 24));
-        var bill = new BillDatabase(db, dateProvider);
+        var bill = new BillDatabase(db);
 
         var billService = new BillService(bill, dateProvider);
         await billService.DeleteBill(new DeleteBillDTO(1));
@@ -73,9 +73,9 @@ public class BillServiceTest : IAsyncLifetime
     public async void EditBill()
     {
         var db = new PostgresDatabase(_postgres.GetConnectionString());
-        IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 8, 24));
-        var bill = new BillDatabase(db, dateProvider);
+        var bill = new BillDatabase(db);
 
+        IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 8, 24));
         var billService = new BillService(bill, dateProvider);
         await billService.EditBill(new EditBillDTO(1, payee: "supermarket b"));
 
@@ -94,9 +94,9 @@ public class BillServiceTest : IAsyncLifetime
     public async void AddBill()
     {
         var db = new PostgresDatabase(_postgres.GetConnectionString());
-        IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 8, 24));
-        var bill = new BillDatabase(db, dateProvider);
+        var bill = new BillDatabase(db);
 
+        IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 8, 24));
         var billService = new BillService(bill, dateProvider);
         await billService.AddBill(new NewBillDTO("flight sim", 420, DateOnly.Parse("2024-09-05"), "Daily", 5));
 
@@ -116,10 +116,11 @@ public class BillServiceTest : IAsyncLifetime
     public async void FirstLoadCheckButCurrentDateIsOneIterationAfterDueDate()
     {
         var db = new PostgresDatabase(_postgres.GetConnectionString());
-        IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 9, 7));
-        var bill = new BillDatabase(db, dateProvider);
+        var bill = new BillDatabase(db);
 
+        IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 9, 7));
         var billService = new BillService(bill, dateProvider);
+
         var expected = new List<BillDTO>()
         {
             new BillDTO(2, "company a", 100, DateOnly.Parse("2024-08-30"), "Monthly", "Wages & Salary : Net Pay",
@@ -137,9 +138,9 @@ public class BillServiceTest : IAsyncLifetime
     public async void FirstLoadCheckButCurrentDateIsMultipleIterationsAfterDueDate()
     {
         var db = new PostgresDatabase(_postgres.GetConnectionString());
-        IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 10, 4));
-        var bill = new BillDatabase(db, dateProvider);
+        var bill = new BillDatabase(db);
 
+        IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 10, 4));
         var billService = new BillService(bill, dateProvider);
 
         var expected = new List<BillDTO>()
@@ -159,9 +160,9 @@ public class BillServiceTest : IAsyncLifetime
     public async void FirstLoadCheckButCurrentDateIsMultipleIterationsAfterDueDate2()
     {
         var db = new PostgresDatabase(_postgres.GetConnectionString());
-        IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 10, 3));
-        var bill = new BillDatabase(db, dateProvider);
+        var bill = new BillDatabase(db);
 
+        IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 10, 3));
         var billService = new BillService(bill, dateProvider);
 
         var expected = new List<BillDTO>()
