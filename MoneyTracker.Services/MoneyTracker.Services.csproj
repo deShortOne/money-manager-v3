@@ -1,18 +1,12 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>02ede966-6801-4101-a2df-a4b9bb8c42a7</UserSecretsId>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
-	</ItemGroup>
-
   <ItemGroup>
-    <ProjectReference Include="..\MoneyTracker.Core\MoneyTracker.Core.csproj" />
     <ProjectReference Include="..\MoneyTracker.DatabaseMigration\MoneyTracker.DatabaseMigration.csproj" />
     <ProjectReference Include="..\MoneyTracker.Data\MoneyTracker.Data.csproj" />
     <ProjectReference Include="..\MoneyTracker.Shared\MoneyTracker.Shared.csproj" />

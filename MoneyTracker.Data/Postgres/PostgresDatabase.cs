@@ -1,5 +1,4 @@
 ﻿using System.Data.Common;
-using Microsoft.Extensions.Configuration;
 using MoneyTracker.Data.Global;
 using Npgsql;
 

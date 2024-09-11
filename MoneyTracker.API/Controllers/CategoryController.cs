@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MoneyTracker.Data.Global;
+using MoneyTracker.Shared.Core;
 using MoneyTracker.Shared.Models.Category;
 
 namespace MoneyTracker.API.Controllers
@@ -10,40 +10,40 @@ namespace MoneyTracker.API.Controllers
     {
 
         private readonly ILogger<CategoryController> _logger;
-        private readonly ICategoryDatabase _database;
+        private readonly ICategoryService _service;
 
-        public CategoryController(ILogger<CategoryController> logger, ICategoryDatabase db)
+        public CategoryController(ILogger<CategoryController> logger, ICategoryService service)
         {
             _logger = logger;
-            _database = db;
+            _service = service;
         }
 
         [HttpGet]
         [Route("get")]
         public Task<List<CategoryDTO>> GetCategories()
         {
-            return _database.GetAllCategories();
+            return _service.GetAllCategories();
         }
 
         [HttpPost]
         [Route("add")]
         public Task<CategoryDTO> AddCategory([FromBody] NewCategoryDTO categoryName)
         {
-            return _database.AddCategory(categoryName);
+            return _service.AddCategory(categoryName);
         }
 
         [HttpPut]
         [Route("edit")]
         public Task<CategoryDTO> EditCategory([FromBody] EditCategoryDTO editCategory)
         {
-            return _database.EditCategory(editCategory);
+            return _service.EditCategory(editCategory);
         }
 
         [HttpDelete]
         [Route("delete")]
         public Task<bool> DeleteCategory([FromBody] DeleteCategoryDTO deleteCategory)
         {
-            return _database.DeleteCategory(deleteCategory);
+            return _service.DeleteCategory(deleteCategory);
         }
     }
 }

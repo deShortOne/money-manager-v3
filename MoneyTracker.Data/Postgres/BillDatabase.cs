@@ -3,6 +3,7 @@ using System.Data;
 using System.Data.Common;
 using MoneyTracker.Calculation.Bill;
 using MoneyTracker.Data.Global;
+using MoneyTracker.Shared.Data;
 using MoneyTracker.Shared.DateManager;
 using MoneyTracker.Shared.Models.Bill;
 using Npgsql;
@@ -18,7 +19,7 @@ public class BillDatabase : IBillDatabase
         _dateProvider = dateProvider;
     }
 
-    public async Task<List<BillDTO>> GetBill()
+    public async Task<List<BillDTO>> GetAllBills()
     {
         string query = """
             SELECT b.id,
@@ -73,7 +74,7 @@ public class BillDatabase : IBillDatabase
 
         await _database.UpdateTable(query, queryParams);
 
-        return await GetBill();
+        return await GetAllBills();
     }
 
     public async Task<List<BillDTO>> EditBill(EditBillDTO editBillDTO)
@@ -118,7 +119,7 @@ public class BillDatabase : IBillDatabase
 
         await _database.UpdateTable(query, queryParams);
 
-        return await GetBill();
+        return await GetAllBills();
     }
 
     public async Task<List<BillDTO>> DeleteBill(DeleteBillDTO deleteBillDTO)
@@ -134,6 +135,6 @@ public class BillDatabase : IBillDatabase
 
         await _database.UpdateTable(query, queryParams);
 
-        return await GetBill();
+        return await GetAllBills();
     }
 }

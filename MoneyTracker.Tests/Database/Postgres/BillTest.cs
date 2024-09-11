@@ -45,7 +45,7 @@ public class BillTest : IAsyncLifetime
             new BillDTO(1, "supermarket a", 23, DateOnly.Parse("2024-09-03"), "Weekly", "Groceries", null),
         };
 
-        var actual = await bill.GetBill();
+        var actual = await bill.GetAllBills();
 
         Assert.Equal(expected, actual);
     }
@@ -63,7 +63,7 @@ public class BillTest : IAsyncLifetime
             new BillDTO(2, "company a", 100, DateOnly.Parse("2024-08-30"), "Monthly", "Wages & Salary : Net Pay", null),
         };
 
-        var actual = await bill.GetBill();
+        var actual = await bill.GetAllBills();
 
         Assert.Equal(expected, actual);
     }
@@ -82,7 +82,7 @@ public class BillTest : IAsyncLifetime
             new BillDTO(1, "supermarket b", 23, DateOnly.Parse("2024-09-03"), "Weekly", "Groceries", null),
         };
 
-        var actual = await bill.GetBill();
+        var actual = await bill.GetAllBills();
 
         Assert.Equal(expected, actual);
     }
@@ -102,7 +102,7 @@ public class BillTest : IAsyncLifetime
             new BillDTO(3, "flight sim", 420, DateOnly.Parse("2024-09-05"), "Daily", "Hobby", null),
         };
 
-        var actual = await bill.GetBill();
+        var actual = await bill.GetAllBills();
 
         Assert.Equal(expected, actual);
     }
@@ -122,7 +122,7 @@ public class BillTest : IAsyncLifetime
                 new OverDueBillInfo(4, 1)),
         };
 
-        var actual = await bill.GetBill();
+        var actual = await bill.GetAllBills();
 
         Assert.Equal(expected, actual);
     }
@@ -142,7 +142,7 @@ public class BillTest : IAsyncLifetime
                 new OverDueBillInfo(31, 5)),
         };
 
-        var actual = await bill.GetBill();
+        var actual = await bill.GetAllBills();
 
         Assert.Equal(expected, actual);
     }
@@ -162,7 +162,7 @@ public class BillTest : IAsyncLifetime
                 new OverDueBillInfo(30, 5)),
         };
 
-        var actual = await bill.GetBill();
+        var actual = await bill.GetAllBills();
 
         Assert.Equal(expected, actual);
     }

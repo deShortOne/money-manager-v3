@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using MoneyTracker.Data.Global;
+using MoneyTracker.Shared.Core;
 using MoneyTracker.Shared.Models.Transaction;
 
 namespace MoneyTracker.API.Controllers
@@ -10,12 +10,12 @@ namespace MoneyTracker.API.Controllers
     {
 
         private readonly ILogger<RegisterController> _logger;
-        private readonly IRegisterDatabase _database;
+        private readonly IRegisterService _database;
 
-        public RegisterController(ILogger<RegisterController> logger, IRegisterDatabase db)
+        public RegisterController(ILogger<RegisterController> logger, IRegisterService service)
         {
             _logger = logger;
-            _database = db;
+            _database = service;
         }
 
         [HttpGet]
@@ -29,7 +29,7 @@ namespace MoneyTracker.API.Controllers
         [Route("add")]
         public Task<TransactionDTO> Add([FromBody] NewTransactionDTO newRegisterDTO)
         {
-            return _database.AddNewTransaction(newRegisterDTO);
+            return _database.AddTransaction(newRegisterDTO);
         }
 
         [HttpPut]

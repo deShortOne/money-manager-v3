@@ -1,7 +1,7 @@
 ﻿
 using MoneyTracker.Shared.Models.Category;
 
-namespace MoneyTracker.Data.Global
+namespace MoneyTracker.Shared.Data
 {
     public interface ICategoryDatabase
     {

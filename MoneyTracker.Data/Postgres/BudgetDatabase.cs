@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using System.Data.Common;
 using MoneyTracker.Data.Global;
+using MoneyTracker.Shared.Data;
 using MoneyTracker.Shared.Models.Budget;
 using Npgsql;
 

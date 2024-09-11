@@ -1,7 +1,7 @@
 ﻿
 using MoneyTracker.Shared.Models.Budget;
 
-namespace MoneyTracker.Data.Global
+namespace MoneyTracker.Shared.Data
 {
     public interface IBudgetDatabase
     {
