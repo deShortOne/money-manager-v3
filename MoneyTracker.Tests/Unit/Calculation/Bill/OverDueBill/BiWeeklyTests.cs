@@ -14,6 +14,16 @@ public sealed class BiWeeklyTests
     }
 
     [Fact]
+    public void CalculateOverDueBillInfo_OnTheDay_Null()
+    {
+        IDateProvider currentDay = TestHelper.CreateMockdateProvider(new DateOnly(2024, 8, 24));
+
+        var week = new BiWeekly();
+
+        Assert.Null(week.CalculateOverDueBill(new DateOnly(2024, 8, 24), currentDay));
+    }
+
+    [Fact]
     public void CalculateOverDueBillInfo_WithinOneIterationBefore_Null()
     {
         IDateProvider currentDay = TestHelper.CreateMockdateProvider(new DateOnly(2024, 8, 24));
