@@ -1,4 +1,5 @@
 ﻿
+using System.Data;
 using MoneyTracker.Data.Postgres;
 using MoneyTracker.DatabaseMigration;
 using MoneyTracker.DatabaseMigration.Models;
@@ -78,7 +79,12 @@ namespace MoneyTracker.Tests.Database.Postgres
             var category = new CategoryDatabase(db);
 
             var categoryToAdd = new CategoryDTO(7, "Hobby");
-            await category.AddCategory(new NewCategoryDTO(categoryToAdd.Name));
+
+            await Assert.ThrowsAsync<DuplicateNameException>(async () =>
+            {
+                await category.AddCategory(new NewCategoryDTO(categoryToAdd.Name));
+            });
+
 
             var expected = new List<CategoryDTO>() {
                 new CategoryDTO(2, "Bills : Cell Phone"),

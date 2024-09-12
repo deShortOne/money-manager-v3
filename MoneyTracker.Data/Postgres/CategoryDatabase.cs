@@ -57,7 +57,7 @@ namespace MoneyTracker.Data.Postgres
             {
                 return new CategoryDTO(reader.GetInt32("id"), reader.GetString("name"));
             }
-            throw new ExternalException("Database failed to return data");
+            throw new DuplicateNameException($"Category {categoryName} already exists");
         }
 
         public async Task<CategoryDTO> EditCategory(EditCategoryDTO editCategoryDTO)
