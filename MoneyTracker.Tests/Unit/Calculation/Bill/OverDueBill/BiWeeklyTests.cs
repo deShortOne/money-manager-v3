@@ -54,20 +54,28 @@ public sealed class BiWeeklyTests
     }
 
     [Fact]
+    public void CalculateOverDueBillInfo_OnTheDayOfTheSecondWeek_ReturnsOneIterationLate()
+    {
+        IDateProvider currentDay = TestHelper.CreateMockdateProvider(new DateOnly(2024, 8, 24));
+
+        var week = new BiWeekly();
+
+        var fourteenDaysBeforeResult = week.CalculateOverDueBill(new DateOnly(2024, 8, 10), currentDay);
+        Assert.Equal(new OverDueBillInfo(14, 1), fourteenDaysBeforeResult);
+    }
+
+    [Fact]
     public void CalculateOverDueBillInfo_BetweenOneAndTwoWeeksAfter_ReturnsTwoIterationsLate()
     {
         IDateProvider currentDay = TestHelper.CreateMockdateProvider(new DateOnly(2024, 8, 24));
 
         var week = new BiWeekly();
 
-        var oneDayBeforeResult = week.CalculateOverDueBill(new DateOnly(2024, 8, 10), currentDay);
-        Assert.Equal(new OverDueBillInfo(14, 2), oneDayBeforeResult);
+        var twentyOneDaysBeforeResult = week.CalculateOverDueBill(new DateOnly(2024, 8, 3), currentDay);
+        Assert.Equal(new OverDueBillInfo(21, 2), twentyOneDaysBeforeResult);
 
-        var threeDaysBeforeResult = week.CalculateOverDueBill(new DateOnly(2024, 8, 3), currentDay);
-        Assert.Equal(new OverDueBillInfo(21, 2), threeDaysBeforeResult);
-
-        var sixDaysBeforeResult = week.CalculateOverDueBill(new DateOnly(2024, 7, 28), currentDay);
-        Assert.Equal(new OverDueBillInfo(27, 2), sixDaysBeforeResult);
+        var twentySevenDaysBeforeResult = week.CalculateOverDueBill(new DateOnly(2024, 7, 28), currentDay);
+        Assert.Equal(new OverDueBillInfo(27, 2), twentySevenDaysBeforeResult);
     }
 
     [Fact]

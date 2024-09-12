@@ -19,7 +19,7 @@ internal class BiWeekly : IFrequency
         {
             return null;
         }
-        return new OverDueBillInfo(numberOfDaysOverdue, numberOfDaysOverdue / 14 + 1);
+        return new OverDueBillInfo(numberOfDaysOverdue, (numberOfDaysOverdue - 1) / 14 + 1);
     }
 
     public bool MatchCommand(string frequency) => frequency == "BiWeekly";
