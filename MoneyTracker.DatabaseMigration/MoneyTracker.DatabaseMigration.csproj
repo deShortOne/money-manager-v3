@@ -9,25 +9,22 @@
   </PropertyGroup>
 
 	<ItemGroup>
-		<EmbeddedResource Include="scripts/Migrations/*.sql" />
+		<EmbeddedResource Include="Scripts\Migrations\*.sql" />
+    <EmbeddedResource Include="Scripts\Seed.sql" />
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Remove="scripts\migrations\20240826211628_AddGroupAndCategoryConnection.sql" />
-	  <None Remove="scripts\migrations\20240826233417_AddConstraintOnCategoryName.sql" />
-	  <None Remove="scripts\Migrations\20240827075013_AlterConstraintToBudgetCategory.sql" />
-	  <None Remove="scripts\migrations\20240901003215_ChangeTableBillToTransaction.sql" />
-	  <None Remove="scripts\migrations\20240901162333_SetDatePaidCorrectly.sql" />
-	  <None Remove="scripts\migrations\20240903195037_AddBillTable.sql" />
-	  <None Remove="scripts\migrations\20240904235440_SeedSomeBillData.sql" />
-	  <None Remove="scripts\migrations\20240907151913_UpdateFrequencyToCorrectNames.sql" />
-	  <None Remove="scripts\migrations\20240908172659_RemoveAllSeedData.sql" />
+	  <None Remove="Scripts\Migrations\20240826211628_AddGroupAndCategoryConnection.sql" />
+	  <None Remove="Scripts\Migrations\20240826233417_AddConstraintOnCategoryName.sql" />
+	  <None Remove="Scripts\Migrations\20240827075013_AlterConstraintToBudgetCategory.sql" />
+	  <None Remove="Scripts\Migrations\20240901003215_ChangeTableBillToTransaction.sql" />
+	  <None Remove="Scripts\Migrations\20240901162333_SetDatePaidCorrectly.sql" />
+	  <None Remove="Scripts\Migrations\20240903195037_AddBillTable.sql" />
+	  <None Remove="Scripts\Migrations\20240904235440_SeedSomeBillData.sql" />
+	  <None Remove="Scripts\Migrations\20240907151913_UpdateFrequencyToCorrectNames.sql" />
+	  <None Remove="Scripts\Migrations\20240908172659_RemoveAllSeedData.sql" />
 	  <None Remove="Scripts\Migrations\20240908173619_SetTableReigsterColumnDatePaidToDateOnly.sql" />
 	  <None Remove="Scripts\Seed.sql" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <EmbeddedResource Include="Scripts\Seed.sql" />
 	</ItemGroup>
 
 	<ItemGroup>
