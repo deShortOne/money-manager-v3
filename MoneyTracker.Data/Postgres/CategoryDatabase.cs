@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Data.Common;
+using System.Runtime.InteropServices;
 using MoneyTracker.Data.Global;
 using MoneyTracker.Shared.Data;
 using MoneyTracker.Shared.Models.Category;
@@ -56,7 +57,7 @@ namespace MoneyTracker.Data.Postgres
             {
                 return new CategoryDTO(reader.GetInt32("id"), reader.GetString("name"));
             }
-            return null; // throw error
+            throw new ExternalException("Database failed to return data");
         }
 
         public async Task<CategoryDTO> EditCategory(EditCategoryDTO editCategoryDTO)
@@ -80,7 +81,7 @@ namespace MoneyTracker.Data.Postgres
             {
                 return new CategoryDTO(reader.GetInt32("id"), reader.GetString("name"));
             }
-            return null; // throw error
+            throw new ExternalException("Database failed to return data");
         }
 
         public async Task<bool> DeleteCategory(DeleteCategoryDTO deleteCategoryDTO)

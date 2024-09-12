@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Data.Common;
+using System.Runtime.InteropServices;
 using MoneyTracker.Data.Global;
 using MoneyTracker.Shared.Data;
 using MoneyTracker.Shared.Models.Transaction;
@@ -79,7 +80,7 @@ namespace MoneyTracker.Data.Postgres
                     reader.GetString("name")
                 );
             }
-            return null; //throw error
+            throw new ExternalException("Database failed to return data");
         }
 
         public async Task<TransactionDTO> EditTransaction(EditTransactionDTO tramsaction)
@@ -136,10 +137,10 @@ namespace MoneyTracker.Data.Postgres
                     reader.GetString("payee"),
                     reader.GetDecimal("amount"),
                     reader.GetDateTime("datePaid"),
-                     reader.GetString("name")
+                    reader.GetString("name")
                 );
             }
-            return null; //throw error
+            throw new ExternalException("Database failed to return data");
         }
 
         public async Task<bool> DeleteTransaction(DeleteTransactionDTO transaction)

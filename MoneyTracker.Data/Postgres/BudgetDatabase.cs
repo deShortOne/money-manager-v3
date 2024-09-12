@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Data.Common;
+using System.Runtime.InteropServices;
 using MoneyTracker.Data.Global;
 using MoneyTracker.Shared.Data;
 using MoneyTracker.Shared.Models.Budget;
@@ -46,7 +47,7 @@ namespace MoneyTracker.Data.Postgres
             while (await reader.ReadAsync())
             {
                 var budgetId = reader.GetInt32("id");
-                if (!res.TryGetValue(budgetId, out BudgetGroupDTO group))
+                if (!res.TryGetValue(budgetId, out BudgetGroupDTO? group))
                 {
                     group = new BudgetGroupDTO(reader.GetString("name"));
                     res.Add(budgetId, group);
@@ -94,8 +95,7 @@ namespace MoneyTracker.Data.Postgres
                 var actual = reader.GetDecimal("actual");
                 return new BudgetCategoryDTO(name, planned, actual, planned - actual);
             }
-
-            return null;
+            throw new ExternalException("Database failed to return data");
         }
 
         public async Task<List<BudgetGroupDTO>> EditBudgetCategory(EditBudgetCategoryDTO editBudgetCateogry)

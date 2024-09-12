@@ -15,7 +15,7 @@ namespace MoneyTracker.Data.Postgres
             _dataSource_rw = dataSourceBuilder_ro.Build();
         }
 
-        public async Task<DbDataReader> GetTable(string query, List<DbParameter> parameters = null)
+        public async Task<DbDataReader> GetTable(string query, List<DbParameter>? parameters = null)
         {
             var conn = await _dataSource_rw.OpenConnectionAsync();
 
@@ -32,7 +32,7 @@ namespace MoneyTracker.Data.Postgres
             }
         }
 
-        public async Task<int> UpdateTable(string query, List<DbParameter> parameters = null)
+        public async Task<int> UpdateTable(string query, List<DbParameter>? parameters = null)
         {
             var conn = await _dataSource_rw.OpenConnectionAsync();
 
