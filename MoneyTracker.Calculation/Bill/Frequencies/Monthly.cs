@@ -38,8 +38,8 @@ internal class Monthly : IFrequency
             numberOfMonthsDifference = today.Month - nextDueDate.Month;
             var newNextDueDate = nextDueDate.AddMonths(numberOfMonthsDifference);
             var maxDayOfNewMonth = new DateOnly(newNextDueDate.Year, newNextDueDate.Month, 1).AddMonths(1).AddDays(-1);
-
-            newNextDueDate = new DateOnly(newNextDueDate.Year, newNextDueDate.Month, Math.Min(monthDay, maxDayOfNewMonth.Day));
+            var setDayInMonth = Math.Min(monthDay, maxDayOfNewMonth.Day);
+            newNextDueDate = new DateOnly(newNextDueDate.Year, newNextDueDate.Month, setDayInMonth);
 
             if (newNextDueDate < today)
             {
