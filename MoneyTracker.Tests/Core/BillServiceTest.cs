@@ -124,9 +124,9 @@ public class BillServiceTest : IAsyncLifetime
         var expected = new List<BillDTO>()
         {
             new BillDTO(2, "company a", 100, DateOnly.Parse("2024-08-30"), "Monthly", "Wages & Salary : Net Pay",
-                new OverDueBillInfo(8, 1, [])),
+                new OverDueBillInfo(8, 1, [new DateOnly(2024, 8, 30)])),
             new BillDTO(1, "supermarket a", 23, DateOnly.Parse("2024-09-03"), "Weekly", "Groceries",
-                new OverDueBillInfo(4, 1, [])),
+                new OverDueBillInfo(4, 1, [new DateOnly(2024, 9, 3)])),
         };
 
         var actual = await billService.GetAllBills();
@@ -143,12 +143,14 @@ public class BillServiceTest : IAsyncLifetime
         IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 10, 4));
         var billService = new BillService(bill, dateProvider);
 
+        DateOnly[] dates = [new DateOnly(2024, 9, 3), new DateOnly(2024, 9, 10), new DateOnly(2024, 9, 17),
+            new DateOnly(2024, 9, 24), new DateOnly(2024, 10, 1)];
         var expected = new List<BillDTO>()
         {
             new BillDTO(2, "company a", 100, DateOnly.Parse("2024-08-30"), "Monthly", "Wages & Salary : Net Pay",
-                new OverDueBillInfo(35, 2, [])),
+                new OverDueBillInfo(35, 2, [new DateOnly(2024, 8, 30), new DateOnly(2024, 9, 30)])),
             new BillDTO(1, "supermarket a", 23, DateOnly.Parse("2024-09-03"), "Weekly", "Groceries",
-                new OverDueBillInfo(31, 5, [])),
+                new OverDueBillInfo(31, 5, dates)),
         };
 
         var actual = await billService.GetAllBills();
@@ -165,12 +167,14 @@ public class BillServiceTest : IAsyncLifetime
         IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 10, 3));
         var billService = new BillService(bill, dateProvider);
 
+        DateOnly[] dates = [new DateOnly(2024, 9, 3), new DateOnly(2024, 9, 10), new DateOnly(2024, 9, 17),
+            new DateOnly(2024, 9, 24), new DateOnly(2024, 10, 1)];
         var expected = new List<BillDTO>()
         {
             new BillDTO(2, "company a", 100, DateOnly.Parse("2024-08-30"), "Monthly", "Wages & Salary : Net Pay",
-                new OverDueBillInfo(34, 2, [])),
+                new OverDueBillInfo(34, 2, [new DateOnly(2024, 8, 30), new DateOnly(2024, 9, 30)])),
             new BillDTO(1, "supermarket a", 23, DateOnly.Parse("2024-09-03"), "Weekly", "Groceries",
-                new OverDueBillInfo(30, 5, [])),
+                new OverDueBillInfo(30, 5, dates)),
         };
 
         var actual = await billService.GetAllBills();
