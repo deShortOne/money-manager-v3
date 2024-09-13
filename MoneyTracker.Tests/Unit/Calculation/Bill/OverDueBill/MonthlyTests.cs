@@ -44,6 +44,17 @@ public sealed class MonthlyTests
     }
 
     [Fact]
+    public void CalculateOverDueBillInfo_OnTheSecondIteration_ReturnsOneIteration()
+    {
+        IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 8, 24));
+
+        var month = new Monthly();
+
+        var thrityOneDaysBeforeIteration = month.CalculateOverDueBill(24, new DateOnly(2024, 7, 24), dateProvider);
+        Assert.Equal(new OverDueBillInfo(31, 1), thrityOneDaysBeforeIteration);
+    }
+
+    [Fact]
     public void CalculateOverDueBillInfo_GreaterThanTwoAndLessThanThreeIterationAfterNextDueDate_ReturnTwoIterations()
     {
         IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 8, 24));
