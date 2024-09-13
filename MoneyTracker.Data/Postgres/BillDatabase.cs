@@ -130,4 +130,43 @@ public class BillDatabase : IBillDatabase
 
         return await GetAllBills();
     }
+
+    public async Task<BillDTO> GetBillById(int id)
+    {
+        string query = """
+            SELECT b.id,
+            	payee,
+            	amount,
+            	nextduedate,
+            	frequency,
+            	c.name
+            FROM bill b
+            INNER JOIN category c
+            	ON b.categoryid = c.id
+            WHERE b.id = @id;
+            """;
+        var queryParams = new List<DbParameter>()
+        {
+            new NpgsqlParameter("id", id),
+        };
+        using var reader = await _database.GetTable(query, queryParams);
+
+        List<BillDTO> res = [];
+        if (await reader.ReadAsync())
+        {
+            var nextDueDate = DateOnly.FromDateTime(reader.GetDateTime("nextduedate"));
+            var frequency = reader.GetString("frequency");
+
+            return new BillDTO(
+                reader.GetInt32("id"),
+                reader.GetString("payee"),
+                reader.GetDecimal("amount"),
+                nextDueDate,
+                frequency,
+                reader.GetString("name")
+            );
+        }
+
+        throw new ArgumentException("Bill id was not found");
+    }
 }
