@@ -12,4 +12,14 @@ public sealed class MonthlyTests
     {
         Assert.True(new Monthly().MatchCommand("Monthly"));
     }
+
+    [Fact]
+    public void CalculateOverDueBillInfo_SameDay_Null()
+    {
+        IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 8, 24));
+
+        var month = new Monthly();
+
+        Assert.Null(month.CalculateOverDueBill(24, new DateOnly(2024, 8, 24), dateProvider));
+    }
 }
