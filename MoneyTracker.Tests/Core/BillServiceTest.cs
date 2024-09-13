@@ -191,7 +191,7 @@ public class BillServiceTest : IAsyncLifetime
         IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 10, 3));
         var billService = new BillService(bill, dateProvider);
 
-        await billService.SkipOccurence(new SkipBillOccurrenceDTO(1, new DateOnly(2024, 9, 17)));
+        var currNewBill = await billService.SkipOccurence(new SkipBillOccurrenceDTO(1, new DateOnly(2024, 9, 17)));
 
         DateOnly[] dates = [new DateOnly(2024, 9, 24), new DateOnly(2024, 10, 1)];
         var expected = new List<BillDTO>()
@@ -203,7 +203,10 @@ public class BillServiceTest : IAsyncLifetime
         };
 
         var actual = await billService.GetAllBills();
-
-        Assert.Equal(expected, actual);
+        Assert.Multiple(() =>
+        {
+            Assert.Equal(expected[1], currNewBill);
+            Assert.Equal(expected, actual);
+        });
     }
 }
