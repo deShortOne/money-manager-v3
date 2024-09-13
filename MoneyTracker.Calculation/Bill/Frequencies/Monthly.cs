@@ -47,7 +47,7 @@ internal class Monthly : IFrequency
             }
         }
 
-        return new OverDueBillInfo(numberOfDaysOverdue, numberOfMonthsDifference);
+        return new OverDueBillInfo(numberOfDaysOverdue, numberOfMonthsDifference, []);
     }
 
     public bool MatchCommand(string frequency) => frequency == "Monthly";
