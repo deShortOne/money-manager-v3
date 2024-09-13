@@ -91,8 +91,8 @@ public sealed class MonthlyTests
         var thrityDaysBeforeIteration = month.CalculateOverDueBill(1, new DateOnly(2024, 7, 1), dateProvider);
         Assert.Equal(new OverDueBillInfo(30, 1), thrityDaysBeforeIteration);
 
-        //var thrityOneDaysBeforeIteration = month.CalculateOverDueBill(new DateOnly(2024, 6, 30), dateProvider);
-        //Assert.Equal(new OverDueBillInfo(31, 2), thrityOneDaysBeforeIteration);
+        var thrityOneDaysBeforeIteration = month.CalculateOverDueBill(31, new DateOnly(2024, 6, 30), dateProvider);
+        Assert.Equal(new OverDueBillInfo(31, 1), thrityOneDaysBeforeIteration);
     }
 
     [Fact]
