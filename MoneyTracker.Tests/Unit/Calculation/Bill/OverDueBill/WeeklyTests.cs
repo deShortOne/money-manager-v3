@@ -34,13 +34,13 @@ public sealed class WeeklyTests
         var week = new Weekly();
 
         var oneDayBeforeResult = week.CalculateOverDueBill(-1, new DateOnly(2024, 8, 23), currentDay);
-        Assert.Equal(new OverDueBillInfo(1, 1, []), oneDayBeforeResult);
+        Assert.Equal(new OverDueBillInfo(1, [new DateOnly(2024, 8, 23)]), oneDayBeforeResult);
 
         var threeDaysBeforeResult = week.CalculateOverDueBill(-1, new DateOnly(2024, 8, 21), currentDay);
-        Assert.Equal(new OverDueBillInfo(3, 1, []), threeDaysBeforeResult);
+        Assert.Equal(new OverDueBillInfo(3, [new DateOnly(2024, 8, 21)]), threeDaysBeforeResult);
 
         var sixDaysBeforeResult = week.CalculateOverDueBill(-1, new DateOnly(2024, 8, 18), currentDay);
-        Assert.Equal(new OverDueBillInfo(6, 1, []), sixDaysBeforeResult);
+        Assert.Equal(new OverDueBillInfo(6, [new DateOnly(2024, 8, 18)]), sixDaysBeforeResult);
     }
 
     [Fact]
@@ -51,13 +51,13 @@ public sealed class WeeklyTests
         var week = new Weekly();
 
         var oneDayBeforeResult = week.CalculateOverDueBill(-1, new DateOnly(2024, 8, 16), currentDay);
-        Assert.Equal(new OverDueBillInfo(8, 2, []), oneDayBeforeResult);
+        Assert.Equal(new OverDueBillInfo(8, [new DateOnly(2024, 8, 16), new DateOnly(2024, 8, 23)]), oneDayBeforeResult);
 
         var threeDaysBeforeResult = week.CalculateOverDueBill(-1, new DateOnly(2024, 8, 14), currentDay);
-        Assert.Equal(new OverDueBillInfo(10, 2, []), threeDaysBeforeResult);
+        Assert.Equal(new OverDueBillInfo(10, [new DateOnly(2024, 8, 14), new DateOnly(2024, 8, 21)]), threeDaysBeforeResult);
 
         var sixDaysBeforeResult = week.CalculateOverDueBill(-1, new DateOnly(2024, 8, 11), currentDay);
-        Assert.Equal(new OverDueBillInfo(13, 2, []), sixDaysBeforeResult);
+        Assert.Equal(new OverDueBillInfo(13, [new DateOnly(2024, 8, 11), new DateOnly(2024, 8, 18)]), sixDaysBeforeResult);
     }
 
     [Fact]

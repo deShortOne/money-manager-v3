@@ -1,4 +1,5 @@
 ﻿
+using System.Numerics;
 using MoneyTracker.Shared.DateManager;
 using MoneyTracker.Shared.Models.Bill;
 
@@ -20,7 +21,19 @@ internal class Daily : IFrequency
             return null;
         }
 
-        return new OverDueBillInfo(numberOfDaysOverdue, numberOfDaysOverdue, []);
+        return new OverDueBillInfo(numberOfDaysOverdue, GetOverDueDatesLis(nextDueDate, today));
     }
     public bool MatchCommand(string frequency) => frequency.Equals("Daily");
+
+    public static DateOnly[] GetOverDueDatesLis(DateOnly date1, DateOnly date2)
+    {
+        List<DateOnly> previousDates = [];
+        while (date1 < date2)
+        {
+            previousDates.Add(date1);
+            date1 = date1.AddDays(1);
+        }
+
+        return [.. previousDates];
+    }
 }

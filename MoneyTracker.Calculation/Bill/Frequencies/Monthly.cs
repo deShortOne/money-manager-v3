@@ -28,27 +28,24 @@ internal class Monthly : IFrequency
             return null;
         }
 
-        int numberOfMonthsDifference;
-        if (today.Month == nextDueDate.Month)
-        {
-            numberOfMonthsDifference = 1;
-        }
-        else
-        {
-            numberOfMonthsDifference = today.Month - nextDueDate.Month;
-            var newNextDueDate = nextDueDate.AddMonths(numberOfMonthsDifference);
-            var maxDayOfNewMonth = new DateOnly(newNextDueDate.Year, newNextDueDate.Month, 1).AddMonths(1).AddDays(-1);
-            var setDayInMonth = Math.Min(monthDay, maxDayOfNewMonth.Day);
-            newNextDueDate = new DateOnly(newNextDueDate.Year, newNextDueDate.Month, setDayInMonth);
-
-            if (newNextDueDate < today)
-            {
-                numberOfMonthsDifference++;
-            }
-        }
-
-        return new OverDueBillInfo(numberOfDaysOverdue, numberOfMonthsDifference, []);
+        return new OverDueBillInfo(numberOfDaysOverdue, GetOverDueDatesLis(nextDueDate, today, monthDay));
     }
 
     public bool MatchCommand(string frequency) => frequency == "Monthly";
+
+    public static DateOnly[] GetOverDueDatesLis(DateOnly date1, DateOnly date2, int monthDay)
+    {
+        List<DateOnly> previousDates = [];
+        while (date1 < date2)
+        {
+            previousDates.Add(date1);
+            date1 = date1.AddMonths(1);
+
+            var maxDayOfNewMonth = new DateOnly(date1.Year, date1.Month, 1).AddMonths(1).AddDays(-1);
+            var setDayInMonth = Math.Min(monthDay, maxDayOfNewMonth.Day);
+            date1 = new DateOnly(date1.Year, date1.Month, setDayInMonth);
+        }
+
+        return [.. previousDates];
+    }
 }
