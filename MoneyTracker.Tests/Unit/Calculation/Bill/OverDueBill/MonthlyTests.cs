@@ -20,7 +20,7 @@ public sealed class MonthlyTests
 
         var month = new Monthly();
 
-        Assert.Null(month.CalculateOverDueBill(-1, new DateOnly(2024, 8, 24), dateProvider));
+        Assert.Null(month.CalculateOverDueBill(24, new DateOnly(2024, 8, 24), dateProvider));
     }
 
     [Fact]
@@ -30,7 +30,7 @@ public sealed class MonthlyTests
 
         var month = new Monthly();
 
-        Assert.Null(month.CalculateOverDueBill(-1, new DateOnly(2024, 8, 30), dateProvider));
+        Assert.Null(month.CalculateOverDueBill(30, new DateOnly(2024, 8, 30), dateProvider));
     }
 
     [Fact]
@@ -40,16 +40,16 @@ public sealed class MonthlyTests
 
         var month = new Monthly();
 
-        var fiveDaysBeforeIteration = month.CalculateOverDueBill(-1, new DateOnly(2024, 8, 19), dateProvider);
+        var fiveDaysBeforeIteration = month.CalculateOverDueBill(19, new DateOnly(2024, 8, 19), dateProvider);
         Assert.Equal(new OverDueBillInfo(5, 1), fiveDaysBeforeIteration);
 
-        var tenDaysBeforeIteration = month.CalculateOverDueBill(-1, new DateOnly(2024, 8, 14), dateProvider);
+        var tenDaysBeforeIteration = month.CalculateOverDueBill(14, new DateOnly(2024, 8, 14), dateProvider);
         Assert.Equal(new OverDueBillInfo(10, 1), tenDaysBeforeIteration);
 
-        var fifteenDaysBeforeIteration = month.CalculateOverDueBill(-1, new DateOnly(2024, 8, 9), dateProvider);
+        var fifteenDaysBeforeIteration = month.CalculateOverDueBill(9, new DateOnly(2024, 8, 9), dateProvider);
         Assert.Equal(new OverDueBillInfo(15, 1), fifteenDaysBeforeIteration);
 
-        var twentyThreeDaysBeforeIteration = month.CalculateOverDueBill(-1, new DateOnly(2024, 8, 1), dateProvider);
+        var twentyThreeDaysBeforeIteration = month.CalculateOverDueBill(1, new DateOnly(2024, 8, 1), dateProvider);
         Assert.Equal(new OverDueBillInfo(23, 1), twentyThreeDaysBeforeIteration);
     }
 
@@ -60,7 +60,7 @@ public sealed class MonthlyTests
 
         var month = new Monthly();
 
-        var twentyThreeDaysBeforeIteration = month.CalculateOverDueBill(-1, new DateOnly(2024, 6, 24), dateProvider);
+        var twentyThreeDaysBeforeIteration = month.CalculateOverDueBill(24, new DateOnly(2024, 6, 24), dateProvider);
         Assert.Equal(new OverDueBillInfo(61, 1), twentyThreeDaysBeforeIteration);
     }
 
@@ -71,13 +71,13 @@ public sealed class MonthlyTests
 
         var month = new Monthly();
 
-        var thrityOneDaysBeforeIteration = month.CalculateOverDueBill(-1, new DateOnly(2024, 7, 24), dateProvider);
+        var thrityOneDaysBeforeIteration = month.CalculateOverDueBill(24, new DateOnly(2024, 7, 24), dateProvider);
         Assert.Equal(new OverDueBillInfo(31, 1), thrityOneDaysBeforeIteration);
 
-        var fourtyOneDaysBeforeIteration = month.CalculateOverDueBill(-1, new DateOnly(2024, 7, 14), dateProvider);
+        var fourtyOneDaysBeforeIteration = month.CalculateOverDueBill(14, new DateOnly(2024, 7, 14), dateProvider);
         Assert.Equal(new OverDueBillInfo(41, 2), fourtyOneDaysBeforeIteration);
 
-        var fiftyOneDaysBeforeIteration = month.CalculateOverDueBill(-1, new DateOnly(2024, 7, 4), dateProvider);
+        var fiftyOneDaysBeforeIteration = month.CalculateOverDueBill(4, new DateOnly(2024, 7, 4), dateProvider);
         Assert.Equal(new OverDueBillInfo(51, 2), fiftyOneDaysBeforeIteration);
     }
 
@@ -88,7 +88,7 @@ public sealed class MonthlyTests
 
         var month = new Monthly();
 
-        var thrityDaysBeforeIteration = month.CalculateOverDueBill(-1, new DateOnly(2024, 7, 1), dateProvider);
+        var thrityDaysBeforeIteration = month.CalculateOverDueBill(1, new DateOnly(2024, 7, 1), dateProvider);
         Assert.Equal(new OverDueBillInfo(30, 1), thrityDaysBeforeIteration);
 
         //var thrityOneDaysBeforeIteration = month.CalculateOverDueBill(new DateOnly(2024, 6, 30), dateProvider);
@@ -102,7 +102,7 @@ public sealed class MonthlyTests
 
         var month = new Monthly();
 
-        var twentyNineDaysBeforeIteration = month.CalculateOverDueBill(-1, new DateOnly(2024, 6, 1), dateProvider);
+        var twentyNineDaysBeforeIteration = month.CalculateOverDueBill(1, new DateOnly(2024, 6, 1), dateProvider);
         Assert.Equal(new OverDueBillInfo(29, 1), twentyNineDaysBeforeIteration);
 
         //var thrityDaysBeforeIteration = month.CalculateOverDueBill(new DateOnly(2024, 5, 31), dateProvider);
@@ -111,7 +111,7 @@ public sealed class MonthlyTests
         //var thrityOneDaysBeforeIteration = month.CalculateOverDueBill(new DateOnly(2024, 5, 30), dateProvider);
         //Assert.Equal(new OverDueBillInfo(31, 1), thrityOneDaysBeforeIteration);
 
-        var thrityTwoDaysBeforeIteration = month.CalculateOverDueBill(-1, new DateOnly(2024, 5, 29), dateProvider);
+        var thrityTwoDaysBeforeIteration = month.CalculateOverDueBill(29, new DateOnly(2024, 5, 29), dateProvider);
         Assert.Equal(new OverDueBillInfo(32, 2), thrityTwoDaysBeforeIteration);
     }
 
@@ -122,13 +122,13 @@ public sealed class MonthlyTests
 
         var month = new Monthly();
 
-        var oneDayBeforeIterationButOneMonthDiff = month.CalculateOverDueBill(-1, new DateOnly(2024, 5, 31), dateProvider);
+        var oneDayBeforeIterationButOneMonthDiff = month.CalculateOverDueBill(31, new DateOnly(2024, 5, 31), dateProvider);
         Assert.Equal(new OverDueBillInfo(1, 1), oneDayBeforeIterationButOneMonthDiff);
 
-        var twoDaysBeforeIterationButOneMonthDiff = month.CalculateOverDueBill(-1, new DateOnly(2024, 5, 30), dateProvider);
+        var twoDaysBeforeIterationButOneMonthDiff = month.CalculateOverDueBill(30, new DateOnly(2024, 5, 30), dateProvider);
         Assert.Equal(new OverDueBillInfo(2, 1), twoDaysBeforeIterationButOneMonthDiff);
 
-        var threeDaysBeforeIterationButOneMonthDiff = month.CalculateOverDueBill(-1, new DateOnly(2024, 5, 29), dateProvider);
+        var threeDaysBeforeIterationButOneMonthDiff = month.CalculateOverDueBill(29, new DateOnly(2024, 5, 29), dateProvider);
         Assert.Equal(new OverDueBillInfo(3, 1), threeDaysBeforeIterationButOneMonthDiff);
     }
 
@@ -139,13 +139,13 @@ public sealed class MonthlyTests
 
         var month = new Monthly();
 
-        var oneDayBeforeIterationButOneMonthDiff = month.CalculateOverDueBill(-1, new DateOnly(2024, 6, 30), dateProvider);
+        var oneDayBeforeIterationButOneMonthDiff = month.CalculateOverDueBill(30, new DateOnly(2024, 6, 30), dateProvider);
         Assert.Equal(new OverDueBillInfo(1, 1), oneDayBeforeIterationButOneMonthDiff);
 
-        var rwoDaysBeforeIterationButOneMonthDiff = month.CalculateOverDueBill(-1, new DateOnly(2024, 6, 29), dateProvider);
+        var rwoDaysBeforeIterationButOneMonthDiff = month.CalculateOverDueBill(29, new DateOnly(2024, 6, 29), dateProvider);
         Assert.Equal(new OverDueBillInfo(2, 1), rwoDaysBeforeIterationButOneMonthDiff);
 
-        var threeDaysBeforeIterationButOneMonthDiff = month.CalculateOverDueBill(-1, new DateOnly(2024, 6, 29), dateProvider);
+        var threeDaysBeforeIterationButOneMonthDiff = month.CalculateOverDueBill(29, new DateOnly(2024, 6, 29), dateProvider);
         Assert.Equal(new OverDueBillInfo(2, 1), threeDaysBeforeIterationButOneMonthDiff);
     }
 
@@ -156,7 +156,7 @@ public sealed class MonthlyTests
 
         var month = new Monthly();
 
-        var nextDueDate = month.CalculateOverDueBill(-1, new DateOnly(2024, 8, 30), dateProvider);
+        var nextDueDate = month.CalculateOverDueBill(30, new DateOnly(2024, 8, 30), dateProvider);
         Assert.Equal(new OverDueBillInfo(35, 2), nextDueDate);
     }
 }
