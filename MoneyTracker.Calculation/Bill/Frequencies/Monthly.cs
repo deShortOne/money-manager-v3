@@ -28,26 +28,7 @@ internal class Monthly : IFrequency
             return null;
         }
 
-        int numberOfMonthsDifference;
-        if (today.Month == nextDueDate.Month)
-        {
-            numberOfMonthsDifference = 1;
-        }
-        else
-        {
-            numberOfMonthsDifference = today.Month - nextDueDate.Month;
-            var newNextDueDate = nextDueDate.AddMonths(numberOfMonthsDifference);
-            var maxDayOfNewMonth = new DateOnly(newNextDueDate.Year, newNextDueDate.Month, 1).AddMonths(1).AddDays(-1);
-            var setDayInMonth = Math.Min(monthDay, maxDayOfNewMonth.Day);
-            newNextDueDate = new DateOnly(newNextDueDate.Year, newNextDueDate.Month, setDayInMonth);
-
-            if (newNextDueDate < today)
-            {
-                numberOfMonthsDifference++;
-            }
-        }
-
-        return new OverDueBillInfo(numberOfDaysOverdue, numberOfMonthsDifference, GetOverDueDatesLis(nextDueDate, today, monthDay));
+        return new OverDueBillInfo(numberOfDaysOverdue, GetOverDueDatesLis(nextDueDate, today, monthDay));
     }
 
     public bool MatchCommand(string frequency) => frequency == "Monthly";
