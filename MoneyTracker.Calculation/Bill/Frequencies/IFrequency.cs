@@ -6,6 +6,6 @@ namespace MoneyTracker.Calculation.Bill.Frequencies;
 internal interface IFrequency
 {
     public bool MatchCommand(string frequency);
-    public OverDueBillInfo? CalculateOverDueBill(DateOnly nextDueDate, IDateProvider dateProvider);
+    public OverDueBillInfo? CalculateOverDueBill(int monthDay, DateOnly nextDueDate, IDateProvider dateProvider);
     public DateOnly CalculateNextDueDate(int monthDay, DateOnly currNextDueDate);
 }
