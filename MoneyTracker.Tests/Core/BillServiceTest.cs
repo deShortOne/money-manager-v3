@@ -181,4 +181,29 @@ public class BillServiceTest : IAsyncLifetime
 
         Assert.Equal(expected, actual);
     }
+
+    [Fact]
+    public async void SkipOccurence_SkipTwoOccurences_BillIsSkippedPassed()
+    {
+        var db = new PostgresDatabase(_postgres.GetConnectionString());
+        var bill = new BillDatabase(db);
+
+        IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 10, 3));
+        var billService = new BillService(bill, dateProvider);
+
+        await billService.SkipOccurence(new SkipBillOccurrenceDTO(1, new DateOnly(2024, 9, 17)));
+
+        DateOnly[] dates = [new DateOnly(2024, 9, 24), new DateOnly(2024, 10, 1)];
+        var expected = new List<BillDTO>()
+        {
+            new BillDTO(2, "company a", 100, DateOnly.Parse("2024-08-30"), "Monthly", "Wages & Salary : Net Pay",
+                new OverDueBillInfo(34, [new DateOnly(2024, 8, 30), new DateOnly(2024, 9, 30)])),
+            new BillDTO(1, "supermarket a", 23, new DateOnly(2024, 9, 24), "Weekly", "Groceries",
+                new OverDueBillInfo(9, dates)),
+        };
+
+        var actual = await billService.GetAllBills();
+
+        Assert.Equal(expected, actual);
+    }
 }
