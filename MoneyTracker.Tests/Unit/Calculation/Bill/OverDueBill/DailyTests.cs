@@ -41,7 +41,7 @@ public sealed class DailyTests
         var day = new Daily();
         var overdueBillInfo = day.CalculateOverDueBill(-1, new DateOnly(2024, 8, 23), dateProvider);
 
-        Assert.Equal(new OverDueBillInfo(1, 1, []), overdueBillInfo);
+        Assert.Equal(new OverDueBillInfo(1, 1, [new DateOnly(2024, 8, 23)]), overdueBillInfo);
     }
 
     [Fact]
@@ -52,7 +52,7 @@ public sealed class DailyTests
         var day = new Daily();
         var overdueBillInfo = day.CalculateOverDueBill(-1, new DateOnly(2024, 8, 22), dateProvider);
 
-        Assert.Equal(new OverDueBillInfo(2, 2, []), overdueBillInfo);
+        Assert.Equal(new OverDueBillInfo(2, 2, [new DateOnly(2024, 8, 22), new DateOnly(2024, 8, 23)]), overdueBillInfo);
     }
 
     [Fact]
@@ -63,7 +63,7 @@ public sealed class DailyTests
         var day = new Daily();
         var overdueBillInfo = day.CalculateOverDueBill(-1, new DateOnly(2024, 2, 28), dateProvider);
 
-        Assert.Equal(new OverDueBillInfo(2, 2, []), overdueBillInfo);
+        Assert.Equal(new OverDueBillInfo(2, 2, [new DateOnly(2024, 2, 28), new DateOnly(2024, 2, 29)]), overdueBillInfo);
     }
 
     [Fact]
@@ -74,6 +74,6 @@ public sealed class DailyTests
         var day = new Daily();
         var overdueBillInfo = day.CalculateOverDueBill(-1, new DateOnly(2023, 2, 28), dateProvider);
 
-        Assert.Equal(new OverDueBillInfo(1, 1, []), overdueBillInfo);
+        Assert.Equal(new OverDueBillInfo(1, 1, [new DateOnly(2023, 2, 28)]), overdueBillInfo);
     }
 }
