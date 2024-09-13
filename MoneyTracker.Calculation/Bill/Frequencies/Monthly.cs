@@ -18,7 +18,7 @@ internal class Monthly : IFrequency
         return tmpNextDueDate;
     }
 
-    public OverDueBillInfo? CalculateOverDueBill(DateOnly nextDueDate, IDateProvider dateProvider)
+    public OverDueBillInfo? CalculateOverDueBill(int monthDay, DateOnly nextDueDate, IDateProvider dateProvider)
     {
         var today = dateProvider.Now;
         int numberOfDaysOverdue = today.DayNumber - nextDueDate.DayNumber;
@@ -36,13 +36,18 @@ internal class Monthly : IFrequency
         else
         {
             numberOfMonthsDifference = today.Month - nextDueDate.Month;
-            if (nextDueDate.AddMonths(numberOfMonthsDifference) < today)
+            var newNextDueDate = nextDueDate.AddMonths(numberOfMonthsDifference);
+            var maxDayOfNewMonth = new DateOnly(newNextDueDate.Year, newNextDueDate.Month, 1).AddMonths(1).AddDays(-1);
+            var setDayInMonth = Math.Min(monthDay, maxDayOfNewMonth.Day);
+            newNextDueDate = new DateOnly(newNextDueDate.Year, newNextDueDate.Month, setDayInMonth);
+
+            if (newNextDueDate < today)
             {
                 numberOfMonthsDifference++;
             }
         }
 
-        return new OverDueBillInfo(numberOfDaysOverdue, numberOfMonthsDifference);
+        return new OverDueBillInfo(numberOfDaysOverdue, numberOfMonthsDifference, []);
     }
 
     public bool MatchCommand(string frequency) => frequency == "Monthly";

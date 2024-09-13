@@ -20,132 +20,163 @@ public sealed class MonthlyTests
 
         var month = new Monthly();
 
-        Assert.Null(month.CalculateOverDueBill(new DateOnly(2024, 8, 24), dateProvider));
+        Assert.Null(month.CalculateOverDueBill(24, new DateOnly(2024, 8, 24), dateProvider));
     }
 
     [Fact]
-    public void CalculateOverDueBillInfo_BeforeNextDueDate_Null()
+    public void CalculateOverDueBillInfo_BeforeDueDate_Null()
     {
         IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 8, 24));
 
         var month = new Monthly();
 
-        Assert.Null(month.CalculateOverDueBill(new DateOnly(2024, 8, 30), dateProvider));
+        Assert.Null(month.CalculateOverDueBill(30, new DateOnly(2024, 8, 30), dateProvider));
     }
 
     [Fact]
-    public void CalculateOverDueBillInfo_OneIterationAfterNextDueDate_ReturnOneIteration()
+    public void CalculateOverDueBillInfo_AfterDueDateWithinOneIteration_ReturnsOneIteration()
     {
         IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 8, 24));
 
         var month = new Monthly();
 
-        var fiveDaysBeforeIteration = month.CalculateOverDueBill(new DateOnly(2024, 8, 19), dateProvider);
-        Assert.Equal(new OverDueBillInfo(5, 1), fiveDaysBeforeIteration);
-
-        var tenDaysBeforeIteration = month.CalculateOverDueBill(new DateOnly(2024, 8, 14), dateProvider);
-        Assert.Equal(new OverDueBillInfo(10, 1), tenDaysBeforeIteration);
-
-        var fifteenDaysBeforeIteration = month.CalculateOverDueBill(new DateOnly(2024, 8, 9), dateProvider);
-        Assert.Equal(new OverDueBillInfo(15, 1), fifteenDaysBeforeIteration);
-
-        var twentyThreeDaysBeforeIteration = month.CalculateOverDueBill(new DateOnly(2024, 8, 1), dateProvider);
-        Assert.Equal(new OverDueBillInfo(23, 1), twentyThreeDaysBeforeIteration);
+        Assert.Null(month.CalculateOverDueBill(30, new DateOnly(2024, 8, 30), dateProvider));
     }
 
     [Fact]
-    public void CalculateOverDueBillInfo_TwoIterationAfterNextDueDate_ReturnTwoIterations()
+    public void CalculateOverDueBillInfo_OnTheSecondIteration_ReturnsOneIteration()
     {
         IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 8, 24));
 
         var month = new Monthly();
 
-        var thrityOneDaysBeforeIteration = month.CalculateOverDueBill(new DateOnly(2024, 7, 24), dateProvider);
-        Assert.Equal(new OverDueBillInfo(31, 1), thrityOneDaysBeforeIteration);
-
-        var fourtyOneDaysBeforeIteration = month.CalculateOverDueBill(new DateOnly(2024, 7, 14), dateProvider);
-        Assert.Equal(new OverDueBillInfo(41, 2), fourtyOneDaysBeforeIteration);
-
-        var fiftyOneDaysBeforeIteration = month.CalculateOverDueBill(new DateOnly(2024, 7, 4), dateProvider);
-        Assert.Equal(new OverDueBillInfo(51, 2), fiftyOneDaysBeforeIteration);
+        var thrityOneDaysBeforeIteration = month.CalculateOverDueBill(24, new DateOnly(2024, 7, 24), dateProvider);
+        Assert.Equal(new OverDueBillInfo(31, 1, []), thrityOneDaysBeforeIteration);
     }
 
     [Fact]
-    public void CalculateOverDueBillInfo_OneIterationAfterNextDueDateMonthOf31EndOfMonth_ReturnXIterations()
+    public void CalculateOverDueBillInfo_GreaterThanTwoAndLessThanThreeIterationAfterNextDueDate_ReturnTwoIterations()
     {
-        IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 7, 31));
+        IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 8, 24));
 
         var month = new Monthly();
 
-        var thrityDaysBeforeIteration = month.CalculateOverDueBill(new DateOnly(2024, 7, 1), dateProvider);
-        Assert.Equal(new OverDueBillInfo(30, 1), thrityDaysBeforeIteration);
+        Assert.Multiple(() =>
+        {
+            var fourtyOneDaysBeforeIteration = month.CalculateOverDueBill(14, new DateOnly(2024, 7, 14), dateProvider);
+            Assert.Equal(new OverDueBillInfo(41, 2, []), fourtyOneDaysBeforeIteration);
 
-        var thrityOneDaysBeforeIteration = month.CalculateOverDueBill(new DateOnly(2024, 6, 30), dateProvider);
-        Assert.Equal(new OverDueBillInfo(31, 2), thrityOneDaysBeforeIteration);
+            var fiftyOneDaysBeforeIteration = month.CalculateOverDueBill(4, new DateOnly(2024, 7, 4), dateProvider);
+            Assert.Equal(new OverDueBillInfo(51, 2, []), fiftyOneDaysBeforeIteration);
+        });
     }
 
     [Fact]
-    public void CalculateOverDueBillInfo_OneIterationAfterNextDueDateMonthOf30EndOfMonth_ReturnXIterations()
+    public void CalculateOverDueBillInfo_CurrDateNearEndOfMonthAndDueDateNearStart()
     {
         IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 6, 30));
 
         var month = new Monthly();
 
-        var twentyNineDaysBeforeIteration = month.CalculateOverDueBill(new DateOnly(2024, 6, 1), dateProvider);
-        Assert.Equal(new OverDueBillInfo(29, 1), twentyNineDaysBeforeIteration);
+        Assert.Multiple(() =>
+        {
+            var twentyNineDaysBeforeIteration = month.CalculateOverDueBill(1, new DateOnly(2024, 6, 1), dateProvider);
+            Assert.Equal(new OverDueBillInfo(29, 1, []), twentyNineDaysBeforeIteration);
 
-        var thrityDaysBeforeIteration = month.CalculateOverDueBill(new DateOnly(2024, 5, 31), dateProvider);
-        Assert.Equal(new OverDueBillInfo(30, 1), thrityDaysBeforeIteration);
-
-        var thrityOneDaysBeforeIteration = month.CalculateOverDueBill(new DateOnly(2024, 5, 30), dateProvider);
-        Assert.Equal(new OverDueBillInfo(31, 1), thrityOneDaysBeforeIteration);
-
-        var thrityTwoDaysBeforeIteration = month.CalculateOverDueBill(new DateOnly(2024, 5, 29), dateProvider);
-        Assert.Equal(new OverDueBillInfo(32, 2), thrityTwoDaysBeforeIteration);
+            var thrityTwoDaysBeforeIteration = month.CalculateOverDueBill(29, new DateOnly(2024, 5, 1), dateProvider);
+            Assert.Equal(new OverDueBillInfo(60, 2, []), thrityTwoDaysBeforeIteration);
+        });
     }
 
+
     [Fact]
-    public void CalculateOverDueBillInfo_OneIterationAfterNextDueDateMonthOf1st_ReturnXIterations()
+    public void CalculateOverDueBillInfo_CurrDateNearStartOfMonthAndDueDateNearEnd()
     {
         IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 6, 1));
 
         var month = new Monthly();
 
-        var oneDayBeforeIterationButOneMonthDiff = month.CalculateOverDueBill(new DateOnly(2024, 5, 31), dateProvider);
-        Assert.Equal(new OverDueBillInfo(1, 1), oneDayBeforeIterationButOneMonthDiff);
+        Assert.Multiple(() =>
+        {
+            var oneDayBeforeIterationButOneMonthDiff = month.CalculateOverDueBill(31, new DateOnly(2024, 5, 31), dateProvider);
+            Assert.Equal(new OverDueBillInfo(1, 1, []), oneDayBeforeIterationButOneMonthDiff);
 
-        var twoDaysBeforeIterationButOneMonthDiff = month.CalculateOverDueBill(new DateOnly(2024, 5, 30), dateProvider);
-        Assert.Equal(new OverDueBillInfo(2, 1), twoDaysBeforeIterationButOneMonthDiff);
+            var twoDaysBeforeIterationButOneMonthDiff = month.CalculateOverDueBill(30, new DateOnly(2024, 5, 30), dateProvider);
+            Assert.Equal(new OverDueBillInfo(2, 1, []), twoDaysBeforeIterationButOneMonthDiff);
 
-        var threeDaysBeforeIterationButOneMonthDiff = month.CalculateOverDueBill(new DateOnly(2024, 5, 29), dateProvider);
-        Assert.Equal(new OverDueBillInfo(3, 1), threeDaysBeforeIterationButOneMonthDiff);
+            var threeDaysBeforeIterationButOneMonthDiff = month.CalculateOverDueBill(29, new DateOnly(2024, 5, 29), dateProvider);
+            Assert.Equal(new OverDueBillInfo(3, 1, []), threeDaysBeforeIterationButOneMonthDiff);
+
+            var thirtyTwoDaysBeforeIteration = month.CalculateOverDueBill(30, new DateOnly(2024, 4, 30), dateProvider);
+            Assert.Equal(new OverDueBillInfo(32, 2, []), thirtyTwoDaysBeforeIteration);
+        });
     }
 
     [Fact]
-    public void CalculateOverDueBillInfo_OneIterationAfterNextDueDateMonthOf1stOf30th_ReturnXIterations()
+    public void CalculateOverDueBillInfo_30To30MonthDay30()
     {
-        IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 7, 1));
+        IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 7, 30));
 
         var month = new Monthly();
 
-        var oneDayBeforeIterationButOneMonthDiff = month.CalculateOverDueBill(new DateOnly(2024, 6, 30), dateProvider);
-        Assert.Equal(new OverDueBillInfo(1, 1), oneDayBeforeIterationButOneMonthDiff);
+        Assert.Multiple(() =>
+        {
+            var thrityDaysBeforeIteration = month.CalculateOverDueBill(30, new DateOnly(2024, 6, 30), dateProvider);
+            Assert.Equal(new OverDueBillInfo(30, 1, []), thrityDaysBeforeIteration);
 
-        var rwoDaysBeforeIterationButOneMonthDiff = month.CalculateOverDueBill(new DateOnly(2024, 6, 29), dateProvider);
-        Assert.Equal(new OverDueBillInfo(2, 1), rwoDaysBeforeIterationButOneMonthDiff);
-
-        var threeDaysBeforeIterationButOneMonthDiff = month.CalculateOverDueBill(new DateOnly(2024, 6, 29), dateProvider);
-        Assert.Equal(new OverDueBillInfo(2, 1), threeDaysBeforeIterationButOneMonthDiff);
+            var thrityOneDaysBeforeIteration = month.CalculateOverDueBill(30, new DateOnly(2024, 5, 30), dateProvider);
+            Assert.Equal(new OverDueBillInfo(61, 2, []), thrityOneDaysBeforeIteration);
+        });
     }
 
     [Fact]
-    public void CalculateOverDueBillInfo_CurrDateDayNumberLessThanNextDueDateDayNumber()
+    public void CalculateOverDueBillInfo_31ToCurrDay30MonthDay31()
     {
-        IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 10, 4));
+        IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 8, 30));
 
         var month = new Monthly();
 
-        var nextDueDate = month.CalculateOverDueBill(new DateOnly(2024, 8, 30), dateProvider);
-        Assert.Equal(new OverDueBillInfo(35, 2), nextDueDate);
+        Assert.Multiple(() =>
+        {
+            var thrityDaysBeforeIteration = month.CalculateOverDueBill(31, new DateOnly(2024, 7, 31), dateProvider);
+            Assert.Equal(new OverDueBillInfo(30, 1, []), thrityDaysBeforeIteration);
+
+            var thrityOneDaysBeforeIteration = month.CalculateOverDueBill(31, new DateOnly(2024, 5, 31), dateProvider);
+            Assert.Equal(new OverDueBillInfo(91, 3, []), thrityOneDaysBeforeIteration);
+        });
+    }
+
+    [Fact]
+    public void CalculateOverDueBillInfo_30ToCurrDay31MonthDay30()
+    {
+        IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 8, 31));
+
+        var month = new Monthly();
+
+        Assert.Multiple(() =>
+        {
+            var thrityDaysBeforeIteration = month.CalculateOverDueBill(30, new DateOnly(2024, 7, 30), dateProvider);
+            Assert.Equal(new OverDueBillInfo(32, 2, []), thrityDaysBeforeIteration);
+
+            var thrityOneDaysBeforeIteration = month.CalculateOverDueBill(30, new DateOnly(2024, 5, 30), dateProvider);
+            Assert.Equal(new OverDueBillInfo(93, 4, []), thrityOneDaysBeforeIteration);
+        });
+    }
+
+    [Fact]
+    public void CalculateOverDueBillInfo_31ToCurrDay31MonthDay31()
+    {
+        IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 8, 31));
+
+        var month = new Monthly();
+
+        Assert.Multiple(() =>
+        {
+            var thrityDaysBeforeIteration = month.CalculateOverDueBill(31, new DateOnly(2024, 7, 31), dateProvider);
+            Assert.Equal(new OverDueBillInfo(31, 1, []), thrityDaysBeforeIteration);
+
+            var thrityOneDaysBeforeIteration = month.CalculateOverDueBill(31, new DateOnly(2024, 5, 31), dateProvider);
+            Assert.Equal(new OverDueBillInfo(92, 3, []), thrityOneDaysBeforeIteration);
+        });
     }
 }

@@ -10,7 +10,7 @@ internal class Daily : IFrequency
         return currNextDueDate.AddDays(1);
     }
 
-    public OverDueBillInfo? CalculateOverDueBill(DateOnly nextDueDate, IDateProvider dateProvider)
+    public OverDueBillInfo? CalculateOverDueBill(int monthDay, DateOnly nextDueDate, IDateProvider dateProvider)
     {
         var today = dateProvider.Now;
         int numberOfDaysOverdue = today.DayNumber - nextDueDate.DayNumber;
@@ -20,7 +20,7 @@ internal class Daily : IFrequency
             return null;
         }
 
-        return new OverDueBillInfo(numberOfDaysOverdue, numberOfDaysOverdue);
+        return new OverDueBillInfo(numberOfDaysOverdue, numberOfDaysOverdue, []);
     }
     public bool MatchCommand(string frequency) => frequency.Equals("Daily");
 }

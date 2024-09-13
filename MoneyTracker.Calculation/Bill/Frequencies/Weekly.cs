@@ -10,7 +10,7 @@ internal class Weekly : IFrequency
         return currNextDueDate.AddDays(7);
     }
 
-    public OverDueBillInfo? CalculateOverDueBill(DateOnly nextDueDate, IDateProvider dateProvider)
+    public OverDueBillInfo? CalculateOverDueBill(int monthDay, DateOnly nextDueDate, IDateProvider dateProvider)
     {
         var today = dateProvider.Now;
         int numberOfDaysOverdue = today.DayNumber - nextDueDate.DayNumber;
@@ -19,7 +19,7 @@ internal class Weekly : IFrequency
         {
             return null;
         }
-        return new OverDueBillInfo(numberOfDaysOverdue, numberOfDaysOverdue / 7 + 1);
+        return new OverDueBillInfo(numberOfDaysOverdue, numberOfDaysOverdue / 7 + 1, []);
     }
 
     public bool MatchCommand(string frequency) => frequency == "Weekly";

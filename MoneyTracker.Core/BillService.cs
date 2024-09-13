@@ -31,8 +31,9 @@ public class BillService : IBillService
                bill.NextDueDate,
                bill.Frequency,
                bill.Category,
-               BillCalculation.CalculateOverDueBillInfo(bill.Frequency, bill.NextDueDate,
-                   _dateProvider)
+               BillCalculation.CalculateOverDueBillInfo(bill.NextDueDate.Day, bill.Frequency,
+                   bill.NextDueDate, _dateProvider)
+            // TODO Get monthday
            ));
         }
 
