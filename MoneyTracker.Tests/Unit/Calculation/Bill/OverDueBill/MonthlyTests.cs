@@ -70,4 +70,21 @@ public sealed class MonthlyTests
             Assert.Equal(new OverDueBillInfo(51, 2), fiftyOneDaysBeforeIteration);
         });
     }
+
+    [Fact]
+    public void CalculateOverDueBillInfo_CurrDateNearEndOfMonthAndDueDateNearStart()
+    {
+        IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 6, 30));
+
+        var month = new Monthly();
+
+        Assert.Multiple(() =>
+        {
+            var twentyNineDaysBeforeIteration = month.CalculateOverDueBill(1, new DateOnly(2024, 6, 1), dateProvider);
+            Assert.Equal(new OverDueBillInfo(29, 1), twentyNineDaysBeforeIteration);
+
+            var thrityTwoDaysBeforeIteration = month.CalculateOverDueBill(29, new DateOnly(2024, 5, 1), dateProvider);
+            Assert.Equal(new OverDueBillInfo(60, 2), thrityTwoDaysBeforeIteration);
+        });
+    }
 }
