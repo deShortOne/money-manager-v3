@@ -95,6 +95,8 @@ public class BillDatabase : IBillDatabase
         {
             setParamsLis.Add("nextduedate = @nextduedate");
             queryParams.Add(new NpgsqlParameter("nextduedate", editBillDTO.NextDueDate));
+            setParamsLis.Add("monthday = @monthday");
+            queryParams.Add(new NpgsqlParameter("monthday", ((DateOnly)editBillDTO.NextDueDate).Day));
         }
         if (editBillDTO.Frequency != null)
         {
