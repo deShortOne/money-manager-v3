@@ -53,8 +53,8 @@ public class BillDatabase : IBillDatabase
     public async Task<List<BillDTO>> AddBill(NewBillDTO newBillDTO)
     {
         string query = """
-            INSERT INTO bill (payee, amount, nextduedate, frequency, categoryid)
-            VALUES (@payee, @amount, @nextduedate, @frequency, @categoryid);
+            INSERT INTO bill (payee, amount, nextduedate, frequency, categoryid, monthday)
+            VALUES (@payee, @amount, @nextduedate, @frequency, @categoryid, @monthday);
             """;
         var queryParams = new List<DbParameter>()
             {
@@ -63,6 +63,7 @@ public class BillDatabase : IBillDatabase
                 new NpgsqlParameter("nextduedate", newBillDTO.NextDueDate),
                 new NpgsqlParameter("frequency", newBillDTO.Frequency),
                 new NpgsqlParameter("categoryid", newBillDTO.Category),
+                new NpgsqlParameter("monthday", newBillDTO.MonthDay),
             };
 
         await _database.UpdateTable(query, queryParams);

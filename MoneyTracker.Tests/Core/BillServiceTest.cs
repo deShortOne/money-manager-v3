@@ -93,7 +93,7 @@ public class BillServiceTest : IAsyncLifetime
         IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 8, 24));
         var billService = new BillService(_billDb, dateProvider);
 
-        await billService.AddBill(new NewBillDTO("flight sim", 420, DateOnly.Parse("2024-09-05"), "Daily", 5));
+        await billService.AddBill(new NewBillDTO("flight sim", 420, DateOnly.Parse("2024-09-05"), "Daily", 5, 5));
 
         var expected = new List<BillDTO>()
         {
