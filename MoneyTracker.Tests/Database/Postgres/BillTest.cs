@@ -38,10 +38,10 @@ public class BillTest : IAsyncLifetime
         var db = new PostgresDatabase(_postgres.GetConnectionString());
         var bill = new BillDatabase(db);
 
-        var expected = new List<BillDTO>()
+        var expected = new List<BillFromRepositoryDTO>()
         {
-            new BillDTO(2, "company a", 100, DateOnly.Parse("2024-08-30"), "Monthly", "Wages & Salary : Net Pay", null),
-            new BillDTO(1, "supermarket a", 23, DateOnly.Parse("2024-09-03"), "Weekly", "Groceries", null),
+            new(2, "company a", 100, DateOnly.Parse("2024-08-30"), "Monthly", "Wages & Salary : Net Pay", 30),
+            new(1, "supermarket a", 23, DateOnly.Parse("2024-09-03"), "Weekly", "Groceries", 3),
         };
 
         var actual = await bill.GetAllBills();
@@ -56,9 +56,9 @@ public class BillTest : IAsyncLifetime
         var bill = new BillDatabase(db);
         await bill.DeleteBill(new DeleteBillDTO(1));
 
-        var expected = new List<BillDTO>()
+        var expected = new List<BillFromRepositoryDTO>()
         {
-            new BillDTO(2, "company a", 100, DateOnly.Parse("2024-08-30"), "Monthly", "Wages & Salary : Net Pay", null),
+            new(2, "company a", 100, DateOnly.Parse("2024-08-30"), "Monthly", "Wages & Salary : Net Pay", 30),
         };
 
         var actual = await bill.GetAllBills();
@@ -73,10 +73,10 @@ public class BillTest : IAsyncLifetime
         var bill = new BillDatabase(db);
         await bill.EditBill(new EditBillDTO(1, payee: "supermarket b"));
 
-        var expected = new List<BillDTO>()
+        var expected = new List<BillFromRepositoryDTO>()
         {
-            new BillDTO(2, "company a", 100, DateOnly.Parse("2024-08-30"), "Monthly", "Wages & Salary : Net Pay", null),
-            new BillDTO(1, "supermarket b", 23, DateOnly.Parse("2024-09-03"), "Weekly", "Groceries", null),
+            new(2, "company a", 100, DateOnly.Parse("2024-08-30"), "Monthly", "Wages & Salary : Net Pay", 30),
+            new(1, "supermarket b", 23, DateOnly.Parse("2024-09-03"), "Weekly", "Groceries", 3),
         };
 
         var actual = await bill.GetAllBills();
@@ -91,11 +91,11 @@ public class BillTest : IAsyncLifetime
         var bill = new BillDatabase(db);
         await bill.AddBill(new NewBillDTO("flight sim", 420, DateOnly.Parse("2024-09-05"), "Daily", 5, 5));
 
-        var expected = new List<BillDTO>()
+        var expected = new List<BillFromRepositoryDTO>()
         {
-            new BillDTO(2, "company a", 100, DateOnly.Parse("2024-08-30"), "Monthly", "Wages & Salary : Net Pay", null),
-            new BillDTO(1, "supermarket a", 23, DateOnly.Parse("2024-09-03"), "Weekly", "Groceries", null),
-            new BillDTO(3, "flight sim", 420, DateOnly.Parse("2024-09-05"), "Daily", "Hobby", null),
+            new(2, "company a", 100, DateOnly.Parse("2024-08-30"), "Monthly", "Wages & Salary : Net Pay", 30),
+            new(1, "supermarket a", 23, DateOnly.Parse("2024-09-03"), "Weekly", "Groceries", 3),
+            new(3, "flight sim", 420, DateOnly.Parse("2024-09-05"), "Daily", "Hobby", 5),
         };
 
         var actual = await bill.GetAllBills();

@@ -39,10 +39,10 @@ public class BillServiceTest : IAsyncLifetime
     [Fact]
     public async void FirstLoadCheckTablesThatDataAreThere()
     {
-        var expected = new List<BillDTO>()
+        var expected = new List<BillFromRepositoryDTO>()
         {
-            new BillDTO(2, "company a", 100, DateOnly.Parse("2024-08-30"), "Monthly", "Wages & Salary : Net Pay", null),
-            new BillDTO(1, "supermarket a", 23, DateOnly.Parse("2024-09-03"), "Weekly", "Groceries", null),
+            new(2, "company a", 100, DateOnly.Parse("2024-08-30"), "Monthly", "Wages & Salary : Net Pay", 30),
+            new(1, "supermarket a", 23, DateOnly.Parse("2024-09-03"), "Weekly", "Groceries", 3),
         };
 
         var actual = await _billDb.GetAllBills();

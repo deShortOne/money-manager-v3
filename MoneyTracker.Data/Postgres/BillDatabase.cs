@@ -14,7 +14,7 @@ public class BillDatabase : IBillDatabase
         _database = (PostgresDatabase)db;
     }
 
-    public async Task<List<BillDTO>> GetAllBills()
+    public async Task<List<BillFromRepositoryDTO>> GetAllBills()
     {
         string query = """
             SELECT b.id,
@@ -22,7 +22,8 @@ public class BillDatabase : IBillDatabase
             	amount,
             	nextduedate,
             	frequency,
-            	c.name
+            	c.name,
+                b.monthday
             FROM bill b
             INNER JOIN category c
             	ON b.categoryid = c.id
@@ -31,26 +32,27 @@ public class BillDatabase : IBillDatabase
 
         using var reader = await _database.GetTable(query);
 
-        List<BillDTO> res = [];
+        List<BillFromRepositoryDTO> res = [];
         while (await reader.ReadAsync())
         {
             var nextDueDate = DateOnly.FromDateTime(reader.GetDateTime("nextduedate"));
             var frequency = reader.GetString("frequency");
 
-            res.Add(new BillDTO(
+            res.Add(new BillFromRepositoryDTO(
                 reader.GetInt32("id"),
                 reader.GetString("payee"),
                 reader.GetDecimal("amount"),
                 nextDueDate,
                 frequency,
-                reader.GetString("name")
+                reader.GetString("name"),
+                reader.GetInt32("monthday")
             ));
         }
 
         return res;
     }
 
-    public async Task<List<BillDTO>> AddBill(NewBillDTO newBillDTO)
+    public async Task<List<BillFromRepositoryDTO>> AddBill(NewBillDTO newBillDTO)
     {
         string query = """
             INSERT INTO bill (payee, amount, nextduedate, frequency, categoryid, monthday)
@@ -71,7 +73,7 @@ public class BillDatabase : IBillDatabase
         return await GetAllBills();
     }
 
-    public async Task<List<BillDTO>> EditBill(EditBillDTO editBillDTO)
+    public async Task<List<BillFromRepositoryDTO>> EditBill(EditBillDTO editBillDTO)
     {
         var setParamsLis = new List<string>();
         var queryParams = new List<DbParameter>()
@@ -116,7 +118,7 @@ public class BillDatabase : IBillDatabase
         return await GetAllBills();
     }
 
-    public async Task<List<BillDTO>> DeleteBill(DeleteBillDTO deleteBillDTO)
+    public async Task<List<BillFromRepositoryDTO>> DeleteBill(DeleteBillDTO deleteBillDTO)
     {
         string query = """
             DELETE FROM bill
@@ -132,7 +134,7 @@ public class BillDatabase : IBillDatabase
         return await GetAllBills();
     }
 
-    public async Task<BillDTO> GetBillById(int id)
+    public async Task<BillFromRepositoryDTO> GetBillById(int id)
     {
         string query = """
             SELECT b.id,
@@ -140,7 +142,8 @@ public class BillDatabase : IBillDatabase
             	amount,
             	nextduedate,
             	frequency,
-            	c.name
+            	c.name,
+                b.monthday
             FROM bill b
             INNER JOIN category c
             	ON b.categoryid = c.id
@@ -158,13 +161,14 @@ public class BillDatabase : IBillDatabase
             var nextDueDate = DateOnly.FromDateTime(reader.GetDateTime("nextduedate"));
             var frequency = reader.GetString("frequency");
 
-            return new BillDTO(
+            return new BillFromRepositoryDTO(
                 reader.GetInt32("id"),
                 reader.GetString("payee"),
                 reader.GetDecimal("amount"),
                 nextDueDate,
                 frequency,
-                reader.GetString("name")
+                reader.GetString("name"),
+                reader.GetInt32("monthday")
             );
         }
 
