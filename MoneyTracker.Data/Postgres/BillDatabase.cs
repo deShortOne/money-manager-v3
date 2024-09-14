@@ -2,19 +2,20 @@
 using System.Data.Common;
 using MoneyTracker.Data.Global;
 using MoneyTracker.Shared.Data;
-using MoneyTracker.Shared.Models.Bill;
+using MoneyTracker.Shared.Models.RepositoryToService.Bill;
+using MoneyTracker.Shared.Models.ServiceToRepository.Bill;
 using Npgsql;
 
 namespace MoneyTracker.Data.Postgres;
 public class BillDatabase : IBillDatabase
 {
-    private readonly PostgresDatabase _database;
+    private readonly IDatabase _database;
     public BillDatabase(IDatabase db)
     {
-        _database = (PostgresDatabase)db;
+        _database = db;
     }
 
-    public async Task<List<BillFromRepositoryDTO>> GetAllBills()
+    public async Task<List<BillEntityDTO>> GetAllBills()
     {
         string query = """
             SELECT b.id,
@@ -23,40 +24,45 @@ public class BillDatabase : IBillDatabase
             	nextduedate,
             	frequency,
             	c.name,
-                b.monthday
+                b.monthday,
+                a.name account_name
             FROM bill b
             INNER JOIN category c
-            	ON b.categoryid = c.id
+            	ON b.category_id = c.id
+            INNER JOIN account a
+                on b.account_id = a.id
             ORDER BY nextduedate ASC;
             """;
 
         using var reader = await _database.GetTable(query);
 
-        List<BillFromRepositoryDTO> res = [];
+        List<BillEntityDTO> res = [];
         while (await reader.ReadAsync())
         {
             var nextDueDate = DateOnly.FromDateTime(reader.GetDateTime("nextduedate"));
             var frequency = reader.GetString("frequency");
 
-            res.Add(new BillFromRepositoryDTO(
+            res.Add(new BillEntityDTO(
                 reader.GetInt32("id"),
                 reader.GetString("payee"),
                 reader.GetDecimal("amount"),
                 nextDueDate,
                 frequency,
                 reader.GetString("name"),
-                reader.GetInt32("monthday")
+                reader.GetInt32("monthday"),
+                reader.GetString("account_name")
             ));
         }
 
         return res;
     }
 
-    public async Task<List<BillFromRepositoryDTO>> AddBill(NewBillDTO newBillDTO)
+    public async Task<List<BillEntityDTO>> AddBill(NewBillDTO newBillDTO)
     {
+        // TODO - ACCOUNT ID
         string query = """
-            INSERT INTO bill (payee, amount, nextduedate, frequency, categoryid, monthday)
-            VALUES (@payee, @amount, @nextduedate, @frequency, @categoryid, @monthday);
+            INSERT INTO bill (payee, amount, nextduedate, frequency, category_id, monthday, account_id)
+            VALUES (@payee, @amount, @nextduedate, @frequency, @category_id, @monthday, 1);
             """;
         var queryParams = new List<DbParameter>()
             {
@@ -64,7 +70,7 @@ public class BillDatabase : IBillDatabase
                 new NpgsqlParameter("amount", newBillDTO.Amount),
                 new NpgsqlParameter("nextduedate", newBillDTO.NextDueDate),
                 new NpgsqlParameter("frequency", newBillDTO.Frequency),
-                new NpgsqlParameter("categoryid", newBillDTO.Category),
+                new NpgsqlParameter("category_id", newBillDTO.Category),
                 new NpgsqlParameter("monthday", newBillDTO.MonthDay),
             };
 
@@ -73,7 +79,7 @@ public class BillDatabase : IBillDatabase
         return await GetAllBills();
     }
 
-    public async Task<List<BillFromRepositoryDTO>> EditBill(EditBillDTO editBillDTO)
+    public async Task<List<BillEntityDTO>> EditBill(EditBillDTO editBillDTO)
     {
         var setParamsLis = new List<string>();
         var queryParams = new List<DbParameter>()
@@ -105,7 +111,7 @@ public class BillDatabase : IBillDatabase
         }
         if (editBillDTO.Category != null)
         {
-            setParamsLis.Add("categoryid = @category");
+            setParamsLis.Add("category_id = @category");
             queryParams.Add(new NpgsqlParameter("category", editBillDTO.Category));
         }
 
@@ -120,7 +126,7 @@ public class BillDatabase : IBillDatabase
         return await GetAllBills();
     }
 
-    public async Task<List<BillFromRepositoryDTO>> DeleteBill(DeleteBillDTO deleteBillDTO)
+    public async Task<List<BillEntityDTO>> DeleteBill(DeleteBillDTO deleteBillDTO)
     {
         string query = """
             DELETE FROM bill
@@ -136,7 +142,7 @@ public class BillDatabase : IBillDatabase
         return await GetAllBills();
     }
 
-    public async Task<BillFromRepositoryDTO> GetBillById(int id)
+    public async Task<BillEntityDTO> GetBillById(int id)
     {
         string query = """
             SELECT b.id,
@@ -145,10 +151,13 @@ public class BillDatabase : IBillDatabase
             	nextduedate,
             	frequency,
             	c.name,
-                b.monthday
+                b.monthday,
+                a.name account_name
             FROM bill b
             INNER JOIN category c
-            	ON b.categoryid = c.id
+            	ON b.category_id = c.id
+            INNER JOIN account a
+                ON b.account_id = a.id
             WHERE b.id = @id;
             """;
         var queryParams = new List<DbParameter>()
@@ -157,20 +166,21 @@ public class BillDatabase : IBillDatabase
         };
         using var reader = await _database.GetTable(query, queryParams);
 
-        List<BillDTO> res = [];
+        List<BillEntityDTO> res = [];
         if (await reader.ReadAsync())
         {
             var nextDueDate = DateOnly.FromDateTime(reader.GetDateTime("nextduedate"));
             var frequency = reader.GetString("frequency");
 
-            return new BillFromRepositoryDTO(
+            return new BillEntityDTO(
                 reader.GetInt32("id"),
                 reader.GetString("payee"),
                 reader.GetDecimal("amount"),
                 nextDueDate,
                 frequency,
                 reader.GetString("name"),
-                reader.GetInt32("monthday")
+                reader.GetInt32("monthday"),
+                reader.GetString("account_name")
             );
         }
 

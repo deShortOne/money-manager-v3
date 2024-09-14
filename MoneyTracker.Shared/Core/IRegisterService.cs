@@ -1,10 +1,11 @@
-﻿using MoneyTracker.Shared.Models.Transaction;
+﻿using MoneyTracker.Shared.Models.ControllerToService.Transaction;
+using MoneyTracker.Shared.Models.ServiceToController.Transaction;
 
 namespace MoneyTracker.Shared.Core;
 public interface IRegisterService
 {
-    Task<TransactionDTO> AddTransaction(NewTransactionDTO newTransaction);
-    Task<bool> DeleteTransaction(DeleteTransactionDTO deleteTransaction);
-    Task<TransactionDTO> EditTransaction(EditTransactionDTO editTransaction);
-    Task<List<TransactionDTO>> GetAllTransactions();
+    Task<TransactionResponseDTO> AddTransaction(NewTransactionRequestDTO newTransaction);
+    Task<bool> DeleteTransaction(DeleteTransactionRequestDTO deleteTransaction);
+    Task<TransactionResponseDTO> EditTransaction(EditTransactionRequestDTO editTransaction);
+    Task<List<TransactionResponseDTO>> GetAllTransactions();
 }

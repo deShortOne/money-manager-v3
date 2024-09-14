@@ -2,7 +2,8 @@
 using MoneyTracker.Data.Postgres;
 using MoneyTracker.DatabaseMigration;
 using MoneyTracker.DatabaseMigration.Models;
-using MoneyTracker.Shared.Models.Transaction;
+using MoneyTracker.Shared.Models.RepositoryToService.Transaction;
+using MoneyTracker.Shared.Models.ServiceToRepository.Transaction;
 using Testcontainers.PostgreSql;
 
 namespace MoneyTracker.Tests.Database.Postgres
@@ -37,51 +38,51 @@ namespace MoneyTracker.Tests.Database.Postgres
             var db = new PostgresDatabase(_postgres.GetConnectionString());
             var register = new RegisterDatabase(db);
 
-            var expected = new List<TransactionDTO>()
+            var expected = new List<TransactionEntityDTO>()
             {
-                new TransactionDTO(
+                new TransactionEntityDTO(
                     1,
                     "Company A",
                     1800,
                     DateTime.Parse("2024-08-28T00:00:00Z").ToUniversalTime(),
                     "Wages & Salary : Net Pay"
                 ),
-                new TransactionDTO(
+                new TransactionEntityDTO(
                     6,
                     "Supermarket",
                     27,
                     DateTime.Parse("2024-08-15T00:00:00Z").ToUniversalTime(),
                     "Groceries"
                 ),
-                new TransactionDTO(
+                new TransactionEntityDTO(
                     7,
                     "Hobby item",
                     150,
                     DateTime.Parse("2024-08-09T00:00:00Z").ToUniversalTime(),
                     "Hobby"
                 ),
-                new TransactionDTO(
+                new TransactionEntityDTO(
                     5,
                     "Supermarket",
                     23,
                     DateTime.Parse("2024-08-08T00:00:00Z").ToUniversalTime(),
                     "Groceries"
                 ),
-                new TransactionDTO(
+                new TransactionEntityDTO(
                     2,
                     "Phone company",
                     10,
                     DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
                     "Bills : Cell Phone"
                 ),
-                new TransactionDTO(
+                new TransactionEntityDTO(
                     3,
                     "Landlord A",
                     500,
                     DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
                     "Bills : Rent"
                 ),
-                new TransactionDTO(
+                new TransactionEntityDTO(
                     4,
                     "Supermarket",
                     25,
@@ -98,7 +99,7 @@ namespace MoneyTracker.Tests.Database.Postgres
         {
             var db = new PostgresDatabase(_postgres.GetConnectionString());
             var register = new RegisterDatabase(db);
-            var transactionToAdd = new TransactionDTO(
+            var transactionToAdd = new TransactionEntityDTO(
                 8,
                 "Super star",
                 2300,
@@ -112,52 +113,52 @@ namespace MoneyTracker.Tests.Database.Postgres
                 5 // id correlate to hobby
             ));
 
-            var expected = new List<TransactionDTO>()
+            var expected = new List<TransactionEntityDTO>()
             {
                 transactionToAdd,
-                new TransactionDTO(
+                new TransactionEntityDTO(
                     1,
                     "Company A",
                     1800,
                     DateTime.Parse("2024-08-28T00:00:00Z").ToUniversalTime(),
                     "Wages & Salary : Net Pay"
                 ),
-                new TransactionDTO(
+                new TransactionEntityDTO(
                     6,
                     "Supermarket",
                     27,
                     DateTime.Parse("2024-08-15T00:00:00Z").ToUniversalTime(),
                     "Groceries"
                 ),
-                new TransactionDTO(
+                new TransactionEntityDTO(
                     7,
                     "Hobby item",
                     150,
                     DateTime.Parse("2024-08-09T00:00:00Z").ToUniversalTime(),
                     "Hobby"
                 ),
-                new TransactionDTO(
+                new TransactionEntityDTO(
                     5,
                     "Supermarket",
                     23,
                     DateTime.Parse("2024-08-08T00:00:00Z").ToUniversalTime(),
                     "Groceries"
                 ),
-                new TransactionDTO(
+                new TransactionEntityDTO(
                     2,
                     "Phone company",
                     10,
                     DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
                     "Bills : Cell Phone"
                 ),
-                new TransactionDTO(
+                new TransactionEntityDTO(
                     3,
                     "Landlord A",
                     500,
                     DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
                     "Bills : Rent"
                 ),
-                new TransactionDTO(
+                new TransactionEntityDTO(
                     4,
                     "Supermarket",
                     25,
@@ -181,51 +182,51 @@ namespace MoneyTracker.Tests.Database.Postgres
                 category: 5 // "Hobby"
             ));
 
-            var expected = new List<TransactionDTO>()
+            var expected = new List<TransactionEntityDTO>()
             {
-                new TransactionDTO(
+                new TransactionEntityDTO(
                     1,
                     "Company A",
                     1800,
                     DateTime.Parse("2024-08-28T00:00:00Z").ToUniversalTime(),
                     "Wages & Salary : Net Pay"
                 ),
-                new TransactionDTO(
+                new TransactionEntityDTO(
                     6,
                     "Bar",
                     27,
                     DateTime.Parse("2024-08-15T00:00:00Z").ToUniversalTime(),
                     "Hobby"
                 ),
-                new TransactionDTO(
+                new TransactionEntityDTO(
                     7,
                     "Hobby item",
                     150,
                     DateTime.Parse("2024-08-09T00:00:00Z").ToUniversalTime(),
                     "Hobby"
                 ),
-                new TransactionDTO(
+                new TransactionEntityDTO(
                     5,
                     "Supermarket",
                     23,
                     DateTime.Parse("2024-08-08T00:00:00Z").ToUniversalTime(),
                     "Groceries"
                 ),
-                new TransactionDTO(
+                new TransactionEntityDTO(
                     2,
                     "Phone company",
                     10,
                     DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
                     "Bills : Cell Phone"
                 ),
-                new TransactionDTO(
+                new TransactionEntityDTO(
                     3,
                     "Landlord A",
                     500,
                     DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
                     "Bills : Rent"
                 ),
-                new TransactionDTO(
+                new TransactionEntityDTO(
                     4,
                     "Supermarket",
                     25,
@@ -243,49 +244,46 @@ namespace MoneyTracker.Tests.Database.Postgres
             var db = new PostgresDatabase(_postgres.GetConnectionString());
             var register = new RegisterDatabase(db);
 
-            await register.DeleteTransaction(new DeleteTransactionDTO()
-            {
-                Id = 6,
-            });
+            await register.DeleteTransaction(new DeleteTransactionDTO(6));
 
-            var expected = new List<TransactionDTO>()
+            var expected = new List<TransactionEntityDTO>()
             {
-                new TransactionDTO(
+                new TransactionEntityDTO(
                     1,
                     "Company A",
                     1800,
                     DateTime.Parse("2024-08-28T00:00:00Z").ToUniversalTime(),
                     "Wages & Salary : Net Pay"
                 ),
-                new TransactionDTO(
+                new TransactionEntityDTO(
                     7,
                     "Hobby item",
                     150,
                     DateTime.Parse("2024-08-09T00:00:00Z").ToUniversalTime(),
                     "Hobby"
                 ),
-                new TransactionDTO(
+                new TransactionEntityDTO(
                     5,
                     "Supermarket",
                     23,
                     DateTime.Parse("2024-08-08T00:00:00Z").ToUniversalTime(),
                     "Groceries"
                 ),
-                new TransactionDTO(
+                new TransactionEntityDTO(
                     2,
                     "Phone company",
                     10,
                     DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
                     "Bills : Cell Phone"
                 ),
-                new TransactionDTO(
+                new TransactionEntityDTO(
                     3,
                     "Landlord A",
                     500,
                     DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
                     "Bills : Rent"
                 ),
-                new TransactionDTO(
+                new TransactionEntityDTO(
                     4,
                     "Supermarket",
                     25,

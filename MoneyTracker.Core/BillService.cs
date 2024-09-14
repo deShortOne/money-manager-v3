@@ -2,7 +2,10 @@
 using MoneyTracker.Shared.Core;
 using MoneyTracker.Shared.Data;
 using MoneyTracker.Shared.DateManager;
-using MoneyTracker.Shared.Models.Bill;
+using MoneyTracker.Shared.Models.ControllerToService.Bill;
+using MoneyTracker.Shared.Models.RepositoryToService.Bill;
+using MoneyTracker.Shared.Models.ServiceToController.Bill;
+using MoneyTracker.Shared.Models.ServiceToRepository.Bill;
 
 namespace MoneyTracker.Core;
 public class BillService : IBillService
@@ -16,27 +19,46 @@ public class BillService : IBillService
         _dateProvider = dateProvider;
     }
 
-    public async Task<List<BillDTO>> GetAllBills()
+    public async Task<List<BillResponseDTO>> GetAllBills()
     {
         return ConvertFromRepoDTOToDTO(await _dbService.GetAllBills());
     }
 
-    public async Task<List<BillDTO>> AddBill(NewBillDTO newBill)
+    public async Task<List<BillResponseDTO>> AddBill(NewBillRequestDTO newBill)
     {
-        return ConvertFromRepoDTOToDTO(await _dbService.AddBill(newBill));
+        var dtoToDb = new NewBillDTO(
+            newBill.Payee,
+            newBill.Amount,
+            newBill.NextDueDate,
+            newBill.Frequency,
+            newBill.Category,
+            newBill.MonthDay
+        );
+        return ConvertFromRepoDTOToDTO(await _dbService.AddBill(dtoToDb));
     }
 
-    public async Task<List<BillDTO>> EditBill(EditBillDTO editBill)
+    public async Task<List<BillResponseDTO>> EditBill(EditBillRequestDTO editBill)
     {
-        return ConvertFromRepoDTOToDTO(await _dbService.EditBill(editBill));
+        var dtoToDb = new EditBillDTO(
+            editBill.Id,
+            editBill.Payee,
+            editBill.Amount,
+            editBill.NextDueDate,
+            editBill.Frequency,
+            editBill.Category
+        );
+        return ConvertFromRepoDTOToDTO(await _dbService.EditBill(dtoToDb));
     }
 
-    public async Task<List<BillDTO>> DeleteBill(DeleteBillDTO deleteBill)
+    public async Task<List<BillResponseDTO>> DeleteBill(DeleteBillRequestDTO deleteBill)
     {
-        return ConvertFromRepoDTOToDTO(await _dbService.DeleteBill(deleteBill));
+        var dtoToDb = new DeleteBillDTO(
+            deleteBill.Id
+        );
+        return ConvertFromRepoDTOToDTO(await _dbService.DeleteBill(dtoToDb));
     }
 
-    public async Task<BillDTO> SkipOccurence(SkipBillOccurrenceDTO skipBillDTO)
+    public async Task<BillResponseDTO> SkipOccurence(SkipBillOccurrenceRequestDTO skipBillDTO)
     {
         var bill = await _dbService.GetBillById(skipBillDTO.Id);
         var newDueDate = BillCalculation.CalculateNextDueDate(bill.Frequency, bill.MonthDay, skipBillDTO.SkipDatePastThisDate);
@@ -44,7 +66,7 @@ public class BillService : IBillService
         var editBill = new EditBillDTO(skipBillDTO.Id, nextDueDate: newDueDate);
         await _dbService.EditBill(editBill);
 
-        return new BillDTO(
+        return new BillResponseDTO(
                bill.Id,
                bill.Payee,
                bill.Amount,
@@ -52,17 +74,18 @@ public class BillService : IBillService
                bill.Frequency,
                bill.Category,
                BillCalculation.CalculateOverDueBillInfo(bill.MonthDay, bill.Frequency,
-                   newDueDate, _dateProvider)
+                   newDueDate, _dateProvider),
+               bill.AccountName
            );
     }
 
-    private List<BillDTO> ConvertFromRepoDTOToDTO(List<BillFromRepositoryDTO> billRepoDTO)
+    private List<BillResponseDTO> ConvertFromRepoDTOToDTO(List<BillEntityDTO> billRepoDTO)
     {
-        List<BillDTO> res = [];
+        List<BillResponseDTO> res = [];
         foreach (var bill in billRepoDTO)
         {
 
-            res.Add(new BillDTO(
+            res.Add(new BillResponseDTO(
                bill.Id,
                bill.Payee,
                bill.Amount,
@@ -70,7 +93,8 @@ public class BillService : IBillService
                bill.Frequency,
                bill.Category,
                BillCalculation.CalculateOverDueBillInfo(bill.MonthDay, bill.Frequency,
-                   bill.NextDueDate, _dateProvider)
+                   bill.NextDueDate, _dateProvider),
+               bill.AccountName
            ));
         }
 

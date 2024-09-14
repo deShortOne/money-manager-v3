@@ -1,8 +1,9 @@
 ﻿using MoneyTracker.Data.Postgres;
 using MoneyTracker.DatabaseMigration;
 using MoneyTracker.DatabaseMigration.Models;
-using MoneyTracker.Shared.Models.Budget;
-using MoneyTracker.Shared.Models.Transaction;
+using MoneyTracker.Shared.Models.RepositoryToService.Budget;
+using MoneyTracker.Shared.Models.ServiceToRepository.Budget;
+using MoneyTracker.Shared.Models.ServiceToRepository.Transaction;
 using Testcontainers.PostgreSql;
 
 namespace MoneyTracker.Tests.Database.Postgres
@@ -37,25 +38,25 @@ namespace MoneyTracker.Tests.Database.Postgres
             var db = new PostgresDatabase(_postgres.GetConnectionString());
             var budget = new BudgetDatabase(db);
 
-            var expected = new List<BudgetGroupDTO>()
+            var expected = new List<BudgetGroupEntityDTO>()
             {
-                new BudgetGroupDTO("Income", 1800, 1800, 0, [
-                        new BudgetCategoryDTO("Wages & Salary : Net Pay", 1800, 1800, 0),
+                new BudgetGroupEntityDTO("Income", 1800, 1800, 0, [
+                        new BudgetCategoryEntityDTO("Wages & Salary : Net Pay", 1800, 1800, 0),
                     ]
                 ),
-                new BudgetGroupDTO("Committed Expenses", 610, 585, 25, [
-                        new BudgetCategoryDTO("Bills : Cell Phone", 10, 10, 0),
-                        new BudgetCategoryDTO("Bills : Rent", 500, 500, 0),
-                        new BudgetCategoryDTO("Groceries", 100, 75, 25),
+                new BudgetGroupEntityDTO("Committed Expenses", 610, 585, 25, [
+                        new BudgetCategoryEntityDTO("Bills : Cell Phone", 10, 10, 0),
+                        new BudgetCategoryEntityDTO("Bills : Rent", 500, 500, 0),
+                        new BudgetCategoryEntityDTO("Groceries", 100, 75, 25),
                     ]
                 ),
-                new BudgetGroupDTO("Fun", 0, 0, 0, []),
-                new BudgetGroupDTO("Irregular Expenses", 50, 150, -100, [
-                        new BudgetCategoryDTO("Hobby", 50, 150, -100),
+                new BudgetGroupEntityDTO("Fun", 0, 0, 0, []),
+                new BudgetGroupEntityDTO("Irregular Expenses", 50, 150, -100, [
+                        new BudgetCategoryEntityDTO("Hobby", 50, 150, -100),
                     ]
                 ),
-                new BudgetGroupDTO("Savings & Debt", 0, 0, 0, []),
-                new BudgetGroupDTO("Retirement", 0, 0, 0, []),
+                new BudgetGroupEntityDTO("Savings & Debt", 0, 0, 0, []),
+                new BudgetGroupEntityDTO("Retirement", 0, 0, 0, []),
             };
 
             var actual = await budget.GetBudget();
@@ -70,32 +71,32 @@ namespace MoneyTracker.Tests.Database.Postgres
             var newBudget = new NewBudgetCategoryDTO(2, 6, 180);
             await budget.AddBudgetCategory(newBudget);
 
-            var budgetToBePutIntoExpected = new BudgetCategoryDTO("Pet Care", 180, 0, 180);
+            var budgetToBePutIntoExpected = new BudgetCategoryEntityDTO("Pet Care", 180, 0, 180);
 
-            var expected = new List<BudgetGroupDTO>()
+            var expected = new List<BudgetGroupEntityDTO>()
             {
-                new BudgetGroupDTO("Income", 1800, 1800, 0, [
-                        new BudgetCategoryDTO("Wages & Salary : Net Pay", 1800, 1800, 0),
+                new BudgetGroupEntityDTO("Income", 1800, 1800, 0, [
+                        new BudgetCategoryEntityDTO("Wages & Salary : Net Pay", 1800, 1800, 0),
                     ]
                 ),
-                new BudgetGroupDTO("Committed Expenses",
+                new BudgetGroupEntityDTO("Committed Expenses",
                     610 + budgetToBePutIntoExpected.Planned,
                     585 + budgetToBePutIntoExpected.Actual,
                     25 + budgetToBePutIntoExpected.Difference,
                     [
-                        new BudgetCategoryDTO("Bills : Cell Phone", 10, 10, 0),
-                        new BudgetCategoryDTO("Bills : Rent", 500, 500, 0),
-                        new BudgetCategoryDTO("Groceries", 100, 75, 25),
+                        new BudgetCategoryEntityDTO("Bills : Cell Phone", 10, 10, 0),
+                        new BudgetCategoryEntityDTO("Bills : Rent", 500, 500, 0),
+                        new BudgetCategoryEntityDTO("Groceries", 100, 75, 25),
                         budgetToBePutIntoExpected,
                     ]
                 ),
-                new BudgetGroupDTO("Fun", 0, 0, 0, []),
-                new BudgetGroupDTO("Irregular Expenses", 50, 150, -100, [
-                        new BudgetCategoryDTO("Hobby", 50, 150, -100),
+                new BudgetGroupEntityDTO("Fun", 0, 0, 0, []),
+                new BudgetGroupEntityDTO("Irregular Expenses", 50, 150, -100, [
+                        new BudgetCategoryEntityDTO("Hobby", 50, 150, -100),
                     ]
                 ),
-                new BudgetGroupDTO("Savings & Debt", 0, 0, 0, []),
-                new BudgetGroupDTO("Retirement", 0, 0, 0, []),
+                new BudgetGroupEntityDTO("Savings & Debt", 0, 0, 0, []),
+                new BudgetGroupEntityDTO("Retirement", 0, 0, 0, []),
             };
 
             var actual = await budget.GetBudget();
@@ -111,25 +112,25 @@ namespace MoneyTracker.Tests.Database.Postgres
 
             var budget = new BudgetDatabase(db);
 
-            var expected = new List<BudgetGroupDTO>()
+            var expected = new List<BudgetGroupEntityDTO>()
             {
-                new BudgetGroupDTO("Income", 1800, 1800, 0, [
-                        new BudgetCategoryDTO("Wages & Salary : Net Pay", 1800, 1800, 0),
+                new BudgetGroupEntityDTO("Income", 1800, 1800, 0, [
+                        new BudgetCategoryEntityDTO("Wages & Salary : Net Pay", 1800, 1800, 0),
                     ]
                 ),
-                new BudgetGroupDTO("Committed Expenses", 610, 602, 8, [ // EDITED
-                        new BudgetCategoryDTO("Bills : Cell Phone", 10, 10, 0),
-                        new BudgetCategoryDTO("Bills : Rent", 500, 500, 0),
-                        new BudgetCategoryDTO("Groceries", 100, 92, 8),// EDITED
+                new BudgetGroupEntityDTO("Committed Expenses", 610, 602, 8, [ // EDITED
+                        new BudgetCategoryEntityDTO("Bills : Cell Phone", 10, 10, 0),
+                        new BudgetCategoryEntityDTO("Bills : Rent", 500, 500, 0),
+                        new BudgetCategoryEntityDTO("Groceries", 100, 92, 8),// EDITED
                     ]
                 ),
-                new BudgetGroupDTO("Fun", 0, 0, 0, []),
-                new BudgetGroupDTO("Irregular Expenses", 50, 150, -100, [
-                        new BudgetCategoryDTO("Hobby", 50, 150, -100),
+                new BudgetGroupEntityDTO("Fun", 0, 0, 0, []),
+                new BudgetGroupEntityDTO("Irregular Expenses", 50, 150, -100, [
+                        new BudgetCategoryEntityDTO("Hobby", 50, 150, -100),
                     ]
                 ),
-                new BudgetGroupDTO("Savings & Debt", 0, 0, 0, []),
-                new BudgetGroupDTO("Retirement", 0, 0, 0, []),
+                new BudgetGroupEntityDTO("Savings & Debt", 0, 0, 0, []),
+                new BudgetGroupEntityDTO("Retirement", 0, 0, 0, []),
             };
 
             var actual = await budget.GetBudget();
@@ -144,25 +145,25 @@ namespace MoneyTracker.Tests.Database.Postgres
             var newBudget = new NewBudgetCategoryDTO(2, 4, 150);
             await budget.AddBudgetCategory(newBudget);
 
-            var expected = new List<BudgetGroupDTO>()
+            var expected = new List<BudgetGroupEntityDTO>()
             {
-                new BudgetGroupDTO("Income", 1800, 1800, 0, [
-                        new BudgetCategoryDTO("Wages & Salary : Net Pay", 1800, 1800, 0),
+                new BudgetGroupEntityDTO("Income", 1800, 1800, 0, [
+                        new BudgetCategoryEntityDTO("Wages & Salary : Net Pay", 1800, 1800, 0),
                     ]
                 ),
-                new BudgetGroupDTO("Committed Expenses", 660, 585, 75, [
-                        new BudgetCategoryDTO("Bills : Cell Phone", 10, 10, 0),
-                        new BudgetCategoryDTO("Bills : Rent", 500, 500, 0),
-                        new BudgetCategoryDTO("Groceries", 150, 75, 75),
+                new BudgetGroupEntityDTO("Committed Expenses", 660, 585, 75, [
+                        new BudgetCategoryEntityDTO("Bills : Cell Phone", 10, 10, 0),
+                        new BudgetCategoryEntityDTO("Bills : Rent", 500, 500, 0),
+                        new BudgetCategoryEntityDTO("Groceries", 150, 75, 75),
                     ]
                 ),
-                new BudgetGroupDTO("Fun", 0, 0, 0, []),
-                new BudgetGroupDTO("Irregular Expenses", 50, 150, -100, [
-                        new BudgetCategoryDTO("Hobby", 50, 150, -100),
+                new BudgetGroupEntityDTO("Fun", 0, 0, 0, []),
+                new BudgetGroupEntityDTO("Irregular Expenses", 50, 150, -100, [
+                        new BudgetCategoryEntityDTO("Hobby", 50, 150, -100),
                     ]
                 ),
-                new BudgetGroupDTO("Savings & Debt", 0, 0, 0, []),
-                new BudgetGroupDTO("Retirement", 0, 0, 0, []),
+                new BudgetGroupEntityDTO("Savings & Debt", 0, 0, 0, []),
+                new BudgetGroupEntityDTO("Retirement", 0, 0, 0, []),
             };
 
             var actual = await budget.GetBudget();
@@ -177,25 +178,25 @@ namespace MoneyTracker.Tests.Database.Postgres
             var newBudget = new EditBudgetCategoryDTO(4, budgetCategoryPlanned: 150);
             await budget.EditBudgetCategory(newBudget);
 
-            var expected = new List<BudgetGroupDTO>()
+            var expected = new List<BudgetGroupEntityDTO>()
             {
-                new BudgetGroupDTO("Income", 1800, 1800, 0, [
-                        new BudgetCategoryDTO("Wages & Salary : Net Pay", 1800, 1800, 0),
+                new BudgetGroupEntityDTO("Income", 1800, 1800, 0, [
+                        new BudgetCategoryEntityDTO("Wages & Salary : Net Pay", 1800, 1800, 0),
                     ]
                 ),
-                new BudgetGroupDTO("Committed Expenses", 660, 585, 75, [
-                        new BudgetCategoryDTO("Bills : Cell Phone", 10, 10, 0),
-                        new BudgetCategoryDTO("Bills : Rent", 500, 500, 0),
-                        new BudgetCategoryDTO("Groceries", 150, 75, 75),
+                new BudgetGroupEntityDTO("Committed Expenses", 660, 585, 75, [
+                        new BudgetCategoryEntityDTO("Bills : Cell Phone", 10, 10, 0),
+                        new BudgetCategoryEntityDTO("Bills : Rent", 500, 500, 0),
+                        new BudgetCategoryEntityDTO("Groceries", 150, 75, 75),
                     ]
                 ),
-                new BudgetGroupDTO("Fun", 0, 0, 0, []),
-                new BudgetGroupDTO("Irregular Expenses", 50, 150, -100, [
-                        new BudgetCategoryDTO("Hobby", 50, 150, -100),
+                new BudgetGroupEntityDTO("Fun", 0, 0, 0, []),
+                new BudgetGroupEntityDTO("Irregular Expenses", 50, 150, -100, [
+                        new BudgetCategoryEntityDTO("Hobby", 50, 150, -100),
                     ]
                 ),
-                new BudgetGroupDTO("Savings & Debt", 0, 0, 0, []),
-                new BudgetGroupDTO("Retirement", 0, 0, 0, []),
+                new BudgetGroupEntityDTO("Savings & Debt", 0, 0, 0, []),
+                new BudgetGroupEntityDTO("Retirement", 0, 0, 0, []),
             };
 
             var actual = await budget.GetBudget();

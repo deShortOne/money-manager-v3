@@ -3,20 +3,21 @@ using System.Data.Common;
 using System.Runtime.InteropServices;
 using MoneyTracker.Data.Global;
 using MoneyTracker.Shared.Data;
-using MoneyTracker.Shared.Models.Budget;
+using MoneyTracker.Shared.Models.RepositoryToService.Budget;
+using MoneyTracker.Shared.Models.ServiceToRepository.Budget;
 using Npgsql;
 
 namespace MoneyTracker.Data.Postgres
 {
     public class BudgetDatabase : IBudgetDatabase
     {
-        private readonly PostgresDatabase _database;
+        private readonly IDatabase _database;
         public BudgetDatabase(IDatabase db)
         {
-            _database = (PostgresDatabase)db;
+            _database = db;
         }
 
-        public async Task<List<BudgetGroupDTO>> GetBudget()
+        public async Task<List<BudgetGroupEntityDTO>> GetBudget()
         {
             string query = """
                 SELECT bg.id,
@@ -43,13 +44,13 @@ namespace MoneyTracker.Data.Postgres
 
             using var reader = await _database.GetTable(query);
 
-            Dictionary<int, BudgetGroupDTO> res = [];
+            Dictionary<int, BudgetGroupEntityDTO> res = [];
             while (await reader.ReadAsync())
             {
                 var budgetId = reader.GetInt32("id");
-                if (!res.TryGetValue(budgetId, out BudgetGroupDTO? group))
+                if (!res.TryGetValue(budgetId, out BudgetGroupEntityDTO? group))
                 {
-                    group = new BudgetGroupDTO(reader.GetString("name"));
+                    group = new BudgetGroupEntityDTO(reader.GetString("name"));
                     res.Add(budgetId, group);
                 }
 
@@ -57,7 +58,7 @@ namespace MoneyTracker.Data.Postgres
                 {
                     decimal planned = reader.GetDecimal("planned");
                     decimal actual = reader.GetDecimal("actual");
-                    res[budgetId].AddBudgetCategoryDTO(new BudgetCategoryDTO(
+                    res[budgetId].AddBudgetCategoryDTO(new BudgetCategoryEntityDTO(
                         reader.GetString("category_name"),
                         planned,
                         actual,
@@ -69,12 +70,13 @@ namespace MoneyTracker.Data.Postgres
             return res.Values.ToList();
         }
 
-        public async Task<BudgetCategoryDTO> AddBudgetCategory(NewBudgetCategoryDTO newBudget)
+        public async Task<BudgetCategoryEntityDTO> AddBudgetCategory(NewBudgetCategoryDTO newBudget)
         {
+            // TODO - USERS ID
             var queryInsertIntoBudgetCategory = """
                 INSERT INTO budgetcategory VALUES
-                    (@budgetGroupId, @categoryId, @planned)
-                ON CONFLICT (budget_group_id, category_id) DO UPDATE
+                    (1, @budgetGroupId, @categoryId, @planned)
+                ON CONFLICT (users_id, budget_group_id, category_id) DO UPDATE
                     SET planned = @planned
                 RETURNING (SELECT name FROM category WHERE id = @categoryId),
                     (planned),
@@ -93,12 +95,12 @@ namespace MoneyTracker.Data.Postgres
                 var name = reader.GetString("name");
                 var planned = reader.GetDecimal("planned");
                 var actual = reader.GetDecimal("actual");
-                return new BudgetCategoryDTO(name, planned, actual, planned - actual);
+                return new BudgetCategoryEntityDTO(name, planned, actual, planned - actual);
             }
             throw new ExternalException("Database failed to return data");
         }
 
-        public async Task<List<BudgetGroupDTO>> EditBudgetCategory(EditBudgetCategoryDTO editBudgetCateogry)
+        public async Task<List<BudgetGroupEntityDTO>> EditBudgetCategory(EditBudgetCategoryDTO editBudgetCateogry)
         {
             var setParamsLis = new List<string>();
             var queryParams = new List<DbParameter>()
@@ -130,7 +132,7 @@ namespace MoneyTracker.Data.Postgres
             return await GetBudget();
         }
 
-        public async Task<bool> DeleteBudgetCategory(DeleteBudgetCategory deleteBudgetCategory)
+        public async Task<bool> DeleteBudgetCategory(DeleteBudgetCategoryDTO deleteBudgetCategory)
         {
             var query = """
                 DELETE FROM budgetcategory

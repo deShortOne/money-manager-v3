@@ -1,6 +1,9 @@
-﻿using MoneyTracker.Shared.Core;
+﻿using System.Transactions;
+using MoneyTracker.Shared.Core;
 using MoneyTracker.Shared.Data;
-using MoneyTracker.Shared.Models.Transaction;
+using MoneyTracker.Shared.Models.ControllerToService.Transaction;
+using MoneyTracker.Shared.Models.ServiceToController.Transaction;
+using MoneyTracker.Shared.Models.ServiceToRepository.Transaction;
 
 namespace MoneyTracker.Core;
 public class RegisterService : IRegisterService
@@ -12,23 +15,37 @@ public class RegisterService : IRegisterService
         _dbService = dbService;
     }
 
-    public Task<List<TransactionDTO>> GetAllTransactions()
+    public async Task<List<TransactionResponseDTO>> GetAllTransactions()
     {
-        return _dbService.GetAllTransactions();
+        var dtoFromDb = await _dbService.GetAllTransactions();
+        List<TransactionResponseDTO> res = [];
+        foreach (var transaction in dtoFromDb)
+        {
+            res.Add(new(transaction.Id, transaction.Payee, transaction.Amount,
+                transaction.DatePaid, transaction.Category));
+        }
+        return res;
     }
 
-    public Task<TransactionDTO> AddTransaction(NewTransactionDTO newTransaction)
+    public async Task<TransactionResponseDTO> AddTransaction(NewTransactionRequestDTO newTransaction)
     {
-        return _dbService.AddTransaction(newTransaction);
+        var dtoToDb = new NewTransactionDTO(newTransaction.Payee, newTransaction.Amount,
+            newTransaction.DatePaid, newTransaction.Category);
+        var dtoFromDb = await _dbService.AddTransaction(dtoToDb);
+        return new(dtoFromDb.Id, dtoFromDb.Payee, dtoFromDb.Amount, dtoFromDb.DatePaid, dtoFromDb.Category);
     }
 
-    public Task<TransactionDTO> EditTransaction(EditTransactionDTO editTransaction)
+    public async Task<TransactionResponseDTO> EditTransaction(EditTransactionRequestDTO editTransaction)
     {
-        return _dbService.EditTransaction(editTransaction);
+        var dtoToDb = new EditTransactionDTO(editTransaction.Id, editTransaction.Payee, editTransaction.Amount,
+            editTransaction.DatePaid, editTransaction.Category);
+        var dtoFromDb = await _dbService.EditTransaction(dtoToDb);
+        return new(dtoFromDb.Id, dtoFromDb.Payee, dtoFromDb.Amount, dtoFromDb.DatePaid, dtoFromDb.Category);
     }
 
-    public Task<bool> DeleteTransaction(DeleteTransactionDTO deleteTransaction)
+    public Task<bool> DeleteTransaction(DeleteTransactionRequestDTO deleteTransaction)
     {
-        return _dbService.DeleteTransaction(deleteTransaction);
+        var dtoToDb = new DeleteTransactionDTO(deleteTransaction.Id);
+        return _dbService.DeleteTransaction(dtoToDb);
     }
 }

@@ -3,21 +3,22 @@ using System.Data.Common;
 using System.Runtime.InteropServices;
 using MoneyTracker.Data.Global;
 using MoneyTracker.Shared.Data;
-using MoneyTracker.Shared.Models.Transaction;
+using MoneyTracker.Shared.Models.RepositoryToService.Transaction;
+using MoneyTracker.Shared.Models.ServiceToRepository.Transaction;
 using Npgsql;
 
 namespace MoneyTracker.Data.Postgres
 {
     public class RegisterDatabase : IRegisterDatabase
     {
-        private readonly PostgresDatabase _database;
+        private readonly IDatabase _database;
 
         public RegisterDatabase(IDatabase db)
         {
-            _database = (PostgresDatabase)db;
+            _database = db;
         }
 
-        public async Task<List<TransactionDTO>> GetAllTransactions()
+        public async Task<List<TransactionEntityDTO>> GetAllTransactions()
         {
             var query = """
                 SELECT register.id,
@@ -35,10 +36,10 @@ namespace MoneyTracker.Data.Postgres
             // get category id
             using var reader = await _database.GetTable(query);
 
-            var res = new List<TransactionDTO>();
+            var res = new List<TransactionEntityDTO>();
             while (await reader.ReadAsync())
             {
-                res.Add(new TransactionDTO(
+                res.Add(new TransactionEntityDTO(
                     reader.GetInt32("id"),
                     reader.GetString("payee"),
                     reader.GetDecimal("amount"),
@@ -49,11 +50,12 @@ namespace MoneyTracker.Data.Postgres
             return res;
         }
 
-        public async Task<TransactionDTO> AddTransaction(NewTransactionDTO transaction)
+        public async Task<TransactionEntityDTO> AddTransaction(NewTransactionDTO transaction)
         {
+            // TODO - ACCOUNT ID
             var query = """
-                INSERT INTO register (payee, amount, datePaid, category_id) VALUES
-                    (@payee, @amount, @datePaid, @category_id)
+                INSERT INTO register (payee, amount, datePaid, category_id, account_id) VALUES
+                    (@payee, @amount, @datePaid, @category_id, 1)
                 RETURNING (id),
                     (payee), 
                     (amount), 
@@ -72,7 +74,7 @@ namespace MoneyTracker.Data.Postgres
             using var reader = await _database.GetTable(query, queryParams);
             if (await reader.ReadAsync())
             {
-                return new TransactionDTO(
+                return new TransactionEntityDTO(
                     reader.GetInt32("id"),
                     reader.GetString("payee"),
                     reader.GetDecimal("amount"),
@@ -83,7 +85,7 @@ namespace MoneyTracker.Data.Postgres
             throw new ExternalException("Database failed to return data");
         }
 
-        public async Task<TransactionDTO> EditTransaction(EditTransactionDTO tramsaction)
+        public async Task<TransactionEntityDTO> EditTransaction(EditTransactionDTO tramsaction)
         {
             var setParamsLis = new List<string>();
             var queryParams = new List<DbParameter>()
@@ -132,7 +134,7 @@ namespace MoneyTracker.Data.Postgres
             using var reader = await _database.GetTable(query, queryParams);
             if (await reader.ReadAsync())
             {
-                return new TransactionDTO(
+                return new TransactionEntityDTO(
                     reader.GetInt32("id"),
                     reader.GetString("payee"),
                     reader.GetDecimal("amount"),
