@@ -39,7 +39,7 @@ public class BillService : IBillService
     public async Task<BillDTO> SkipOccurence(SkipBillOccurrenceDTO skipBillDTO)
     {
         var bill = await _dbService.GetBillById(skipBillDTO.Id);
-        var newDueDate = BillCalculation.CalculateNextDueDate(bill.Frequency, bill.NextDueDate.Day, skipBillDTO.SkipDatePastThisDate);
+        var newDueDate = BillCalculation.CalculateNextDueDate(bill.Frequency, bill.MonthDay, skipBillDTO.SkipDatePastThisDate);
 
         var editBill = new EditBillDTO(skipBillDTO.Id, nextDueDate: newDueDate);
         await _dbService.EditBill(editBill);
