@@ -11,11 +11,11 @@ namespace MoneyTracker.Data.Postgres
 {
     public class RegisterDatabase : IRegisterDatabase
     {
-        private readonly PostgresDatabase _database;
+        private readonly IDatabase _database;
 
         public RegisterDatabase(IDatabase db)
         {
-            _database = (PostgresDatabase)db;
+            _database = db;
         }
 
         public async Task<List<TransactionEntityDTO>> GetAllTransactions()
