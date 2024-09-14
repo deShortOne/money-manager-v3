@@ -1,6 +1,6 @@
 ﻿
 
-namespace MoneyTracker.Shared.Models.Bill;
+namespace MoneyTracker.Shared.Models.ServiceToController.Bill;
 public class OverDueBillInfo(int daysOverDue, DateOnly[] pastOccurences)
 {
     public int DaysOverDue { get; private set; } = daysOverDue;

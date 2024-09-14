@@ -1,5 +1,4 @@
-﻿using MoneyTracker.Shared.Models.Bill;
-
+﻿
 namespace MoneyTracker.Shared.Models.Category
 {
     public class CategoryDTO

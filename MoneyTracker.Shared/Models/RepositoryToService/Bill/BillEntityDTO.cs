@@ -1,6 +1,6 @@
 ﻿
-namespace MoneyTracker.Shared.Models.Bill;
-public class BillFromRepositoryDTO(int id, string payee, decimal amount, DateOnly nextDueDate,
+namespace MoneyTracker.Shared.Models.RepositoryToService.Bill;
+public class BillEntityDTO(int id, string payee, decimal amount, DateOnly nextDueDate,
     string frequency, string category, int monthDay)
 {
     public int Id { get; private set; } = id;
@@ -13,7 +13,7 @@ public class BillFromRepositoryDTO(int id, string payee, decimal amount, DateOnl
 
     public override bool Equals(object? obj)
     {
-        var other = obj as BillFromRepositoryDTO;
+        var other = obj as BillEntityDTO;
 
         if (other == null)
         {

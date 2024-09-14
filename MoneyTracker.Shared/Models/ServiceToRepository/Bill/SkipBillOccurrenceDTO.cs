@@ -1,5 +1,5 @@
 ﻿
-namespace MoneyTracker.Shared.Models.Bill;
+namespace MoneyTracker.Shared.Models.ServiceToRepository.Bill;
 public class SkipBillOccurrenceDTO(int id, DateOnly skipDatePastThisDate)
 {
     public int Id { get; private set; } = id;

@@ -2,7 +2,8 @@
 using System.Data.Common;
 using MoneyTracker.Data.Global;
 using MoneyTracker.Shared.Data;
-using MoneyTracker.Shared.Models.Bill;
+using MoneyTracker.Shared.Models.RepositoryToService.Bill;
+using MoneyTracker.Shared.Models.ServiceToRepository.Bill;
 using Npgsql;
 
 namespace MoneyTracker.Data.Postgres;
@@ -14,7 +15,7 @@ public class BillDatabase : IBillDatabase
         _database = (PostgresDatabase)db;
     }
 
-    public async Task<List<BillFromRepositoryDTO>> GetAllBills()
+    public async Task<List<BillEntityDTO>> GetAllBills()
     {
         string query = """
             SELECT b.id,
@@ -32,13 +33,13 @@ public class BillDatabase : IBillDatabase
 
         using var reader = await _database.GetTable(query);
 
-        List<BillFromRepositoryDTO> res = [];
+        List<BillEntityDTO> res = [];
         while (await reader.ReadAsync())
         {
             var nextDueDate = DateOnly.FromDateTime(reader.GetDateTime("nextduedate"));
             var frequency = reader.GetString("frequency");
 
-            res.Add(new BillFromRepositoryDTO(
+            res.Add(new BillEntityDTO(
                 reader.GetInt32("id"),
                 reader.GetString("payee"),
                 reader.GetDecimal("amount"),
@@ -52,7 +53,7 @@ public class BillDatabase : IBillDatabase
         return res;
     }
 
-    public async Task<List<BillFromRepositoryDTO>> AddBill(NewBillDTO newBillDTO)
+    public async Task<List<BillEntityDTO>> AddBill(NewBillDTO newBillDTO)
     {
         // TODO - ACCOUNT ID
         string query = """
@@ -74,7 +75,7 @@ public class BillDatabase : IBillDatabase
         return await GetAllBills();
     }
 
-    public async Task<List<BillFromRepositoryDTO>> EditBill(EditBillDTO editBillDTO)
+    public async Task<List<BillEntityDTO>> EditBill(EditBillDTO editBillDTO)
     {
         var setParamsLis = new List<string>();
         var queryParams = new List<DbParameter>()
@@ -121,7 +122,7 @@ public class BillDatabase : IBillDatabase
         return await GetAllBills();
     }
 
-    public async Task<List<BillFromRepositoryDTO>> DeleteBill(DeleteBillDTO deleteBillDTO)
+    public async Task<List<BillEntityDTO>> DeleteBill(DeleteBillDTO deleteBillDTO)
     {
         string query = """
             DELETE FROM bill
@@ -137,7 +138,7 @@ public class BillDatabase : IBillDatabase
         return await GetAllBills();
     }
 
-    public async Task<BillFromRepositoryDTO> GetBillById(int id)
+    public async Task<BillEntityDTO> GetBillById(int id)
     {
         string query = """
             SELECT b.id,
@@ -158,13 +159,13 @@ public class BillDatabase : IBillDatabase
         };
         using var reader = await _database.GetTable(query, queryParams);
 
-        List<BillDTO> res = [];
+        List<BillEntityDTO> res = [];
         if (await reader.ReadAsync())
         {
             var nextDueDate = DateOnly.FromDateTime(reader.GetDateTime("nextduedate"));
             var frequency = reader.GetString("frequency");
 
-            return new BillFromRepositoryDTO(
+            return new BillEntityDTO(
                 reader.GetInt32("id"),
                 reader.GetString("payee"),
                 reader.GetDecimal("amount"),

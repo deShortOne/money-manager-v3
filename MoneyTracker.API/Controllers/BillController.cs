@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MoneyTracker.Shared.Core;
-using MoneyTracker.Shared.Models.Bill;
+using MoneyTracker.Shared.Models.ControllerToService.Bill;
+using MoneyTracker.Shared.Models.ServiceToController.Bill;
 
 namespace MoneyTracker.API.Controllers;
 public class BillController : ControllerBase
@@ -17,28 +18,28 @@ public class BillController : ControllerBase
 
     [HttpGet]
     [Route("get")]
-    public Task<List<BillDTO>> Get()
+    public Task<List<BillResponseDTO>> Get()
     {
         return _service.GetAllBills();
     }
 
     [HttpPost]
     [Route("add")]
-    public Task<List<BillDTO>> AddBill([FromBody] NewBillDTO newBill)
+    public Task<List<BillResponseDTO>> AddBill([FromBody] NewBillRequestDTO newBill)
     {
         return _service.AddBill(newBill);
     }
 
     [HttpPut]
     [Route("edit")]
-    public Task<List<BillDTO>> EditBill([FromBody] EditBillDTO editBill)
+    public Task<List<BillResponseDTO>> EditBill([FromBody] EditBillRequestDTO editBill)
     {
         return _service.EditBill(editBill);
     }
 
     [HttpDelete]
     [Route("delete")]
-    public Task<List<BillDTO>> DeleteBill([FromBody] DeleteBillDTO deleteBill)
+    public Task<List<BillResponseDTO>> DeleteBill([FromBody] DeleteBillRequestDTO deleteBill)
     {
         return _service.DeleteBill(deleteBill);
     }

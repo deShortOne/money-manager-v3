@@ -1,5 +1,5 @@
 ﻿
-namespace MoneyTracker.Shared.Models.Bill;
+namespace MoneyTracker.Shared.Models.ServiceToRepository.Bill;
 public class NewBillDTO(string payee, decimal amount, DateOnly nextDueDate, string frequency,
     int category, int monthDay)
 {

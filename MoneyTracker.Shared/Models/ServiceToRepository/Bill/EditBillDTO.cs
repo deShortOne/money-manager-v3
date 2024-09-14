@@ -1,5 +1,5 @@
 ﻿
-namespace MoneyTracker.Shared.Models.Bill;
+namespace MoneyTracker.Shared.Models.ServiceToRepository.Bill;
 public class EditBillDTO(int id, string? payee = null, decimal? amount = null, DateOnly? nextDueDate = null, string? frequency = null, int? category = null)
 {
     public int Id { get; private set; } = id;

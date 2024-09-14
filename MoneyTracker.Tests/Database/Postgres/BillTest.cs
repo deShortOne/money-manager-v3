@@ -2,9 +2,8 @@
 using MoneyTracker.Data.Postgres;
 using MoneyTracker.DatabaseMigration;
 using MoneyTracker.DatabaseMigration.Models;
-using MoneyTracker.Shared.DateManager;
-using MoneyTracker.Shared.Models.Bill;
-using MoneyTracker.Tests.Local;
+using MoneyTracker.Shared.Models.RepositoryToService.Bill;
+using MoneyTracker.Shared.Models.ServiceToRepository.Bill;
 using Testcontainers.PostgreSql;
 
 namespace MoneyTracker.Tests.Database.Postgres;
@@ -38,7 +37,7 @@ public class BillTest : IAsyncLifetime
         var db = new PostgresDatabase(_postgres.GetConnectionString());
         var bill = new BillDatabase(db);
 
-        var expected = new List<BillFromRepositoryDTO>()
+        var expected = new List<BillEntityDTO>()
         {
             new(2, "company a", 100, new DateOnly(2024, 08, 30), "Monthly", "Wages & Salary : Net Pay", 30),
             new(1, "supermarket a", 23, new DateOnly(2024, 09, 03), "Weekly", "Groceries", 3),
@@ -56,7 +55,7 @@ public class BillTest : IAsyncLifetime
         var bill = new BillDatabase(db);
         await bill.DeleteBill(new DeleteBillDTO(1));
 
-        var expected = new List<BillFromRepositoryDTO>()
+        var expected = new List<BillEntityDTO>()
         {
             new(2, "company a", 100, new DateOnly(2024, 08, 30), "Monthly", "Wages & Salary : Net Pay", 30),
         };
@@ -73,7 +72,7 @@ public class BillTest : IAsyncLifetime
         var bill = new BillDatabase(db);
         await bill.EditBill(new EditBillDTO(1, payee: "supermarket b"));
 
-        var expected = new List<BillFromRepositoryDTO>()
+        var expected = new List<BillEntityDTO>()
         {
             new(2, "company a", 100, new DateOnly(2024, 08, 30), "Monthly", "Wages & Salary : Net Pay", 30),
             new(1, "supermarket b", 23, new DateOnly(2024, 09, 03), "Weekly", "Groceries", 3),
@@ -92,7 +91,7 @@ public class BillTest : IAsyncLifetime
         await bill.EditBill(new EditBillDTO(1, nextDueDate: new DateOnly(2024, 5, 5)));
         await bill.EditBill(new EditBillDTO(2, nextDueDate: new DateOnly(2024, 10, 17)));
 
-        var expected = new List<BillFromRepositoryDTO>()
+        var expected = new List<BillEntityDTO>()
         {
             new(1, "supermarket a", 23, new DateOnly(2024, 05, 05), "Weekly", "Groceries", 5),
             new(2, "company a", 100, new DateOnly(2024, 10, 17), "Monthly", "Wages & Salary : Net Pay", 17),
@@ -110,7 +109,7 @@ public class BillTest : IAsyncLifetime
         var bill = new BillDatabase(db);
         await bill.AddBill(new NewBillDTO("flight sim", 420, new DateOnly(2024, 09, 05), "Daily", 5, 5));
 
-        var expected = new List<BillFromRepositoryDTO>()
+        var expected = new List<BillEntityDTO>()
         {
             new(2, "company a", 100, new DateOnly(2024, 08, 30), "Monthly", "Wages & Salary : Net Pay", 30),
             new(1, "supermarket a", 23, new DateOnly(2024, 09, 03), "Weekly", "Groceries", 3),
