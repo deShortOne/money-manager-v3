@@ -39,8 +39,8 @@ public class BillTest : IAsyncLifetime
 
         var expected = new List<BillEntityDTO>()
         {
-            new(2, "company a", 100, new DateOnly(2024, 08, 30), "Monthly", "Wages & Salary : Net Pay", 30),
-            new(1, "supermarket a", 23, new DateOnly(2024, 09, 03), "Weekly", "Groceries", 3),
+            new(2, "company a", 100, new DateOnly(2024, 08, 30), "Monthly", "Wages & Salary : Net Pay", 30, "bank a"),
+            new(1, "supermarket a", 23, new DateOnly(2024, 09, 03), "Weekly", "Groceries", 3, "bank a"),
         };
 
         var actual = await bill.GetAllBills();
@@ -57,7 +57,7 @@ public class BillTest : IAsyncLifetime
 
         var expected = new List<BillEntityDTO>()
         {
-            new(2, "company a", 100, new DateOnly(2024, 08, 30), "Monthly", "Wages & Salary : Net Pay", 30),
+            new(2, "company a", 100, new DateOnly(2024, 08, 30), "Monthly", "Wages & Salary : Net Pay", 30, "bank a"),
         };
 
         var actual = await bill.GetAllBills();
@@ -74,8 +74,8 @@ public class BillTest : IAsyncLifetime
 
         var expected = new List<BillEntityDTO>()
         {
-            new(2, "company a", 100, new DateOnly(2024, 08, 30), "Monthly", "Wages & Salary : Net Pay", 30),
-            new(1, "supermarket b", 23, new DateOnly(2024, 09, 03), "Weekly", "Groceries", 3),
+            new(2, "company a", 100, new DateOnly(2024, 08, 30), "Monthly", "Wages & Salary : Net Pay", 30, "bank a"),
+            new(1, "supermarket b", 23, new DateOnly(2024, 09, 03), "Weekly", "Groceries", 3, "bank a"),
         };
 
         var actual = await bill.GetAllBills();
@@ -93,8 +93,8 @@ public class BillTest : IAsyncLifetime
 
         var expected = new List<BillEntityDTO>()
         {
-            new(1, "supermarket a", 23, new DateOnly(2024, 05, 05), "Weekly", "Groceries", 5),
-            new(2, "company a", 100, new DateOnly(2024, 10, 17), "Monthly", "Wages & Salary : Net Pay", 17),
+            new(1, "supermarket a", 23, new DateOnly(2024, 05, 05), "Weekly", "Groceries", 5, "bank a"),
+            new(2, "company a", 100, new DateOnly(2024, 10, 17), "Monthly", "Wages & Salary : Net Pay", 17, "bank a"),
         };
 
         var actual = await bill.GetAllBills();
@@ -111,9 +111,9 @@ public class BillTest : IAsyncLifetime
 
         var expected = new List<BillEntityDTO>()
         {
-            new(2, "company a", 100, new DateOnly(2024, 08, 30), "Monthly", "Wages & Salary : Net Pay", 30),
-            new(1, "supermarket a", 23, new DateOnly(2024, 09, 03), "Weekly", "Groceries", 3),
-            new(3, "flight sim", 420, new DateOnly(2024, 09, 05), "Daily", "Hobby", 5),
+            new(2, "company a", 100, new DateOnly(2024, 08, 30), "Monthly", "Wages & Salary : Net Pay", 30, "bank a"),
+            new(1, "supermarket a", 23, new DateOnly(2024, 09, 03), "Weekly", "Groceries", 3, "bank a"),
+            new(3, "flight sim", 420, new DateOnly(2024, 09, 05), "Daily", "Hobby", 5, "bank a"),
         };
 
         var actual = await bill.GetAllBills();

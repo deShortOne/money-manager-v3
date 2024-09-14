@@ -43,8 +43,8 @@ public class BillServiceTest : IAsyncLifetime
     {
         var expected = new List<BillEntityDTO>()
         {
-            new(2, "company a", 100, new DateOnly(2024, 08, 30), "Monthly", "Wages & Salary : Net Pay", 30),
-            new(1, "supermarket a", 23, new DateOnly(2024, 09, 03), "Weekly", "Groceries", 3),
+            new(2, "company a", 100, new DateOnly(2024, 08, 30), "Monthly", "Wages & Salary : Net Pay", 30, "bank a"),
+            new(1, "supermarket a", 23, new DateOnly(2024, 09, 03), "Weekly", "Groceries", 3, "bank a"),
         };
 
         var actual = await _billDb.GetAllBills();

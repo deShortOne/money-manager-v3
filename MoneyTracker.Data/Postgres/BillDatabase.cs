@@ -24,10 +24,13 @@ public class BillDatabase : IBillDatabase
             	nextduedate,
             	frequency,
             	c.name,
-                b.monthday
+                b.monthday,
+                a.name account_name
             FROM bill b
             INNER JOIN category c
             	ON b.category_id = c.id
+            INNER JOIN account a
+                on b.account_id = a.id
             ORDER BY nextduedate ASC;
             """;
 
@@ -46,7 +49,8 @@ public class BillDatabase : IBillDatabase
                 nextDueDate,
                 frequency,
                 reader.GetString("name"),
-                reader.GetInt32("monthday")
+                reader.GetInt32("monthday"),
+                reader.GetString("account_name")
             ));
         }
 
@@ -147,10 +151,13 @@ public class BillDatabase : IBillDatabase
             	nextduedate,
             	frequency,
             	c.name,
-                b.monthday
+                b.monthday,
+                a.name account_name
             FROM bill b
             INNER JOIN category c
             	ON b.category_id = c.id
+            INNER JOIN account a
+                ON b.account_id = a.id
             WHERE b.id = @id;
             """;
         var queryParams = new List<DbParameter>()
@@ -172,7 +179,8 @@ public class BillDatabase : IBillDatabase
                 nextDueDate,
                 frequency,
                 reader.GetString("name"),
-                reader.GetInt32("monthday")
+                reader.GetInt32("monthday"),
+                reader.GetString("account_name")
             );
         }
 

@@ -1,7 +1,7 @@
 ﻿
 namespace MoneyTracker.Shared.Models.RepositoryToService.Bill;
 public class BillEntityDTO(int id, string payee, decimal amount, DateOnly nextDueDate,
-    string frequency, string category, int monthDay)
+    string frequency, string category, int monthDay, string accountName)
 {
     public int Id { get; private set; } = id;
     public string Payee { get; private set; } = payee;
@@ -10,6 +10,7 @@ public class BillEntityDTO(int id, string payee, decimal amount, DateOnly nextDu
     public string Frequency { get; private set; } = frequency;
     public string Category { get; private set; } = category;
     public int MonthDay { get; } = monthDay;
+    public string AccountName { get; } = accountName;
 
     public override bool Equals(object? obj)
     {
@@ -22,7 +23,8 @@ public class BillEntityDTO(int id, string payee, decimal amount, DateOnly nextDu
 
         return Id == other.Id && Payee == other.Payee && Amount == other.Amount &&
             NextDueDate == other.NextDueDate && Frequency == other.Frequency &&
-            Category == other.Category && MonthDay == other.MonthDay;
+            Category == other.Category && MonthDay == other.MonthDay &&
+            AccountName == other.AccountName;
     }
 
     public override int GetHashCode()
