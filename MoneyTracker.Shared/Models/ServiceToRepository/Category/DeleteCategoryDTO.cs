@@ -1,4 +1,4 @@
-﻿namespace MoneyTracker.Shared.Models.Category
+﻿namespace MoneyTracker.Shared.Models.ServiceToRepository.Category
 {
     public class DeleteCategoryDTO
     {

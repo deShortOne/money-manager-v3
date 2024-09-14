@@ -1,9 +1,9 @@
 ﻿
-namespace MoneyTracker.Shared.Models.Category
+namespace MoneyTracker.Shared.Models.ServiceToController.Category
 {
-    public class CategoryDTO
+    public class CategoryResponseDTO
     {
-        public CategoryDTO(int id, string name)
+        public CategoryResponseDTO(int id, string name)
         {
             Id = id;
             Name = name;
@@ -14,7 +14,7 @@ namespace MoneyTracker.Shared.Models.Category
 
         public override bool Equals(object? obj)
         {
-            var other = obj as CategoryDTO;
+            var other = obj as CategoryResponseDTO;
 
             if (other == null)
             {

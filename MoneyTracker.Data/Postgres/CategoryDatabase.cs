@@ -3,7 +3,8 @@ using System.Data.Common;
 using System.Runtime.InteropServices;
 using MoneyTracker.Data.Global;
 using MoneyTracker.Shared.Data;
-using MoneyTracker.Shared.Models.Category;
+using MoneyTracker.Shared.Models.RepositoryToService.Category;
+using MoneyTracker.Shared.Models.ServiceToRepository.Category;
 using Npgsql;
 
 namespace MoneyTracker.Data.Postgres
@@ -17,7 +18,7 @@ namespace MoneyTracker.Data.Postgres
             _database = (PostgresDatabase)db;
         }
 
-        public async Task<List<CategoryDTO>> GetAllCategories()
+        public async Task<List<CategoryEntityDTO>> GetAllCategories()
         {
             // UPSERTS!! and gets id
             var queryGetAllCategories = """
@@ -29,15 +30,15 @@ namespace MoneyTracker.Data.Postgres
             // get category id
             using var reader = await _database.GetTable(queryGetAllCategories);
 
-            var res = new List<CategoryDTO>();
+            var res = new List<CategoryEntityDTO>();
             while (await reader.ReadAsync())
             {
-                res.Add(new CategoryDTO(reader.GetInt32("id"), reader.GetString("name")));
+                res.Add(new CategoryEntityDTO(reader.GetInt32("id"), reader.GetString("name")));
             }
             return res;
         }
 
-        public async Task<CategoryDTO> AddCategory(NewCategoryDTO categoryName)
+        public async Task<CategoryEntityDTO> AddCategory(NewCategoryDTO categoryName)
         {
             // UPSERTS!! and gets id
             var queryGetIdOfCategoryName = """
@@ -55,12 +56,12 @@ namespace MoneyTracker.Data.Postgres
             using var reader = await _database.GetTable(queryGetIdOfCategoryName, queryGetIdOfCategoryNameParams);
             if (await reader.ReadAsync())
             {
-                return new CategoryDTO(reader.GetInt32("id"), reader.GetString("name"));
+                return new CategoryEntityDTO(reader.GetInt32("id"), reader.GetString("name"));
             }
             throw new DuplicateNameException($"Category {categoryName} already exists");
         }
 
-        public async Task<CategoryDTO> EditCategory(EditCategoryDTO editCategoryDTO)
+        public async Task<CategoryEntityDTO> EditCategory(EditCategoryDTO editCategoryDTO)
         {
             // UPSERTS!! and gets id
             var queryGetIdOfCategoryName = """
@@ -79,7 +80,7 @@ namespace MoneyTracker.Data.Postgres
             using var reader = await _database.GetTable(queryGetIdOfCategoryName, queryGetIdOfCategoryNameParams);
             if (await reader.ReadAsync())
             {
-                return new CategoryDTO(reader.GetInt32("id"), reader.GetString("name"));
+                return new CategoryEntityDTO(reader.GetInt32("id"), reader.GetString("name"));
             }
             throw new ExternalException("Database failed to return data");
         }

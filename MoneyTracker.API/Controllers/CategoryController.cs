@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MoneyTracker.Shared.Core;
-using MoneyTracker.Shared.Models.Category;
+using MoneyTracker.Shared.Models.ControllerToService.Category;
+using MoneyTracker.Shared.Models.ServiceToController.Category;
 
 namespace MoneyTracker.API.Controllers
 {
@@ -20,28 +21,28 @@ namespace MoneyTracker.API.Controllers
 
         [HttpGet]
         [Route("get")]
-        public Task<List<CategoryDTO>> GetCategories()
+        public Task<List<CategoryResponseDTO>> GetCategories()
         {
             return _service.GetAllCategories();
         }
 
         [HttpPost]
         [Route("add")]
-        public Task<CategoryDTO> AddCategory([FromBody] NewCategoryDTO categoryName)
+        public Task<CategoryResponseDTO> AddCategory([FromBody] NewCategoryRequestDTO categoryName)
         {
             return _service.AddCategory(categoryName);
         }
 
         [HttpPut]
         [Route("edit")]
-        public Task<CategoryDTO> EditCategory([FromBody] EditCategoryDTO editCategory)
+        public Task<CategoryResponseDTO> EditCategory([FromBody] EditCategoryRequestDTO editCategory)
         {
             return _service.EditCategory(editCategory);
         }
 
         [HttpDelete]
         [Route("delete")]
-        public Task<bool> DeleteCategory([FromBody] DeleteCategoryDTO deleteCategory)
+        public Task<bool> DeleteCategory([FromBody] DeleteCategoryRequestDTO deleteCategory)
         {
             return _service.DeleteCategory(deleteCategory);
         }

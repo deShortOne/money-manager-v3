@@ -3,7 +3,8 @@ using System.Data;
 using MoneyTracker.Data.Postgres;
 using MoneyTracker.DatabaseMigration;
 using MoneyTracker.DatabaseMigration.Models;
-using MoneyTracker.Shared.Models.Category;
+using MoneyTracker.Shared.Models.RepositoryToService.Category;
+using MoneyTracker.Shared.Models.ServiceToRepository.Category;
 using Testcontainers.PostgreSql;
 
 namespace MoneyTracker.Tests.Database.Postgres
@@ -38,13 +39,13 @@ namespace MoneyTracker.Tests.Database.Postgres
             var db = new PostgresDatabase(_postgres.GetConnectionString());
             var category = new CategoryDatabase(db);
 
-            var expected = new List<CategoryDTO>() {
-                new CategoryDTO(2, "Bills : Cell Phone"),
-                new CategoryDTO(3, "Bills : Rent"),
-                new CategoryDTO(4, "Groceries"),
-                new CategoryDTO(5, "Hobby"),
-                new CategoryDTO(6, "Pet Care"),
-                new CategoryDTO(1, "Wages & Salary : Net Pay"),
+            var expected = new List<CategoryEntityDTO>() {
+                new(2, "Bills : Cell Phone"),
+                new(3, "Bills : Rent"),
+                new(4, "Groceries"),
+                new(5, "Hobby"),
+                new(6, "Pet Care"),
+                new(1, "Wages & Salary : Net Pay"),
             };
             var actual = await category.GetAllCategories();
             Assert.Equal(expected, actual);
@@ -56,17 +57,17 @@ namespace MoneyTracker.Tests.Database.Postgres
             var db = new PostgresDatabase(_postgres.GetConnectionString());
             var category = new CategoryDatabase(db);
 
-            var categoryToAdd = new CategoryDTO(7, "Speeding tickets");
+            var categoryToAdd = new CategoryEntityDTO(7, "Speeding tickets");
             await category.AddCategory(new NewCategoryDTO(categoryToAdd.Name));
 
-            var expected = new List<CategoryDTO>() {
-                new CategoryDTO(2, "Bills : Cell Phone"),
-                new CategoryDTO(3, "Bills : Rent"),
-                new CategoryDTO(4, "Groceries"),
-                new CategoryDTO(5, "Hobby"),
-                new CategoryDTO(6, "Pet Care"),
+            var expected = new List<CategoryEntityDTO>() {
+                new(2, "Bills : Cell Phone"),
+                new(3, "Bills : Rent"),
+                new(4, "Groceries"),
+                new(5, "Hobby"),
+                new(6, "Pet Care"),
                 categoryToAdd,
-                new CategoryDTO(1, "Wages & Salary : Net Pay"),
+                new(1, "Wages & Salary : Net Pay"),
             };
             var actual = await category.GetAllCategories();
             Assert.Equal(expected, actual);
@@ -78,7 +79,7 @@ namespace MoneyTracker.Tests.Database.Postgres
             var db = new PostgresDatabase(_postgres.GetConnectionString());
             var category = new CategoryDatabase(db);
 
-            var categoryToAdd = new CategoryDTO(7, "Hobby");
+            var categoryToAdd = new CategoryEntityDTO(7, "Hobby");
 
             await Assert.ThrowsAsync<DuplicateNameException>(async () =>
             {
@@ -86,13 +87,13 @@ namespace MoneyTracker.Tests.Database.Postgres
             });
 
 
-            var expected = new List<CategoryDTO>() {
-                new CategoryDTO(2, "Bills : Cell Phone"),
-                new CategoryDTO(3, "Bills : Rent"),
-                new CategoryDTO(4, "Groceries"),
-                new CategoryDTO(5, "Hobby"),
-                new CategoryDTO(6, "Pet Care"),
-                new CategoryDTO(1, "Wages & Salary : Net Pay"),
+            var expected = new List<CategoryEntityDTO>() {
+                new(2, "Bills : Cell Phone"),
+                new(3, "Bills : Rent"),
+                new(4, "Groceries"),
+                new(5, "Hobby"),
+                new(6, "Pet Care"),
+                new(1, "Wages & Salary : Net Pay"),
             };
             var actual = await category.GetAllCategories();
             Assert.Equal(expected, actual);
@@ -106,13 +107,13 @@ namespace MoneyTracker.Tests.Database.Postgres
 
             await category.EditCategory(new EditCategoryDTO(5, "Something funky"));
 
-            var expected = new List<CategoryDTO>() {
-                new CategoryDTO(2, "Bills : Cell Phone"),
-                new CategoryDTO(3, "Bills : Rent"),
-                new CategoryDTO(4, "Groceries"),
-                new CategoryDTO(6, "Pet Care"),
-                new CategoryDTO(5, "Something funky"),
-                new CategoryDTO(1, "Wages & Salary : Net Pay"),
+            var expected = new List<CategoryEntityDTO>() {
+                new(2, "Bills : Cell Phone"),
+                new(3, "Bills : Rent"),
+                new(4, "Groceries"),
+                new(6, "Pet Care"),
+                new(5, "Something funky"),
+                new(1, "Wages & Salary : Net Pay"),
             };
             var actual = await category.GetAllCategories();
             Assert.Equal(expected, actual);
@@ -128,13 +129,13 @@ namespace MoneyTracker.Tests.Database.Postgres
                 await category.EditCategory(new EditCategoryDTO(4, "Hobby"))
             );
 
-            var expected = new List<CategoryDTO>() {
-                new CategoryDTO(2, "Bills : Cell Phone"),
-                new CategoryDTO(3, "Bills : Rent"),
-                new CategoryDTO(4, "Groceries"),
-                new CategoryDTO(5, "Hobby"),
-                new CategoryDTO(6, "Pet Care"),
-                new CategoryDTO(1, "Wages & Salary : Net Pay"),
+            var expected = new List<CategoryEntityDTO>() {
+                new(2, "Bills : Cell Phone"),
+                new(3, "Bills : Rent"),
+                new(4, "Groceries"),
+                new(5, "Hobby"),
+                new(6, "Pet Care"),
+                new(1, "Wages & Salary : Net Pay"),
             };
             var actual = await category.GetAllCategories();
             Assert.Equal(expected, actual);

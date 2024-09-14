@@ -1,6 +1,8 @@
 ﻿using MoneyTracker.Shared.Core;
 using MoneyTracker.Shared.Data;
-using MoneyTracker.Shared.Models.Category;
+using MoneyTracker.Shared.Models.ControllerToService.Category;
+using MoneyTracker.Shared.Models.ServiceToController.Category;
+using MoneyTracker.Shared.Models.ServiceToRepository.Category;
 
 namespace MoneyTracker.Core;
 public class CategoryService : ICategoryService
@@ -12,23 +14,34 @@ public class CategoryService : ICategoryService
         _dbService = dbService;
     }
 
-    public Task<List<CategoryDTO>> GetAllCategories()
+    public async Task<List<CategoryResponseDTO>> GetAllCategories()
     {
-        return _dbService.GetAllCategories();
+        var dtoLisFromDb = await _dbService.GetAllCategories();
+        List<CategoryResponseDTO> res = [];
+        foreach (var category in dtoLisFromDb)
+        {
+            res.Add(new(category.Id, category.Name));
+        }
+        return res;
     }
 
-    public Task<CategoryDTO> AddCategory(NewCategoryDTO categoryName)
+    public async Task<CategoryResponseDTO> AddCategory(Shared.Models.ControllerToService.Category.NewCategoryRequestDTO categoryName)
     {
-        return _dbService.AddCategory(categoryName);
+        var dtoToDb = new Shared.Models.ServiceToRepository.Category.NewCategoryDTO(categoryName.Name);
+        var dtoFromDb = await _dbService.AddCategory(dtoToDb);
+        return new CategoryResponseDTO(dtoFromDb.Id, dtoFromDb.Name);
     }
 
-    public Task<CategoryDTO> EditCategory(EditCategoryDTO editCategory)
+    public async Task<CategoryResponseDTO> EditCategory(EditCategoryRequestDTO editCategory)
     {
-        return _dbService.EditCategory(editCategory);
+        var dtoToDb = new EditCategoryDTO(editCategory.Id, editCategory.Name);
+        var dtoFromDb = await _dbService.EditCategory(dtoToDb);
+        return new CategoryResponseDTO(dtoFromDb.Id, dtoFromDb.Name);
     }
 
-    public Task<bool> DeleteCategory(DeleteCategoryDTO deleteCategory)
+    public Task<bool> DeleteCategory(DeleteCategoryRequestDTO deleteCategory)
     {
-        return _dbService.DeleteCategory(deleteCategory);
+        var dtoToDb = new DeleteCategoryDTO(deleteCategory.Id);
+        return _dbService.DeleteCategory(dtoToDb);
     }
 }
