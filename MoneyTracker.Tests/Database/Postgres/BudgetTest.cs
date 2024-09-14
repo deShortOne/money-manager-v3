@@ -3,7 +3,7 @@ using MoneyTracker.DatabaseMigration;
 using MoneyTracker.DatabaseMigration.Models;
 using MoneyTracker.Shared.Models.RepositoryToService.Budget;
 using MoneyTracker.Shared.Models.ServiceToRepository.Budget;
-using MoneyTracker.Shared.Models.Transaction;
+using MoneyTracker.Shared.Models.ServiceToRepository.Transaction;
 using Testcontainers.PostgreSql;
 
 namespace MoneyTracker.Tests.Database.Postgres

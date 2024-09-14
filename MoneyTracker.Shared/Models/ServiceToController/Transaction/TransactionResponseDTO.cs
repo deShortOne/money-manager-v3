@@ -1,9 +1,8 @@
-﻿
-namespace MoneyTracker.Shared.Models.Transaction
+﻿namespace MoneyTracker.Shared.Models.ServiceToController.Transaction
 {
-    public class TransactionDTO
+    public class TransactionResponseDTO
     {
-        public TransactionDTO(int id, string payee, decimal amount, DateTime datePaid, string category)
+        public TransactionResponseDTO(int id, string payee, decimal amount, DateTime datePaid, string category)
         {
             Id = id;
             Payee = payee;
@@ -19,7 +18,7 @@ namespace MoneyTracker.Shared.Models.Transaction
         public string Category { get; private set; }
         public override bool Equals(object? obj)
         {
-            var other = obj as TransactionDTO;
+            var other = obj as TransactionResponseDTO;
 
             if (other == null)
             {

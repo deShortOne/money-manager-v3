@@ -1,4 +1,4 @@
-﻿namespace MoneyTracker.Shared.Models.Transaction
+﻿namespace MoneyTracker.Shared.Models.ServiceToRepository.Transaction
 {
     public class NewTransactionDTO
     {

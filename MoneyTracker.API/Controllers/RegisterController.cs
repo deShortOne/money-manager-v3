@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using MoneyTracker.Shared.Core;
-using MoneyTracker.Shared.Models.Transaction;
+using MoneyTracker.Shared.Models.ControllerToService.Transaction;
+using MoneyTracker.Shared.Models.ServiceToController.Transaction;
+using MoneyTracker.Shared.Models.ServiceToRepository.Transaction;
 
 namespace MoneyTracker.API.Controllers
 {
@@ -20,28 +22,28 @@ namespace MoneyTracker.API.Controllers
 
         [HttpGet]
         [Route("get")]
-        public Task<List<TransactionDTO>> Get()
+        public Task<List<TransactionResponseDTO>> Get()
         {
             return _database.GetAllTransactions();
         }
 
         [HttpPost]
         [Route("add")]
-        public Task<TransactionDTO> Add([FromBody] NewTransactionDTO newRegisterDTO)
+        public Task<TransactionResponseDTO> Add([FromBody] NewTransactionRequestDTO newRegisterDTO)
         {
             return _database.AddTransaction(newRegisterDTO);
         }
 
         [HttpPut]
         [Route("edit")]
-        public Task<TransactionDTO> Edit([FromBody] EditTransactionDTO editRegisterDTO)
+        public Task<TransactionResponseDTO> Edit([FromBody] EditTransactionRequestDTO editRegisterDTO)
         {
             return _database.EditTransaction(editRegisterDTO);
         }
 
         [HttpDelete]
         [Route("delete")]
-        public Task<bool> Delete([FromBody] DeleteTransactionDTO deleteTransaction)
+        public Task<bool> Delete([FromBody] DeleteTransactionRequestDTO deleteTransaction)
         {
             return _database.DeleteTransaction(deleteTransaction);
         }
