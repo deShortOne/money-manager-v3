@@ -1,4 +1,4 @@
-﻿namespace MoneyTracker.Shared.Models.Budget
+﻿namespace MoneyTracker.Shared.Models.ServiceToRepository.Budget
 {
     public class NewBudgetCategoryDTO
     {

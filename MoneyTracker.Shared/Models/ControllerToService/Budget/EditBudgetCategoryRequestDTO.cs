@@ -1,8 +1,8 @@
-﻿namespace MoneyTracker.Shared.Models.Budget
+﻿namespace MoneyTracker.Shared.Models.ControllerToService.Budget
 {
-    public class EditBudgetCategoryDTO
+    public class EditBudgetCategoryRequestDTO
     {
-        public EditBudgetCategoryDTO(int budgetCategoryId, int? budgetGroupId = null, decimal? budgetCategoryPlanned = null)
+        public EditBudgetCategoryRequestDTO(int budgetCategoryId, int? budgetGroupId = null, decimal? budgetCategoryPlanned = null)
         {
             BudgetCategoryId = budgetCategoryId;
             BudgetGroupId = budgetGroupId;

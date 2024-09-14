@@ -1,10 +1,11 @@
-﻿using MoneyTracker.Shared.Models.Budget;
+﻿using MoneyTracker.Shared.Models.ControllerToService.Budget;
+using MoneyTracker.Shared.Models.ServiceToController.Budget;
 
 namespace MoneyTracker.Shared.Core;
 public interface IBudgetService
 {
-    Task<BudgetCategoryDTO> AddBudgetCategory(NewBudgetCategoryDTO newBudget);
-    Task<bool> DeleteBudgetCategory(DeleteBudgetCategory deleteBudgetCategory);
-    Task<List<BudgetGroupDTO>> EditBudgetCategory(EditBudgetCategoryDTO editBudgetCategory);
-    Task<List<BudgetGroupDTO>> GetBudget();
+    Task<BudgetCategoryResponseDTO> AddBudgetCategory(NewBudgetCategoryRequestDTO newBudget);
+    Task<bool> DeleteBudgetCategory(DeleteBudgetCategoryRequestDTO deleteBudgetCategory);
+    Task<List<BudgetGroupResponseDTO>> EditBudgetCategory(EditBudgetCategoryRequestDTO editBudgetCategory);
+    Task<List<BudgetGroupResponseDTO>> GetBudget();
 }

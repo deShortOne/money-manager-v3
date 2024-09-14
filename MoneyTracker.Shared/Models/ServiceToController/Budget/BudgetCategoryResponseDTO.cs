@@ -1,9 +1,9 @@
 ﻿
-namespace MoneyTracker.Shared.Models.Budget
+namespace MoneyTracker.Shared.Models.ServiceToController.Budget
 {
-    public class BudgetCategoryDTO
+    public class BudgetCategoryResponseDTO
     {
-        public BudgetCategoryDTO(string name, decimal planned, decimal actual, decimal difference)
+        public BudgetCategoryResponseDTO(string name, decimal planned, decimal actual, decimal difference)
         {
             Name = name;
             Planned = planned;
@@ -18,7 +18,7 @@ namespace MoneyTracker.Shared.Models.Budget
 
         public override bool Equals(object? obj)
         {
-            var other = obj as BudgetCategoryDTO;
+            var other = obj as BudgetCategoryResponseDTO;
 
             if (other == null)
             {

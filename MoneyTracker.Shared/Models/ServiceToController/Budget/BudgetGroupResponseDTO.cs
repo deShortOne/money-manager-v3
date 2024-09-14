@@ -1,16 +1,16 @@
 ﻿using System.Collections.ObjectModel;
 
-namespace MoneyTracker.Shared.Models.Budget
+namespace MoneyTracker.Shared.Models.ServiceToController.Budget
 {
-    public class BudgetGroupDTO
+    public class BudgetGroupResponseDTO
     {
-        private IList<BudgetCategoryDTO> _categories;
+        private IList<BudgetCategoryResponseDTO> _categories;
 
-        public BudgetGroupDTO(string name) : this(name, 0, 0, 0, [])
+        public BudgetGroupResponseDTO(string name) : this(name, 0, 0, 0, [])
         {
         }
 
-        public BudgetGroupDTO(string name, decimal planned, decimal actual, decimal difference, IList<BudgetCategoryDTO> categories)
+        public BudgetGroupResponseDTO(string name, decimal planned, decimal actual, decimal difference, IList<BudgetCategoryResponseDTO> categories)
         {
             Name = name;
             Planned = planned;
@@ -19,7 +19,7 @@ namespace MoneyTracker.Shared.Models.Budget
             _categories = categories;
         }
 
-        public void AddBudgetCategoryDTO(BudgetCategoryDTO newBudgetCategory)
+        public void AddBudgetCategoryDTO(BudgetCategoryResponseDTO newBudgetCategory)
         {
             _categories.Add(newBudgetCategory);
             Planned += newBudgetCategory.Planned;
@@ -28,9 +28,9 @@ namespace MoneyTracker.Shared.Models.Budget
         }
 
         public string Name { get; private set; }
-        public IList<BudgetCategoryDTO> Categories
+        public IList<BudgetCategoryResponseDTO> Categories
         {
-            get => new ReadOnlyCollection<BudgetCategoryDTO>(_categories);
+            get => new ReadOnlyCollection<BudgetCategoryResponseDTO>(_categories);
             private set => _categories = value;
         }
 
@@ -40,7 +40,7 @@ namespace MoneyTracker.Shared.Models.Budget
 
         public override bool Equals(object? obj)
         {
-            var other = obj as BudgetGroupDTO;
+            var other = obj as BudgetGroupResponseDTO;
 
             if (other == null)
             {
