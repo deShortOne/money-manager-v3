@@ -74,7 +74,8 @@ public class BillService : IBillService
                bill.Frequency,
                bill.Category,
                BillCalculation.CalculateOverDueBillInfo(bill.MonthDay, bill.Frequency,
-                   newDueDate, _dateProvider)
+                   newDueDate, _dateProvider),
+               bill.AccountName
            );
     }
 
@@ -92,7 +93,8 @@ public class BillService : IBillService
                bill.Frequency,
                bill.Category,
                BillCalculation.CalculateOverDueBillInfo(bill.MonthDay, bill.Frequency,
-                   bill.NextDueDate, _dateProvider)
+                   bill.NextDueDate, _dateProvider),
+               bill.AccountName
            ));
         }
 
