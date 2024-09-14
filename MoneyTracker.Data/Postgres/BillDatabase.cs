@@ -26,7 +26,7 @@ public class BillDatabase : IBillDatabase
                 b.monthday
             FROM bill b
             INNER JOIN category c
-            	ON b.categoryid = c.id
+            	ON b.category_id = c.id
             ORDER BY nextduedate ASC;
             """;
 
@@ -54,9 +54,10 @@ public class BillDatabase : IBillDatabase
 
     public async Task<List<BillFromRepositoryDTO>> AddBill(NewBillDTO newBillDTO)
     {
+        // TODO - ACCOUNT ID
         string query = """
-            INSERT INTO bill (payee, amount, nextduedate, frequency, categoryid, monthday)
-            VALUES (@payee, @amount, @nextduedate, @frequency, @categoryid, @monthday);
+            INSERT INTO bill (payee, amount, nextduedate, frequency, category_id, monthday, account_id)
+            VALUES (@payee, @amount, @nextduedate, @frequency, @category_id, @monthday, 1);
             """;
         var queryParams = new List<DbParameter>()
             {
@@ -64,7 +65,7 @@ public class BillDatabase : IBillDatabase
                 new NpgsqlParameter("amount", newBillDTO.Amount),
                 new NpgsqlParameter("nextduedate", newBillDTO.NextDueDate),
                 new NpgsqlParameter("frequency", newBillDTO.Frequency),
-                new NpgsqlParameter("categoryid", newBillDTO.Category),
+                new NpgsqlParameter("category_id", newBillDTO.Category),
                 new NpgsqlParameter("monthday", newBillDTO.MonthDay),
             };
 
@@ -105,7 +106,7 @@ public class BillDatabase : IBillDatabase
         }
         if (editBillDTO.Category != null)
         {
-            setParamsLis.Add("categoryid = @category");
+            setParamsLis.Add("category_id = @category");
             queryParams.Add(new NpgsqlParameter("category", editBillDTO.Category));
         }
 
@@ -148,7 +149,7 @@ public class BillDatabase : IBillDatabase
                 b.monthday
             FROM bill b
             INNER JOIN category c
-            	ON b.categoryid = c.id
+            	ON b.category_id = c.id
             WHERE b.id = @id;
             """;
         var queryParams = new List<DbParameter>()

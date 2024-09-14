@@ -71,10 +71,11 @@ namespace MoneyTracker.Data.Postgres
 
         public async Task<BudgetCategoryDTO> AddBudgetCategory(NewBudgetCategoryDTO newBudget)
         {
+            // TODO - USERS ID
             var queryInsertIntoBudgetCategory = """
                 INSERT INTO budgetcategory VALUES
-                    (@budgetGroupId, @categoryId, @planned)
-                ON CONFLICT (budget_group_id, category_id) DO UPDATE
+                    (1, @budgetGroupId, @categoryId, @planned)
+                ON CONFLICT (users_id, budget_group_id, category_id) DO UPDATE
                     SET planned = @planned
                 RETURNING (SELECT name FROM category WHERE id = @categoryId),
                     (planned),

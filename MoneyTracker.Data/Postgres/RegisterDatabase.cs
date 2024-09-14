@@ -51,9 +51,10 @@ namespace MoneyTracker.Data.Postgres
 
         public async Task<TransactionDTO> AddTransaction(NewTransactionDTO transaction)
         {
+            // TODO - ACCOUNT ID
             var query = """
-                INSERT INTO register (payee, amount, datePaid, category_id) VALUES
-                    (@payee, @amount, @datePaid, @category_id)
+                INSERT INTO register (payee, amount, datePaid, category_id, account_id) VALUES
+                    (@payee, @amount, @datePaid, @category_id, 1)
                 RETURNING (id),
                     (payee), 
                     (amount), 

@@ -1,6 +1,7 @@
 ﻿
 namespace MoneyTracker.Shared.Models.Bill;
-public class NewBillDTO(string payee, decimal amount, DateOnly nextDueDate, string frequency, int category, int monthDay)
+public class NewBillDTO(string payee, decimal amount, DateOnly nextDueDate, string frequency,
+    int category, int monthDay)
 {
     public string Payee { get; private set; } = payee;
     public decimal Amount { get; private set; } = amount;
