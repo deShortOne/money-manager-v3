@@ -24,6 +24,7 @@
 	  <None Remove="Scripts\Migrations\20240907151913_UpdateFrequencyToCorrectNames.sql" />
 	  <None Remove="Scripts\Migrations\20240908172659_RemoveAllSeedData.sql" />
 	  <None Remove="Scripts\Migrations\20240908173619_SetTableReigsterColumnDatePaidToDateOnly.sql" />
+	  <None Remove="scripts\migrations\20240914083432_AddMonthDayToBill.sql" />
 	  <None Remove="Scripts\Seed.sql" />
 	</ItemGroup>
 
