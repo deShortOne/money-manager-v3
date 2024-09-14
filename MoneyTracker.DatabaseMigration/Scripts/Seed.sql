@@ -7,9 +7,9 @@ INSERT INTO register (payee, amount, datePaid, category_id) VALUES
 	('Supermarket', 27, '2024-08-15', 4),
 	('Hobby item', 150, '2024-08-09', 5);
 
-INSERT INTO bill (payee, amount, nextduedate, frequency, categoryid) VALUES
-    ('supermarket a', 23, '2024-09-03', 'Weekly', 4),
-    ('company a', 100, '2024-08-30', 'Monthly', 1);
+INSERT INTO bill (payee, amount, nextduedate, frequency, categoryid, monthday) VALUES
+    ('supermarket a', 23, '2024-09-03', 'Weekly', 4, 3),
+    ('company a', 100, '2024-08-30', 'Monthly', 1, 30);
 
 INSERT INTO BudgetCategory VALUES 
 	(1, 1, 1800),
