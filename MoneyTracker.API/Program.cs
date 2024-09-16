@@ -30,6 +30,7 @@ Startup.SetBillDependencyInjection(builder.Services);
 Startup.SetBudgetDependencyInjection(builder.Services);
 Startup.SetCategoryDependencyInjection(builder.Services);
 Startup.SetRegisterDependencyInjection(builder.Services);
+Startup.SetupAuthentication(builder);
 
 var dbResult = Migration.CheckMigration(dbConnString, new MigrationOption(false));
 if (!dbResult.Successful)
