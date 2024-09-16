@@ -54,4 +54,25 @@ public sealed class UserAuthenticationTest : IAsyncLifetime
 
         Assert.Equal("test-token-fds1200", token);
     }
+
+    [Fact]
+    public void GeneratesABearerToken()
+    {
+        var mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
+
+        var db = new PostgresDatabase(_postgres.GetConnectionString());
+        var userDb = new UserAuthDatabase(db);
+        var jwtToken = new JwtConfig("iss_company a",
+            "aud_company b",
+            "TOPSECRETTOPSECRETTOPSECRETTOPSE",
+            0
+        );
+        var userAuthService = new UserAuthenticationService(userDb, jwtToken);
+
+        var userAuthController = new UserAuthenticationController(null, userAuthService, mockHttpContextAccessor.Object);
+
+        var userToAuth = new UnauthenticatedUser("root");
+        var token = userAuthController.GemerateAuthToken(userToAuth);
+        Assert.NotNull(token);
+    }
 }
