@@ -71,24 +71,24 @@ public class Startup
         });
 
         builder.Services.AddAuthentication(options =>
-                {
-                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-                }).AddJwtBearer(o =>
-        {
-            o.RequireHttpsMetadata = true;
-            o.SaveToken = true;
-            o.TokenValidationParameters = new TokenValidationParameters
             {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(
-                    Encoding.ASCII.GetBytes(builder.Configuration["Jwt:Key"])
-                ),
-                ValidateIssuer = false,
-                ValidateAudience = false
-            };
-        });
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(o =>
+                {
+                    o.RequireHttpsMetadata = true;
+                    o.SaveToken = true;
+                    o.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.ASCII.GetBytes(builder.Configuration["Jwt:Key"])
+                        ),
+                        ValidateIssuer = false,
+                        ValidateAudience = false
+                    };
+                });
 
         builder.Services.AddAuthorization();
         builder.Services.AddHttpContextAccessor();
