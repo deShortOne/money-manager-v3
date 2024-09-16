@@ -10,7 +10,7 @@ namespace MoneyTracker.API.Controllers
     {
 
         private readonly ILogger<UserAuthenticationController> _logger;
-        private readonly IUserAuthenticationService _userAuthenticationService;
+        private readonly IUserAuthenticationService _service;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         public UserAuthenticationController(ILogger<UserAuthenticationController> logger,
@@ -18,7 +18,7 @@ namespace MoneyTracker.API.Controllers
             IHttpContextAccessor httpContextAccessor)
         {
             _logger = logger;
-            _userAuthenticationService = userAuthenticationService;
+            _service = userAuthenticationService;
             _httpContextAccessor = httpContextAccessor;
         }
 
@@ -39,17 +39,9 @@ namespace MoneyTracker.API.Controllers
 
         [HttpPost]
         [Route("authenticate")]
-        public string GemerateAuthToken([FromBody] UnauthenticatedUser user)
+        public Task<string> GemerateAuthToken([FromBody] UnauthenticatedUser user)
         {
-            var authHeader = _httpContextAccessor.HttpContext.Request
-                .Headers.Authorization.ToString();
-
-            if (!string.IsNullOrEmpty(authHeader) && authHeader.StartsWith("Bearer "))
-            {
-                return authHeader.Substring("Bearer ".Length).Trim();
-            }
-
-            throw new InvalidDataException("Not authorised. Add token.");
+            return _service.GenerateToken(user);
         }
     }
 }
