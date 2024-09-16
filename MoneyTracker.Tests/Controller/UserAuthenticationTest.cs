@@ -1,13 +1,18 @@
 ﻿
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
+using MoneyTracker.API.Controllers;
 using MoneyTracker.Core;
 using MoneyTracker.Data.Postgres;
 using MoneyTracker.DatabaseMigration;
 using MoneyTracker.DatabaseMigration.Models;
 using MoneyTracker.Shared.Auth;
+using Moq;
 using Testcontainers.PostgreSql;
 
-namespace MoneyTracker.Tests.Authentication;
-public sealed class UserAuthentication : IAsyncLifetime
+namespace MoneyTracker.Tests.Controller;
+public sealed class UserAuthenticationTest : IAsyncLifetime
 {
     private readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder()
 #if RUN_LOCAL
@@ -32,32 +37,21 @@ public sealed class UserAuthentication : IAsyncLifetime
     }
 
     [Fact]
-    public async void SuccessfullyLogInUser()
+    public void RepeatBackBearerToken()
     {
-        var userToAuthenticate = new UnauthenticatedUser("root");
-        var expected = new AuthenticatedUser(1);
+        var mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
+        var httpContext = new DefaultHttpContext();
+        httpContext.Request.Headers.Authorization = "Bearer test-token-fds1200";
+        mockHttpContextAccessor.Setup(_ => _.HttpContext).Returns(httpContext);
 
         var db = new PostgresDatabase(_postgres.GetConnectionString());
         var userDb = new UserAuthDatabase(db);
         var jwtToken = new JwtConfig("", "", "", 0);
         var userAuthService = new UserAuthenticationService(userDb, jwtToken);
 
-        Assert.Equal(expected, await userAuthService.AuthenticateUser(userToAuthenticate));
-    }
+        var userAuthController = new UserAuthenticationController(null, userAuthService, mockHttpContextAccessor.Object);
+        var token = userAuthController.RepeatAuthTokenBack();
 
-    [Fact]
-    public async void FailToLogInUserThatDoesntExist()
-    {
-        var userToAuthenticate = new UnauthenticatedUser("broken root");
-
-        var db = new PostgresDatabase(_postgres.GetConnectionString());
-        var userDb = new UserAuthDatabase(db);
-        var jwtToken = new JwtConfig("", "", "", 0);
-        var userAuthService = new UserAuthenticationService(userDb, jwtToken);
-
-        await Assert.ThrowsAsync<InvalidDataException>(async () =>
-        {
-            await userAuthService.AuthenticateUser(userToAuthenticate);
-        });
+        Assert.Equal("test-token-fds1200", token);
     }
 }
