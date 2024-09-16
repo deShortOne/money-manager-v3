@@ -1,5 +1,5 @@
-﻿using MoneyTracker.Shared.Models.RepositoryToService.Account;
-using MoneyTracker.Shared.User;
+﻿using MoneyTracker.Shared.Auth;
+using MoneyTracker.Shared.Models.RepositoryToService.Account;
 
 namespace MoneyTracker.Data.Postgres;
 public interface IAccountDatabase

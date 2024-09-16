@@ -1,4 +1,4 @@
-﻿using MoneyTracker.Shared.User;
+﻿using MoneyTracker.Shared.Auth;
 
 namespace MoneyTracker.Shared.Data;
 

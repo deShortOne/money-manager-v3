@@ -1,6 +1,6 @@
 ﻿
+using MoneyTracker.Shared.Auth;
 using MoneyTracker.Shared.Data;
-using MoneyTracker.Shared.User;
 
 namespace MoneyTracker.Core;
 public class UserAuthenticationService

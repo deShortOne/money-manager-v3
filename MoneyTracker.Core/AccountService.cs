@@ -1,7 +1,7 @@
 ﻿
 using MoneyTracker.Data.Postgres;
+using MoneyTracker.Shared.Auth;
 using MoneyTracker.Shared.Models.ServiceToController.Account;
-using MoneyTracker.Shared.User;
 
 namespace MoneyTracker.Core;
 public class AccountService

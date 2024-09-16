@@ -2,8 +2,8 @@
 using System.Data;
 using System.Data.Common;
 using MoneyTracker.Data.Global;
+using MoneyTracker.Shared.Auth;
 using MoneyTracker.Shared.Data;
-using MoneyTracker.Shared.User;
 using Npgsql;
 
 namespace MoneyTracker.Data.Postgres;

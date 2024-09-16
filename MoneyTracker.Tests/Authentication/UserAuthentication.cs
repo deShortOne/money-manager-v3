@@ -3,9 +3,7 @@ using MoneyTracker.Core;
 using MoneyTracker.Data.Postgres;
 using MoneyTracker.DatabaseMigration;
 using MoneyTracker.DatabaseMigration.Models;
-using MoneyTracker.Shared.Data;
-using MoneyTracker.Shared.Models.RepositoryToService.Bill;
-using MoneyTracker.Shared.User;
+using MoneyTracker.Shared.Auth;
 using Testcontainers.PostgreSql;
 
 namespace MoneyTracker.Tests.Authentication;

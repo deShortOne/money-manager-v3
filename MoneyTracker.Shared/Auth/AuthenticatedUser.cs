@@ -1,5 +1,4 @@
-﻿
-namespace MoneyTracker.Shared.User;
+﻿namespace MoneyTracker.Shared.Auth;
 public class AuthenticatedUser(int userId)
 {
     public int UserId { get; } = userId;
