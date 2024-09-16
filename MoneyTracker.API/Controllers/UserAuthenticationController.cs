@@ -43,5 +43,20 @@ namespace MoneyTracker.API.Controllers
         {
             return _service.GenerateToken(user);
         }
+
+        [HttpPost]
+        [Route("decodeToken")]
+        public AuthenticatedUser DecodeAuthToken()
+        {
+            var authHeader = _httpContextAccessor.HttpContext.Request
+                .Headers.Authorization.ToString();
+
+            if (!string.IsNullOrEmpty(authHeader) && authHeader.StartsWith("Bearer "))
+            {
+                return _service.DecodeToken(authHeader.Substring("Bearer ".Length).Trim());
+            }
+
+            throw new InvalidDataException("Not authorised. Add token.");
+        }
     }
 }

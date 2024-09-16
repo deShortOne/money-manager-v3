@@ -49,4 +49,12 @@ public class UserAuthenticationService : IUserAuthenticationService
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
+
+    public AuthenticatedUser DecodeToken(string token)
+    {
+        var data = new JwtSecurityTokenHandler().ReadJwtToken(token);
+        var sub = data.Claims.First(claim => claim.Type == "sub");
+
+        return new AuthenticatedUser(int.Parse(sub.Value));
+    }
 }
