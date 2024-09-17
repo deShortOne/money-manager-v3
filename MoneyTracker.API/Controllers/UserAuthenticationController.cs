@@ -4,6 +4,9 @@ using MoneyTracker.Shared.Core;
 
 namespace MoneyTracker.API.Controllers
 {
+#if (!DEBUG)
+    [ApiExplorerSettings(IgnoreApi = true)]
+#endif
     [ApiController]
     [Route("/api/userAuth/")]
     public class UserAuthenticationController : ControllerBase
