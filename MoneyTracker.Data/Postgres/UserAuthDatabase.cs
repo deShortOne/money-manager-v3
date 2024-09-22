@@ -16,7 +16,7 @@ public class UserAuthDatabase : IUserAuthDatabase
         _database = db;
     }
 
-    public async Task<AuthenticatedUser> AuthenticateUser(UnauthenticatedUser userToLogIn)
+    public async Task<AuthenticatedUser> AuthenticateUser(LoginWithUsernameAndPassword userToLogIn)
     {
         var query = """
             SELECT id

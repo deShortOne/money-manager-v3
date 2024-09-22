@@ -38,7 +38,7 @@ public sealed class UserAuthentication : IAsyncLifetime
     [Fact]
     public async void SuccessfullyLogInUser()
     {
-        var userToAuthenticate = new UnauthenticatedUser("root");
+        var userToAuthenticate = new LoginWithUsernameAndPassword("root");
         var expected = new AuthenticatedUser(1);
 
         var db = new PostgresDatabase(_postgres.GetConnectionString());
@@ -52,7 +52,7 @@ public sealed class UserAuthentication : IAsyncLifetime
     [Fact]
     public async void FailToLogInUserThatDoesntExist()
     {
-        var userToAuthenticate = new UnauthenticatedUser("broken root");
+        var userToAuthenticate = new LoginWithUsernameAndPassword("broken root");
 
         var db = new PostgresDatabase(_postgres.GetConnectionString());
         var userDb = new UserAuthDatabase(db);
@@ -78,7 +78,7 @@ public sealed class UserAuthentication : IAsyncLifetime
         );
         var userAuthService = new UserAuthenticationService(userDb, jwtToken);
 
-        var userToAuth = new UnauthenticatedUser("root");
+        var userToAuth = new LoginWithUsernameAndPassword("root");
         var token = await userAuthService.GenerateToken(userToAuth);
         Assert.NotNull(token);
 

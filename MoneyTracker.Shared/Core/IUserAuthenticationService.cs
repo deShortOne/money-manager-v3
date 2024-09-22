@@ -3,7 +3,7 @@
 namespace MoneyTracker.Shared.Core;
 public interface IUserAuthenticationService
 {
-    Task<AuthenticatedUser> AuthenticateUser(UnauthenticatedUser user);
+    Task<AuthenticatedUser> AuthenticateUser(LoginWithUsernameAndPassword user);
     AuthenticatedUser DecodeToken(string authHeader);
-    Task<string> GenerateToken(UnauthenticatedUser user);
+    Task<string> GenerateToken(LoginWithUsernameAndPassword user);
 }

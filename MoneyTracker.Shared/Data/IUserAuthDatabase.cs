@@ -4,5 +4,5 @@ namespace MoneyTracker.Shared.Data;
 
 public interface IUserAuthDatabase
 {
-    public Task<AuthenticatedUser> AuthenticateUser(UnauthenticatedUser userToLogIn);
+    public Task<AuthenticatedUser> AuthenticateUser(LoginWithUsernameAndPassword userToLogIn);
 }

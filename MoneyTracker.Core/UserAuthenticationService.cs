@@ -19,12 +19,12 @@ public class UserAuthenticationService : IUserAuthenticationService
         _jwtToken = jwtConfig;
     }
 
-    public Task<AuthenticatedUser> AuthenticateUser(UnauthenticatedUser user)
+    public Task<AuthenticatedUser> AuthenticateUser(LoginWithUsernameAndPassword user)
     {
         return _dbService.AuthenticateUser(user);
     }
 
-    public async Task<string> GenerateToken(UnauthenticatedUser user)
+    public async Task<string> GenerateToken(LoginWithUsernameAndPassword user)
     {
         var userInfo = await _dbService.AuthenticateUser(user);
 
