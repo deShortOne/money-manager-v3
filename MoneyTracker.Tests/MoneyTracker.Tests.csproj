@@ -19,6 +19,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\MoneyTracker.API\MoneyTracker.API.csproj" />
 		<ProjectReference Include="..\MoneyTracker.Calculation\MoneyTracker.Calculation.csproj" />
 		<ProjectReference Include="..\MoneyTracker.Core\MoneyTracker.Core.csproj" />
 		<ProjectReference Include="..\MoneyTracker.DatabaseMigration\MoneyTracker.DatabaseMigration.csproj" />
