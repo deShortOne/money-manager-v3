@@ -59,7 +59,7 @@ public class BillService : IBillService
         var user = await _userAuthService.DecodeToken(token);
         if (!await _dbService.IsBillAssociatedWithUser(user, editBill.Id))
         {
-            throw new InvalidDataException("Bill id not found");
+            throw new InvalidDataException("Bill not found");
         }
         if (editBill.AccountId != null &&
             !await _accountDatabase.IsAccountOwnedByUser(user, (int)editBill.AccountId))
@@ -84,7 +84,7 @@ public class BillService : IBillService
         var user = await _userAuthService.DecodeToken(token);
         if (!await _dbService.IsBillAssociatedWithUser(user, deleteBill.Id))
         {
-            throw new InvalidDataException("Bill id not found");
+            throw new InvalidDataException("Bill not found");
         }
 
         var dtoToDb = new DeleteBillDTO(
@@ -98,7 +98,7 @@ public class BillService : IBillService
         var user = await _userAuthService.DecodeToken(token);
         if (!await _dbService.IsBillAssociatedWithUser(user, skipBillDTO.Id))
         {
-            throw new InvalidDataException("Bill id not found");
+            throw new InvalidDataException("Bill not found");
         }
 
         var bill = await _dbService.GetBillById(user, skipBillDTO.Id);

@@ -236,7 +236,7 @@ public class BillServiceTest : IAsyncLifetime
         {
             await billService.EditBill("", new EditBillRequestDTO(1, payee: "supermarket b"));
         });
-        Assert.Equal("Bill id not found", editBillMessage.Message);
+        Assert.Equal("Bill not found", editBillMessage.Message);
     }
 
     [Fact]
@@ -252,7 +252,7 @@ public class BillServiceTest : IAsyncLifetime
         {
             await billService.DeleteBill("", new DeleteBillRequestDTO(1));
         });
-        Assert.Equal("Bill id not found", editBillMessage.Message);
+        Assert.Equal("Bill not found", editBillMessage.Message);
     }
 
     [Fact]
@@ -268,7 +268,7 @@ public class BillServiceTest : IAsyncLifetime
         {
             await billService.SkipOccurence("", new SkipBillOccurrenceRequestDTO(1, new DateOnly(2024, 9, 17)));
         });
-        Assert.Equal("Bill id not found", editBillMessage.Message);
+        Assert.Equal("Bill not found", editBillMessage.Message);
     }
 
     [Fact]
