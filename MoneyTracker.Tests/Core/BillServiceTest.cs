@@ -2,6 +2,7 @@
 using MoneyTracker.Data.Postgres;
 using MoneyTracker.DatabaseMigration;
 using MoneyTracker.DatabaseMigration.Models;
+using MoneyTracker.Shared.Auth;
 using MoneyTracker.Shared.DateManager;
 using MoneyTracker.Shared.Models.ControllerToService.Bill;
 using MoneyTracker.Shared.Models.RepositoryToService.Bill;
@@ -41,13 +42,14 @@ public class BillServiceTest : IAsyncLifetime
     [Fact]
     public async void FirstLoadCheckTablesThatDataAreThere()
     {
+        var user = new AuthenticatedUser(1);
         var expected = new List<BillEntityDTO>()
         {
             new(2, "company a", 100, new DateOnly(2024, 08, 30), "Monthly", "Wages & Salary : Net Pay", 30, "bank a"),
             new(1, "supermarket a", 23, new DateOnly(2024, 09, 03), "Weekly", "Groceries", 3, "bank a"),
         };
 
-        var actual = await _billDb.GetAllBills();
+        var actual = await _billDb.GetAllBills(user);
 
         Assert.Equal(expected, actual);
     }

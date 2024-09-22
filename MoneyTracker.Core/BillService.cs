@@ -1,4 +1,5 @@
 ﻿using MoneyTracker.Calculation.Bill;
+using MoneyTracker.Shared.Auth;
 using MoneyTracker.Shared.Core;
 using MoneyTracker.Shared.Data;
 using MoneyTracker.Shared.DateManager;
@@ -21,11 +22,13 @@ public class BillService : IBillService
 
     public async Task<List<BillResponseDTO>> GetAllBills()
     {
-        return ConvertFromRepoDTOToDTO(await _dbService.GetAllBills());
+        var user = new AuthenticatedUser(1);
+        return ConvertFromRepoDTOToDTO(await _dbService.GetAllBills(user));
     }
 
     public async Task<List<BillResponseDTO>> AddBill(NewBillRequestDTO newBill)
     {
+        var user = new AuthenticatedUser(1);
         var dtoToDb = new NewBillDTO(
             newBill.Payee,
             newBill.Amount,
@@ -34,11 +37,12 @@ public class BillService : IBillService
             newBill.Category,
             newBill.MonthDay
         );
-        return ConvertFromRepoDTOToDTO(await _dbService.AddBill(dtoToDb));
+        return ConvertFromRepoDTOToDTO(await _dbService.AddBill(user, dtoToDb));
     }
 
     public async Task<List<BillResponseDTO>> EditBill(EditBillRequestDTO editBill)
     {
+        var user = new AuthenticatedUser(1);
         var dtoToDb = new EditBillDTO(
             editBill.Id,
             editBill.Payee,
@@ -47,24 +51,26 @@ public class BillService : IBillService
             editBill.Frequency,
             editBill.Category
         );
-        return ConvertFromRepoDTOToDTO(await _dbService.EditBill(dtoToDb));
+        return ConvertFromRepoDTOToDTO(await _dbService.EditBill(user, dtoToDb));
     }
 
     public async Task<List<BillResponseDTO>> DeleteBill(DeleteBillRequestDTO deleteBill)
     {
+        var user = new AuthenticatedUser(1);
         var dtoToDb = new DeleteBillDTO(
             deleteBill.Id
         );
-        return ConvertFromRepoDTOToDTO(await _dbService.DeleteBill(dtoToDb));
+        return ConvertFromRepoDTOToDTO(await _dbService.DeleteBill(user, dtoToDb));
     }
 
     public async Task<BillResponseDTO> SkipOccurence(SkipBillOccurrenceRequestDTO skipBillDTO)
     {
-        var bill = await _dbService.GetBillById(skipBillDTO.Id);
+        var user = new AuthenticatedUser(1);
+        var bill = await _dbService.GetBillById(user, skipBillDTO.Id);
         var newDueDate = BillCalculation.CalculateNextDueDate(bill.Frequency, bill.MonthDay, skipBillDTO.SkipDatePastThisDate);
 
         var editBill = new EditBillDTO(skipBillDTO.Id, nextDueDate: newDueDate);
-        await _dbService.EditBill(editBill);
+        await _dbService.EditBill(user, editBill);
 
         return new BillResponseDTO(
                bill.Id,
@@ -84,7 +90,6 @@ public class BillService : IBillService
         List<BillResponseDTO> res = [];
         foreach (var bill in billRepoDTO)
         {
-
             res.Add(new BillResponseDTO(
                bill.Id,
                bill.Payee,
