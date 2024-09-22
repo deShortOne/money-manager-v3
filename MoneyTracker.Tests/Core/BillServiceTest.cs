@@ -220,4 +220,52 @@ public class BillServiceTest : IAsyncLifetime
             Assert.Equal(expected, actual);
         });
     }
+
+    [Fact]
+    public async void EditBill_EditBillNotAssoicatedWithUser_ThrowsError()
+    {
+        IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 10, 3));
+        var mockUserAuth = new Mock<IUserAuthenticationService>();
+        mockUserAuth.Setup(x => x.DecodeToken(It.IsAny<string>()))
+            .Returns(Task.FromResult(new AuthenticatedUser(2)));
+        var billService = new BillService(_billDb, dateProvider, mockUserAuth.Object);
+
+        var editBillMessage = await Assert.ThrowsAsync<InvalidDataException>(async () =>
+        {
+            await billService.EditBill("", new EditBillRequestDTO(1, payee: "supermarket b"));
+        });
+        Assert.Equal("Bill id not found", editBillMessage.Message);
+    }
+
+    [Fact]
+    public async void DeleteBill_EditBillNotAssoicatedWithUser_ThrowsError()
+    {
+        IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 10, 3));
+        var mockUserAuth = new Mock<IUserAuthenticationService>();
+        mockUserAuth.Setup(x => x.DecodeToken(It.IsAny<string>()))
+            .Returns(Task.FromResult(new AuthenticatedUser(2)));
+        var billService = new BillService(_billDb, dateProvider, mockUserAuth.Object);
+
+        var editBillMessage = await Assert.ThrowsAsync<InvalidDataException>(async () =>
+        {
+            await billService.DeleteBill("", new DeleteBillRequestDTO(1));
+        });
+        Assert.Equal("Bill id not found", editBillMessage.Message);
+    }
+
+    [Fact]
+    public async void SkipOccurence_EditBillNotAssoicatedWithUser_ThrowsError()
+    {
+        IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 10, 3));
+        var mockUserAuth = new Mock<IUserAuthenticationService>();
+        mockUserAuth.Setup(x => x.DecodeToken(It.IsAny<string>()))
+            .Returns(Task.FromResult(new AuthenticatedUser(2)));
+        var billService = new BillService(_billDb, dateProvider, mockUserAuth.Object);
+
+        var editBillMessage = await Assert.ThrowsAsync<InvalidDataException>(async () =>
+        {
+            await billService.SkipOccurence("", new SkipBillOccurrenceRequestDTO(1, new DateOnly(2024, 9, 17)));
+        });
+        Assert.Equal("Bill id not found", editBillMessage.Message);
+    }
 }

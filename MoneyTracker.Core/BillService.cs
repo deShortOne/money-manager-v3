@@ -46,6 +46,11 @@ public class BillService : IBillService
     public async Task<List<BillResponseDTO>> EditBill(string token, EditBillRequestDTO editBill)
     {
         var user = await _userAuthService.DecodeToken(token);
+        if (!await _dbService.IsBillAssociatedWithUser(user, editBill.Id))
+        {
+            throw new InvalidDataException("Bill id not found");
+        }
+
         var dtoToDb = new EditBillDTO(
             editBill.Id,
             editBill.Payee,
@@ -61,6 +66,11 @@ public class BillService : IBillService
     public async Task<List<BillResponseDTO>> DeleteBill(string token, DeleteBillRequestDTO deleteBill)
     {
         var user = await _userAuthService.DecodeToken(token);
+        if (!await _dbService.IsBillAssociatedWithUser(user, deleteBill.Id))
+        {
+            throw new InvalidDataException("Bill id not found");
+        }
+
         var dtoToDb = new DeleteBillDTO(
             deleteBill.Id
         );
@@ -70,6 +80,11 @@ public class BillService : IBillService
     public async Task<BillResponseDTO> SkipOccurence(string token, SkipBillOccurrenceRequestDTO skipBillDTO)
     {
         var user = await _userAuthService.DecodeToken(token);
+        if (!await _dbService.IsBillAssociatedWithUser(user, skipBillDTO.Id))
+        {
+            throw new InvalidDataException("Bill id not found");
+        }
+
         var bill = await _dbService.GetBillById(user, skipBillDTO.Id);
         var newDueDate = BillCalculation.CalculateNextDueDate(bill.Frequency, bill.MonthDay, skipBillDTO.SkipDatePastThisDate);
 

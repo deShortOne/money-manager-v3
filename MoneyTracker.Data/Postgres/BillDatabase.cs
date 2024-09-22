@@ -229,7 +229,7 @@ public class BillDatabase : IBillDatabase
             WHERE b.id = @id
             AND b.account_id IN (
                 SELECT a.id
-                FROM account
+                FROM account a
                 WHERE a.users_id = @user_id
             );
             """;
