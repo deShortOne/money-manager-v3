@@ -4,12 +4,11 @@ using MoneyTracker.Data.Postgres;
 using MoneyTracker.DatabaseMigration;
 using MoneyTracker.DatabaseMigration.Models;
 using MoneyTracker.Shared.Auth;
-using Moq;
 using Npgsql;
 using Testcontainers.PostgreSql;
 
 namespace MoneyTracker.Tests.Authentication;
-public sealed class UserAuthentication : IAsyncLifetime
+public sealed class UserAuthenticationTest : IAsyncLifetime
 {
     private readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder()
 #if RUN_LOCAL
