@@ -1,5 +1,4 @@
 ﻿using MoneyTracker.Calculation.Bill;
-using MoneyTracker.Shared.Auth;
 using MoneyTracker.Shared.Core;
 using MoneyTracker.Shared.Data;
 using MoneyTracker.Shared.DateManager;
@@ -13,59 +12,64 @@ public class BillService : IBillService
 {
     private readonly IBillDatabase _dbService;
     private readonly IDateProvider _dateProvider;
+    private readonly IUserAuthenticationService _userAuthService;
 
-    public BillService(IBillDatabase dbService, IDateProvider dateProvider)
+    public BillService(IBillDatabase dbService, IDateProvider dateProvider,
+        IUserAuthenticationService userAuthService)
     {
         _dbService = dbService;
         _dateProvider = dateProvider;
+        _userAuthService = userAuthService;
     }
 
-    public async Task<List<BillResponseDTO>> GetAllBills()
+    public async Task<List<BillResponseDTO>> GetAllBills(string token)
     {
-        var user = new AuthenticatedUser(1);
+        var user = await _userAuthService.DecodeToken(token);
         return ConvertFromRepoDTOToDTO(await _dbService.GetAllBills(user));
     }
 
-    public async Task<List<BillResponseDTO>> AddBill(NewBillRequestDTO newBill)
+    public async Task<List<BillResponseDTO>> AddBill(string token, NewBillRequestDTO newBill)
     {
-        var user = new AuthenticatedUser(1);
+        var user = await _userAuthService.DecodeToken(token);
         var dtoToDb = new NewBillDTO(
             newBill.Payee,
             newBill.Amount,
             newBill.NextDueDate,
             newBill.Frequency,
             newBill.Category,
-            newBill.MonthDay
+            newBill.MonthDay,
+            newBill.AccountId
         );
         return ConvertFromRepoDTOToDTO(await _dbService.AddBill(user, dtoToDb));
     }
 
-    public async Task<List<BillResponseDTO>> EditBill(EditBillRequestDTO editBill)
+    public async Task<List<BillResponseDTO>> EditBill(string token, EditBillRequestDTO editBill)
     {
-        var user = new AuthenticatedUser(1);
+        var user = await _userAuthService.DecodeToken(token);
         var dtoToDb = new EditBillDTO(
             editBill.Id,
             editBill.Payee,
             editBill.Amount,
             editBill.NextDueDate,
             editBill.Frequency,
-            editBill.Category
+            editBill.Category,
+            editBill.AccountId
         );
         return ConvertFromRepoDTOToDTO(await _dbService.EditBill(user, dtoToDb));
     }
 
-    public async Task<List<BillResponseDTO>> DeleteBill(DeleteBillRequestDTO deleteBill)
+    public async Task<List<BillResponseDTO>> DeleteBill(string token, DeleteBillRequestDTO deleteBill)
     {
-        var user = new AuthenticatedUser(1);
+        var user = await _userAuthService.DecodeToken(token);
         var dtoToDb = new DeleteBillDTO(
             deleteBill.Id
         );
         return ConvertFromRepoDTOToDTO(await _dbService.DeleteBill(user, dtoToDb));
     }
 
-    public async Task<BillResponseDTO> SkipOccurence(SkipBillOccurrenceRequestDTO skipBillDTO)
+    public async Task<BillResponseDTO> SkipOccurence(string token, SkipBillOccurrenceRequestDTO skipBillDTO)
     {
-        var user = new AuthenticatedUser(1);
+        var user = await _userAuthService.DecodeToken(token);
         var bill = await _dbService.GetBillById(user, skipBillDTO.Id);
         var newDueDate = BillCalculation.CalculateNextDueDate(bill.Frequency, bill.MonthDay, skipBillDTO.SkipDatePastThisDate);
 

@@ -3,11 +3,13 @@ using MoneyTracker.Data.Postgres;
 using MoneyTracker.DatabaseMigration;
 using MoneyTracker.DatabaseMigration.Models;
 using MoneyTracker.Shared.Auth;
+using MoneyTracker.Shared.Core;
 using MoneyTracker.Shared.DateManager;
 using MoneyTracker.Shared.Models.ControllerToService.Bill;
 using MoneyTracker.Shared.Models.RepositoryToService.Bill;
 using MoneyTracker.Shared.Models.ServiceToController.Bill;
 using MoneyTracker.Tests.Local;
+using Moq;
 using Testcontainers.PostgreSql;
 
 namespace MoneyTracker.Tests.Core;
@@ -58,16 +60,19 @@ public class BillServiceTest : IAsyncLifetime
     public async void DeleteBill()
     {
         IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 8, 24));
-        var billService = new BillService(_billDb, dateProvider);
+        var mockUserAuth = new Mock<IUserAuthenticationService>();
+        mockUserAuth.Setup(x => x.DecodeToken(It.IsAny<string>()))
+            .Returns(Task.FromResult(new AuthenticatedUser(1)));
+        var billService = new BillService(_billDb, dateProvider, mockUserAuth.Object);
 
-        await billService.DeleteBill(new DeleteBillRequestDTO(1));
+        await billService.DeleteBill("", new DeleteBillRequestDTO(1));
 
         var expected = new List<BillResponseDTO>()
         {
             new(2, "company a", 100, new DateOnly(2024, 08, 30), "Monthly", "Wages & Salary : Net Pay", null, "bank b"),
         };
 
-        var actual = await billService.GetAllBills();
+        var actual = await billService.GetAllBills("");
 
         Assert.Equal(expected, actual);
     }
@@ -76,9 +81,12 @@ public class BillServiceTest : IAsyncLifetime
     public async void EditBill()
     {
         IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 8, 24));
-        var billService = new BillService(_billDb, dateProvider);
+        var mockUserAuth = new Mock<IUserAuthenticationService>();
+        mockUserAuth.Setup(x => x.DecodeToken(It.IsAny<string>()))
+            .Returns(Task.FromResult(new AuthenticatedUser(1)));
+        var billService = new BillService(_billDb, dateProvider, mockUserAuth.Object);
 
-        await billService.EditBill(new EditBillRequestDTO(1, payee: "supermarket b"));
+        await billService.EditBill("", new EditBillRequestDTO(1, payee: "supermarket b"));
 
         var expected = new List<BillResponseDTO>()
         {
@@ -86,7 +94,7 @@ public class BillServiceTest : IAsyncLifetime
             new(1, "supermarket b", 23, new DateOnly(2024, 09, 03), "Weekly", "Groceries", null, "bank a"),
         };
 
-        var actual = await billService.GetAllBills();
+        var actual = await billService.GetAllBills("");
 
         Assert.Equal(expected, actual);
     }
@@ -95,9 +103,12 @@ public class BillServiceTest : IAsyncLifetime
     public async void AddBill()
     {
         IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 8, 24));
-        var billService = new BillService(_billDb, dateProvider);
+        var mockUserAuth = new Mock<IUserAuthenticationService>();
+        mockUserAuth.Setup(x => x.DecodeToken(It.IsAny<string>()))
+            .Returns(Task.FromResult(new AuthenticatedUser(1)));
+        var billService = new BillService(_billDb, dateProvider, mockUserAuth.Object);
 
-        await billService.AddBill(new NewBillRequestDTO("flight sim", 420, new DateOnly(2024, 09, 05), "Daily", 5, 5));
+        await billService.AddBill("", new NewBillRequestDTO("flight sim", 420, new DateOnly(2024, 09, 05), "Daily", 5, 5, 1));
 
         var expected = new List<BillResponseDTO>()
         {
@@ -106,7 +117,7 @@ public class BillServiceTest : IAsyncLifetime
             new(4, "flight sim", 420, new DateOnly(2024, 09, 05), "Daily", "Hobby", null, "bank a"),
         };
 
-        var actual = await billService.GetAllBills();
+        var actual = await billService.GetAllBills("");
 
         Assert.Equal(expected, actual);
     }
@@ -115,7 +126,10 @@ public class BillServiceTest : IAsyncLifetime
     public async void FirstLoadCheckButCurrentDateIsOneIterationAfterDueDate()
     {
         IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 9, 7));
-        var billService = new BillService(_billDb, dateProvider);
+        var mockUserAuth = new Mock<IUserAuthenticationService>();
+        mockUserAuth.Setup(x => x.DecodeToken(It.IsAny<string>()))
+            .Returns(Task.FromResult(new AuthenticatedUser(1)));
+        var billService = new BillService(_billDb, dateProvider, mockUserAuth.Object);
 
         var expected = new List<BillResponseDTO>()
         {
@@ -125,7 +139,7 @@ public class BillServiceTest : IAsyncLifetime
                 new OverDueBillInfo(4, [new DateOnly(2024, 9, 3)]), "bank a"),
         };
 
-        var actual = await billService.GetAllBills();
+        var actual = await billService.GetAllBills("");
 
         Assert.Equal(expected, actual);
     }
@@ -134,7 +148,10 @@ public class BillServiceTest : IAsyncLifetime
     public async void FirstLoadCheckButCurrentDateIsMultipleIterationsAfterDueDate()
     {
         IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 10, 4));
-        var billService = new BillService(_billDb, dateProvider);
+        var mockUserAuth = new Mock<IUserAuthenticationService>();
+        mockUserAuth.Setup(x => x.DecodeToken(It.IsAny<string>()))
+            .Returns(Task.FromResult(new AuthenticatedUser(1)));
+        var billService = new BillService(_billDb, dateProvider, mockUserAuth.Object);
 
         DateOnly[] dates = [new DateOnly(2024, 9, 3), new DateOnly(2024, 9, 10), new DateOnly(2024, 9, 17),
             new DateOnly(2024, 9, 24), new DateOnly(2024, 10, 1)];
@@ -146,7 +163,7 @@ public class BillServiceTest : IAsyncLifetime
                 new OverDueBillInfo(31, dates), "bank a"),
         };
 
-        var actual = await billService.GetAllBills();
+        var actual = await billService.GetAllBills("");
 
         Assert.Equal(expected, actual);
     }
@@ -155,7 +172,10 @@ public class BillServiceTest : IAsyncLifetime
     public async void FirstLoadCheckButCurrentDateIsMultipleIterationsAfterDueDate2()
     {
         IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 10, 3));
-        var billService = new BillService(_billDb, dateProvider);
+        var mockUserAuth = new Mock<IUserAuthenticationService>();
+        mockUserAuth.Setup(x => x.DecodeToken(It.IsAny<string>()))
+            .Returns(Task.FromResult(new AuthenticatedUser(1)));
+        var billService = new BillService(_billDb, dateProvider, mockUserAuth.Object);
 
         DateOnly[] dates = [new DateOnly(2024, 9, 3), new DateOnly(2024, 9, 10), new DateOnly(2024, 9, 17),
             new DateOnly(2024, 9, 24), new DateOnly(2024, 10, 1)];
@@ -167,7 +187,7 @@ public class BillServiceTest : IAsyncLifetime
                 new OverDueBillInfo(30, dates), "bank a"),
         };
 
-        var actual = await billService.GetAllBills();
+        var actual = await billService.GetAllBills("");
 
         Assert.Equal(expected, actual);
     }
@@ -176,9 +196,12 @@ public class BillServiceTest : IAsyncLifetime
     public async void SkipOccurence_SkipTwoOccurences_BillIsSkippedPassed()
     {
         IDateProvider dateProvider = TestHelper.CreateMockdateProvider(new DateOnly(2024, 10, 3));
-        var billService = new BillService(_billDb, dateProvider);
+        var mockUserAuth = new Mock<IUserAuthenticationService>();
+        mockUserAuth.Setup(x => x.DecodeToken(It.IsAny<string>()))
+            .Returns(Task.FromResult(new AuthenticatedUser(1)));
+        var billService = new BillService(_billDb, dateProvider, mockUserAuth.Object);
 
-        var currNewBill = await billService.SkipOccurence(new SkipBillOccurrenceRequestDTO(1,
+        var currNewBill = await billService.SkipOccurence("", new SkipBillOccurrenceRequestDTO(1,
             new DateOnly(2024, 9, 17)));
 
         DateOnly[] dates = [new DateOnly(2024, 9, 24), new DateOnly(2024, 10, 1)];
@@ -190,7 +213,7 @@ public class BillServiceTest : IAsyncLifetime
                 new OverDueBillInfo(9, dates), "bank a"),
         };
 
-        var actual = await billService.GetAllBills();
+        var actual = await billService.GetAllBills("");
         Assert.Multiple(() =>
         {
             Assert.Equal(expected[1], currNewBill);

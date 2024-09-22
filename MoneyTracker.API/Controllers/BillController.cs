@@ -9,38 +9,61 @@ public class BillController : ControllerBase
 
     private readonly ILogger<BillController> _logger;
     private readonly IBillService _service;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public BillController(ILogger<BillController> logger, IBillService service)
+    public BillController(ILogger<BillController> logger, IBillService service,
+            IHttpContextAccessor httpContextAccessor)
     {
         _logger = logger;
         _service = service;
+        _httpContextAccessor = httpContextAccessor;
     }
 
     [HttpGet]
     [Route("get")]
     public Task<List<BillResponseDTO>> Get()
     {
-        return _service.GetAllBills();
+        var token = ControllerHelper.GetToken(_httpContextAccessor);
+        if (string.IsNullOrEmpty(token))
+        {
+            throw new InvalidOperationException("No token provided");
+        }
+        return _service.GetAllBills(token);
     }
 
     [HttpPost]
     [Route("add")]
     public Task<List<BillResponseDTO>> AddBill([FromBody] NewBillRequestDTO newBill)
     {
-        return _service.AddBill(newBill);
+        var token = ControllerHelper.GetToken(_httpContextAccessor);
+        if (string.IsNullOrEmpty(token))
+        {
+            throw new InvalidOperationException("No token provided");
+        }
+        return _service.AddBill(token, newBill);
     }
 
     [HttpPut]
     [Route("edit")]
     public Task<List<BillResponseDTO>> EditBill([FromBody] EditBillRequestDTO editBill)
     {
-        return _service.EditBill(editBill);
+        var token = ControllerHelper.GetToken(_httpContextAccessor);
+        if (string.IsNullOrEmpty(token))
+        {
+            throw new InvalidOperationException("No token provided");
+        }
+        return _service.EditBill(token, editBill);
     }
 
     [HttpDelete]
     [Route("delete")]
     public Task<List<BillResponseDTO>> DeleteBill([FromBody] DeleteBillRequestDTO deleteBill)
     {
-        return _service.DeleteBill(deleteBill);
+        var token = ControllerHelper.GetToken(_httpContextAccessor);
+        if (string.IsNullOrEmpty(token))
+        {
+            throw new InvalidOperationException("No token provided");
+        }
+        return _service.DeleteBill(token, deleteBill);
     }
 }

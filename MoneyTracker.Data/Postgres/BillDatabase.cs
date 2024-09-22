@@ -72,7 +72,7 @@ public class BillDatabase : IBillDatabase
     {
         string query = """
             INSERT INTO bill (payee, amount, nextduedate, frequency, category_id, monthday, account_id)
-            VALUES (@payee, @amount, @nextduedate, @frequency, @category_id, @monthday, @user_id);
+            VALUES (@payee, @amount, @nextduedate, @frequency, @category_id, @monthday, @account_id);
             """;
         var queryParams = new List<DbParameter>()
             {
@@ -82,7 +82,7 @@ public class BillDatabase : IBillDatabase
                 new NpgsqlParameter("frequency", newBillDTO.Frequency),
                 new NpgsqlParameter("category_id", newBillDTO.Category),
                 new NpgsqlParameter("monthday", newBillDTO.MonthDay),
-                new NpgsqlParameter("user_id", user.UserId),
+                new NpgsqlParameter("account_id", newBillDTO.AccountId),
             };
 
         await _database.UpdateTable(query, queryParams);
@@ -125,6 +125,11 @@ public class BillDatabase : IBillDatabase
         {
             setParamsLis.Add("category_id = @category");
             queryParams.Add(new NpgsqlParameter("category", editBillDTO.Category));
+        }
+        if (editBillDTO.AccountId != null)
+        {
+            setParamsLis.Add("account_id = @account_id");
+            queryParams.Add(new NpgsqlParameter("account_id", editBillDTO.AccountId));
         }
 
         string query = $"""
@@ -214,5 +219,32 @@ public class BillDatabase : IBillDatabase
         }
 
         throw new ArgumentException("Bill id was not found");
+    }
+
+    public async Task<bool> IsBillAssociatedWithUser(AuthenticatedUser user, int billId)
+    {
+        string query = """
+            SELECT 1
+            FROM bill b
+            WHERE b.id = @id
+            AND b.account_id IN (
+                SELECT a.id
+                FROM account
+                WHERE a.users_id = @user_id
+            );
+            """;
+        var queryParams = new List<DbParameter>()
+        {
+            new NpgsqlParameter("id", billId),
+            new NpgsqlParameter("user_id", user.UserId),
+        };
+        using var reader = await _database.GetTable(query, queryParams);
+
+        List<BillEntityDTO> res = [];
+        if (await reader.ReadAsync())
+        {
+            return reader.GetInt32(0) == 1;
+        }
+        return false;
     }
 }

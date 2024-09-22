@@ -29,12 +29,10 @@ namespace MoneyTracker.API.Controllers
         [Route("getToken")]
         public string RepeatAuthTokenBack()
         {
-            var authHeader = _httpContextAccessor.HttpContext.Request
-                .Headers.Authorization.ToString();
-
-            if (!string.IsNullOrEmpty(authHeader) && authHeader.StartsWith("Bearer "))
+            var token = ControllerHelper.GetToken(_httpContextAccessor);
+            if (!string.IsNullOrEmpty(token))
             {
-                return authHeader.Substring("Bearer ".Length).Trim();
+                return token;
             }
 
             throw new InvalidDataException("Not authorised. Add token.");
@@ -51,12 +49,10 @@ namespace MoneyTracker.API.Controllers
         [Route("decodeToken")]
         public Task<AuthenticatedUser> DecodeAuthToken()
         {
-            var authHeader = _httpContextAccessor.HttpContext.Request
-                .Headers.Authorization.ToString();
-
-            if (!string.IsNullOrEmpty(authHeader) && authHeader.StartsWith("Bearer "))
+            var token = ControllerHelper.GetToken(_httpContextAccessor);
+            if (!string.IsNullOrEmpty(token))
             {
-                return _service.DecodeToken(authHeader.Substring("Bearer ".Length).Trim());
+                return _service.DecodeToken(token);
             }
 
             throw new InvalidDataException("Not authorised. Add token.");
