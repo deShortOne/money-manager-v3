@@ -49,7 +49,7 @@ namespace MoneyTracker.API.Controllers
 
         [HttpPost]
         [Route("decodeToken")]
-        public AuthenticatedUser DecodeAuthToken()
+        public Task<AuthenticatedUser> DecodeAuthToken()
         {
             var authHeader = _httpContextAccessor.HttpContext.Request
                 .Headers.Authorization.ToString();

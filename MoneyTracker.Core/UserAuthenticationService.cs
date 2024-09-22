@@ -28,9 +28,12 @@ public class UserAuthenticationService : IUserAuthenticationService
     {
         var userInfo = await _dbService.AuthenticateUser(user);
 
+        var expiration = DateTime.Now.AddMinutes(_jwtToken.Expires);
+        var userGuid = await _dbService.GenerateTempGuidForUser(userInfo, expiration);
+
         var claims = new[]
         {
-            new Claim(JwtRegisteredClaimNames.Sub, userInfo.UserId.ToString()),
+            new Claim("UserGuid", userGuid.ToString()),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
         };
 
@@ -43,18 +46,30 @@ public class UserAuthenticationService : IUserAuthenticationService
             issuer: _jwtToken.Issuer,
             audience: _jwtToken.Audience,
             claims: claims,
-            expires: DateTime.Now.AddMinutes(_jwtToken.Expires),
+            expires: expiration,
             signingCredentials: creds
         );
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    public AuthenticatedUser DecodeToken(string token)
+    public async Task<AuthenticatedUser> DecodeToken(string token)
     {
         var data = new JwtSecurityTokenHandler().ReadJwtToken(token);
-        var sub = data.Claims.First(claim => claim.Type == "sub");
+        var tokenExpiryDate = data.ValidTo;
+        if (tokenExpiryDate < new DateTime())
+        {
+            throw new InvalidDataException("Token has expired!");
+        }
 
-        return new AuthenticatedUser(int.Parse(sub.Value));
+        var userGuid = data.Claims.First(claim => claim.Type == "UserGuid");
+        var userInfoFromDb = await _dbService.GetUserFromGuid(Guid.Parse(userGuid.Value));
+
+        if (userInfoFromDb.Expires < new DateTime())
+        {
+            throw new InvalidDataException("Invalid token: expired");
+        }
+
+        return new AuthenticatedUser(userInfoFromDb.UserId);
     }
 }

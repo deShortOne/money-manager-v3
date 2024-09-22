@@ -1,6 +1,4 @@
 ﻿
-using Microsoft.AspNetCore.Http;
-using MoneyTracker.API.Controllers;
 using MoneyTracker.Core;
 using MoneyTracker.Data.Postgres;
 using MoneyTracker.DatabaseMigration;
@@ -84,7 +82,7 @@ public sealed class UserAuthentication : IAsyncLifetime
 
         var expectedAuthedUser = new AuthenticatedUser(1);
 
-        var actualAuthedUser = userAuthService.DecodeToken(token);
+        var actualAuthedUser = await userAuthService.DecodeToken(token);
         Assert.Equal(expectedAuthedUser, actualAuthedUser);
 
         var dataTable = await db.GetTable("SELECT 1 FROM users WHERE id = @id AND name = @name", [new NpgsqlParameter("id", 1), new NpgsqlParameter("name", "root")]);
