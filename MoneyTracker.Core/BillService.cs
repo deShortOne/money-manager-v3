@@ -1,4 +1,5 @@
 ﻿using MoneyTracker.Calculation.Bill;
+using MoneyTracker.Data.Postgres;
 using MoneyTracker.Shared.Core;
 using MoneyTracker.Shared.Data;
 using MoneyTracker.Shared.DateManager;
@@ -13,13 +14,18 @@ public class BillService : IBillService
     private readonly IBillDatabase _dbService;
     private readonly IDateProvider _dateProvider;
     private readonly IUserAuthenticationService _userAuthService;
+    private readonly IAccountDatabase _accountDatabase;
 
-    public BillService(IBillDatabase dbService, IDateProvider dateProvider,
-        IUserAuthenticationService userAuthService)
+    public BillService(IBillDatabase dbService,
+        IDateProvider dateProvider,
+        IUserAuthenticationService userAuthService,
+        IAccountDatabase accountDatabase
+        )
     {
         _dbService = dbService;
         _dateProvider = dateProvider;
         _userAuthService = userAuthService;
+        _accountDatabase = accountDatabase;
     }
 
     public async Task<List<BillResponseDTO>> GetAllBills(string token)
@@ -31,6 +37,11 @@ public class BillService : IBillService
     public async Task<List<BillResponseDTO>> AddBill(string token, NewBillRequestDTO newBill)
     {
         var user = await _userAuthService.DecodeToken(token);
+        if (!await _accountDatabase.IsAccountOwnedByUser(user, newBill.AccountId))
+        {
+            throw new InvalidDataException("Account not found");
+        }
+
         var dtoToDb = new NewBillDTO(
             newBill.Payee,
             newBill.Amount,
@@ -49,6 +60,11 @@ public class BillService : IBillService
         if (!await _dbService.IsBillAssociatedWithUser(user, editBill.Id))
         {
             throw new InvalidDataException("Bill id not found");
+        }
+        if (editBill.AccountId != null &&
+            !await _accountDatabase.IsAccountOwnedByUser(user, (int)editBill.AccountId))
+        {
+            throw new InvalidDataException("Account not found");
         }
 
         var dtoToDb = new EditBillDTO(

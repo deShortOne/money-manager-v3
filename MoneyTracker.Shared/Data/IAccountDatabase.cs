@@ -5,4 +5,5 @@ namespace MoneyTracker.Data.Postgres;
 public interface IAccountDatabase
 {
     Task<List<AccountEntityDTO>> GetAccounts(AuthenticatedUser user);
+    Task<bool> IsAccountOwnedByUser(AuthenticatedUser user, int accountId);
 }
