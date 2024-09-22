@@ -4,6 +4,8 @@ using MoneyTracker.Data.Postgres;
 using MoneyTracker.DatabaseMigration;
 using MoneyTracker.DatabaseMigration.Models;
 using MoneyTracker.Shared.Auth;
+using MoneyTracker.Shared.DateManager;
+using Moq;
 using Npgsql;
 using Testcontainers.PostgreSql;
 
@@ -41,7 +43,7 @@ public sealed class UserAuthenticationTest : IAsyncLifetime
         var db = new PostgresDatabase(_postgres.GetConnectionString());
         var userDb = new UserAuthDatabase(db);
         var jwtToken = new JwtConfig("", "", "", 0);
-        var userAuthService = new UserAuthenticationService(userDb, jwtToken);
+        var userAuthService = new UserAuthenticationService(userDb, jwtToken, new DateTimeProvider());
 
         Assert.Equal(expected, await userAuthService.AuthenticateUser(userToAuthenticate));
     }
@@ -54,7 +56,7 @@ public sealed class UserAuthenticationTest : IAsyncLifetime
         var db = new PostgresDatabase(_postgres.GetConnectionString());
         var userDb = new UserAuthDatabase(db);
         var jwtToken = new JwtConfig("", "", "", 0);
-        var userAuthService = new UserAuthenticationService(userDb, jwtToken);
+        var userAuthService = new UserAuthenticationService(userDb, jwtToken, new DateTimeProvider());
 
         await Assert.ThrowsAsync<InvalidDataException>(async () =>
         {
@@ -62,18 +64,17 @@ public sealed class UserAuthenticationTest : IAsyncLifetime
         });
     }
 
-
     [Fact]
-    public async void GeneratesABearerToken()
+    public async void GeneratesABearerTokenAndEnsureIsValid()
     {
         var db = new PostgresDatabase(_postgres.GetConnectionString());
         var userDb = new UserAuthDatabase(db);
         var jwtToken = new JwtConfig("iss_company a",
             "aud_company b",
             "TOPSECRETTOPSECRETTOPSECRETTOPSE",
-            0
+            5
         );
-        var userAuthService = new UserAuthenticationService(userDb, jwtToken);
+        var userAuthService = new UserAuthenticationService(userDb, jwtToken, new DateTimeProvider());
 
         var userToAuth = new LoginWithUsernameAndPassword("root");
         var token = await userAuthService.GenerateToken(userToAuth);
@@ -86,5 +87,59 @@ public sealed class UserAuthenticationTest : IAsyncLifetime
 
         var dataTable = await db.GetTable("SELECT 1 FROM users WHERE id = @id AND name = @name", [new NpgsqlParameter("id", 1), new NpgsqlParameter("name", "root")]);
         Assert.True(await dataTable.ReadAsync());
+    }
+
+    [Fact]
+    public async void GeneratesABearerTokenAndEnsureIsValidAcrossServiceMadeTwice()
+    {
+        var db = new PostgresDatabase(_postgres.GetConnectionString());
+        var userDb = new UserAuthDatabase(db);
+        var jwtToken = new JwtConfig("iss_company a",
+            "aud_company b",
+            "TOPSECRETTOPSECRETTOPSECRETTOPSE",
+            5
+        );
+        var userAuthService = new UserAuthenticationService(userDb, jwtToken, new DateTimeProvider());
+
+        var userToAuth = new LoginWithUsernameAndPassword("root");
+        var token = await userAuthService.GenerateToken(userToAuth);
+        Assert.NotNull(token);
+
+        var expectedAuthedUser = new AuthenticatedUser(1);
+
+        var userAuthService2 = new UserAuthenticationService(userDb, jwtToken, new DateTimeProvider());
+        var actualAuthedUser = await userAuthService2.DecodeToken(token);
+        Assert.Equal(expectedAuthedUser, actualAuthedUser);
+
+        var dataTable = await db.GetTable("SELECT 1 FROM users WHERE id = @id AND name = @name", [new NpgsqlParameter("id", 1), new NpgsqlParameter("name", "root")]);
+        Assert.True(await dataTable.ReadAsync());
+    }
+
+
+    [Fact]
+    public async void AttemptToUseAnExpiredBearerToken()
+    {
+        var db = new PostgresDatabase(_postgres.GetConnectionString());
+        var userDb = new UserAuthDatabase(db);
+        var jwtToken = new JwtConfig("iss_company a",
+            "aud_company b",
+            "TOPSECRETTOPSECRETTOPSECRETTOPSE",
+            5
+        );
+        var mockDateTimeProvider = new Mock<IDateTimeProvider>();
+        mockDateTimeProvider.Setup(x => x.Now).Returns(new DateTimeProvider().Now.AddHours(-1));
+        var userAuthService = new UserAuthenticationService(userDb, jwtToken, mockDateTimeProvider.Object);
+
+        var userToAuth = new LoginWithUsernameAndPassword("root");
+        var token = await userAuthService.GenerateToken(userToAuth);
+        Assert.NotNull(token);
+
+        var expectedAuthedUser = new AuthenticatedUser(1);
+
+        var userAuthService2 = new UserAuthenticationService(userDb, jwtToken, new DateTimeProvider());
+        await Assert.ThrowsAsync<InvalidDataException>(async () =>
+        {
+            await userAuthService2.DecodeToken(token);
+        });
     }
 }

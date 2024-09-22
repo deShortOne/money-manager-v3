@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -6,17 +7,21 @@ using Microsoft.IdentityModel.Tokens;
 using MoneyTracker.Shared.Auth;
 using MoneyTracker.Shared.Core;
 using MoneyTracker.Shared.Data;
+using MoneyTracker.Shared.DateManager;
 
 namespace MoneyTracker.Core;
 public class UserAuthenticationService : IUserAuthenticationService
 {
     private readonly IUserAuthDatabase _dbService;
     private readonly IJwtConfig _jwtToken;
+    private readonly IDateTimeProvider _dateTimeProvider;
 
-    public UserAuthenticationService(IUserAuthDatabase dbService, IJwtConfig jwtConfig)
+    public UserAuthenticationService(IUserAuthDatabase dbService, IJwtConfig jwtConfig,
+        IDateTimeProvider dateTimeProvider)
     {
         _dbService = dbService;
         _jwtToken = jwtConfig;
+        _dateTimeProvider = dateTimeProvider;
     }
 
     public Task<AuthenticatedUser> AuthenticateUser(LoginWithUsernameAndPassword user)
@@ -28,7 +33,7 @@ public class UserAuthenticationService : IUserAuthenticationService
     {
         var userInfo = await _dbService.AuthenticateUser(user);
 
-        var expiration = DateTime.Now.AddMinutes(_jwtToken.Expires);
+        var expiration = _dateTimeProvider.Now.AddMinutes(_jwtToken.Expires);
         var userGuid = await _dbService.GenerateTempGuidForUser(userInfo, expiration);
 
         var claims = new[]
@@ -56,8 +61,9 @@ public class UserAuthenticationService : IUserAuthenticationService
     public async Task<AuthenticatedUser> DecodeToken(string token)
     {
         var data = new JwtSecurityTokenHandler().ReadJwtToken(token);
+
         var tokenExpiryDate = data.ValidTo;
-        if (tokenExpiryDate < new DateTime())
+        if (tokenExpiryDate < _dateTimeProvider.Now)
         {
             throw new InvalidDataException("Token has expired!");
         }
@@ -65,7 +71,7 @@ public class UserAuthenticationService : IUserAuthenticationService
         var userGuid = data.Claims.First(claim => claim.Type == "UserGuid");
         var userInfoFromDb = await _dbService.GetUserFromGuid(Guid.Parse(userGuid.Value));
 
-        if (userInfoFromDb.Expires < new DateTime())
+        if (userInfoFromDb.Expires < _dateTimeProvider.Now)
         {
             throw new InvalidDataException("Invalid token: expired");
         }
