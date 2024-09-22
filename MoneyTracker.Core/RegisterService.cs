@@ -1,5 +1,4 @@
-﻿using System.Transactions;
-using MoneyTracker.Shared.Core;
+﻿using MoneyTracker.Shared.Core;
 using MoneyTracker.Shared.Data;
 using MoneyTracker.Shared.Models.ControllerToService.Transaction;
 using MoneyTracker.Shared.Models.ServiceToController.Transaction;

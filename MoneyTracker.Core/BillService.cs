@@ -1,4 +1,5 @@
 ﻿using MoneyTracker.Calculation.Bill;
+using MoneyTracker.Data.Postgres;
 using MoneyTracker.Shared.Core;
 using MoneyTracker.Shared.Data;
 using MoneyTracker.Shared.DateManager;
@@ -12,59 +13,99 @@ public class BillService : IBillService
 {
     private readonly IBillDatabase _dbService;
     private readonly IDateProvider _dateProvider;
+    private readonly IUserAuthenticationService _userAuthService;
+    private readonly IAccountDatabase _accountDatabase;
 
-    public BillService(IBillDatabase dbService, IDateProvider dateProvider)
+    public BillService(IBillDatabase dbService,
+        IDateProvider dateProvider,
+        IUserAuthenticationService userAuthService,
+        IAccountDatabase accountDatabase
+        )
     {
         _dbService = dbService;
         _dateProvider = dateProvider;
+        _userAuthService = userAuthService;
+        _accountDatabase = accountDatabase;
     }
 
-    public async Task<List<BillResponseDTO>> GetAllBills()
+    public async Task<List<BillResponseDTO>> GetAllBills(string token)
     {
-        return ConvertFromRepoDTOToDTO(await _dbService.GetAllBills());
+        var user = await _userAuthService.DecodeToken(token);
+        return ConvertFromRepoDTOToDTO(await _dbService.GetAllBills(user));
     }
 
-    public async Task<List<BillResponseDTO>> AddBill(NewBillRequestDTO newBill)
+    public async Task<List<BillResponseDTO>> AddBill(string token, NewBillRequestDTO newBill)
     {
+        var user = await _userAuthService.DecodeToken(token);
+        if (!await _accountDatabase.IsAccountOwnedByUser(user, newBill.AccountId))
+        {
+            throw new InvalidDataException("Account not found");
+        }
+
         var dtoToDb = new NewBillDTO(
             newBill.Payee,
             newBill.Amount,
             newBill.NextDueDate,
             newBill.Frequency,
             newBill.Category,
-            newBill.MonthDay
+            newBill.MonthDay,
+            newBill.AccountId
         );
-        return ConvertFromRepoDTOToDTO(await _dbService.AddBill(dtoToDb));
+        return ConvertFromRepoDTOToDTO(await _dbService.AddBill(user, dtoToDb));
     }
 
-    public async Task<List<BillResponseDTO>> EditBill(EditBillRequestDTO editBill)
+    public async Task<List<BillResponseDTO>> EditBill(string token, EditBillRequestDTO editBill)
     {
+        var user = await _userAuthService.DecodeToken(token);
+        if (!await _dbService.IsBillAssociatedWithUser(user, editBill.Id))
+        {
+            throw new InvalidDataException("Bill not found");
+        }
+        if (editBill.AccountId != null &&
+            !await _accountDatabase.IsAccountOwnedByUser(user, (int)editBill.AccountId))
+        {
+            throw new InvalidDataException("Account not found");
+        }
+
         var dtoToDb = new EditBillDTO(
             editBill.Id,
             editBill.Payee,
             editBill.Amount,
             editBill.NextDueDate,
             editBill.Frequency,
-            editBill.Category
+            editBill.Category,
+            editBill.AccountId
         );
-        return ConvertFromRepoDTOToDTO(await _dbService.EditBill(dtoToDb));
+        return ConvertFromRepoDTOToDTO(await _dbService.EditBill(user, dtoToDb));
     }
 
-    public async Task<List<BillResponseDTO>> DeleteBill(DeleteBillRequestDTO deleteBill)
+    public async Task<List<BillResponseDTO>> DeleteBill(string token, DeleteBillRequestDTO deleteBill)
     {
+        var user = await _userAuthService.DecodeToken(token);
+        if (!await _dbService.IsBillAssociatedWithUser(user, deleteBill.Id))
+        {
+            throw new InvalidDataException("Bill not found");
+        }
+
         var dtoToDb = new DeleteBillDTO(
             deleteBill.Id
         );
-        return ConvertFromRepoDTOToDTO(await _dbService.DeleteBill(dtoToDb));
+        return ConvertFromRepoDTOToDTO(await _dbService.DeleteBill(user, dtoToDb));
     }
 
-    public async Task<BillResponseDTO> SkipOccurence(SkipBillOccurrenceRequestDTO skipBillDTO)
+    public async Task<BillResponseDTO> SkipOccurence(string token, SkipBillOccurrenceRequestDTO skipBillDTO)
     {
-        var bill = await _dbService.GetBillById(skipBillDTO.Id);
+        var user = await _userAuthService.DecodeToken(token);
+        if (!await _dbService.IsBillAssociatedWithUser(user, skipBillDTO.Id))
+        {
+            throw new InvalidDataException("Bill not found");
+        }
+
+        var bill = await _dbService.GetBillById(user, skipBillDTO.Id);
         var newDueDate = BillCalculation.CalculateNextDueDate(bill.Frequency, bill.MonthDay, skipBillDTO.SkipDatePastThisDate);
 
         var editBill = new EditBillDTO(skipBillDTO.Id, nextDueDate: newDueDate);
-        await _dbService.EditBill(editBill);
+        await _dbService.EditBill(user, editBill);
 
         return new BillResponseDTO(
                bill.Id,
@@ -84,7 +125,6 @@ public class BillService : IBillService
         List<BillResponseDTO> res = [];
         foreach (var bill in billRepoDTO)
         {
-
             res.Add(new BillResponseDTO(
                bill.Id,
                bill.Payee,

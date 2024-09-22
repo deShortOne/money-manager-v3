@@ -21,7 +21,8 @@ public class AccountDatabase : IAccountDatabase
         var query = """
             SELECT id, name
             FROM account
-            WHERE users_id = @userid;
+            WHERE users_id = @userid
+            ORDER BY name;
          """;
         var queryParams = new List<DbParameter>()
         {
@@ -40,5 +41,29 @@ public class AccountDatabase : IAccountDatabase
         }
 
         return res;
+    }
+
+    public async Task<bool> IsAccountOwnedByUser(AuthenticatedUser user, int accountId)
+    {
+        var query = """
+            SELECT 1
+            FROM account
+            WHERE users_id = @userid
+            AND id = @account_id;
+         """;
+        var queryParams = new List<DbParameter>()
+        {
+            new NpgsqlParameter("userid", user.UserId),
+            new NpgsqlParameter("account_id", accountId),
+        };
+
+        var reader = await _database.GetTable(query, queryParams);
+
+        if (await reader.ReadAsync())
+        {
+            return reader.GetInt32(0) == 1;
+
+        }
+        return false;
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using System.Data.Common;
 using MoneyTracker.Data.Global;
+using MoneyTracker.Shared.Auth;
 using MoneyTracker.Shared.Data;
 using MoneyTracker.Shared.Models.RepositoryToService.Bill;
 using MoneyTracker.Shared.Models.ServiceToRepository.Bill;
@@ -15,26 +16,36 @@ public class BillDatabase : IBillDatabase
         _database = db;
     }
 
-    public async Task<List<BillEntityDTO>> GetAllBills()
+    public async Task<List<BillEntityDTO>> GetAllBills(AuthenticatedUser user)
     {
         string query = """
             SELECT b.id,
-            	payee,
-            	amount,
-            	nextduedate,
-            	frequency,
-            	c.name,
+               	payee,
+               	amount,
+               	nextduedate,
+               	frequency,
+               	c.name,
                 b.monthday,
-                a.name account_name
+                account.name account_name
             FROM bill b
             INNER JOIN category c
-            	ON b.category_id = c.id
-            INNER JOIN account a
-                on b.account_id = a.id
+               	ON b.category_id = c.id
+            INNER JOIN (
+            	SELECT a.id, a.name
+            	FROM account a
+            	INNER JOIN users u
+            		ON a.users_id = u.id 
+            	WHERE u.id = @user_id
+            ) account
+            	ON b.account_id = account.id
             ORDER BY nextduedate ASC;
             """;
+        var queryParams = new List<DbParameter>()
+            {
+                new NpgsqlParameter("user_id", user.UserId),
+            };
 
-        using var reader = await _database.GetTable(query);
+        using var reader = await _database.GetTable(query, queryParams);
 
         List<BillEntityDTO> res = [];
         while (await reader.ReadAsync())
@@ -57,12 +68,11 @@ public class BillDatabase : IBillDatabase
         return res;
     }
 
-    public async Task<List<BillEntityDTO>> AddBill(NewBillDTO newBillDTO)
+    public async Task<List<BillEntityDTO>> AddBill(AuthenticatedUser user, NewBillDTO newBillDTO)
     {
-        // TODO - ACCOUNT ID
         string query = """
             INSERT INTO bill (payee, amount, nextduedate, frequency, category_id, monthday, account_id)
-            VALUES (@payee, @amount, @nextduedate, @frequency, @category_id, @monthday, 1);
+            VALUES (@payee, @amount, @nextduedate, @frequency, @category_id, @monthday, @account_id);
             """;
         var queryParams = new List<DbParameter>()
             {
@@ -72,19 +82,21 @@ public class BillDatabase : IBillDatabase
                 new NpgsqlParameter("frequency", newBillDTO.Frequency),
                 new NpgsqlParameter("category_id", newBillDTO.Category),
                 new NpgsqlParameter("monthday", newBillDTO.MonthDay),
+                new NpgsqlParameter("account_id", newBillDTO.AccountId),
             };
 
         await _database.UpdateTable(query, queryParams);
 
-        return await GetAllBills();
+        return await GetAllBills(user);
     }
 
-    public async Task<List<BillEntityDTO>> EditBill(EditBillDTO editBillDTO)
+    public async Task<List<BillEntityDTO>> EditBill(AuthenticatedUser user, EditBillDTO editBillDTO)
     {
         var setParamsLis = new List<string>();
         var queryParams = new List<DbParameter>()
         {
                 new NpgsqlParameter("id", editBillDTO.Id),
+                new NpgsqlParameter("user_id", user.UserId),
         };
 
         if (editBillDTO.Payee != null)
@@ -114,35 +126,51 @@ public class BillDatabase : IBillDatabase
             setParamsLis.Add("category_id = @category");
             queryParams.Add(new NpgsqlParameter("category", editBillDTO.Category));
         }
+        if (editBillDTO.AccountId != null)
+        {
+            setParamsLis.Add("account_id = @account_id");
+            queryParams.Add(new NpgsqlParameter("account_id", editBillDTO.AccountId));
+        }
 
         string query = $"""
             UPDATE bill
             SET {string.Join(",", setParamsLis)}
-            WHERE id = @id;
+            WHERE id = @id
+            AND bill.account_id IN (
+                SELECT a.id
+                FROM account a
+                WHERE a.users_id = @user_id
+            );
             """;
 
         await _database.UpdateTable(query, queryParams);
 
-        return await GetAllBills();
+        return await GetAllBills(user);
     }
 
-    public async Task<List<BillEntityDTO>> DeleteBill(DeleteBillDTO deleteBillDTO)
+    public async Task<List<BillEntityDTO>> DeleteBill(AuthenticatedUser user, DeleteBillDTO deleteBillDTO)
     {
         string query = """
             DELETE FROM bill
-            WHERE id = @id;
+            WHERE id = @id
+            AND account_id IN (
+                SELECT id
+                FROM account
+                WHERE users_id = @user_id
+            );
             """;
         var queryParams = new List<DbParameter>()
             {
                 new NpgsqlParameter("id", deleteBillDTO.Id),
+                new NpgsqlParameter("user_id", user.UserId),
             };
 
         await _database.UpdateTable(query, queryParams);
 
-        return await GetAllBills();
+        return await GetAllBills(new AuthenticatedUser(1));
     }
 
-    public async Task<BillEntityDTO> GetBillById(int id)
+    public async Task<BillEntityDTO> GetBillById(AuthenticatedUser user, int id)
     {
         string query = """
             SELECT b.id,
@@ -158,11 +186,17 @@ public class BillDatabase : IBillDatabase
             	ON b.category_id = c.id
             INNER JOIN account a
                 ON b.account_id = a.id
-            WHERE b.id = @id;
+            WHERE b.id = @id
+            AND b.account_id IN (
+                SELECT a.id
+                FROM account
+                WHERE a.users_id = @user_id
+            );
             """;
         var queryParams = new List<DbParameter>()
         {
             new NpgsqlParameter("id", id),
+            new NpgsqlParameter("user_id", user.UserId),
         };
         using var reader = await _database.GetTable(query, queryParams);
 
@@ -185,5 +219,32 @@ public class BillDatabase : IBillDatabase
         }
 
         throw new ArgumentException("Bill id was not found");
+    }
+
+    public async Task<bool> IsBillAssociatedWithUser(AuthenticatedUser user, int billId)
+    {
+        string query = """
+            SELECT 1
+            FROM bill b
+            WHERE b.id = @id
+            AND b.account_id IN (
+                SELECT a.id
+                FROM account a
+                WHERE a.users_id = @user_id
+            );
+            """;
+        var queryParams = new List<DbParameter>()
+        {
+            new NpgsqlParameter("id", billId),
+            new NpgsqlParameter("user_id", user.UserId),
+        };
+        using var reader = await _database.GetTable(query, queryParams);
+
+        List<BillEntityDTO> res = [];
+        if (await reader.ReadAsync())
+        {
+            return reader.GetInt32(0) == 1;
+        }
+        return false;
     }
 }

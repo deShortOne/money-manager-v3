@@ -4,7 +4,7 @@ using MoneyTracker.Shared.Auth;
 using MoneyTracker.Shared.Models.ServiceToController.Account;
 
 namespace MoneyTracker.Core;
-public class AccountService
+public class AccountService : IAccountService
 {
     private readonly IAccountDatabase _dbService;
 
