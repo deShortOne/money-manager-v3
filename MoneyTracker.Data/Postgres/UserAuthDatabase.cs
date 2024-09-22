@@ -16,7 +16,7 @@ public class UserAuthDatabase : IUserAuthDatabase
         _database = db;
     }
 
-    public async Task<AuthenticatedUser> AuthenticateUser(UnauthenticatedUser userToLogIn)
+    public async Task<AuthenticatedUser> AuthenticateUser(LoginWithUsernameAndPassword userToLogIn)
     {
         var query = """
             SELECT id
@@ -36,5 +36,48 @@ public class UserAuthDatabase : IUserAuthDatabase
         }
 
         throw new InvalidDataException("User does not exist!");
+    }
+
+    public async Task<Guid> GenerateTempGuidForUser(AuthenticatedUser user, DateTime expiration)
+    {
+        var query = """
+            INSERT INTO user_id_to_guid VALUES
+            (@userId, (SELECT gen_random_uuid()), @expire)
+            RETURNING (guid);
+         """;
+        var queryParams = new List<DbParameter>()
+        {
+            new NpgsqlParameter("userId", user.UserId),
+            new NpgsqlParameter("expire", expiration),
+        };
+
+        using var reader = await _database.GetTable(query, queryParams);
+
+        if (await reader.ReadAsync())
+        {
+            return reader.GetGuid("guid");
+        }
+        throw new InvalidDataException("User does not exist!");
+    }
+
+    public async Task<GuidMapToUserDTO> GetUserFromGuid(Guid userGuid)
+    {
+        var query = """
+            SELECT user_id, expires
+            FROM user_id_to_guid
+            WHERE guid = @guid
+         """;
+        var queryParams = new List<DbParameter>()
+        {
+            new NpgsqlParameter("guid", userGuid),
+        };
+        using var reader = await _database.GetTable(query, queryParams);
+
+        if (await reader.ReadAsync())
+        {
+            return new GuidMapToUserDTO(reader.GetInt32("user_id"), reader.GetDateTime("expires"));
+        }
+
+        throw new InvalidDataException("Guid does not map to a user!");
     }
 }

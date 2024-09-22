@@ -42,14 +42,14 @@ namespace MoneyTracker.API.Controllers
 
         [HttpPost]
         [Route("authenticate")]
-        public Task<string> GemerateAuthToken([FromBody] UnauthenticatedUser user)
+        public Task<string> GemerateAuthToken([FromBody] LoginWithUsernameAndPassword user)
         {
             return _service.GenerateToken(user);
         }
 
         [HttpPost]
         [Route("decodeToken")]
-        public AuthenticatedUser DecodeAuthToken()
+        public Task<AuthenticatedUser> DecodeAuthToken()
         {
             var authHeader = _httpContextAccessor.HttpContext.Request
                 .Headers.Authorization.ToString();
