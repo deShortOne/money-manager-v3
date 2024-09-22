@@ -15,6 +15,7 @@
 
 	<ItemGroup>
 	  <None Remove="Scripts\Migrations\20240914174402_InitialTables.sql" />
+	  <None Remove="scripts\migrations\20240922141226_UserIdMapToGuid.sql" />
 	  <None Remove="Scripts\Seed.sql" />
 	</ItemGroup>
 
