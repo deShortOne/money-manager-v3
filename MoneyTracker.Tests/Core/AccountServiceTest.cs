@@ -44,6 +44,7 @@ public sealed class AccountServiceTest : IAsyncLifetime
         var expected = new List<AccountResponseDTO>()
         {
             new(1, "bank a"),
+            new(2, "bank b"),
         };
 
         Assert.Equal(expected, actual);

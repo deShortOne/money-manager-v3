@@ -70,10 +70,9 @@ public class BillDatabase : IBillDatabase
 
     public async Task<List<BillEntityDTO>> AddBill(AuthenticatedUser user, NewBillDTO newBillDTO)
     {
-        // TODO - ACCOUNT ID
         string query = """
             INSERT INTO bill (payee, amount, nextduedate, frequency, category_id, monthday, account_id)
-            VALUES (@payee, @amount, @nextduedate, @frequency, @category_id, @monthday, 1);
+            VALUES (@payee, @amount, @nextduedate, @frequency, @category_id, @monthday, @user_id);
             """;
         var queryParams = new List<DbParameter>()
             {
@@ -83,6 +82,7 @@ public class BillDatabase : IBillDatabase
                 new NpgsqlParameter("frequency", newBillDTO.Frequency),
                 new NpgsqlParameter("category_id", newBillDTO.Category),
                 new NpgsqlParameter("monthday", newBillDTO.MonthDay),
+                new NpgsqlParameter("user_id", user.UserId),
             };
 
         await _database.UpdateTable(query, queryParams);
@@ -96,6 +96,7 @@ public class BillDatabase : IBillDatabase
         var queryParams = new List<DbParameter>()
         {
                 new NpgsqlParameter("id", editBillDTO.Id),
+                new NpgsqlParameter("user_id", user.UserId),
         };
 
         if (editBillDTO.Payee != null)
@@ -129,7 +130,12 @@ public class BillDatabase : IBillDatabase
         string query = $"""
             UPDATE bill
             SET {string.Join(",", setParamsLis)}
-            WHERE id = @id;
+            WHERE id = @id
+            AND bill.account_id IN (
+                SELECT a.id
+                FROM account a
+                WHERE a.users_id = @user_id
+            );
             """;
 
         await _database.UpdateTable(query, queryParams);
@@ -141,11 +147,17 @@ public class BillDatabase : IBillDatabase
     {
         string query = """
             DELETE FROM bill
-            WHERE id = @id;
+            WHERE id = @id
+            AND account_id IN (
+                SELECT id
+                FROM account
+                WHERE users_id = @user_id
+            );
             """;
         var queryParams = new List<DbParameter>()
             {
                 new NpgsqlParameter("id", deleteBillDTO.Id),
+                new NpgsqlParameter("user_id", user.UserId),
             };
 
         await _database.UpdateTable(query, queryParams);

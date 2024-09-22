@@ -21,7 +21,8 @@ public class AccountDatabase : IAccountDatabase
         var query = """
             SELECT id, name
             FROM account
-            WHERE users_id = @userid;
+            WHERE users_id = @userid
+            ORDER BY name;
          """;
         var queryParams = new List<DbParameter>()
         {

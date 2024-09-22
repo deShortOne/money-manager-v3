@@ -45,7 +45,7 @@ public class BillServiceTest : IAsyncLifetime
         var user = new AuthenticatedUser(1);
         var expected = new List<BillEntityDTO>()
         {
-            new(2, "company a", 100, new DateOnly(2024, 08, 30), "Monthly", "Wages & Salary : Net Pay", 30, "bank a"),
+            new(2, "company a", 100, new DateOnly(2024, 08, 30), "Monthly", "Wages & Salary : Net Pay", 30, "bank b"),
             new(1, "supermarket a", 23, new DateOnly(2024, 09, 03), "Weekly", "Groceries", 3, "bank a"),
         };
 
@@ -64,7 +64,7 @@ public class BillServiceTest : IAsyncLifetime
 
         var expected = new List<BillResponseDTO>()
         {
-            new(2, "company a", 100, new DateOnly(2024, 08, 30), "Monthly", "Wages & Salary : Net Pay", null, "bank a"),
+            new(2, "company a", 100, new DateOnly(2024, 08, 30), "Monthly", "Wages & Salary : Net Pay", null, "bank b"),
         };
 
         var actual = await billService.GetAllBills();
@@ -82,7 +82,7 @@ public class BillServiceTest : IAsyncLifetime
 
         var expected = new List<BillResponseDTO>()
         {
-            new(2, "company a", 100, new DateOnly(2024, 08, 30), "Monthly", "Wages & Salary : Net Pay", null, "bank a"),
+            new(2, "company a", 100, new DateOnly(2024, 08, 30), "Monthly", "Wages & Salary : Net Pay", null, "bank b"),
             new(1, "supermarket b", 23, new DateOnly(2024, 09, 03), "Weekly", "Groceries", null, "bank a"),
         };
 
@@ -101,9 +101,9 @@ public class BillServiceTest : IAsyncLifetime
 
         var expected = new List<BillResponseDTO>()
         {
-            new(2, "company a", 100, new DateOnly(2024, 08, 30), "Monthly", "Wages & Salary : Net Pay", null, "bank a"),
+            new(2, "company a", 100, new DateOnly(2024, 08, 30), "Monthly", "Wages & Salary : Net Pay", null, "bank b"),
             new(1, "supermarket a", 23, new DateOnly(2024, 09, 03), "Weekly", "Groceries", null, "bank a"),
-            new(3, "flight sim", 420, new DateOnly(2024, 09, 05), "Daily", "Hobby", null, "bank a"),
+            new(4, "flight sim", 420, new DateOnly(2024, 09, 05), "Daily", "Hobby", null, "bank a"),
         };
 
         var actual = await billService.GetAllBills();
@@ -120,7 +120,7 @@ public class BillServiceTest : IAsyncLifetime
         var expected = new List<BillResponseDTO>()
         {
             new(2, "company a", 100, new DateOnly(2024, 08, 30), "Monthly", "Wages & Salary : Net Pay",
-                new OverDueBillInfo(8, [new DateOnly(2024, 8, 30)]), "bank a"),
+                new OverDueBillInfo(8, [new DateOnly(2024, 8, 30)]), "bank b"),
             new(1, "supermarket a", 23, new DateOnly(2024, 09, 03), "Weekly", "Groceries",
                 new OverDueBillInfo(4, [new DateOnly(2024, 9, 3)]), "bank a"),
         };
@@ -141,7 +141,7 @@ public class BillServiceTest : IAsyncLifetime
         var expected = new List<BillResponseDTO>()
         {
             new(2, "company a", 100, new DateOnly(2024, 08, 30), "Monthly", "Wages & Salary : Net Pay",
-                new OverDueBillInfo(35, [new DateOnly(2024, 8, 30), new DateOnly(2024, 9, 30)]), "bank a"),
+                new OverDueBillInfo(35, [new DateOnly(2024, 8, 30), new DateOnly(2024, 9, 30)]), "bank b"),
             new(1, "supermarket a", 23, new DateOnly(2024, 09, 03), "Weekly", "Groceries",
                 new OverDueBillInfo(31, dates), "bank a"),
         };
@@ -162,7 +162,7 @@ public class BillServiceTest : IAsyncLifetime
         var expected = new List<BillResponseDTO>()
         {
             new(2, "company a", 100, new DateOnly(2024, 08, 30), "Monthly", "Wages & Salary : Net Pay",
-                new OverDueBillInfo(34, [new DateOnly(2024, 8, 30), new DateOnly(2024, 9, 30)]), "bank a"),
+                new OverDueBillInfo(34, [new DateOnly(2024, 8, 30), new DateOnly(2024, 9, 30)]), "bank b"),
             new(1, "supermarket a", 23, new DateOnly(2024, 09, 03), "Weekly", "Groceries",
                 new OverDueBillInfo(30, dates), "bank a"),
         };
@@ -185,7 +185,7 @@ public class BillServiceTest : IAsyncLifetime
         var expected = new List<BillResponseDTO>()
         {
             new(2, "company a", 100, new DateOnly(2024, 08, 30), "Monthly", "Wages & Salary : Net Pay",
-                new OverDueBillInfo(34, [new DateOnly(2024, 8, 30), new DateOnly(2024, 9, 30)]), "bank a"),
+                new OverDueBillInfo(34, [new DateOnly(2024, 8, 30), new DateOnly(2024, 9, 30)]), "bank b"),
             new(1, "supermarket a", 23, new DateOnly(2024, 9, 24), "Weekly", "Groceries",
                 new OverDueBillInfo(9, dates), "bank a"),
         };
