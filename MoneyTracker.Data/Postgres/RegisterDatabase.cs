@@ -28,7 +28,12 @@ namespace MoneyTracker.Data.Postgres
                        c.name
                 FROM register
                 INNER JOIN category c
-                    	ON register.category_id = c.id
+                    ON register.category_id = c.id
+                WHERE account_id IN (
+                    SELECT id
+                    FROM account
+                    WHERE account.users_id = 1
+                )
                 ORDER BY datePaid DESC,
                 	c.id ASC;
                 """;

@@ -100,7 +100,7 @@ namespace MoneyTracker.Tests.Database.Postgres
             var db = new PostgresDatabase(_postgres.GetConnectionString());
             var register = new RegisterDatabase(db);
             var transactionToAdd = new TransactionEntityDTO(
-                8,
+                11,
                 "Super star",
                 2300,
                 DateTime.Parse("2024-09-01T00:00:00Z").ToUniversalTime(),
