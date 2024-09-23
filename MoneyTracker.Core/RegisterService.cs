@@ -40,7 +40,7 @@ public class RegisterService : IRegisterService
     public async Task<TransactionResponseDTO> EditTransaction(EditTransactionRequestDTO editTransaction)
     {
         var dtoToDb = new EditTransactionDTO(editTransaction.Id, editTransaction.Payee, editTransaction.Amount,
-            editTransaction.DatePaid, editTransaction.Category);
+            editTransaction.DatePaid, editTransaction.Category, editTransaction.AccountId);
         var dtoFromDb = await _dbService.EditTransaction(dtoToDb);
         return new(dtoFromDb.Id, dtoFromDb.Payee, dtoFromDb.Amount, dtoFromDb.DatePaid, dtoFromDb.Category);
     }
