@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MoneyTracker.Shared.Core;
 using MoneyTracker.Shared.Models.ControllerToService.Transaction;
 using MoneyTracker.Shared.Models.ServiceToController.Transaction;
@@ -25,6 +26,7 @@ namespace MoneyTracker.API.Controllers
 
         [HttpGet]
         [Route("get")]
+        [Authorize]
         public Task<List<TransactionResponseDTO>> Get()
         {
             var token = ControllerHelper.GetToken(_httpContextAccessor);
@@ -37,6 +39,7 @@ namespace MoneyTracker.API.Controllers
 
         [HttpPost]
         [Route("add")]
+        [Authorize]
         public Task<TransactionResponseDTO> Add([FromBody] NewTransactionRequestDTO newRegisterDTO)
         {
             var token = ControllerHelper.GetToken(_httpContextAccessor);
@@ -49,6 +52,7 @@ namespace MoneyTracker.API.Controllers
 
         [HttpPut]
         [Route("edit")]
+        [Authorize]
         public Task<TransactionResponseDTO> Edit([FromBody] EditTransactionRequestDTO editRegisterDTO)
         {
             var token = ControllerHelper.GetToken(_httpContextAccessor);
@@ -61,6 +65,7 @@ namespace MoneyTracker.API.Controllers
 
         [HttpDelete]
         [Route("delete")]
+        [Authorize]
         public Task<bool> Delete([FromBody] DeleteTransactionRequestDTO deleteTransaction)
         {
             var token = ControllerHelper.GetToken(_httpContextAccessor);

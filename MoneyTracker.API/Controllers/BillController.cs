@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MoneyTracker.Shared.Core;
 using MoneyTracker.Shared.Models.ControllerToService.Bill;
 using MoneyTracker.Shared.Models.ServiceToController.Bill;
@@ -21,6 +22,7 @@ public class BillController : ControllerBase
 
     [HttpGet]
     [Route("get")]
+    [Authorize]
     public Task<List<BillResponseDTO>> Get()
     {
         var token = ControllerHelper.GetToken(_httpContextAccessor);
@@ -33,6 +35,7 @@ public class BillController : ControllerBase
 
     [HttpPost]
     [Route("add")]
+    [Authorize]
     public Task<List<BillResponseDTO>> AddBill([FromBody] NewBillRequestDTO newBill)
     {
         var token = ControllerHelper.GetToken(_httpContextAccessor);
@@ -45,6 +48,7 @@ public class BillController : ControllerBase
 
     [HttpPut]
     [Route("edit")]
+    [Authorize]
     public Task<List<BillResponseDTO>> EditBill([FromBody] EditBillRequestDTO editBill)
     {
         var token = ControllerHelper.GetToken(_httpContextAccessor);
@@ -57,6 +61,7 @@ public class BillController : ControllerBase
 
     [HttpDelete]
     [Route("delete")]
+    [Authorize]
     public Task<List<BillResponseDTO>> DeleteBill([FromBody] DeleteBillRequestDTO deleteBill)
     {
         var token = ControllerHelper.GetToken(_httpContextAccessor);
