@@ -1,4 +1,5 @@
-﻿using MoneyTracker.Shared.Core;
+﻿using MoneyTracker.Shared.Auth;
+using MoneyTracker.Shared.Core;
 using MoneyTracker.Shared.Data;
 using MoneyTracker.Shared.Models.ControllerToService.Transaction;
 using MoneyTracker.Shared.Models.ServiceToController.Transaction;
@@ -16,7 +17,8 @@ public class RegisterService : IRegisterService
 
     public async Task<List<TransactionResponseDTO>> GetAllTransactions()
     {
-        var dtoFromDb = await _dbService.GetAllTransactions();
+        var user = new AuthenticatedUser(1);
+        var dtoFromDb = await _dbService.GetAllTransactions(user);
         List<TransactionResponseDTO> res = [];
         foreach (var transaction in dtoFromDb)
         {

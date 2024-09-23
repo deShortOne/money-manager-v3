@@ -1,7 +1,9 @@
 ﻿using System.Data;
 using System.Data.Common;
 using System.Runtime.InteropServices;
+using System.Transactions;
 using MoneyTracker.Data.Global;
+using MoneyTracker.Shared.Auth;
 using MoneyTracker.Shared.Data;
 using MoneyTracker.Shared.Models.RepositoryToService.Transaction;
 using MoneyTracker.Shared.Models.ServiceToRepository.Transaction;
@@ -18,7 +20,7 @@ namespace MoneyTracker.Data.Postgres
             _database = db;
         }
 
-        public async Task<List<TransactionEntityDTO>> GetAllTransactions()
+        public async Task<List<TransactionEntityDTO>> GetAllTransactions(AuthenticatedUser user)
         {
             var query = """
                 SELECT register.id,
@@ -32,14 +34,17 @@ namespace MoneyTracker.Data.Postgres
                 WHERE account_id IN (
                     SELECT id
                     FROM account
-                    WHERE account.users_id = 1
+                    WHERE account.users_id = @user_id
                 )
                 ORDER BY datePaid DESC,
                 	c.id ASC;
                 """;
+            var queryParams = new List<DbParameter>()
+            {
+                new NpgsqlParameter("user_id", user.UserId),
+            };
 
-            // get category id
-            using var reader = await _database.GetTable(query);
+            using var reader = await _database.GetTable(query, queryParams);
 
             var res = new List<TransactionEntityDTO>();
             while (await reader.ReadAsync())

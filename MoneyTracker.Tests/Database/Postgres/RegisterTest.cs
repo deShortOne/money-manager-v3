@@ -2,6 +2,7 @@
 using MoneyTracker.Data.Postgres;
 using MoneyTracker.DatabaseMigration;
 using MoneyTracker.DatabaseMigration.Models;
+using MoneyTracker.Shared.Auth;
 using MoneyTracker.Shared.Models.RepositoryToService.Transaction;
 using MoneyTracker.Shared.Models.ServiceToRepository.Transaction;
 using Testcontainers.PostgreSql;
@@ -90,7 +91,41 @@ namespace MoneyTracker.Tests.Database.Postgres
                     "Groceries"
                 ),
             };
-            var actual = await register.GetAllTransactions();
+            var actual = await register.GetAllTransactions(new AuthenticatedUser(1));
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public async void FirstLoadCheckTablesThatDataAreThereForUser2()
+        {
+            var db = new PostgresDatabase(_postgres.GetConnectionString());
+            var register = new RegisterDatabase(db);
+
+            var expected = new List<TransactionEntityDTO>()
+            {
+                new TransactionEntityDTO(
+                    10,
+                    "Football kit",
+                    100,
+                    DateTime.Parse("2024-08-30T00:00:00Z").ToUniversalTime(),
+                    "Hobby"
+                ),
+                new TransactionEntityDTO(
+                    9,
+                    "Vet",
+                    75,
+                    DateTime.Parse("2024-08-29T00:00:00Z").ToUniversalTime(),
+                    "Pet Care"
+                ),
+                new TransactionEntityDTO(
+                    8,
+                    "Company A",
+                    1500,
+                    DateTime.Parse("2024-08-28T00:00:00Z").ToUniversalTime(),
+                    "Wages & Salary : Net Pay"
+                ),
+            };
+            var actual = await register.GetAllTransactions(new AuthenticatedUser(2));
             Assert.Equal(expected, actual);
         }
 
@@ -166,7 +201,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                     "Groceries"
                 ),
             };
-            var actual = await register.GetAllTransactions();
+            var actual = await register.GetAllTransactions(new AuthenticatedUser(1));
             Assert.Equal(expected, actual);
         }
 
@@ -234,7 +269,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                     "Groceries"
                 ),
             };
-            var actual = await register.GetAllTransactions();
+            var actual = await register.GetAllTransactions(new AuthenticatedUser(1));
             Assert.Equal(expected, actual);
         }
 
@@ -291,7 +326,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                     "Groceries"
                 ),
             };
-            var actual = await register.GetAllTransactions();
+            var actual = await register.GetAllTransactions(new AuthenticatedUser(1));
             Assert.Equal(expected, actual);
         }
     }
