@@ -13,39 +13,62 @@ namespace MoneyTracker.API.Controllers
 
         private readonly ILogger<RegisterController> _logger;
         private readonly IRegisterService _database;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public RegisterController(ILogger<RegisterController> logger, IRegisterService service)
+        public RegisterController(ILogger<RegisterController> logger, IRegisterService service,
+            IHttpContextAccessor httpContextAccessor)
         {
             _logger = logger;
             _database = service;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         [HttpGet]
         [Route("get")]
         public Task<List<TransactionResponseDTO>> Get()
         {
-            return _database.GetAllTransactions("");
+            var token = ControllerHelper.GetToken(_httpContextAccessor);
+            if (string.IsNullOrEmpty(token))
+            {
+                throw new InvalidOperationException("No token provided");
+            }
+            return _database.GetAllTransactions(token);
         }
 
         [HttpPost]
         [Route("add")]
         public Task<TransactionResponseDTO> Add([FromBody] NewTransactionRequestDTO newRegisterDTO)
         {
-            return _database.AddTransaction("", newRegisterDTO);
+            var token = ControllerHelper.GetToken(_httpContextAccessor);
+            if (string.IsNullOrEmpty(token))
+            {
+                throw new InvalidOperationException("No token provided");
+            }
+            return _database.AddTransaction(token, newRegisterDTO);
         }
 
         [HttpPut]
         [Route("edit")]
         public Task<TransactionResponseDTO> Edit([FromBody] EditTransactionRequestDTO editRegisterDTO)
         {
-            return _database.EditTransaction("", editRegisterDTO);
+            var token = ControllerHelper.GetToken(_httpContextAccessor);
+            if (string.IsNullOrEmpty(token))
+            {
+                throw new InvalidOperationException("No token provided");
+            }
+            return _database.EditTransaction(token, editRegisterDTO);
         }
 
         [HttpDelete]
         [Route("delete")]
         public Task<bool> Delete([FromBody] DeleteTransactionRequestDTO deleteTransaction)
         {
-            return _database.DeleteTransaction("", deleteTransaction);
+            var token = ControllerHelper.GetToken(_httpContextAccessor);
+            if (string.IsNullOrEmpty(token))
+            {
+                throw new InvalidOperationException("No token provided");
+            }
+            return _database.DeleteTransaction(token, deleteTransaction);
         }
     }
 }
