@@ -45,7 +45,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                     1,
                     "Company A",
                     1800,
-                    DateTime.Parse("2024-08-28T00:00:00Z").ToUniversalTime(),
+                    new DateOnly(2024, 8, 28),
                     "Wages & Salary : Net Pay",
                     "bank a"
                 ),
@@ -53,7 +53,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                     6,
                     "Supermarket",
                     27,
-                    DateTime.Parse("2024-08-15T00:00:00Z").ToUniversalTime(),
+                    new DateOnly(2024,8,15),
                     "Groceries",
                     "bank b"
                 ),
@@ -61,7 +61,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                     7,
                     "Hobby item",
                     150,
-                    DateTime.Parse("2024-08-09T00:00:00Z").ToUniversalTime(),
+                    new DateOnly(2024, 8, 9),
                     "Hobby",
                     "bank a"
                 ),
@@ -69,7 +69,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                     5,
                     "Supermarket",
                     23,
-                    DateTime.Parse("2024-08-08T00:00:00Z").ToUniversalTime(),
+                    new DateOnly(2024, 8, 8),
                     "Groceries",
                     "bank b"
                 ),
@@ -77,7 +77,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                     2,
                     "Phone company",
                     10,
-                    DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
+                    new DateOnly(2024, 8, 1),
                     "Bills : Cell Phone",
                     "bank a"
                 ),
@@ -85,7 +85,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                     3,
                     "Landlord A",
                     500,
-                    DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
+                    new DateOnly(2024, 8, 1),
                     "Bills : Rent",
                     "bank a"
                 ),
@@ -93,7 +93,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                     4,
                     "Supermarket",
                     25,
-                    DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
+                    new DateOnly(2024, 8, 1),
                     "Groceries",
                     "bank b"
                 ),
@@ -114,7 +114,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                     10,
                     "Football kit",
                     100,
-                    DateTime.Parse("2024-08-30T00:00:00Z").ToUniversalTime(),
+                    new DateOnly(2024, 8, 30),
                     "Hobby",
                     "bank a"
                 ),
@@ -122,7 +122,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                     9,
                     "Vet",
                     75,
-                    DateTime.Parse("2024-08-29T00:00:00Z").ToUniversalTime(),
+                    new DateOnly(2024, 8, 29),
                     "Pet Care",
                     "bank a"
                 ),
@@ -130,7 +130,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                     8,
                     "Company A",
                     1500,
-                    DateTime.Parse("2024-08-28T00:00:00Z").ToUniversalTime(),
+                    new DateOnly(2024, 8, 28),
                     "Wages & Salary : Net Pay",
                     "bank a"
                 ),
@@ -148,7 +148,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                 11,
                 "Super star",
                 2300,
-                DateTime.Parse("2024-09-01T00:00:00Z").ToUniversalTime(),
+                new DateOnly(2024, 9, 1),
                 "Hobby", // which is 5
                 "bank a"
             );
@@ -167,7 +167,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                     1,
                     "Company A",
                     1800,
-                    DateTime.Parse("2024-08-28T00:00:00Z").ToUniversalTime(),
+                    new DateOnly(2024, 8, 28),
                     "Wages & Salary : Net Pay",
                     "bank a"
                 ),
@@ -175,7 +175,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                     6,
                     "Supermarket",
                     27,
-                    DateTime.Parse("2024-08-15T00:00:00Z").ToUniversalTime(),
+                    new DateOnly(2024, 8, 15),
                     "Groceries",
                     "bank b"
                 ),
@@ -183,7 +183,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                     7,
                     "Hobby item",
                     150,
-                    DateTime.Parse("2024-08-09T00:00:00Z").ToUniversalTime(),
+                    new DateOnly(2024, 8, 9),
                     "Hobby",
                     "bank a"
                 ),
@@ -191,7 +191,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                     5,
                     "Supermarket",
                     23,
-                    DateTime.Parse("2024-08-08T00:00:00Z").ToUniversalTime(),
+                    new DateOnly(2024, 8, 8),
                     "Groceries",
                     "bank b"
                 ),
@@ -199,7 +199,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                     2,
                     "Phone company",
                     10,
-                    DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
+                    new DateOnly(2024, 8, 1),
                     "Bills : Cell Phone",
                     "bank a"
                 ),
@@ -207,7 +207,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                     3,
                     "Landlord A",
                     500,
-                    DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
+                    new DateOnly(2024, 8, 1),
                     "Bills : Rent",
                     "bank a"
                 ),
@@ -215,7 +215,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                     4,
                     "Supermarket",
                     25,
-                    DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
+                    new DateOnly(2024, 8, 1),
                     "Groceries",
                     "bank b"
                 ),
@@ -242,7 +242,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                     1,
                     "Company A",
                     1800,
-                    DateTime.Parse("2024-08-28T00:00:00Z").ToUniversalTime(),
+                    new DateOnly(2024, 8, 28),
                     "Wages & Salary : Net Pay",
                     "bank a"
                 ),
@@ -250,7 +250,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                     6,
                     "Bar",
                     27,
-                    DateTime.Parse("2024-08-15T00:00:00Z").ToUniversalTime(),
+                    new DateOnly(2024, 8, 15),
                     "Hobby",
                     "bank b"
                 ),
@@ -258,7 +258,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                     7,
                     "Hobby item",
                     150,
-                    DateTime.Parse("2024-08-09T00:00:00Z").ToUniversalTime(),
+                    new DateOnly(2024, 8, 9),
                     "Hobby",
                     "bank a"
                 ),
@@ -266,7 +266,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                     5,
                     "Supermarket",
                     23,
-                    DateTime.Parse("2024-08-08T00:00:00Z").ToUniversalTime(),
+                    new DateOnly(2024, 8, 8),
                     "Groceries",
                     "bank b"
                 ),
@@ -274,7 +274,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                     2,
                     "Phone company",
                     10,
-                    DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
+                    new DateOnly(2024, 8, 1),
                     "Bills : Cell Phone",
                     "bank a"
                 ),
@@ -282,7 +282,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                     3,
                     "Landlord A",
                     500,
-                    DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
+                    new DateOnly(2024, 8, 1),
                     "Bills : Rent",
                     "bank a"
                 ),
@@ -290,7 +290,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                     4,
                     "Supermarket",
                     25,
-                    DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
+                    new DateOnly(2024, 8, 1),
                     "Groceries",
                     "bank b"
                 ),
@@ -313,7 +313,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                     1,
                     "Company A",
                     1800,
-                    DateTime.Parse("2024-08-28T00:00:00Z").ToUniversalTime(),
+                    new DateOnly(2024, 8, 28),
                     "Wages & Salary : Net Pay",
                     "bank a"
                 ),
@@ -321,7 +321,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                     7,
                     "Hobby item",
                     150,
-                    DateTime.Parse("2024-08-09T00:00:00Z").ToUniversalTime(),
+                    new DateOnly(2024, 8, 9),
                     "Hobby",
                     "bank a"
                 ),
@@ -329,7 +329,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                     5,
                     "Supermarket",
                     23,
-                    DateTime.Parse("2024-08-08T00:00:00Z").ToUniversalTime(),
+                    new DateOnly(2024, 8, 8),
                     "Groceries",
                     "bank b"
                 ),
@@ -337,7 +337,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                     2,
                     "Phone company",
                     10,
-                    DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
+                    new DateOnly(2024, 8, 1),
                     "Bills : Cell Phone",
                     "bank a"
                 ),
@@ -345,7 +345,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                     3,
                     "Landlord A",
                     500,
-                    DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
+                    new DateOnly(2024, 8, 1),
                     "Bills : Rent",
                     "bank a"
                 ),
@@ -353,7 +353,7 @@ namespace MoneyTracker.Tests.Database.Postgres
                     4,
                     "Supermarket",
                     25,
-                    DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
+                    new DateOnly(2024, 8, 1),
                     "Groceries",
                     "bank b"
                 ),

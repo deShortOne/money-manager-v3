@@ -2,7 +2,7 @@
 {
     public class TransactionResponseDTO
     {
-        public TransactionResponseDTO(int id, string payee, decimal amount, DateTime datePaid, string category, string accountName)
+        public TransactionResponseDTO(int id, string payee, decimal amount, DateOnly datePaid, string category, string accountName)
         {
             Id = id;
             Payee = payee;
@@ -15,7 +15,7 @@
         public int Id { get; private set; }
         public string Payee { get; private set; }
         public decimal Amount { get; private set; }
-        public DateTime DatePaid { get; private set; }
+        public DateOnly DatePaid { get; private set; }
         public string Category { get; private set; }
         public string AccountName { get; }
 

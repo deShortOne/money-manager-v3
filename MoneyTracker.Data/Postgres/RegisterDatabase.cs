@@ -52,7 +52,7 @@ namespace MoneyTracker.Data.Postgres
                     reader.GetInt32("id"),
                     reader.GetString("payee"),
                     reader.GetDecimal("amount"),
-                    reader.GetDateTime("datePaid"),
+                    DateOnly.FromDateTime(reader.GetDateTime("datePaid")),
                     reader.GetString("category_name"),
                     reader.GetString("account_name")
                 ));
@@ -91,7 +91,7 @@ namespace MoneyTracker.Data.Postgres
                     reader.GetInt32("id"),
                     reader.GetString("payee"),
                     reader.GetDecimal("amount"),
-                    reader.GetDateTime("datePaid"),
+                    DateOnly.FromDateTime(reader.GetDateTime("datePaid")),
                     reader.GetString("category_name"),
                     reader.GetString("account_name")
                 );
@@ -160,7 +160,7 @@ namespace MoneyTracker.Data.Postgres
                     reader.GetInt32("id"),
                     reader.GetString("payee"),
                     reader.GetDecimal("amount"),
-                    reader.GetDateTime("datePaid"),
+                    DateOnly.FromDateTime(reader.GetDateTime("datePaid")),
                     reader.GetString("category_name"),
                     reader.GetString("account_id")
                 );

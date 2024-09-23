@@ -108,7 +108,7 @@ namespace MoneyTracker.Tests.Database.Postgres
         {
             var db = new PostgresDatabase(_postgres.GetConnectionString());
             var transaction = new RegisterDatabase(db);
-            await transaction.AddTransaction(new NewTransactionDTO("bob", 17, new DateTime(2024, 08, 29), 4, 1));
+            await transaction.AddTransaction(new NewTransactionDTO("bob", 17, new DateOnly(2024, 08, 29), 4, 1));
 
             var budget = new BudgetDatabase(db);
 
