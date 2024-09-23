@@ -30,8 +30,9 @@ public class RegisterService : IRegisterService
 
     public async Task<TransactionResponseDTO> AddTransaction(NewTransactionRequestDTO newTransaction)
     {
+        // check account id is owned by user
         var dtoToDb = new NewTransactionDTO(newTransaction.Payee, newTransaction.Amount,
-            newTransaction.DatePaid, newTransaction.Category);
+            newTransaction.DatePaid, newTransaction.Category, newTransaction.AccountId);
         var dtoFromDb = await _dbService.AddTransaction(dtoToDb);
         return new(dtoFromDb.Id, dtoFromDb.Payee, dtoFromDb.Amount, dtoFromDb.DatePaid, dtoFromDb.Category);
     }
