@@ -29,7 +29,7 @@ public class RegisterService : IRegisterService
         foreach (var transaction in dtoFromDb)
         {
             res.Add(new(transaction.Id, transaction.Payee, transaction.Amount,
-                transaction.DatePaid, transaction.Category));
+                transaction.DatePaid, transaction.Category, transaction.AccountName));
         }
         return res;
     }
@@ -45,7 +45,7 @@ public class RegisterService : IRegisterService
         var dtoToDb = new NewTransactionDTO(newTransaction.Payee, newTransaction.Amount,
             newTransaction.DatePaid, newTransaction.Category, newTransaction.AccountId);
         var dtoFromDb = await _dbService.AddTransaction(dtoToDb);
-        return new(dtoFromDb.Id, dtoFromDb.Payee, dtoFromDb.Amount, dtoFromDb.DatePaid, dtoFromDb.Category);
+        return new(dtoFromDb.Id, dtoFromDb.Payee, dtoFromDb.Amount, dtoFromDb.DatePaid, dtoFromDb.Category, dtoFromDb.AccountName);
     }
 
     public async Task<TransactionResponseDTO> EditTransaction(string token, EditTransactionRequestDTO editTransaction)
@@ -59,7 +59,7 @@ public class RegisterService : IRegisterService
         var dtoToDb = new EditTransactionDTO(editTransaction.Id, editTransaction.Payee, editTransaction.Amount,
             editTransaction.DatePaid, editTransaction.Category, editTransaction.AccountId);
         var dtoFromDb = await _dbService.EditTransaction(dtoToDb);
-        return new(dtoFromDb.Id, dtoFromDb.Payee, dtoFromDb.Amount, dtoFromDb.DatePaid, dtoFromDb.Category);
+        return new(dtoFromDb.Id, dtoFromDb.Payee, dtoFromDb.Amount, dtoFromDb.DatePaid, dtoFromDb.Category, dtoFromDb.AccountName);
     }
 
     public Task<bool> DeleteTransaction(string token, DeleteTransactionRequestDTO deleteTransaction)
