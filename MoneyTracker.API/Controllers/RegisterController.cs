@@ -24,28 +24,28 @@ namespace MoneyTracker.API.Controllers
         [Route("get")]
         public Task<List<TransactionResponseDTO>> Get()
         {
-            return _database.GetAllTransactions();
+            return _database.GetAllTransactions("");
         }
 
         [HttpPost]
         [Route("add")]
         public Task<TransactionResponseDTO> Add([FromBody] NewTransactionRequestDTO newRegisterDTO)
         {
-            return _database.AddTransaction(newRegisterDTO);
+            return _database.AddTransaction("", newRegisterDTO);
         }
 
         [HttpPut]
         [Route("edit")]
         public Task<TransactionResponseDTO> Edit([FromBody] EditTransactionRequestDTO editRegisterDTO)
         {
-            return _database.EditTransaction(editRegisterDTO);
+            return _database.EditTransaction("", editRegisterDTO);
         }
 
         [HttpDelete]
         [Route("delete")]
         public Task<bool> Delete([FromBody] DeleteTransactionRequestDTO deleteTransaction)
         {
-            return _database.DeleteTransaction(deleteTransaction);
+            return _database.DeleteTransaction("", deleteTransaction);
         }
     }
 }
