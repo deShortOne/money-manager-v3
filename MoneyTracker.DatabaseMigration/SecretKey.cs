@@ -1,6 +1,6 @@
-﻿
+
 namespace MoneyTracker.DatabaseMigration;
 
-internal class SecretKey
+internal sealed class SecretKey
 {
 }

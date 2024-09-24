@@ -1,4 +1,4 @@
-﻿using MoneyTracker.Shared.Models.ControllerToService.Bill;
+using MoneyTracker.Shared.Models.ControllerToService.Bill;
 using MoneyTracker.Shared.Models.ServiceToController.Bill;
 
 namespace MoneyTracker.Shared.Core;

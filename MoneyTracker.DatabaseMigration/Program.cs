@@ -1,4 +1,4 @@
-﻿
+
 using Microsoft.Extensions.Configuration;
 using MoneyTracker.DatabaseMigration.Models;
 

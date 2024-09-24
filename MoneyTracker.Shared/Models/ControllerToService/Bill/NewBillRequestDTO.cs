@@ -1,4 +1,4 @@
-﻿
+
 namespace MoneyTracker.Shared.Models.ControllerToService.Bill;
 public class NewBillRequestDTO(string payee, decimal amount, DateOnly nextDueDate, string frequency,
     int category, int monthDay, int accountId)

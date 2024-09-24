@@ -1,4 +1,4 @@
-﻿
+
 using MoneyTracker.Shared.Auth;
 
 namespace MoneyTracker.Shared.Models.ServiceToRepository.Account;

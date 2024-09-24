@@ -1,23 +1,22 @@
-﻿namespace MoneyTracker.Shared.Models.ServiceToRepository.Transaction
-{
-    public class EditTransactionDTO
-    {
-        public EditTransactionDTO(int id, string payee, decimal? amount = null,
-            DateOnly? datePaid = null, int? category = null, int? accountId = null)
-        {
-            Id = id;
-            Payee = payee;
-            Amount = amount;
-            DatePaid = datePaid;
-            Category = category;
-            AccountId = accountId;
-        }
+namespace MoneyTracker.Shared.Models.ServiceToRepository.Transaction;
 
-        public int Id { get; private set; }
-        public string Payee { get; private set; }
-        public decimal? Amount { get; private set; } = null;
-        public DateOnly? DatePaid { get; private set; } = null;
-        public int? Category { get; private set; } = null;
-        public int? AccountId { get; } = null;
+public class EditTransactionDTO
+{
+    public EditTransactionDTO(int id, string payee, decimal? amount = null,
+        DateOnly? datePaid = null, int? category = null, int? accountId = null)
+    {
+        Id = id;
+        Payee = payee;
+        Amount = amount;
+        DatePaid = datePaid;
+        Category = category;
+        AccountId = accountId;
     }
+
+    public int Id { get; private set; }
+    public string Payee { get; private set; }
+    public decimal? Amount { get; private set; }
+    public DateOnly? DatePaid { get; private set; }
+    public int? Category { get; private set; }
+    public int? AccountId { get; }
 }

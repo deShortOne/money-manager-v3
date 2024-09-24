@@ -1,4 +1,4 @@
-﻿using MoneyTracker.Shared.Auth;
+using MoneyTracker.Shared.Auth;
 
 namespace MoneyTracker.Shared.Core;
 public interface IUserAuthenticationService

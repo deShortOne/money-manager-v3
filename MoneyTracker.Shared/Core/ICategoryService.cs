@@ -1,4 +1,4 @@
-﻿using MoneyTracker.Shared.Models.ControllerToService.Category;
+using MoneyTracker.Shared.Models.ControllerToService.Category;
 using MoneyTracker.Shared.Models.ServiceToController.Category;
 
 namespace MoneyTracker.Shared.Core;

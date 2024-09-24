@@ -1,4 +1,4 @@
-﻿using MoneyTracker.Core;
+using MoneyTracker.Core;
 using MoneyTracker.Data.Postgres;
 using MoneyTracker.DatabaseMigration;
 using MoneyTracker.DatabaseMigration.Models;
@@ -155,8 +155,11 @@ public class BillServiceTest : IAsyncLifetime
             .Returns(Task.FromResult(new AuthenticatedUser(1)));
         var billService = new BillService(_billDb, dateProvider, mockUserAuth.Object, _accountDb);
 
-        DateOnly[] dates = [new DateOnly(2024, 9, 3), new DateOnly(2024, 9, 10), new DateOnly(2024, 9, 17),
-            new DateOnly(2024, 9, 24), new DateOnly(2024, 10, 1)];
+        DateOnly[] dates = [new DateOnly(2024, 9, 3),
+            new DateOnly(2024, 9, 10),
+            new DateOnly(2024, 9, 17),
+            new DateOnly(2024, 9, 24),
+            new DateOnly(2024, 10, 1)];
         var expected = new List<BillResponseDTO>()
         {
             new(2, "company a", 100, new DateOnly(2024, 08, 30), "Monthly", "Wages & Salary : Net Pay",
@@ -179,8 +182,11 @@ public class BillServiceTest : IAsyncLifetime
             .Returns(Task.FromResult(new AuthenticatedUser(1)));
         var billService = new BillService(_billDb, dateProvider, mockUserAuth.Object, _accountDb);
 
-        DateOnly[] dates = [new DateOnly(2024, 9, 3), new DateOnly(2024, 9, 10), new DateOnly(2024, 9, 17),
-            new DateOnly(2024, 9, 24), new DateOnly(2024, 10, 1)];
+        DateOnly[] dates = [new DateOnly(2024, 9, 3),
+            new DateOnly(2024, 9, 10),
+            new DateOnly(2024, 9, 17),
+            new DateOnly(2024, 9, 24),
+            new DateOnly(2024, 10, 1)];
         var expected = new List<BillResponseDTO>()
         {
             new(2, "company a", 100, new DateOnly(2024, 08, 30), "Monthly", "Wages & Salary : Net Pay",

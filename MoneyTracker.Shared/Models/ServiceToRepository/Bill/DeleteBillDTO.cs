@@ -1,4 +1,4 @@
-﻿
+
 namespace MoneyTracker.Shared.Models.ServiceToRepository.Bill;
 public class DeleteBillDTO(int id)
 {

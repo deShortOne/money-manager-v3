@@ -1,4 +1,4 @@
-﻿using MoneyTracker.Shared.Auth;
+using MoneyTracker.Shared.Auth;
 using MoneyTracker.Shared.Models.RepositoryToService.Account;
 
 namespace MoneyTracker.Data.Postgres;

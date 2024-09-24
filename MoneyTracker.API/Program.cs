@@ -1,4 +1,4 @@
-﻿using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi.Models;
 using MoneyTracker.API;
 using MoneyTracker.Core;
 using MoneyTracker.Data.Global;

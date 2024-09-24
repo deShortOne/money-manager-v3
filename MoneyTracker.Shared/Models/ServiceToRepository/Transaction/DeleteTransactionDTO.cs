@@ -1,7 +1,6 @@
-﻿namespace MoneyTracker.Shared.Models.ServiceToRepository.Transaction
+namespace MoneyTracker.Shared.Models.ServiceToRepository.Transaction;
+
+public class DeleteTransactionDTO(int id)
 {
-    public class DeleteTransactionDTO(int id)
-    {
-        public int Id { get; } = id;
-    }
+    public int Id { get; } = id;
 }

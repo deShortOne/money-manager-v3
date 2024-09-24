@@ -1,4 +1,4 @@
-﻿
+
 using MoneyTracker.Core;
 using MoneyTracker.Data.Postgres;
 using MoneyTracker.DatabaseMigration;
@@ -6,11 +6,9 @@ using MoneyTracker.DatabaseMigration.Models;
 using MoneyTracker.Shared.Auth;
 using MoneyTracker.Shared.Core;
 using MoneyTracker.Shared.Models.ControllerToService.Transaction;
-using MoneyTracker.Shared.Models.RepositoryToService.Transaction;
 using MoneyTracker.Shared.Models.ServiceToController.Transaction;
 using Moq;
 using Testcontainers.PostgreSql;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MoneyTracker.Tests.Core;
 public sealed class RegisterServiceTest : IAsyncLifetime

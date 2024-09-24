@@ -1,4 +1,4 @@
-﻿
+
 namespace MoneyTracker.Shared.Models.ServiceToController.Bill;
 public class BillResponseDTO(int id, string payee, decimal amount, DateOnly nextDueDate,
     string frequency, string category, OverDueBillInfo? overDueBill, string accountName)

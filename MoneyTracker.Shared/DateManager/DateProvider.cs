@@ -1,4 +1,4 @@
-﻿
+
 namespace MoneyTracker.Shared.DateManager;
 public class DateProvider : IDateProvider
 {

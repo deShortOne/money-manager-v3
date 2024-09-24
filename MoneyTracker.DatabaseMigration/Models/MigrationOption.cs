@@ -1,4 +1,4 @@
-﻿namespace MoneyTracker.DatabaseMigration.Models;
+namespace MoneyTracker.DatabaseMigration.Models;
 
 public class MigrationOption(bool includeSeedData = false)
 {

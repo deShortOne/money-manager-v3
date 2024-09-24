@@ -1,4 +1,4 @@
-﻿using MoneyTracker.Calculation.Bill;
+using MoneyTracker.Calculation.Bill;
 using MoneyTracker.Data.Postgres;
 using MoneyTracker.Shared.Core;
 using MoneyTracker.Shared.Data;

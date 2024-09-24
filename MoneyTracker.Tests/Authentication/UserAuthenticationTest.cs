@@ -1,4 +1,4 @@
-﻿
+
 using MoneyTracker.Core;
 using MoneyTracker.Data.Postgres;
 using MoneyTracker.DatabaseMigration;
@@ -114,7 +114,6 @@ public sealed class UserAuthenticationTest : IAsyncLifetime
         var dataTable = await db.GetTable("SELECT 1 FROM users WHERE id = @id AND name = @name", [new NpgsqlParameter("id", 1), new NpgsqlParameter("name", "root")]);
         Assert.True(await dataTable.ReadAsync());
     }
-
 
     [Fact]
     public async void AttemptToUseAnExpiredBearerToken()

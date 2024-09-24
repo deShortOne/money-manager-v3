@@ -1,4 +1,4 @@
-﻿namespace MoneyTracker.Shared.Auth;
+namespace MoneyTracker.Shared.Auth;
 public class AuthenticatedUser(int userId)
 {
     public int UserId { get; } = userId;
@@ -6,7 +6,11 @@ public class AuthenticatedUser(int userId)
     public override bool Equals(object? obj)
     {
         var other = obj as AuthenticatedUser;
-        if (other == null) return false;
+        if (other == null)
+        {
+            return false;
+        }
+
         return UserId == other.UserId;
     }
 

@@ -1,4 +1,4 @@
-﻿
+
 namespace MoneyTracker.Shared.Auth;
 public class GuidMapToUserDTO(int userId, DateTime expires)
 {

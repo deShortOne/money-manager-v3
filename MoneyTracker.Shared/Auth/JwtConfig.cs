@@ -1,4 +1,4 @@
-﻿
+
 namespace MoneyTracker.Shared.Auth;
 public interface IJwtConfig
 {

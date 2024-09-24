@@ -1,9 +1,9 @@
-﻿using DbUp.Engine;
+using DbUp.Engine;
 using DbUp.Support;
 
 namespace MoneyTracker.DatabaseMigration.Models;
 
-internal class MyScriptFilter : IScriptFilter
+internal sealed class MyScriptFilter : IScriptFilter
 {
     public IEnumerable<SqlScript> Filter(
         IEnumerable<SqlScript> sorted,

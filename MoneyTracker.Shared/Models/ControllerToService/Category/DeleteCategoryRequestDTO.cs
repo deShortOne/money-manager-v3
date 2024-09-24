@@ -1,11 +1,10 @@
-﻿namespace MoneyTracker.Shared.Models.ControllerToService.Category
+namespace MoneyTracker.Shared.Models.ControllerToService.Category;
+
+public class DeleteCategoryRequestDTO
 {
-    public class DeleteCategoryRequestDTO
+    public DeleteCategoryRequestDTO(int id)
     {
-        public DeleteCategoryRequestDTO(int id)
-        {
-            Id = id;
-        }
-        public int Id { get; private set; }
+        Id = id;
     }
+    public int Id { get; private set; }
 }

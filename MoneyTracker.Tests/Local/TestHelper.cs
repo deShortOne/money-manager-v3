@@ -1,9 +1,9 @@
-﻿
+
 using MoneyTracker.Shared.DateManager;
 using Moq;
 
 namespace MoneyTracker.Tests.Local;
-internal class TestHelper
+internal sealed class TestHelper
 {
     public static IDateProvider CreateMockdateProvider(DateOnly dateTime)
     {

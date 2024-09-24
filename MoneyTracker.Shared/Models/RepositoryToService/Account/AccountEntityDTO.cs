@@ -1,4 +1,4 @@
-﻿
+
 namespace MoneyTracker.Shared.Models.RepositoryToService.Account;
 public class AccountEntityDTO(int id, string name)
 {

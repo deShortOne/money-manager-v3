@@ -1,4 +1,4 @@
-﻿using System.Reflection;
+using System.Reflection;
 using DbUp;
 using DbUp.Engine;
 using MoneyTracker.DatabaseMigration.Models;

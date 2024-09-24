@@ -1,4 +1,4 @@
-﻿
+
 using MoneyTracker.Shared.Auth;
 using MoneyTracker.Shared.Models.RepositoryToService.Bill;
 using MoneyTracker.Shared.Models.ServiceToRepository.Bill;

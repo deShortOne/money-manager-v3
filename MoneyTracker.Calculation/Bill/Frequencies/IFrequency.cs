@@ -1,4 +1,4 @@
-﻿
+
 using MoneyTracker.Shared.DateManager;
 using MoneyTracker.Shared.Models.ServiceToController.Bill;
 

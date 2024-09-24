@@ -1,12 +1,11 @@
-﻿
-namespace MoneyTracker.Shared.Models.ServiceToRepository.Category
+
+namespace MoneyTracker.Shared.Models.ServiceToRepository.Category;
+
+public class NewCategoryDTO
 {
-    public class NewCategoryDTO
+    public NewCategoryDTO(string name)
     {
-        public NewCategoryDTO(string name)
-        {
-            Name = name;
-        }
-        public string Name { get; set; }
+        Name = name;
     }
+    public string Name { get; set; }
 }

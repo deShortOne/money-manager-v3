@@ -1,4 +1,4 @@
-﻿
+
 using MoneyTracker.Calculation.Bill.Frequencies;
 
 namespace MoneyTracker.Tests.Unit.Calculation.Bill.NextDueDate;

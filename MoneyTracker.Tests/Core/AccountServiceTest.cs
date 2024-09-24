@@ -1,4 +1,4 @@
-﻿
+
 using MoneyTracker.Core;
 using MoneyTracker.Data.Postgres;
 using MoneyTracker.DatabaseMigration;

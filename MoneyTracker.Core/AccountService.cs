@@ -1,4 +1,4 @@
-﻿
+
 using MoneyTracker.Data.Postgres;
 using MoneyTracker.Shared.Auth;
 using MoneyTracker.Shared.Models.ServiceToController.Account;

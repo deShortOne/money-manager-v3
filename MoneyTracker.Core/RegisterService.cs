@@ -1,4 +1,4 @@
-﻿using MoneyTracker.Data.Postgres;
+using MoneyTracker.Data.Postgres;
 using MoneyTracker.Shared.Core;
 using MoneyTracker.Shared.Data;
 using MoneyTracker.Shared.Models.ControllerToService.Transaction;

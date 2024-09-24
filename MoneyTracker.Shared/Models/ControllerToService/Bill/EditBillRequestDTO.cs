@@ -1,4 +1,4 @@
-﻿
+
 namespace MoneyTracker.Shared.Models.ControllerToService.Bill;
 public class EditBillRequestDTO(int id, string? payee = null, decimal? amount = null, DateOnly? nextDueDate = null, string? frequency = null, int? category = null, int? accountId = null)
 {

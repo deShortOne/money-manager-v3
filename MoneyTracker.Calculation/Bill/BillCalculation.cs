@@ -1,4 +1,4 @@
-﻿using MoneyTracker.Calculation.Bill.Frequencies;
+using MoneyTracker.Calculation.Bill.Frequencies;
 using MoneyTracker.Shared.DateManager;
 using MoneyTracker.Shared.Models.ServiceToController.Bill;
 

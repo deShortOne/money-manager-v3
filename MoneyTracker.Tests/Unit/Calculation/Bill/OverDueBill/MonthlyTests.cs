@@ -1,4 +1,4 @@
-﻿
+
 using MoneyTracker.Calculation.Bill.Frequencies;
 using MoneyTracker.Shared.DateManager;
 using MoneyTracker.Shared.Models.ServiceToController.Bill;
@@ -88,7 +88,6 @@ public sealed class MonthlyTests
         });
     }
 
-
     [Fact]
     public void CalculateOverDueBillInfo_CurrDateNearStartOfMonthAndDueDateNearEnd()
     {
@@ -143,7 +142,9 @@ public sealed class MonthlyTests
 
             var thrityOneDaysBeforeIteration = month.CalculateOverDueBill(31, new DateOnly(2024, 5, 31), dateProvider);
             Assert.Equal(new OverDueBillInfo(91, [
-                new DateOnly(2024, 5, 31), new DateOnly(2024, 6, 30), new DateOnly(2024, 7, 31)
+                new DateOnly(2024, 5, 31),
+                new DateOnly(2024, 6, 30),
+                new DateOnly(2024, 7, 31)
                 ]), thrityOneDaysBeforeIteration);
         });
     }
@@ -161,7 +162,9 @@ public sealed class MonthlyTests
             Assert.Equal(new OverDueBillInfo(32, [new DateOnly(2024, 7, 30), new DateOnly(2024, 8, 30)]), thrityDaysBeforeIteration);
 
             var thrityOneDaysBeforeIteration = month.CalculateOverDueBill(30, new DateOnly(2024, 5, 30), dateProvider);
-            DateOnly[] dates = [new DateOnly(2024, 5, 30), new DateOnly(2024, 6, 30), new DateOnly(2024, 7, 30),
+            DateOnly[] dates = [new DateOnly(2024, 5, 30),
+                new DateOnly(2024, 6, 30),
+                new DateOnly(2024, 7, 30),
                 new DateOnly(2024, 8, 30)];
             Assert.Equal(new OverDueBillInfo(93, dates), thrityOneDaysBeforeIteration);
         });
