@@ -1,6 +1,5 @@
 using System.Data;
 using System.Data.Common;
-using System.Runtime.InteropServices;
 using MoneyTracker.Data.Global;
 using MoneyTracker.Shared.Auth;
 using MoneyTracker.Shared.Data;
@@ -95,7 +94,7 @@ public class RegisterDatabase : IRegisterDatabase
                 reader.GetString("account_name")
             );
         }
-        throw new ExternalException("Database failed to return data");
+        throw new InvalidDataException("Database failed to return data");
     }
 
     public async Task<TransactionEntityDTO> EditTransaction(EditTransactionDTO tramsaction)
@@ -164,7 +163,7 @@ public class RegisterDatabase : IRegisterDatabase
                 reader.GetString("account_id")
             );
         }
-        throw new ExternalException("Database failed to return data");
+        throw new InvalidDataException("Database failed to return data");
     }
 
     public async Task<bool> DeleteTransaction(DeleteTransactionDTO transaction)

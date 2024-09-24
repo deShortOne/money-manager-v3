@@ -1,6 +1,5 @@
 using System.Data;
 using System.Data.Common;
-using System.Runtime.InteropServices;
 using MoneyTracker.Data.Global;
 using MoneyTracker.Shared.Data;
 using MoneyTracker.Shared.Models.RepositoryToService.Budget;
@@ -102,7 +101,7 @@ public class BudgetDatabase : IBudgetDatabase
             var actual = reader.GetDecimal("actual");
             return new BudgetCategoryEntityDTO(name, planned, actual, planned - actual);
         }
-        throw new ExternalException("Database failed to return data");
+        throw new InvalidDataException("Database failed to return data");
     }
 
     public async Task<List<BudgetGroupEntityDTO>> EditBudgetCategory(EditBudgetCategoryDTO editBudgetCateogry)
@@ -131,7 +130,7 @@ public class BudgetDatabase : IBudgetDatabase
         var reader = await _database.UpdateTable(query, queryParams);
         if (reader != 1)
         {
-            throw new Exception("Unknown error");
+            throw new InvalidDataException("Unknown error");
         }
 
         return await GetBudget();

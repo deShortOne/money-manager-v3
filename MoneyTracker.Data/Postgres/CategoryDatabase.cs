@@ -1,6 +1,5 @@
 using System.Data;
 using System.Data.Common;
-using System.Runtime.InteropServices;
 using MoneyTracker.Data.Global;
 using MoneyTracker.Shared.Data;
 using MoneyTracker.Shared.Models.RepositoryToService.Category;
@@ -82,7 +81,7 @@ public class CategoryDatabase : ICategoryDatabase
         {
             return new CategoryEntityDTO(reader.GetInt32("id"), reader.GetString("name"));
         }
-        throw new ExternalException("Database failed to return data");
+        throw new InvalidDataException("Database failed to return data");
     }
 
     public async Task<bool> DeleteCategory(DeleteCategoryDTO deleteCategoryDTO)
