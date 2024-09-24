@@ -5,10 +5,8 @@ on:
     branches: [ main ]
 
 jobs:
-  build:
-
+  test:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v4
     - name: Setup .NET
@@ -21,7 +19,6 @@ jobs:
       run: dotnet build --no-restore
     - name: Test
       run: dotnet test --no-build --verbosity normal --collect:"XPlat Code Coverage" --logger trx --results-directory coverage
-
     - name: Code Coverage Summary Report
       uses: irongut/CodeCoverageSummary@v1.3.0
       with:
@@ -29,7 +26,6 @@ jobs:
         badge: true
         format: 'markdown'
         output: 'both'
-
     - name: Add Coverage PR Comment
       uses: marocchino/sticky-pull-request-comment@v2
       if: github.event_name == 'pull_request'
@@ -37,6 +33,53 @@ jobs:
         recreate: true
         path: code-coverage-results.md
       continue-on-error: true
-
     - name: Write to Job Summary
       run: cat code-coverage-results.md >> $GITHUB_STEP_SUMMARY
+
+  format:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        ref: ${{ github.head_ref }}
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore
+    - name: Format code
+      run: dotnet format
+    - name: Verify formatted code is all clean 
+      id: formatCode
+      run: dotnet format --verify-no-changes --report changes.json
+
+    - name: (unhappy path)Convert report into better json
+      if: ${{ failure() }}
+      run: python3 Scripts/ConvertDotnetFormatReportIntoBetterJson.py
+    - name: (unhappy path)Failed to format code convert json to table
+      if: ${{ failure() }}
+      uses: buildingcash/json-to-markdown-table-action@v1.1.0
+      id: table
+      with:
+        json_file_path: "changesToBeMade.json"
+    
+    - name: (happy path)Check for modified files
+      id: git-check
+      run: echo ::set-output name=modified::$(if [ -n "$(git status --porcelain)" ]; then echo "true"; else echo "false"; fi)
+    - name: (happy path)Update changes in GitHub repository
+      if: steps.git-check.outputs.modified == 'true'
+      run: |
+          git config user.email "githubactionbot@example.com"
+          git config user.name "github action bot"
+          git config --global --add safe.directory /github/workspace
+          git commit -am 'Automatic dotnet format
+          Co-authored-by: ${{ github.event.pull_request.user.login }} <${{ github.event.pull_request.user.id }}+${{ github.event.pull_request.user.login }}@users.noreply.github.com>'
+    - name: (happy path)Push changes
+      uses: ad-m/github-push-action@v0.8.0
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: ${{ github.head_ref }}
