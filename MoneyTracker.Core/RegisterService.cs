@@ -51,6 +51,10 @@ public class RegisterService : IRegisterService
     public async Task<TransactionResponseDTO> EditTransaction(string token, EditTransactionRequestDTO editTransaction)
     {
         var user = await _userAuthService.DecodeToken(token);
+        if (!await _dbService.IsTransactionOwnedByUser(user, editTransaction.Id))
+        {
+            throw new InvalidDataException("Transaction not found");
+        }
         if (editTransaction.AccountId != null && !await _accountDb.IsAccountOwnedByUser(user, (int)editTransaction.AccountId))
         {
             throw new InvalidDataException("Account not found");
@@ -62,9 +66,15 @@ public class RegisterService : IRegisterService
         return new(dtoFromDb.Id, dtoFromDb.Payee, dtoFromDb.Amount, dtoFromDb.DatePaid, dtoFromDb.Category, dtoFromDb.AccountName);
     }
 
-    public Task<bool> DeleteTransaction(string token, DeleteTransactionRequestDTO deleteTransaction)
+    public async Task<bool> DeleteTransaction(string token, DeleteTransactionRequestDTO deleteTransaction)
     {
+        var user = await _userAuthService.DecodeToken(token);
+        if (!await _dbService.IsTransactionOwnedByUser(user, deleteTransaction.Id))
+        {
+            throw new InvalidDataException("Transaction not found");
+        }
+
         var dtoToDb = new DeleteTransactionDTO(deleteTransaction.Id);
-        return _dbService.DeleteTransaction(dtoToDb);
+        return await _dbService.DeleteTransaction(dtoToDb);
     }
 }

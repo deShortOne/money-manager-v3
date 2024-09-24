@@ -88,6 +88,43 @@ public sealed class RegisterServiceTest : IAsyncLifetime
             await registerService.EditTransaction("", new EditTransactionRequestDTO(2, accountId: 5));
         });
         Assert.Equal("Account not found", error.Message);
+    }
 
+    [Fact]
+    public async void EditTransaction_ChangeTransactionNotOwnedByUser_Errors()
+    {
+        var db = new PostgresDatabase(_postgres.GetConnectionString());
+        var registerDb = new RegisterDatabase(db);
+        var accountDb = new AccountDatabase(db);
+
+        var mockAuthService = new Mock<IUserAuthenticationService>();
+        mockAuthService.Setup(x => x.DecodeToken(It.IsAny<string>())).Returns(Task.FromResult(new AuthenticatedUser(1)));
+
+        var registerService = new RegisterService(registerDb, mockAuthService.Object, accountDb);
+
+        var error = await Assert.ThrowsAsync<InvalidDataException>(async () =>
+        {
+            await registerService.EditTransaction("", new EditTransactionRequestDTO(8, accountId: 5));
+        });
+        Assert.Equal("Transaction not found", error.Message);
+    }
+
+    [Fact]
+    public async void DeleteTransaction_ChangeTransactionNotOwnedByUser_Errors()
+    {
+        var db = new PostgresDatabase(_postgres.GetConnectionString());
+        var registerDb = new RegisterDatabase(db);
+        var accountDb = new AccountDatabase(db);
+
+        var mockAuthService = new Mock<IUserAuthenticationService>();
+        mockAuthService.Setup(x => x.DecodeToken(It.IsAny<string>())).Returns(Task.FromResult(new AuthenticatedUser(1)));
+
+        var registerService = new RegisterService(registerDb, mockAuthService.Object, accountDb);
+
+        var error = await Assert.ThrowsAsync<InvalidDataException>(async () =>
+        {
+            await registerService.DeleteTransaction("", new DeleteTransactionRequestDTO(8));
+        });
+        Assert.Equal("Transaction not found", error.Message);
     }
 }

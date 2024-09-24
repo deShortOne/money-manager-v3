@@ -11,5 +11,6 @@ namespace MoneyTracker.Shared.Data
         public Task<TransactionEntityDTO> AddTransaction(NewTransactionDTO transaction);
         public Task<TransactionEntityDTO> EditTransaction(EditTransactionDTO tramsaction);
         public Task<bool> DeleteTransaction(DeleteTransactionDTO transaction);
+        public Task<bool> IsTransactionOwnedByUser(AuthenticatedUser user, int transactionId);
     }
 }

@@ -181,5 +181,30 @@ namespace MoneyTracker.Data.Postgres
             var reader = await _database.UpdateTable(query, queryParams);
             return reader == 1;
         }
+
+        public async Task<bool> IsTransactionOwnedByUser(AuthenticatedUser user, int transactionId)
+        {
+            var query = """
+                SELECT 1
+                FROM register
+                WHERE id = @transaction_id
+                AND account_id IN (
+                    SELECT id
+                    FROM account
+                    WHERE users_id = @user_id
+                )
+                """;
+            var queryParams = new List<DbParameter>()
+            {
+                new NpgsqlParameter("transaction_id", transactionId),
+                new NpgsqlParameter("user_id", user.UserId),
+            };
+            var reader = await _database.GetTable(query, queryParams);
+            if (await reader.ReadAsync())
+            {
+                return reader.GetInt32(0) == 1;
+            }
+            return false;
+        }
     }
 }
