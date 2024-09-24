@@ -30,6 +30,11 @@ namespace MoneyTracker.Data.Postgres
                 	SELECT category_id,
                 		sum(amount) AS amount
                 	FROM register
+                    WHERE account_id IN (
+                        SELECT id
+                        FROM account
+                        WHERE users_id = 1
+                    )
                 	GROUP BY category_id
                 	) category_sum
                 	ON category_sum.category_id = bc.category_id

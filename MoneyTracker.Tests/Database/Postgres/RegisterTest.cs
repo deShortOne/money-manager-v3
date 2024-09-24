@@ -2,6 +2,7 @@
 using MoneyTracker.Data.Postgres;
 using MoneyTracker.DatabaseMigration;
 using MoneyTracker.DatabaseMigration.Models;
+using MoneyTracker.Shared.Auth;
 using MoneyTracker.Shared.Models.RepositoryToService.Transaction;
 using MoneyTracker.Shared.Models.ServiceToRepository.Transaction;
 using Testcontainers.PostgreSql;
@@ -44,53 +45,97 @@ namespace MoneyTracker.Tests.Database.Postgres
                     1,
                     "Company A",
                     1800,
-                    DateTime.Parse("2024-08-28T00:00:00Z").ToUniversalTime(),
-                    "Wages & Salary : Net Pay"
+                    new DateOnly(2024, 8, 28),
+                    "Wages & Salary : Net Pay",
+                    "bank a"
                 ),
                 new TransactionEntityDTO(
                     6,
                     "Supermarket",
                     27,
-                    DateTime.Parse("2024-08-15T00:00:00Z").ToUniversalTime(),
-                    "Groceries"
+                    new DateOnly(2024,8,15),
+                    "Groceries",
+                    "bank b"
                 ),
                 new TransactionEntityDTO(
                     7,
                     "Hobby item",
                     150,
-                    DateTime.Parse("2024-08-09T00:00:00Z").ToUniversalTime(),
-                    "Hobby"
+                    new DateOnly(2024, 8, 9),
+                    "Hobby",
+                    "bank a"
                 ),
                 new TransactionEntityDTO(
                     5,
                     "Supermarket",
                     23,
-                    DateTime.Parse("2024-08-08T00:00:00Z").ToUniversalTime(),
-                    "Groceries"
+                    new DateOnly(2024, 8, 8),
+                    "Groceries",
+                    "bank b"
                 ),
                 new TransactionEntityDTO(
                     2,
                     "Phone company",
                     10,
-                    DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
-                    "Bills : Cell Phone"
+                    new DateOnly(2024, 8, 1),
+                    "Bills : Cell Phone",
+                    "bank a"
                 ),
                 new TransactionEntityDTO(
                     3,
                     "Landlord A",
                     500,
-                    DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
-                    "Bills : Rent"
+                    new DateOnly(2024, 8, 1),
+                    "Bills : Rent",
+                    "bank a"
                 ),
                 new TransactionEntityDTO(
                     4,
                     "Supermarket",
                     25,
-                    DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
-                    "Groceries"
+                    new DateOnly(2024, 8, 1),
+                    "Groceries",
+                    "bank b"
                 ),
             };
-            var actual = await register.GetAllTransactions();
+            var actual = await register.GetAllTransactions(new AuthenticatedUser(1));
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        public async void FirstLoadCheckTablesThatDataAreThereForUser2()
+        {
+            var db = new PostgresDatabase(_postgres.GetConnectionString());
+            var register = new RegisterDatabase(db);
+
+            var expected = new List<TransactionEntityDTO>()
+            {
+                new TransactionEntityDTO(
+                    10,
+                    "Football kit",
+                    100,
+                    new DateOnly(2024, 8, 30),
+                    "Hobby",
+                    "bank a"
+                ),
+                new TransactionEntityDTO(
+                    9,
+                    "Vet",
+                    75,
+                    new DateOnly(2024, 8, 29),
+                    "Pet Care",
+                    "bank a"
+                ),
+                new TransactionEntityDTO(
+                    8,
+                    "Company A",
+                    1500,
+                    new DateOnly(2024, 8, 28),
+                    "Wages & Salary : Net Pay",
+                    "bank a"
+                ),
+            };
+            var actual = await register.GetAllTransactions(new AuthenticatedUser(2));
             Assert.Equal(expected, actual);
         }
 
@@ -100,17 +145,19 @@ namespace MoneyTracker.Tests.Database.Postgres
             var db = new PostgresDatabase(_postgres.GetConnectionString());
             var register = new RegisterDatabase(db);
             var transactionToAdd = new TransactionEntityDTO(
-                8,
+                11,
                 "Super star",
                 2300,
-                DateTime.Parse("2024-09-01T00:00:00Z").ToUniversalTime(),
-                "Hobby" // which is 5
+                new DateOnly(2024, 9, 1),
+                "Hobby", // which is 5
+                "bank a"
             );
             await register.AddTransaction(new NewTransactionDTO(
                 transactionToAdd.Payee,
                 transactionToAdd.Amount,
                 transactionToAdd.DatePaid,
-                5 // id correlate to hobby
+                5, // id correlate to hobby
+                1
             ));
 
             var expected = new List<TransactionEntityDTO>()
@@ -120,53 +167,60 @@ namespace MoneyTracker.Tests.Database.Postgres
                     1,
                     "Company A",
                     1800,
-                    DateTime.Parse("2024-08-28T00:00:00Z").ToUniversalTime(),
-                    "Wages & Salary : Net Pay"
+                    new DateOnly(2024, 8, 28),
+                    "Wages & Salary : Net Pay",
+                    "bank a"
                 ),
                 new TransactionEntityDTO(
                     6,
                     "Supermarket",
                     27,
-                    DateTime.Parse("2024-08-15T00:00:00Z").ToUniversalTime(),
-                    "Groceries"
+                    new DateOnly(2024, 8, 15),
+                    "Groceries",
+                    "bank b"
                 ),
                 new TransactionEntityDTO(
                     7,
                     "Hobby item",
                     150,
-                    DateTime.Parse("2024-08-09T00:00:00Z").ToUniversalTime(),
-                    "Hobby"
+                    new DateOnly(2024, 8, 9),
+                    "Hobby",
+                    "bank a"
                 ),
                 new TransactionEntityDTO(
                     5,
                     "Supermarket",
                     23,
-                    DateTime.Parse("2024-08-08T00:00:00Z").ToUniversalTime(),
-                    "Groceries"
+                    new DateOnly(2024, 8, 8),
+                    "Groceries",
+                    "bank b"
                 ),
                 new TransactionEntityDTO(
                     2,
                     "Phone company",
                     10,
-                    DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
-                    "Bills : Cell Phone"
+                    new DateOnly(2024, 8, 1),
+                    "Bills : Cell Phone",
+                    "bank a"
                 ),
                 new TransactionEntityDTO(
                     3,
                     "Landlord A",
                     500,
-                    DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
-                    "Bills : Rent"
+                    new DateOnly(2024, 8, 1),
+                    "Bills : Rent",
+                    "bank a"
                 ),
                 new TransactionEntityDTO(
                     4,
                     "Supermarket",
                     25,
-                    DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
-                    "Groceries"
+                    new DateOnly(2024, 8, 1),
+                    "Groceries",
+                    "bank b"
                 ),
             };
-            var actual = await register.GetAllTransactions();
+            var actual = await register.GetAllTransactions(new AuthenticatedUser(1));
             Assert.Equal(expected, actual);
         }
 
@@ -188,53 +242,60 @@ namespace MoneyTracker.Tests.Database.Postgres
                     1,
                     "Company A",
                     1800,
-                    DateTime.Parse("2024-08-28T00:00:00Z").ToUniversalTime(),
-                    "Wages & Salary : Net Pay"
+                    new DateOnly(2024, 8, 28),
+                    "Wages & Salary : Net Pay",
+                    "bank a"
                 ),
                 new TransactionEntityDTO(
                     6,
                     "Bar",
                     27,
-                    DateTime.Parse("2024-08-15T00:00:00Z").ToUniversalTime(),
-                    "Hobby"
+                    new DateOnly(2024, 8, 15),
+                    "Hobby",
+                    "bank b"
                 ),
                 new TransactionEntityDTO(
                     7,
                     "Hobby item",
                     150,
-                    DateTime.Parse("2024-08-09T00:00:00Z").ToUniversalTime(),
-                    "Hobby"
+                    new DateOnly(2024, 8, 9),
+                    "Hobby",
+                    "bank a"
                 ),
                 new TransactionEntityDTO(
                     5,
                     "Supermarket",
                     23,
-                    DateTime.Parse("2024-08-08T00:00:00Z").ToUniversalTime(),
-                    "Groceries"
+                    new DateOnly(2024, 8, 8),
+                    "Groceries",
+                    "bank b"
                 ),
                 new TransactionEntityDTO(
                     2,
                     "Phone company",
                     10,
-                    DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
-                    "Bills : Cell Phone"
+                    new DateOnly(2024, 8, 1),
+                    "Bills : Cell Phone",
+                    "bank a"
                 ),
                 new TransactionEntityDTO(
                     3,
                     "Landlord A",
                     500,
-                    DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
-                    "Bills : Rent"
+                    new DateOnly(2024, 8, 1),
+                    "Bills : Rent",
+                    "bank a"
                 ),
                 new TransactionEntityDTO(
                     4,
                     "Supermarket",
                     25,
-                    DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
-                    "Groceries"
+                    new DateOnly(2024, 8, 1),
+                    "Groceries",
+                    "bank b"
                 ),
             };
-            var actual = await register.GetAllTransactions();
+            var actual = await register.GetAllTransactions(new AuthenticatedUser(1));
             Assert.Equal(expected, actual);
         }
 
@@ -252,46 +313,52 @@ namespace MoneyTracker.Tests.Database.Postgres
                     1,
                     "Company A",
                     1800,
-                    DateTime.Parse("2024-08-28T00:00:00Z").ToUniversalTime(),
-                    "Wages & Salary : Net Pay"
+                    new DateOnly(2024, 8, 28),
+                    "Wages & Salary : Net Pay",
+                    "bank a"
                 ),
                 new TransactionEntityDTO(
                     7,
                     "Hobby item",
                     150,
-                    DateTime.Parse("2024-08-09T00:00:00Z").ToUniversalTime(),
-                    "Hobby"
+                    new DateOnly(2024, 8, 9),
+                    "Hobby",
+                    "bank a"
                 ),
                 new TransactionEntityDTO(
                     5,
                     "Supermarket",
                     23,
-                    DateTime.Parse("2024-08-08T00:00:00Z").ToUniversalTime(),
-                    "Groceries"
+                    new DateOnly(2024, 8, 8),
+                    "Groceries",
+                    "bank b"
                 ),
                 new TransactionEntityDTO(
                     2,
                     "Phone company",
                     10,
-                    DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
-                    "Bills : Cell Phone"
+                    new DateOnly(2024, 8, 1),
+                    "Bills : Cell Phone",
+                    "bank a"
                 ),
                 new TransactionEntityDTO(
                     3,
                     "Landlord A",
                     500,
-                    DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
-                    "Bills : Rent"
+                    new DateOnly(2024, 8, 1),
+                    "Bills : Rent",
+                    "bank a"
                 ),
                 new TransactionEntityDTO(
                     4,
                     "Supermarket",
                     25,
-                    DateTime.Parse("2024-08-01T00:00:00Z").ToUniversalTime(),
-                    "Groceries"
+                    new DateOnly(2024, 8, 1),
+                    "Groceries",
+                    "bank b"
                 ),
             };
-            var actual = await register.GetAllTransactions();
+            var actual = await register.GetAllTransactions(new AuthenticatedUser(1));
             Assert.Equal(expected, actual);
         }
     }
