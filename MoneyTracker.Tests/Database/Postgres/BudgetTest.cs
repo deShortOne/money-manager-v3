@@ -22,7 +22,7 @@ namespace MoneyTracker.Tests.Database.Postgres
         {
             await _postgres.StartAsync();
 
-            Migration.CheckMigration(_postgres.GetConnectionString(), new MigrationOption(true));
+            Migration.CheckMigration(_postgres.GetConnectionString(), new MigrationOption(true, true));
 
             return;
         }
