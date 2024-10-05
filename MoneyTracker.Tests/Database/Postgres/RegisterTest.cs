@@ -16,9 +16,7 @@ namespace MoneyTracker.Tests.Database.Postgres
             .WithDockerEndpoint("tcp://localhost:2375")
 #endif
             .WithImage("postgres:16")
-            .WithName("aa")
-            .WithReuse(true)
-            .WithCleanUp(false)
+            .WithCleanUp(true)
             .Build();
 
         public async Task InitializeAsync()
