@@ -45,7 +45,7 @@ public class Startup
         {
             c.SwaggerDoc("v1", new OpenApiInfo
             {
-                Title = "JWTToken_Auth_API",
+                Title = "Money Tracker",
                 Version = "v1"
             });
             c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
