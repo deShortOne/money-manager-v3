@@ -40,7 +40,7 @@ namespace MoneyTracker.API.Controllers
         [HttpPost]
         [Route("add")]
         [Authorize]
-        public Task<TransactionResponseDTO> Add([FromBody] NewTransactionRequestDTO newRegisterDTO)
+        public Task Add([FromBody] NewTransactionRequestDTO newRegisterDTO)
         {
             var token = ControllerHelper.GetToken(_httpContextAccessor);
             if (string.IsNullOrEmpty(token))
@@ -53,7 +53,7 @@ namespace MoneyTracker.API.Controllers
         [HttpPut]
         [Route("edit")]
         [Authorize]
-        public Task<TransactionResponseDTO> Edit([FromBody] EditTransactionRequestDTO editRegisterDTO)
+        public Task Edit([FromBody] EditTransactionRequestDTO editRegisterDTO)
         {
             var token = ControllerHelper.GetToken(_httpContextAccessor);
             if (string.IsNullOrEmpty(token))
@@ -66,7 +66,7 @@ namespace MoneyTracker.API.Controllers
         [HttpDelete]
         [Route("delete")]
         [Authorize]
-        public Task<bool> Delete([FromBody] DeleteTransactionRequestDTO deleteTransaction)
+        public Task Delete([FromBody] DeleteTransactionRequestDTO deleteTransaction)
         {
             var token = ControllerHelper.GetToken(_httpContextAccessor);
             if (string.IsNullOrEmpty(token))

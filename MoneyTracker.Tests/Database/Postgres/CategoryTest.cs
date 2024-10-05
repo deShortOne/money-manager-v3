@@ -81,11 +81,10 @@ namespace MoneyTracker.Tests.Database.Postgres
 
             var categoryToAdd = new CategoryEntityDTO(7, "Hobby");
 
-            await Assert.ThrowsAsync<DuplicateNameException>(async () =>
+            await Assert.ThrowsAsync<Npgsql.PostgresException>(async () =>
             {
                 await category.AddCategory(new NewCategoryDTO(categoryToAdd.Name));
             });
-
 
             var expected = new List<CategoryEntityDTO>() {
                 new(2, "Bills : Cell Phone"),

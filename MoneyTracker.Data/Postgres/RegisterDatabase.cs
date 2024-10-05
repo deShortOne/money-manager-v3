@@ -60,21 +60,11 @@ namespace MoneyTracker.Data.Postgres
             return res;
         }
 
-        public async Task<TransactionEntityDTO> AddTransaction(NewTransactionDTO transaction)
+        public async Task AddTransaction(NewTransactionDTO transaction)
         {
             var query = """
                 INSERT INTO register (payee, amount, datePaid, category_id, account_id) VALUES
-                    (@payee, @amount, @datePaid, @category_id, @account_id)
-                RETURNING (id),
-                    (payee), 
-                    (amount), 
-                    (datePaid), 
-                    (SELECT name AS category_name
-                        FROM category
-                        WHERE id = @category_id),
-                    (SELECT name AS account_name
-                        FROM account
-                        WHERE id = @account_id);
+                    (@payee, @amount, @datePaid, @category_id, @account_id);
                 """;
             var queryParams = new List<DbParameter>()
             {
@@ -84,22 +74,11 @@ namespace MoneyTracker.Data.Postgres
                 new NpgsqlParameter("category_id", transaction.Category),
                 new NpgsqlParameter("account_id", transaction.AccountId),
             };
-            using var reader = await _database.GetTable(query, queryParams);
-            if (await reader.ReadAsync())
-            {
-                return new TransactionEntityDTO(
-                    reader.GetInt32("id"),
-                    reader.GetString("payee"),
-                    reader.GetDecimal("amount"),
-                    DateOnly.FromDateTime(reader.GetDateTime("datePaid")),
-                    reader.GetString("category_name"),
-                    reader.GetString("account_name")
-                );
-            }
-            throw new ExternalException("Database failed to return data");
+
+            await _database.GetTable(query, queryParams);
         }
 
-        public async Task<TransactionEntityDTO> EditTransaction(EditTransactionDTO tramsaction)
+        public async Task EditTransaction(EditTransactionDTO tramsaction)
         {
             var setParamsLis = new List<string>();
             var queryParams = new List<DbParameter>()
@@ -140,35 +119,13 @@ namespace MoneyTracker.Data.Postgres
             var query = $"""
                 UPDATE register 
                     SET {string.Join(",", setParamsLis)}
-                WHERE id = @id
-                RETURNING (id),
-                    (payee), 
-                    (amount), 
-                    (datePaid), 
-                    (SELECT name category_name
-                        FROM category
-                        WHERE id = category_id),
-                    (SELECT name account_id
-                        FROM account
-                        WHERE id = account_id);
+                WHERE id = @id;
                 """;
 
-            using var reader = await _database.GetTable(query, queryParams);
-            if (await reader.ReadAsync())
-            {
-                return new TransactionEntityDTO(
-                    reader.GetInt32("id"),
-                    reader.GetString("payee"),
-                    reader.GetDecimal("amount"),
-                    DateOnly.FromDateTime(reader.GetDateTime("datePaid")),
-                    reader.GetString("category_name"),
-                    reader.GetString("account_id")
-                );
-            }
-            throw new ExternalException("Database failed to return data");
+            await _database.GetTable(query, queryParams);
         }
 
-        public async Task<bool> DeleteTransaction(DeleteTransactionDTO transaction)
+        public async Task DeleteTransaction(DeleteTransactionDTO transaction)
         {
             var query = """
                 DELETE FROM register
@@ -178,8 +135,7 @@ namespace MoneyTracker.Data.Postgres
             {
                 new NpgsqlParameter("id", transaction.Id),
             };
-            var reader = await _database.UpdateTable(query, queryParams);
-            return reader == 1;
+            await _database.UpdateTable(query, queryParams);
         }
 
         public async Task<bool> IsTransactionOwnedByUser(AuthenticatedUser user, int transactionId)

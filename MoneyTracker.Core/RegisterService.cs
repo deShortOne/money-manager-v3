@@ -34,7 +34,7 @@ public class RegisterService : IRegisterService
         return res;
     }
 
-    public async Task<TransactionResponseDTO> AddTransaction(string token, NewTransactionRequestDTO newTransaction)
+    public async Task AddTransaction(string token, NewTransactionRequestDTO newTransaction)
     {
         var user = await _userAuthService.DecodeToken(token);
         if (!await _accountDb.IsAccountOwnedByUser(user, newTransaction.AccountId))
@@ -44,11 +44,11 @@ public class RegisterService : IRegisterService
 
         var dtoToDb = new NewTransactionDTO(newTransaction.Payee, newTransaction.Amount,
             newTransaction.DatePaid, newTransaction.Category, newTransaction.AccountId);
-        var dtoFromDb = await _dbService.AddTransaction(dtoToDb);
-        return new(dtoFromDb.Id, dtoFromDb.Payee, dtoFromDb.Amount, dtoFromDb.DatePaid, dtoFromDb.Category, dtoFromDb.AccountName);
+
+        await _dbService.AddTransaction(dtoToDb);
     }
 
-    public async Task<TransactionResponseDTO> EditTransaction(string token, EditTransactionRequestDTO editTransaction)
+    public async Task EditTransaction(string token, EditTransactionRequestDTO editTransaction)
     {
         var user = await _userAuthService.DecodeToken(token);
         if (!await _dbService.IsTransactionOwnedByUser(user, editTransaction.Id))
@@ -62,11 +62,11 @@ public class RegisterService : IRegisterService
 
         var dtoToDb = new EditTransactionDTO(editTransaction.Id, editTransaction.Payee, editTransaction.Amount,
             editTransaction.DatePaid, editTransaction.Category, editTransaction.AccountId);
-        var dtoFromDb = await _dbService.EditTransaction(dtoToDb);
-        return new(dtoFromDb.Id, dtoFromDb.Payee, dtoFromDb.Amount, dtoFromDb.DatePaid, dtoFromDb.Category, dtoFromDb.AccountName);
+
+        await _dbService.EditTransaction(dtoToDb);
     }
 
-    public async Task<bool> DeleteTransaction(string token, DeleteTransactionRequestDTO deleteTransaction)
+    public async Task DeleteTransaction(string token, DeleteTransactionRequestDTO deleteTransaction)
     {
         var user = await _userAuthService.DecodeToken(token);
         if (!await _dbService.IsTransactionOwnedByUser(user, deleteTransaction.Id))
@@ -75,6 +75,6 @@ public class RegisterService : IRegisterService
         }
 
         var dtoToDb = new DeleteTransactionDTO(deleteTransaction.Id);
-        return await _dbService.DeleteTransaction(dtoToDb);
+        await _dbService.DeleteTransaction(dtoToDb);
     }
 }
