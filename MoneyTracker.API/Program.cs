@@ -28,7 +28,8 @@ builder.Services.AddSwaggerGen(c =>
 
 var dbConnString = builder.Configuration["Database:Paelagus_RO"];
 builder.Services.AddSingleton<IDatabase>(_ => new PostgresDatabase(dbConnString))
-    .AddSingleton<IDateProvider, DateProvider>();
+    .AddSingleton<IDateProvider, DateProvider>()
+    .AddSingleton<IDateTimeProvider, DateTimeProvider>();
 builder.Services
     .AddSingleton<IUserAuthDatabase, UserAuthDatabase>()
     .AddSingleton<IUserAuthenticationService, UserAuthenticationService>()
@@ -37,7 +38,8 @@ builder.Services
         builder.Configuration["Jwt:Aud"],
         builder.Configuration["Jwt:Key"],
         int.Parse(builder.Configuration["Jwt:Expires"])
-    ));
+    ))
+    .AddSingleton<IAccountDatabase, AccountDatabase>();
 
 Startup.SetBillDependencyInjection(builder.Services);
 Startup.SetBudgetDependencyInjection(builder.Services);
