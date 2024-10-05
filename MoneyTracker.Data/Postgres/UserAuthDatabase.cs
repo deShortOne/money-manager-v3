@@ -16,26 +16,26 @@ public class UserAuthDatabase : IUserAuthDatabase
         _database = db;
     }
 
-    public async Task<AuthenticatedUser> AuthenticateUser(LoginWithUsernameAndPassword userToLogIn)
+    public async Task<UserEntity?> GetUserByUsername(string username)
     {
         var query = """
-            SELECT id
+            SELECT id, name
             FROM users
             WHERE name = @username
          """;
         var queryParams = new List<DbParameter>()
         {
-            new NpgsqlParameter("username", userToLogIn.Username),
+            new NpgsqlParameter("username", username),
         };
 
         using var reader = await _database.GetTable(query, queryParams);
 
         if (await reader.ReadAsync())
         {
-            return new AuthenticatedUser(reader.GetInt32("id"));
+            return new UserEntity(reader.GetInt32("id"), reader.GetString("name"));
         }
 
-        throw new InvalidDataException("User does not exist!");
+        return null;
     }
 
     public async Task<Guid> GenerateTempGuidForUser(AuthenticatedUser user, DateTime expiration)

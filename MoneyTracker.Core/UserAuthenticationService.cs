@@ -24,14 +24,19 @@ public class UserAuthenticationService : IUserAuthenticationService
         _dateTimeProvider = dateTimeProvider;
     }
 
-    public Task<AuthenticatedUser> AuthenticateUser(LoginWithUsernameAndPassword user)
+    public async Task<AuthenticatedUser> AuthenticateUser(LoginWithUsernameAndPassword user)
     {
-        return _dbService.AuthenticateUser(user);
+        var userEntity = await _dbService.GetUserByUsername(user.Username);
+        if (userEntity == null)
+        {
+            throw new InvalidDataException("User does not exist");
+        }
+        return new AuthenticatedUser(userEntity.Id);
     }
 
     public async Task<string> GenerateToken(LoginWithUsernameAndPassword user)
     {
-        var userInfo = await _dbService.AuthenticateUser(user);
+        var userInfo = await AuthenticateUser(user);
 
         var expiration = _dateTimeProvider.Now.AddMinutes(_jwtToken.Expires);
         var userGuid = await _dbService.GenerateTempGuidForUser(userInfo, expiration);
