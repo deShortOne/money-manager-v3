@@ -16,14 +16,16 @@ namespace MoneyTracker.Tests.Database.Postgres
             .WithDockerEndpoint("tcp://localhost:2375")
 #endif
             .WithImage("postgres:16")
-            .WithCleanUp(true)
+            .WithName("aa")
+            .WithReuse(true)
+            .WithCleanUp(false)
             .Build();
 
         public async Task InitializeAsync()
         {
             await _postgres.StartAsync();
 
-            Migration.CheckMigration(_postgres.GetConnectionString(), new MigrationOption(true));
+            Migration.CheckMigration(_postgres.GetConnectionString(), new MigrationOption(true, true));
 
             return;
         }

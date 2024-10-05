@@ -36,7 +36,7 @@ public class BillController : ControllerBase
     [HttpPost]
     [Route("add")]
     [Authorize]
-    public Task<List<BillResponseDTO>> AddBill([FromBody] NewBillRequestDTO newBill)
+    public Task AddBill([FromBody] NewBillRequestDTO newBill)
     {
         var token = ControllerHelper.GetToken(_httpContextAccessor);
         if (string.IsNullOrEmpty(token))
@@ -49,7 +49,7 @@ public class BillController : ControllerBase
     [HttpPut]
     [Route("edit")]
     [Authorize]
-    public Task<List<BillResponseDTO>> EditBill([FromBody] EditBillRequestDTO editBill)
+    public Task EditBill([FromBody] EditBillRequestDTO editBill)
     {
         var token = ControllerHelper.GetToken(_httpContextAccessor);
         if (string.IsNullOrEmpty(token))
@@ -62,7 +62,7 @@ public class BillController : ControllerBase
     [HttpDelete]
     [Route("delete")]
     [Authorize]
-    public Task<List<BillResponseDTO>> DeleteBill([FromBody] DeleteBillRequestDTO deleteBill)
+    public Task DeleteBill([FromBody] DeleteBillRequestDTO deleteBill)
     {
         var token = ControllerHelper.GetToken(_httpContextAccessor);
         if (string.IsNullOrEmpty(token))
@@ -70,5 +70,18 @@ public class BillController : ControllerBase
             throw new InvalidOperationException("No token provided");
         }
         return _service.DeleteBill(token, deleteBill);
+    }
+
+    [HttpPut]
+    [Route("skipOccurence")]
+    [Authorize]
+    public Task SkipOccurence([FromBody] SkipBillOccurrenceRequestDTO skipBillDTO)
+    {
+        var token = ControllerHelper.GetToken(_httpContextAccessor);
+        if (string.IsNullOrEmpty(token))
+        {
+            throw new InvalidOperationException("No token provided");
+        }
+        return _service.SkipOccurence(token, skipBillDTO);
     }
 }

@@ -1,6 +1,4 @@
 ﻿
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using MoneyTracker.API.Controllers;
 using MoneyTracker.Core;
@@ -10,7 +8,6 @@ using MoneyTracker.DatabaseMigration.Models;
 using MoneyTracker.Shared.Auth;
 using MoneyTracker.Shared.DateManager;
 using Moq;
-using Npgsql;
 using Testcontainers.PostgreSql;
 
 namespace MoneyTracker.Tests.Controller;

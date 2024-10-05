@@ -68,7 +68,7 @@ public class BillDatabase : IBillDatabase
         return res;
     }
 
-    public async Task<List<BillEntityDTO>> AddBill(AuthenticatedUser user, NewBillDTO newBillDTO)
+    public async Task AddBill(NewBillDTO newBillDTO)
     {
         string query = """
             INSERT INTO bill (payee, amount, nextduedate, frequency, category_id, monthday, account_id)
@@ -86,17 +86,14 @@ public class BillDatabase : IBillDatabase
             };
 
         await _database.UpdateTable(query, queryParams);
-
-        return await GetAllBills(user);
     }
 
-    public async Task<List<BillEntityDTO>> EditBill(AuthenticatedUser user, EditBillDTO editBillDTO)
+    public async Task EditBill(EditBillDTO editBillDTO)
     {
         var setParamsLis = new List<string>();
         var queryParams = new List<DbParameter>()
         {
                 new NpgsqlParameter("id", editBillDTO.Id),
-                new NpgsqlParameter("user_id", user.UserId),
         };
 
         if (editBillDTO.Payee != null)
@@ -135,17 +132,10 @@ public class BillDatabase : IBillDatabase
         string query = $"""
             UPDATE bill
             SET {string.Join(",", setParamsLis)}
-            WHERE id = @id
-            AND bill.account_id IN (
-                SELECT a.id
-                FROM account a
-                WHERE a.users_id = @user_id
-            );
+            WHERE id = @id;
             """;
 
         await _database.UpdateTable(query, queryParams);
-
-        return await GetAllBills(user);
     }
 
     public async Task<List<BillEntityDTO>> DeleteBill(AuthenticatedUser user, DeleteBillDTO deleteBillDTO)

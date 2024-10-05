@@ -4,8 +4,8 @@ using MoneyTracker.Shared.Models.ServiceToController.Category;
 namespace MoneyTracker.Shared.Core;
 public interface ICategoryService
 {
-    Task<CategoryResponseDTO> AddCategory(NewCategoryRequestDTO categoryName);
-    Task<bool> DeleteCategory(DeleteCategoryRequestDTO deleteCategory);
-    Task<CategoryResponseDTO> EditCategory(EditCategoryRequestDTO editCategory);
+    Task AddCategory(NewCategoryRequestDTO categoryName);
+    Task DeleteCategory(DeleteCategoryRequestDTO deleteCategory);
+    Task EditCategory(EditCategoryRequestDTO editCategory);
     Task<List<CategoryResponseDTO>> GetAllCategories();
 }

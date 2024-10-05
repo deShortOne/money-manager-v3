@@ -6,11 +6,9 @@ using MoneyTracker.DatabaseMigration.Models;
 using MoneyTracker.Shared.Auth;
 using MoneyTracker.Shared.Core;
 using MoneyTracker.Shared.Models.ControllerToService.Transaction;
-using MoneyTracker.Shared.Models.RepositoryToService.Transaction;
 using MoneyTracker.Shared.Models.ServiceToController.Transaction;
 using Moq;
 using Testcontainers.PostgreSql;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MoneyTracker.Tests.Core;
 public sealed class RegisterServiceTest : IAsyncLifetime
@@ -57,7 +55,7 @@ public sealed class RegisterServiceTest : IAsyncLifetime
     }
 
     [Fact]
-    public async void EditTransaction_ChangeCategory_ReturnsTransactionWithNewCategory()
+    public async void EditTransaction_ChangeCategory_Succeeds()
     {
         var db = new PostgresDatabase(_postgres.GetConnectionString());
         var registerDb = new RegisterDatabase(db);
@@ -67,8 +65,22 @@ public sealed class RegisterServiceTest : IAsyncLifetime
         mockAuthService.Setup(x => x.DecodeToken(It.IsAny<string>())).Returns(Task.FromResult(new AuthenticatedUser(1)));
 
         var registerService = new RegisterService(registerDb, mockAuthService.Object, accountDb);
-        var returnedTransaction = await registerService.EditTransaction("", new EditTransactionRequestDTO(2, category: 5));
-        Assert.Equal(new TransactionResponseDTO(2, "Phone company", 10, new DateOnly(2024, 8, 1), "Hobby", "bank a"), returnedTransaction);
+        await registerService.EditTransaction("", new EditTransactionRequestDTO(2, category: 5));
+
+        var actual = await registerService.GetAllTransactions("");
+
+        var expected = new List<TransactionResponseDTO>()
+        {
+            new(1, "Company A", 1800, new DateOnly(2024, 8, 28), "Wages & Salary : Net Pay", "bank a"),
+            new(6, "Supermarket", 27, new DateOnly(2024, 8, 15), "Groceries", "bank b"),
+            new(7, "Hobby item", 150, new DateOnly(2024, 8, 9), "Hobby", "bank a"),
+            new(5, "Supermarket", 23, new DateOnly(2024, 8, 8), "Groceries", "bank b"),
+            new(3, "Landlord A", 500, new DateOnly(2024, 8, 1), "Bills : Rent", "bank a"),
+            new(4, "Supermarket", 25, new DateOnly(2024, 8, 1), "Groceries", "bank b"),
+            new(2, "Phone company", 10, new DateOnly(2024, 8, 1), "Hobby", "bank a"),
+        };
+
+        Assert.Equal(expected, actual);
     }
 
     [Fact]

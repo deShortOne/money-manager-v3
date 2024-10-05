@@ -8,9 +8,9 @@ namespace MoneyTracker.Shared.Data
     public interface IRegisterDatabase
     {
         public Task<List<TransactionEntityDTO>> GetAllTransactions(AuthenticatedUser user);
-        public Task<TransactionEntityDTO> AddTransaction(NewTransactionDTO transaction);
-        public Task<TransactionEntityDTO> EditTransaction(EditTransactionDTO tramsaction);
-        public Task<bool> DeleteTransaction(DeleteTransactionDTO transaction);
+        public Task AddTransaction(NewTransactionDTO transaction);
+        public Task EditTransaction(EditTransactionDTO tramsaction);
+        public Task DeleteTransaction(DeleteTransactionDTO transaction);
         public Task<bool> IsTransactionOwnedByUser(AuthenticatedUser user, int transactionId);
     }
 }

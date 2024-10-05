@@ -1,6 +1,5 @@
 ﻿using System.Data;
 using System.Data.Common;
-using System.Runtime.InteropServices;
 using MoneyTracker.Data.Global;
 using MoneyTracker.Shared.Data;
 using MoneyTracker.Shared.Models.RepositoryToService.Budget;
@@ -75,17 +74,14 @@ namespace MoneyTracker.Data.Postgres
             return res.Values.ToList();
         }
 
-        public async Task<BudgetCategoryEntityDTO> AddBudgetCategory(NewBudgetCategoryDTO newBudget)
+        public async Task AddBudgetCategory(NewBudgetCategoryDTO newBudget)
         {
             // TODO - USERS ID
             var queryInsertIntoBudgetCategory = """
                 INSERT INTO budgetcategory VALUES
                     (1, @budgetGroupId, @categoryId, @planned)
                 ON CONFLICT (users_id, budget_group_id, category_id) DO UPDATE
-                    SET planned = @planned
-                RETURNING (SELECT name FROM category WHERE id = @categoryId),
-                    (planned),
-                    (coalesce((SELECT SUM(amount) actual FROM register WHERE category_id = @categoryId), 0)) actual;
+                    SET planned = @planned;
                 """;
             var queryInsertIntoBudgetCategoryParams = new List<DbParameter>()
             {
@@ -94,18 +90,10 @@ namespace MoneyTracker.Data.Postgres
                 new NpgsqlParameter("categoryId", newBudget.CategoryId),
             };
 
-            var reader = await _database.GetTable(queryInsertIntoBudgetCategory, queryInsertIntoBudgetCategoryParams);
-            if (await reader.ReadAsync())
-            {
-                var name = reader.GetString("name");
-                var planned = reader.GetDecimal("planned");
-                var actual = reader.GetDecimal("actual");
-                return new BudgetCategoryEntityDTO(name, planned, actual, planned - actual);
-            }
-            throw new ExternalException("Database failed to return data");
+            await _database.GetTable(queryInsertIntoBudgetCategory, queryInsertIntoBudgetCategoryParams);
         }
 
-        public async Task<List<BudgetGroupEntityDTO>> EditBudgetCategory(EditBudgetCategoryDTO editBudgetCateogry)
+        public async Task EditBudgetCategory(EditBudgetCategoryDTO editBudgetCateogry)
         {
             var setParamsLis = new List<string>();
             var queryParams = new List<DbParameter>()
@@ -131,13 +119,11 @@ namespace MoneyTracker.Data.Postgres
             var reader = await _database.UpdateTable(query, queryParams);
             if (reader != 1)
             {
-                throw new Exception("Unknown error");
+                throw new InvalidDataException("Unknown error");
             }
-
-            return await GetBudget();
         }
 
-        public async Task<bool> DeleteBudgetCategory(DeleteBudgetCategoryDTO deleteBudgetCategory)
+        public async Task DeleteBudgetCategory(DeleteBudgetCategoryDTO deleteBudgetCategory)
         {
             var query = """
                 DELETE FROM budgetcategory
@@ -147,8 +133,7 @@ namespace MoneyTracker.Data.Postgres
             {
                 new NpgsqlParameter("id", deleteBudgetCategory.BudgetCategoryId),
             };
-            var reader = await _database.UpdateTable(query, queryParams);
-            return reader == 1;
+            await _database.UpdateTable(query, queryParams);
         }
     }
 }

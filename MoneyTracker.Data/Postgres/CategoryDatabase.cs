@@ -38,37 +38,26 @@ namespace MoneyTracker.Data.Postgres
             return res;
         }
 
-        public async Task<CategoryEntityDTO> AddCategory(NewCategoryDTO categoryName)
+        public async Task AddCategory(NewCategoryDTO categoryName)
         {
-            // UPSERTS!! and gets id
             var queryGetIdOfCategoryName = """
                 INSERT INTO category (name) VALUES
-                    (@categoryName)
-                ON CONFLICT (name) DO NOTHING
-                RETURNING (id), (name);
+                    (@categoryName);
                 """;
             var queryGetIdOfCategoryNameParams = new List<DbParameter>()
             {
                 new NpgsqlParameter("categoryName", categoryName.Name),
             };
 
-            // get category id
             using var reader = await _database.GetTable(queryGetIdOfCategoryName, queryGetIdOfCategoryNameParams);
-            if (await reader.ReadAsync())
-            {
-                return new CategoryEntityDTO(reader.GetInt32("id"), reader.GetString("name"));
-            }
-            throw new DuplicateNameException($"Category {categoryName} already exists");
         }
 
-        public async Task<CategoryEntityDTO> EditCategory(EditCategoryDTO editCategoryDTO)
+        public async Task EditCategory(EditCategoryDTO editCategoryDTO)
         {
-            // UPSERTS!! and gets id
             var queryGetIdOfCategoryName = """
                 UPDATE category
                     SET name = @categoryName
-                WHERE id = @id
-                RETURNING (id), (name);
+                WHERE id = @id;
                 """;
             var queryGetIdOfCategoryNameParams = new List<DbParameter>()
             {
@@ -76,18 +65,11 @@ namespace MoneyTracker.Data.Postgres
                 new NpgsqlParameter("categoryName", editCategoryDTO.Name),
             };
 
-            // get category id
-            using var reader = await _database.GetTable(queryGetIdOfCategoryName, queryGetIdOfCategoryNameParams);
-            if (await reader.ReadAsync())
-            {
-                return new CategoryEntityDTO(reader.GetInt32("id"), reader.GetString("name"));
-            }
-            throw new ExternalException("Database failed to return data");
+            await _database.GetTable(queryGetIdOfCategoryName, queryGetIdOfCategoryNameParams);
         }
 
-        public async Task<bool> DeleteCategory(DeleteCategoryDTO deleteCategoryDTO)
+        public async Task DeleteCategory(DeleteCategoryDTO deleteCategoryDTO)
         {
-            // UPSERTS!! and gets id
             var query = """
                 DELETE FROM category
                 WHERE id = @id;
@@ -98,8 +80,7 @@ namespace MoneyTracker.Data.Postgres
             };
 
             // get category id
-            var reader = await _database.UpdateTable(query, queryParams);
-            return reader == 1;
+            await _database.UpdateTable(query, queryParams);
         }
     }
 }

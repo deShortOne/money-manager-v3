@@ -16,14 +16,16 @@ namespace MoneyTracker.Tests.Database.Postgres
             .WithDockerEndpoint("tcp://localhost:2375")
 #endif
             .WithImage("postgres:16")
-            .WithCleanUp(true)
+            .WithName("bb")
+            .WithReuse(true)
+            .WithCleanUp(false)
             .Build();
 
         public async Task InitializeAsync()
         {
             await _postgres.StartAsync();
 
-            Migration.CheckMigration(_postgres.GetConnectionString(), new MigrationOption(true));
+            Migration.CheckMigration(_postgres.GetConnectionString(), new MigrationOption(true, true));
 
             return;
         }
@@ -81,11 +83,10 @@ namespace MoneyTracker.Tests.Database.Postgres
 
             var categoryToAdd = new CategoryEntityDTO(7, "Hobby");
 
-            await Assert.ThrowsAsync<DuplicateNameException>(async () =>
+            await Assert.ThrowsAsync<Npgsql.PostgresException>(async () =>
             {
                 await category.AddCategory(new NewCategoryDTO(categoryToAdd.Name));
             });
-
 
             var expected = new List<CategoryEntityDTO>() {
                 new(2, "Bills : Cell Phone"),
