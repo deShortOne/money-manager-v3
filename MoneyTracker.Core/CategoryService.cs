@@ -25,23 +25,24 @@ public class CategoryService : ICategoryService
         return res;
     }
 
-    public async Task<CategoryResponseDTO> AddCategory(Shared.Models.ControllerToService.Category.NewCategoryRequestDTO categoryName)
+    public async Task AddCategory(Shared.Models.ControllerToService.Category.NewCategoryRequestDTO categoryName)
     {
         var dtoToDb = new Shared.Models.ServiceToRepository.Category.NewCategoryDTO(categoryName.Name);
-        var dtoFromDb = await _dbService.AddCategory(dtoToDb);
-        return new CategoryResponseDTO(dtoFromDb.Id, dtoFromDb.Name);
+
+        await _dbService.AddCategory(dtoToDb);
     }
 
-    public async Task<CategoryResponseDTO> EditCategory(EditCategoryRequestDTO editCategory)
+    public async Task EditCategory(EditCategoryRequestDTO editCategory)
     {
         var dtoToDb = new EditCategoryDTO(editCategory.Id, editCategory.Name);
-        var dtoFromDb = await _dbService.EditCategory(dtoToDb);
-        return new CategoryResponseDTO(dtoFromDb.Id, dtoFromDb.Name);
+
+        await _dbService.EditCategory(dtoToDb);
     }
 
-    public Task<bool> DeleteCategory(DeleteCategoryRequestDTO deleteCategory)
+    public async Task DeleteCategory(DeleteCategoryRequestDTO deleteCategory)
     {
         var dtoToDb = new DeleteCategoryDTO(deleteCategory.Id);
-        return _dbService.DeleteCategory(dtoToDb);
+
+        await _dbService.DeleteCategory(dtoToDb);
     }
 }

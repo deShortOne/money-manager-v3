@@ -28,21 +28,21 @@ namespace MoneyTracker.API.Controllers
 
         [HttpPost]
         [Route("add")]
-        public Task<CategoryResponseDTO> AddCategory([FromBody] NewCategoryRequestDTO categoryName)
+        public Task AddCategory([FromBody] NewCategoryRequestDTO categoryName)
         {
             return _service.AddCategory(categoryName);
         }
 
         [HttpPut]
         [Route("edit")]
-        public Task<CategoryResponseDTO> EditCategory([FromBody] EditCategoryRequestDTO editCategory)
+        public Task EditCategory([FromBody] EditCategoryRequestDTO editCategory)
         {
             return _service.EditCategory(editCategory);
         }
 
         [HttpDelete]
         [Route("delete")]
-        public Task<bool> DeleteCategory([FromBody] DeleteCategoryRequestDTO deleteCategory)
+        public Task DeleteCategory([FromBody] DeleteCategoryRequestDTO deleteCategory)
         {
             return _service.DeleteCategory(deleteCategory);
         }
