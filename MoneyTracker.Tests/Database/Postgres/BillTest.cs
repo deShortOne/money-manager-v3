@@ -89,7 +89,7 @@ public class BillTest : IAsyncLifetime
         var user = new AuthenticatedUser(1);
         var db = new PostgresDatabase(_postgres.GetConnectionString());
         var bill = new BillDatabase(db);
-        await bill.EditBill(user, new EditBillDTO(1, payee: "supermarket b"));
+        await bill.EditBill(new EditBillDTO(1, payee: "supermarket b"));
 
         var expected = new List<BillEntityDTO>()
         {
@@ -108,8 +108,8 @@ public class BillTest : IAsyncLifetime
         var user = new AuthenticatedUser(1);
         var db = new PostgresDatabase(_postgres.GetConnectionString());
         var bill = new BillDatabase(db);
-        await bill.EditBill(user, new EditBillDTO(1, nextDueDate: new DateOnly(2024, 5, 5)));
-        await bill.EditBill(user, new EditBillDTO(2, nextDueDate: new DateOnly(2024, 10, 17)));
+        await bill.EditBill(new EditBillDTO(1, nextDueDate: new DateOnly(2024, 5, 5)));
+        await bill.EditBill(new EditBillDTO(2, nextDueDate: new DateOnly(2024, 10, 17)));
 
         var expected = new List<BillEntityDTO>()
         {

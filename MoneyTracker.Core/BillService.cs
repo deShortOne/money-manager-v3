@@ -54,7 +54,7 @@ public class BillService : IBillService
         await _dbService.AddBill(dtoToDb);
     }
 
-    public async Task<List<BillResponseDTO>> EditBill(string token, EditBillRequestDTO editBill)
+    public async Task EditBill(string token, EditBillRequestDTO editBill)
     {
         var user = await _userAuthService.DecodeToken(token);
         if (!await _dbService.IsBillAssociatedWithUser(user, editBill.Id))
@@ -76,10 +76,10 @@ public class BillService : IBillService
             editBill.Category,
             editBill.AccountId
         );
-        return ConvertFromRepoDTOToDTO(await _dbService.EditBill(user, dtoToDb));
+        await _dbService.EditBill(dtoToDb);
     }
 
-    public async Task<List<BillResponseDTO>> DeleteBill(string token, DeleteBillRequestDTO deleteBill)
+    public async Task DeleteBill(string token, DeleteBillRequestDTO deleteBill)
     {
         var user = await _userAuthService.DecodeToken(token);
         if (!await _dbService.IsBillAssociatedWithUser(user, deleteBill.Id))
@@ -90,10 +90,11 @@ public class BillService : IBillService
         var dtoToDb = new DeleteBillDTO(
             deleteBill.Id
         );
-        return ConvertFromRepoDTOToDTO(await _dbService.DeleteBill(user, dtoToDb));
+
+        await _dbService.DeleteBill(user, dtoToDb);
     }
 
-    public async Task<BillResponseDTO> SkipOccurence(string token, SkipBillOccurrenceRequestDTO skipBillDTO)
+    public async Task SkipOccurence(string token, SkipBillOccurrenceRequestDTO skipBillDTO)
     {
         var user = await _userAuthService.DecodeToken(token);
         if (!await _dbService.IsBillAssociatedWithUser(user, skipBillDTO.Id))
@@ -105,19 +106,7 @@ public class BillService : IBillService
         var newDueDate = BillCalculation.CalculateNextDueDate(bill.Frequency, bill.MonthDay, skipBillDTO.SkipDatePastThisDate);
 
         var editBill = new EditBillDTO(skipBillDTO.Id, nextDueDate: newDueDate);
-        await _dbService.EditBill(user, editBill);
-
-        return new BillResponseDTO(
-               bill.Id,
-               bill.Payee,
-               bill.Amount,
-               newDueDate,
-               bill.Frequency,
-               bill.Category,
-               BillCalculation.CalculateOverDueBillInfo(bill.MonthDay, bill.Frequency,
-                   newDueDate, _dateProvider),
-               bill.AccountName
-           );
+        await _dbService.EditBill(editBill);
     }
 
     private List<BillResponseDTO> ConvertFromRepoDTOToDTO(List<BillEntityDTO> billRepoDTO)

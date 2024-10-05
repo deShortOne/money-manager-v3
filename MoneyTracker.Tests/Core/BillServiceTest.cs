@@ -203,7 +203,7 @@ public class BillServiceTest : IAsyncLifetime
             .Returns(Task.FromResult(new AuthenticatedUser(1)));
         var billService = new BillService(_billDb, dateProvider, mockUserAuth.Object, _accountDb);
 
-        var currNewBill = await billService.SkipOccurence("", new SkipBillOccurrenceRequestDTO(1,
+        await billService.SkipOccurence("", new SkipBillOccurrenceRequestDTO(1,
             new DateOnly(2024, 9, 17)));
 
         DateOnly[] dates = [new DateOnly(2024, 9, 24), new DateOnly(2024, 10, 1)];
@@ -216,11 +216,7 @@ public class BillServiceTest : IAsyncLifetime
         };
 
         var actual = await billService.GetAllBills("");
-        Assert.Multiple(() =>
-        {
-            Assert.Equal(expected[1], currNewBill);
-            Assert.Equal(expected, actual);
-        });
+        Assert.Equal(expected, actual);
     }
 
     [Fact]
