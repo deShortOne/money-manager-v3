@@ -4,7 +4,7 @@ using MoneyTracker.Shared.Models.ServiceToController.Bill;
 namespace MoneyTracker.Shared.Core;
 public interface IBillService
 {
-    Task<List<BillResponseDTO>> AddBill(string token, NewBillRequestDTO newBill);
+    Task AddBill(string token, NewBillRequestDTO newBill);
     Task<List<BillResponseDTO>> DeleteBill(string token, DeleteBillRequestDTO deleteBill);
     Task<List<BillResponseDTO>> EditBill(string token, EditBillRequestDTO editBill);
     Task<List<BillResponseDTO>> GetAllBills(string token);

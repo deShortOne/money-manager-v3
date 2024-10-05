@@ -128,7 +128,7 @@ public class BillTest : IAsyncLifetime
         var user = new AuthenticatedUser(1);
         var db = new PostgresDatabase(_postgres.GetConnectionString());
         var bill = new BillDatabase(db);
-        await bill.AddBill(user, new NewBillDTO("flight sim", 420, new DateOnly(2024, 09, 05), "Daily", 5, 5, 1));
+        await bill.AddBill(new NewBillDTO("flight sim", 420, new DateOnly(2024, 09, 05), "Daily", 5, 5, 1));
 
         var expected = new List<BillEntityDTO>()
         {

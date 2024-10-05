@@ -68,7 +68,7 @@ public class BillDatabase : IBillDatabase
         return res;
     }
 
-    public async Task<List<BillEntityDTO>> AddBill(AuthenticatedUser user, NewBillDTO newBillDTO)
+    public async Task AddBill(NewBillDTO newBillDTO)
     {
         string query = """
             INSERT INTO bill (payee, amount, nextduedate, frequency, category_id, monthday, account_id)
@@ -86,8 +86,6 @@ public class BillDatabase : IBillDatabase
             };
 
         await _database.UpdateTable(query, queryParams);
-
-        return await GetAllBills(user);
     }
 
     public async Task<List<BillEntityDTO>> EditBill(AuthenticatedUser user, EditBillDTO editBillDTO)

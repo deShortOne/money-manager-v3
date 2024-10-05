@@ -34,7 +34,7 @@ public class BillService : IBillService
         return ConvertFromRepoDTOToDTO(await _dbService.GetAllBills(user));
     }
 
-    public async Task<List<BillResponseDTO>> AddBill(string token, NewBillRequestDTO newBill)
+    public async Task AddBill(string token, NewBillRequestDTO newBill)
     {
         var user = await _userAuthService.DecodeToken(token);
         if (!await _accountDatabase.IsAccountOwnedByUser(user, newBill.AccountId))
@@ -51,7 +51,7 @@ public class BillService : IBillService
             newBill.MonthDay,
             newBill.AccountId
         );
-        return ConvertFromRepoDTOToDTO(await _dbService.AddBill(user, dtoToDb));
+        await _dbService.AddBill(dtoToDb);
     }
 
     public async Task<List<BillResponseDTO>> EditBill(string token, EditBillRequestDTO editBill)

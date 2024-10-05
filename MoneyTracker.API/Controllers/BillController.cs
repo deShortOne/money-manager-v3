@@ -36,7 +36,7 @@ public class BillController : ControllerBase
     [HttpPost]
     [Route("add")]
     [Authorize]
-    public Task<List<BillResponseDTO>> AddBill([FromBody] NewBillRequestDTO newBill)
+    public Task AddBill([FromBody] NewBillRequestDTO newBill)
     {
         var token = ControllerHelper.GetToken(_httpContextAccessor);
         if (string.IsNullOrEmpty(token))
