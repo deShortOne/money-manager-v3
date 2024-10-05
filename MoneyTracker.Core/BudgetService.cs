@@ -20,23 +20,25 @@ public class BudgetService : IBudgetService
         return ConvertFromRepoDTOToDTO(await _dbService.GetBudget());
     }
 
-    public async Task<BudgetCategoryResponseDTO> AddBudgetCategory(NewBudgetCategoryRequestDTO newBudget)
+    public async Task AddBudgetCategory(NewBudgetCategoryRequestDTO newBudget)
     {
         var dtoToDb = new NewBudgetCategoryDTO(newBudget.BudgetGroupId, newBudget.CategoryId, newBudget.Planned);
-        var dtoFromDb = await _dbService.AddBudgetCategory(dtoToDb);
-        return new BudgetCategoryResponseDTO(dtoFromDb.Name, dtoFromDb.Planned, dtoFromDb.Actual, dtoFromDb.Difference);
+
+        await _dbService.AddBudgetCategory(dtoToDb);
     }
 
-    public async Task<List<BudgetGroupResponseDTO>> EditBudgetCategory(EditBudgetCategoryRequestDTO editBudgetCategory)
+    public async Task EditBudgetCategory(EditBudgetCategoryRequestDTO editBudgetCategory)
     {
         var dtoToDb = new EditBudgetCategoryDTO(editBudgetCategory.BudgetCategoryId, editBudgetCategory.BudgetGroupId, editBudgetCategory.BudgetCategoryPlanned);
-        return ConvertFromRepoDTOToDTO(await _dbService.EditBudgetCategory(dtoToDb));
+
+        await _dbService.EditBudgetCategory(dtoToDb);
     }
 
-    public Task<bool> DeleteBudgetCategory(DeleteBudgetCategoryRequestDTO deleteBudgetCategory)
+    public async Task DeleteBudgetCategory(DeleteBudgetCategoryRequestDTO deleteBudgetCategory)
     {
         var dtoToDb = new DeleteBudgetCategoryDTO(deleteBudgetCategory.BudgetCategoryId);
-        return _dbService.DeleteBudgetCategory(dtoToDb);
+
+        await _dbService.DeleteBudgetCategory(dtoToDb);
     }
 
     private List<BudgetGroupResponseDTO> ConvertFromRepoDTOToDTO(List<BudgetGroupEntityDTO> billRepoDTO)

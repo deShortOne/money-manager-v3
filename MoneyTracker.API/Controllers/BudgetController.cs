@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using MoneyTracker.Shared.Core;
 using MoneyTracker.Shared.Models.ControllerToService.Budget;
 using MoneyTracker.Shared.Models.ServiceToController.Budget;
@@ -20,6 +21,7 @@ namespace MoneyTracker.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         [Route("get")]
         public Task<List<BudgetGroupResponseDTO>> Get()
         {
@@ -27,22 +29,25 @@ namespace MoneyTracker.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         [Route("category/add")]
-        public Task<BudgetCategoryResponseDTO> AddBudgetCategory([FromBody] NewBudgetCategoryRequestDTO newBudget)
+        public Task AddBudgetCategory([FromBody] NewBudgetCategoryRequestDTO newBudget)
         {
             return _service.AddBudgetCategory(newBudget);
         }
 
         [HttpPut]
+        [Authorize]
         [Route("category/edit")]
-        public Task<List<BudgetGroupResponseDTO>> EditBudgetCategory([FromBody] EditBudgetCategoryRequestDTO editBudgetCategory)
+        public Task EditBudgetCategory([FromBody] EditBudgetCategoryRequestDTO editBudgetCategory)
         {
             return _service.EditBudgetCategory(editBudgetCategory);
         }
 
         [HttpDelete]
+        [Authorize]
         [Route("category/delete")]
-        public Task<bool> DeleteBudgetCategory([FromBody] DeleteBudgetCategoryRequestDTO deleteBudgetCategory)
+        public Task DeleteBudgetCategory([FromBody] DeleteBudgetCategoryRequestDTO deleteBudgetCategory)
         {
             return _service.DeleteBudgetCategory(deleteBudgetCategory);
         }
