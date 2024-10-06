@@ -15,26 +15,37 @@ public sealed class GenerateTokenTest
     [Fact]
     public void SuccessfullyGenerateAndDecodeTokenForUser()
     {
-        var userToAuthenticate = new LoginWithUsernameAndPassword("root", "root-pass");
-        var expected = new AuthenticatedUser(1);
-
+        var userId = 1;
+        var username = "root";
+        var userProvidedpassword = "root-pass";
+        var databasePassword = "root-pass";
         var tempToken = Guid.NewGuid();
         var tempJti = Guid.NewGuid();
+        var jwtConfigIss = "iss_company a";
+        var jwtConfigAud = "aud_company b";
+        var jwtConfigKey = "TOPSECRETTOPSECRETTOPSECRETTOPSE";
+        var jwtConfigExp = 15;
+        var dateTimeNow = new DateTime(2024, 10, 06, 9, 0, 0);
+        var dateTimeExp = dateTimeNow.AddMinutes(jwtConfigExp);
+
+        var userToAuthenticate = new LoginWithUsernameAndPassword(username, userProvidedpassword);
+        var expected = new AuthenticatedUser(userId);
+
         var mockIdGenerator = new Mock<IIdGenerator>();
         mockIdGenerator.SetupSequence(x => x.NewGuid)
             .Returns(tempToken)
             .Returns(tempJti);
 
         var mockDateTimeProvider = new Mock<IDateTimeProvider>();
-        mockDateTimeProvider.Setup(x => x.Now).Returns(new DateTime(2024, 10, 06, 9, 0, 0));
+        mockDateTimeProvider.Setup(x => x.Now).Returns(dateTimeNow);
 
         var mockUserDb = new Mock<IUserAuthDatabase>();
-        mockUserDb.Setup(x => x.GetUserByUsername("root"))
-            .Returns(Task.FromResult<UserEntity?>(new UserEntity(1, "root", "root-pass")));
-        mockUserDb.Setup(x => x.StoreTemporaryTokenToUser(expected, tempToken, new DateTime(2024, 10, 06, 9, 15, 0)));
+        mockUserDb.Setup(x => x.GetUserByUsername(username))
+            .Returns(Task.FromResult<UserEntity?>(new UserEntity(userId, username, databasePassword)));
+        mockUserDb.Setup(x => x.StoreTemporaryTokenToUser(expected, tempToken, dateTimeExp));
 
         var mockPasswordHasher = new Mock<IPasswordHasher>();
-        mockPasswordHasher.Setup(x => x.VerifyPassword("root-pass", "root-pass", "salt goes here"))
+        mockPasswordHasher.Setup(x => x.VerifyPassword(databasePassword, userProvidedpassword, "salt goes here"))
             .Returns(true);
 
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
@@ -45,10 +56,10 @@ public sealed class GenerateTokenTest
         var mockJwtTokenCreator = new Mock<SecurityTokenHandler>();
         mockJwtTokenCreator.Setup(x => x.WriteToken(It.Is(checkSomeValuesOfJwtSecurityToken))).Returns("Successfully tokenised");
 
-        var jwtToken = new JwtConfig("iss_company a",
-            "aud_company b",
-            "TOPSECRETTOPSECRETTOPSECRETTOPSE",
-            15
+        var jwtToken = new JwtConfig(jwtConfigIss,
+            jwtConfigAud,
+            jwtConfigKey,
+            jwtConfigExp
         );
 
         var userAuthService = new UserAuthenticationService(mockUserDb.Object,
@@ -62,11 +73,12 @@ public sealed class GenerateTokenTest
         {
             Assert.Equal("Successfully tokenised", await userAuthService.GenerateToken(userToAuthenticate));
 
-            mockUserDb.Verify(x => x.GetUserByUsername("root"), Times.Once);
-            mockUserDb.Verify(x => x.StoreTemporaryTokenToUser(expected, tempToken, new DateTime(2024, 10, 06, 9, 15, 0)), Times.Once);
-            mockPasswordHasher.Verify(x => x.VerifyPassword("root-pass", "root-pass", "salt goes here"), Times.Once);
-
+            mockUserDb.Verify(x => x.GetUserByUsername(username), Times.Once);
+            mockUserDb.Verify(x => x.StoreTemporaryTokenToUser(expected, tempToken, dateTimeExp), Times.Once);
+            mockDateTimeProvider.Verify(x => x.Now, Times.Once);
+            mockPasswordHasher.Verify(x => x.VerifyPassword(databasePassword, userProvidedpassword, "salt goes here"), Times.Once);
             mockIdGenerator.Verify(x => x.NewGuid, Times.Exactly(2));
+            mockJwtTokenCreator.Verify(x => x.WriteToken(It.Is(checkSomeValuesOfJwtSecurityToken)), Times.Once);
         });
     }
 }
