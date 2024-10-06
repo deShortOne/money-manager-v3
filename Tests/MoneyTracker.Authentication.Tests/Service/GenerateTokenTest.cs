@@ -13,7 +13,7 @@ namespace MoneyTracker.Authentication.Tests.Service;
 public sealed class GenerateTokenTest
 {
     [Fact]
-    public void SuccessfullyGenerateAndDecodeTokenForUser()
+    public void SuccessfullyGenerateATokenForUser()
     {
         var userId = 1;
         var username = "root";
@@ -79,6 +79,56 @@ public sealed class GenerateTokenTest
             mockPasswordHasher.Verify(x => x.VerifyPassword(databasePassword, userProvidedpassword, "salt goes here"), Times.Once);
             mockIdGenerator.Verify(x => x.NewGuid, Times.Exactly(2));
             mockJwtTokenCreator.Verify(x => x.WriteToken(It.Is(checkSomeValuesOfJwtSecurityToken)), Times.Once);
+        });
+    }
+
+    [Fact]
+    public void FailToGenerateATokenForUserDueToNotBeingAbleToAuthenticateUser()
+    {
+        var userId = 1;
+        var username = "root";
+        var userProvidedpassword = "root-password";
+        var databasePassword = "root-pass";
+        var jwtConfigIss = "iss_company a";
+        var jwtConfigAud = "aud_company b";
+        var jwtConfigKey = "TOPSECRETTOPSECRETTOPSECRETTOPSE";
+        var jwtConfigExp = 15;
+
+        var userToAuthenticate = new LoginWithUsernameAndPassword(username, userProvidedpassword);
+        var expected = new AuthenticatedUser(userId);
+
+        var mockIdGenerator = new Mock<IIdGenerator>();
+
+        var mockDateTimeProvider = new Mock<IDateTimeProvider>();
+
+        var mockUserDb = new Mock<IUserAuthDatabase>();
+        mockUserDb.Setup(x => x.GetUserByUsername(username))
+            .Returns(Task.FromResult<UserEntity?>(new UserEntity(userId, username, databasePassword)));
+
+        var mockPasswordHasher = new Mock<IPasswordHasher>();
+
+        var mockJwtTokenCreator = new Mock<SecurityTokenHandler>();
+
+        var jwtToken = new JwtConfig(jwtConfigIss,
+            jwtConfigAud,
+            jwtConfigKey,
+            jwtConfigExp
+        );
+
+        var userAuthService = new UserAuthenticationService(mockUserDb.Object,
+            jwtToken,
+            mockDateTimeProvider.Object,
+            mockPasswordHasher.Object,
+            mockIdGenerator.Object,
+            mockJwtTokenCreator.Object);
+
+        Assert.Multiple(async () =>
+        {
+            await Assert.ThrowsAsync<InvalidDataException>(async () =>
+            {
+                await userAuthService.GenerateToken(userToAuthenticate);
+            });
+            mockUserDb.Verify(x => x.GetUserByUsername(username), Times.Once);
         });
     }
 }
