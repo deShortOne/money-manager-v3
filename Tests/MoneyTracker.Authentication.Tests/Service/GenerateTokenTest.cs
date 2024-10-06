@@ -9,7 +9,7 @@ using MoneyTracker.Shared.DateManager;
 using MoneyTracker.Shared.Shared;
 using Moq;
 
-namespace MoneyTracker.Authentication.Service;
+namespace MoneyTracker.Authentication.Tests.Service;
 public sealed class GenerateTokenTest
 {
     [Fact]

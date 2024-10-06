@@ -19,7 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoneyTracker.Core", "MoneyT
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{C5874616-B5BD-431D-BA2C-4A3FC6295196}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoneyTracker.Authentication", "Tests\MoneyTracker.Authentication\MoneyTracker.Authentication.csproj", "{78AE64F7-40C1-43B3-ABD2-BAE446B0C872}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoneyTracker.Authentication.Tests", "Tests\MoneyTracker.Authentication.Tests\MoneyTracker.Authentication.Tests.csproj", "{78AE64F7-40C1-43B3-ABD2-BAE446B0C872}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
