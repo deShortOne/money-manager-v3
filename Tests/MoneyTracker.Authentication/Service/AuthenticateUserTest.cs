@@ -9,13 +9,13 @@ namespace MoneyTracker.Authentication.Service;
 public class AuthenticateUserTest
 {
     [Fact]
-    public async void SuccessfullyLogInUser1()
+    public void SuccessfullyLogInUser1()
     {
         var userToAuthenticate = new LoginWithUsernameAndPassword("root", "root-pass");
         var expected = new AuthenticatedUser(1);
 
-        var userDb = new Mock<IUserAuthDatabase>();
-        userDb.Setup(x => x.GetUserByUsername("root"))
+        var mockUserDb = new Mock<IUserAuthDatabase>();
+        mockUserDb.Setup(x => x.GetUserByUsername("root"))
             .Returns(Task.FromResult<UserEntity?>(new UserEntity(1, "root", "root-pass")));
 
         var mockPasswordHasher = new Mock<IPasswordHasher>();
@@ -23,20 +23,26 @@ public class AuthenticateUserTest
             .Returns(true);
 
         var jwtToken = new JwtConfig("", "", "", 0);
-        var userAuthService = new UserAuthenticationService(userDb.Object, jwtToken, new DateTimeProvider(),
+        var userAuthService = new UserAuthenticationService(mockUserDb.Object, jwtToken, new DateTimeProvider(),
             mockPasswordHasher.Object);
 
-        Assert.Equal(expected, await userAuthService.AuthenticateUser(userToAuthenticate));
+        Assert.Multiple(async () =>
+        {
+            Assert.Equal(expected, await userAuthService.AuthenticateUser(userToAuthenticate));
+
+            mockUserDb.Verify(x => x.GetUserByUsername("root"), Times.Once);
+            mockPasswordHasher.Verify(x => x.VerifyPassword("root-pass", "root-pass", "salt goes here"), Times.Once);
+        });
     }
 
     [Fact]
-    public async void SuccessfullyLogInUser2()
+    public void SuccessfullyLogInUser2()
     {
         var userToAuthenticate = new LoginWithUsernameAndPassword("secondary root", "secondary root-pass");
         var expected = new AuthenticatedUser(2);
 
-        var userDb = new Mock<IUserAuthDatabase>();
-        userDb.Setup(x => x.GetUserByUsername(It.Is<string>(y => y == "secondary root")))
+        var mockUserDb = new Mock<IUserAuthDatabase>();
+        mockUserDb.Setup(x => x.GetUserByUsername(It.Is<string>(y => y == "secondary root")))
             .Returns(Task.FromResult<UserEntity?>(new UserEntity(2, "secondary root", "secondary root-pass")));
 
         var mockPasswordHasher = new Mock<IPasswordHasher>();
@@ -44,14 +50,50 @@ public class AuthenticateUserTest
             .Returns(true);
 
         var jwtToken = new JwtConfig("", "", "", 0);
-        var userAuthService = new UserAuthenticationService(userDb.Object, jwtToken, new DateTimeProvider(),
+        var userAuthService = new UserAuthenticationService(mockUserDb.Object, jwtToken, new DateTimeProvider(),
             mockPasswordHasher.Object);
 
-        Assert.Equal(expected, await userAuthService.AuthenticateUser(userToAuthenticate));
+        Assert.Multiple(async () =>
+        {
+            Assert.Equal(expected, await userAuthService.AuthenticateUser(userToAuthenticate));
+
+            mockUserDb.Verify(x => x.GetUserByUsername("secondary root"), Times.Once);
+            mockPasswordHasher.Verify(x => x.VerifyPassword("secondary root-pass", "secondary root-pass", "salt goes here"), Times.Once);
+        });
     }
 
     [Fact]
-    public async void FailToLogInUserThatDoesntExist()
+    public void User1_CorrectUsernameWrongPassword_FailsToAuthenticateUser()
+    {
+        var userToAuthenticate = new LoginWithUsernameAndPassword("root", "root-");
+
+        var mockUserDb = new Mock<IUserAuthDatabase>();
+        mockUserDb.Setup(x => x.GetUserByUsername("root"))
+            .Returns(Task.FromResult<UserEntity?>(new UserEntity(1, "root", "root-pass")));
+
+        var mockPasswordHasher = new Mock<IPasswordHasher>();
+        mockPasswordHasher.Setup(x => x.VerifyPassword("root-pass", "root-", "salt goes here"))
+            .Returns(false);
+
+        var jwtToken = new JwtConfig("", "", "", 0);
+        var userAuthService = new UserAuthenticationService(mockUserDb.Object, jwtToken, new DateTimeProvider(),
+            mockPasswordHasher.Object);
+
+        Assert.Multiple(async () =>
+        {
+            var error = await Assert.ThrowsAsync<InvalidDataException>(async () =>
+            {
+                await userAuthService.AuthenticateUser(userToAuthenticate);
+            });
+            Assert.Equal("User does not exist", error.Message);
+
+            mockUserDb.Verify(x => x.GetUserByUsername("root"), Times.Once);
+            mockPasswordHasher.Verify(x => x.VerifyPassword("root-pass", "root-", "salt goes here"), Times.Once);
+        });
+    }
+
+    [Fact]
+    public void FailToLogInUserThatDoesntExist()
     {
         var userToAuthenticate = new LoginWithUsernameAndPassword("broken root", "broken root-pass");
 
@@ -62,10 +104,14 @@ public class AuthenticateUserTest
         var userAuthService = new UserAuthenticationService(userDb.Object, jwtToken, new DateTimeProvider(),
             new PasswordHasher());
 
-        var error = await Assert.ThrowsAsync<InvalidDataException>(async () =>
+        Assert.Multiple(async () =>
         {
-            await userAuthService.AuthenticateUser(userToAuthenticate);
+            var error = await Assert.ThrowsAsync<InvalidDataException>(async () =>
+            {
+                await userAuthService.AuthenticateUser(userToAuthenticate);
+            });
+
+            Assert.Equal("User does not exist", error.Message);
         });
-        Assert.Equal("User does not exist", error.Message);
     }
 }
