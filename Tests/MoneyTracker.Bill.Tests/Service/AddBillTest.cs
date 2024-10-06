@@ -28,7 +28,7 @@ public sealed class AddBillTest
         var monthDay = 24;
         var accountId = 2;
         var newBillRequest = new NewBillRequestDTO(payee, amount, nextDueDate, frequency, category, monthDay, accountId);
-        var newBillEntity = new NewBillDTO(payee, amount, nextDueDate, frequency, category, monthDay, accountId);
+        var newBillEntity = new NewBillEntity(1, payee, amount, nextDueDate, frequency, category, monthDay, accountId);
 
         var mockDateProvider = new Mock<IDateProvider>();
 

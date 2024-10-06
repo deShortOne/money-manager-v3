@@ -16,6 +16,7 @@ public class BillService : IBillService
     private readonly IDateProvider _dateProvider;
     private readonly IUserAuthenticationService _userAuthService;
     private readonly IAccountDatabase _accountDatabase;
+    private readonly IIdGenerator _idGenerator;
 
     public BillService(IBillDatabase dbService,
         IDateProvider dateProvider,
@@ -27,6 +28,7 @@ public class BillService : IBillService
         _dateProvider = dateProvider;
         _userAuthService = userAuthService;
         _accountDatabase = accountDatabase;
+        _idGenerator = idGenerator;
     }
 
     public async Task<List<BillResponseDTO>> GetAllBills(string token)
@@ -43,7 +45,8 @@ public class BillService : IBillService
             throw new InvalidDataException("Account not found");
         }
 
-        var dtoToDb = new NewBillDTO(
+        var dtoToDb = new NewBillEntity(
+            _idGenerator.NewInt(await _dbService.GetLastId()),
             newBill.Payee,
             newBill.Amount,
             newBill.NextDueDate,

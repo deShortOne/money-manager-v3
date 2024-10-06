@@ -1,8 +1,9 @@
 ﻿
 namespace MoneyTracker.Shared.Models.ServiceToRepository.Bill;
-public class NewBillDTO(string payee, decimal amount, DateOnly nextDueDate, string frequency,
+public class NewBillEntity(int id, string payee, decimal amount, DateOnly nextDueDate, string frequency,
     int category, int monthDay, int accountId)
 {
+    public int Id { get; } = id;
     public string Payee { get; private set; } = payee;
     public decimal Amount { get; private set; } = amount;
     public DateOnly NextDueDate { get; private set; } = nextDueDate;
@@ -13,9 +14,10 @@ public class NewBillDTO(string payee, decimal amount, DateOnly nextDueDate, stri
 
     public override bool Equals(object? obj)
     {
-        var other = obj as NewBillDTO;
+        var other = obj as NewBillEntity;
         if (other == null) return false;
-        return Payee == other.Payee &&
+        return Id == other.Id &&
+            Payee == other.Payee &&
             Amount == other.Amount &&
             NextDueDate == other.NextDueDate &&
             Frequency == other.Frequency &&
@@ -26,6 +28,15 @@ public class NewBillDTO(string payee, decimal amount, DateOnly nextDueDate, stri
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(Payee, Payee, Amount, NextDueDate, Frequency, Category, MonthDay, AccountId);
+        var hash = new HashCode();
+        hash.Add(Id);
+        hash.Add(Payee);
+        hash.Add(Amount);
+        hash.Add(NextDueDate);
+        hash.Add(Frequency);
+        hash.Add(Category);
+        hash.Add(MonthDay);
+        hash.Add(AccountId);
+        return hash.ToHashCode();
     }
 }

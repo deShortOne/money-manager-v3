@@ -68,7 +68,7 @@ public class BillDatabase : IBillDatabase
         return res;
     }
 
-    public async Task AddBill(NewBillDTO newBillDTO)
+    public async Task AddBill(NewBillEntity newBillDTO)
     {
         string query = """
             INSERT INTO bill (payee, amount, nextduedate, frequency, category_id, monthday, account_id)
