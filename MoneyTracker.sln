@@ -21,6 +21,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{C5874616
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoneyTracker.Authentication.Tests", "Tests\MoneyTracker.Authentication.Tests\MoneyTracker.Authentication.Tests.csproj", "{78AE64F7-40C1-43B3-ABD2-BAE446B0C872}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoneyTracker.Bill.Tests", "Tests\MoneyTracker.Bill.Tests\MoneyTracker.Bill.Tests.csproj", "{ADB39ABD-762D-4D64-AF25-8E2AE4C038E5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,12 +61,17 @@ Global
 		{78AE64F7-40C1-43B3-ABD2-BAE446B0C872}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{78AE64F7-40C1-43B3-ABD2-BAE446B0C872}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{78AE64F7-40C1-43B3-ABD2-BAE446B0C872}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ADB39ABD-762D-4D64-AF25-8E2AE4C038E5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ADB39ABD-762D-4D64-AF25-8E2AE4C038E5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ADB39ABD-762D-4D64-AF25-8E2AE4C038E5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ADB39ABD-762D-4D64-AF25-8E2AE4C038E5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{78AE64F7-40C1-43B3-ABD2-BAE446B0C872} = {C5874616-B5BD-431D-BA2C-4A3FC6295196}
+		{ADB39ABD-762D-4D64-AF25-8E2AE4C038E5} = {C5874616-B5BD-431D-BA2C-4A3FC6295196}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C05BF204-356E-4503-B959-74ED22AB7CB0}
