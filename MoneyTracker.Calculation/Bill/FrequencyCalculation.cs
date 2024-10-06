@@ -8,6 +8,7 @@ public interface IFrequencyCalculation
 {
     DateOnly CalculateNextDueDate(string frequency, int monthDay, DateOnly currDueDate);
     OverDueBillInfo? CalculateOverDueBillInfo(int monthDay, string frequency, DateOnly nextDueDate, IDateProvider dateProvider);
+    bool DoesFrequencyExist(string frequency);
 }
 
 public class FrequencyCalculation : IFrequencyCalculation
@@ -45,5 +46,17 @@ public class FrequencyCalculation : IFrequencyCalculation
             }
         }
         throw new NotImplementedException("Frequency type \"{frequency}\" not found");
+    }
+
+    public bool DoesFrequencyExist(string frequency)
+    {
+        foreach (var f in _frequencies)
+        {
+            if (f.MatchCommand(frequency))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }
