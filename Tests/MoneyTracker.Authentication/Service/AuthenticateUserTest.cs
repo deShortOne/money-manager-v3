@@ -1,4 +1,5 @@
-﻿using MoneyTracker.Core;
+﻿using System.IdentityModel.Tokens.Jwt;
+using MoneyTracker.Core;
 using MoneyTracker.Shared.Auth;
 using MoneyTracker.Shared.Data;
 using MoneyTracker.Shared.DateManager;
@@ -24,8 +25,12 @@ public class AuthenticateUserTest
             .Returns(true);
 
         var jwtToken = new JwtConfig("", "", "", 0);
-        var userAuthService = new UserAuthenticationService(mockUserDb.Object, jwtToken, new DateTimeProvider(),
-            mockPasswordHasher.Object, new IdGenerator());
+        var userAuthService = new UserAuthenticationService(mockUserDb.Object,
+            jwtToken,
+            new DateTimeProvider(),
+            mockPasswordHasher.Object,
+            new IdGenerator(),
+            new JwtSecurityTokenHandler());
 
         Assert.Multiple(async () =>
         {
@@ -51,8 +56,12 @@ public class AuthenticateUserTest
             .Returns(true);
 
         var jwtToken = new JwtConfig("", "", "", 0);
-        var userAuthService = new UserAuthenticationService(mockUserDb.Object, jwtToken, new DateTimeProvider(),
-            mockPasswordHasher.Object, new IdGenerator());
+        var userAuthService = new UserAuthenticationService(mockUserDb.Object,
+            jwtToken,
+            new DateTimeProvider(),
+            mockPasswordHasher.Object,
+            new IdGenerator(),
+            new JwtSecurityTokenHandler());
 
         Assert.Multiple(async () =>
         {
@@ -81,7 +90,8 @@ public class AuthenticateUserTest
             jwtToken,
             new DateTimeProvider(),
             mockPasswordHasher.Object,
-            new IdGenerator());
+            new IdGenerator(),
+            new JwtSecurityTokenHandler());
 
         Assert.Multiple(async () =>
         {
@@ -109,7 +119,8 @@ public class AuthenticateUserTest
             jwtToken,
             new DateTimeProvider(),
             new PasswordHasher(),
-            new IdGenerator());
+            new IdGenerator(),
+            new JwtSecurityTokenHandler());
 
         Assert.Multiple(async () =>
         {

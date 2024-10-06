@@ -5,6 +5,6 @@ namespace MoneyTracker.Shared.Data;
 public interface IUserAuthDatabase
 {
     public Task<UserEntity?> GetUserByUsername(string username);
-    public Task<Guid> GenerateTempGuidForUser(AuthenticatedUser user, DateTime expiration);
+    public Task StoreTemporaryTokenToUser(AuthenticatedUser user, Guid token, DateTime expiration);
     public Task<TokenMapToUserDTO> GetUserFromGuid(Guid userGuid);
 }

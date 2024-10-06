@@ -1,4 +1,5 @@
 ﻿
+using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Http;
 using MoneyTracker.API.Controllers;
 using MoneyTracker.Core;
@@ -51,7 +52,8 @@ public sealed class UserAuthenticationTest : IAsyncLifetime
             jwtToken,
             new DateTimeProvider(),
             new PasswordHasher(),
-            new IdGenerator());
+            new IdGenerator(),
+            new JwtSecurityTokenHandler());
 
         var userAuthController = new UserAuthenticationController(null, userAuthService, mockHttpContextAccessor.Object);
         var token = userAuthController.RepeatAuthTokenBack();

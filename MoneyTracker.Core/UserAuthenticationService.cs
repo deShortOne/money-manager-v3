@@ -17,18 +17,21 @@ public class UserAuthenticationService : IUserAuthenticationService
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly IPasswordHasher _passwordHasher;
     private readonly IIdGenerator _idGenerator;
+    private readonly SecurityTokenHandler _securityTokenHandler;
 
     public UserAuthenticationService(IUserAuthDatabase dbService,
         IJwtConfig jwtConfig,
         IDateTimeProvider dateTimeProvider,
         IPasswordHasher passwordHasher,
-        IIdGenerator idGenerator)
+        IIdGenerator idGenerator,
+        SecurityTokenHandler securityTokenHandler)
     {
         _dbService = dbService;
         _jwtToken = jwtConfig;
         _dateTimeProvider = dateTimeProvider;
         _passwordHasher = passwordHasher;
         _idGenerator = idGenerator;
+        _securityTokenHandler = securityTokenHandler;
     }
 
     public async Task<AuthenticatedUser> AuthenticateUser(LoginWithUsernameAndPassword user)
@@ -50,12 +53,13 @@ public class UserAuthenticationService : IUserAuthenticationService
         var userInfo = await AuthenticateUser(user);
 
         var expiration = _dateTimeProvider.Now.AddMinutes(_jwtToken.Expires);
-        var userGuid = await _dbService.GenerateTempGuidForUser(userInfo, expiration);
+        var tokenMappedToUser = _idGenerator.NewGuid;
+        await _dbService.StoreTemporaryTokenToUser(userInfo, tokenMappedToUser, expiration);
 
         var claims = new[]
         {
-            new Claim("UserGuid", userGuid.ToString()),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            new Claim("UserGuid", tokenMappedToUser.ToString()),
+            new Claim(JwtRegisteredClaimNames.Jti, _idGenerator.NewGuid.ToString())
         };
 
         // Create signing key
@@ -71,7 +75,7 @@ public class UserAuthenticationService : IUserAuthenticationService
             signingCredentials: creds
         );
 
-        return new JwtSecurityTokenHandler().WriteToken(token);
+        return _securityTokenHandler.WriteToken(token);
     }
 
     public async Task<AuthenticatedUser> DecodeToken(string token)
