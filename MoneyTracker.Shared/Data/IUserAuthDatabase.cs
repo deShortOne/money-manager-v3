@@ -6,5 +6,5 @@ public interface IUserAuthDatabase
 {
     public Task<UserEntity?> GetUserByUsername(string username);
     public Task StoreTemporaryTokenToUser(AuthenticatedUser user, Guid token, DateTime expiration);
-    public Task<TokenMapToUserDTO> GetUserFromGuid(Guid userGuid);
+    public Task<TokenMapToUserDTO?> GetUserFromToken(Guid userGuid);
 }

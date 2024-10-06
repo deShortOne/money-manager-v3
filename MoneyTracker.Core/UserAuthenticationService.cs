@@ -90,7 +90,7 @@ public class UserAuthenticationService : IUserAuthenticationService
         }
 
         var userGuid = ((JwtSecurityToken)data).Claims.First(claim => claim.Type == "UserGuid");
-        var userInfoFromDb = await _dbService.GetUserFromGuid(Guid.Parse(userGuid.Value));
+        var userInfoFromDb = await _dbService.GetUserFromToken(Guid.Parse(userGuid.Value));
 
         if (userInfoFromDb.Expires < _dateTimeProvider.Now)
         {

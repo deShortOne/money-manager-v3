@@ -29,9 +29,9 @@
   <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Repository\" />
-  </ItemGroup>
+  
+  <PropertyGroup Condition="'$(COMPUTERNAME)' != ''">
+    <DefineConstants>$(DefineConstants);RUN_LOCAL</DefineConstants>
+  </PropertyGroup>
 
 </Project>

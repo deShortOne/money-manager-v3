@@ -35,8 +35,8 @@ public sealed class DecodeTokenTest
         mockDateTimeProvider.Setup(x => x.Now).Returns(dateTimeNow);
 
         var mockUserDb = new Mock<IUserAuthDatabase>();
-        mockUserDb.Setup(x => x.GetUserFromGuid(tempToken))
-            .Returns(Task.FromResult(new TokenMapToUserDTO(userId, dateTimeExp)));
+        mockUserDb.Setup(x => x.GetUserFromToken(tempToken))
+            .Returns(Task.FromResult<TokenMapToUserDTO?>(new TokenMapToUserDTO(userId, dateTimeExp)));
 
         var mockPasswordHasher = new Mock<IPasswordHasher>();
 
@@ -79,7 +79,7 @@ public sealed class DecodeTokenTest
             Assert.Equal(expected, await userAuthService.DecodeToken(tokenToDecode));
 
             mockJwtTokenCreator.Verify(x => x.ReadToken(tokenToDecode), Times.Once);
-            mockUserDb.Verify(x => x.GetUserFromGuid(tempToken), Times.Once);
+            mockUserDb.Verify(x => x.GetUserFromToken(tempToken), Times.Once);
         });
     }
 
@@ -176,8 +176,8 @@ public sealed class DecodeTokenTest
         mockDateTimeProvider.Setup(x => x.Now).Returns(dateTimeNow);
 
         var mockUserDb = new Mock<IUserAuthDatabase>();
-        mockUserDb.Setup(x => x.GetUserFromGuid(tempToken))
-            .Returns(Task.FromResult(new TokenMapToUserDTO(userId, dateTimeNow.AddMinutes(-5))));
+        mockUserDb.Setup(x => x.GetUserFromToken(tempToken))
+            .Returns(Task.FromResult<TokenMapToUserDTO?>(new TokenMapToUserDTO(userId, dateTimeNow.AddMinutes(-5))));
 
         var mockPasswordHasher = new Mock<IPasswordHasher>();
 
@@ -224,7 +224,7 @@ public sealed class DecodeTokenTest
             Assert.Equal("Invalid token: expired", error.Message);
 
             mockJwtTokenCreator.Verify(x => x.ReadToken(tokenToDecode), Times.Once);
-            mockUserDb.Verify(x => x.GetUserFromGuid(tempToken), Times.Once);
+            mockUserDb.Verify(x => x.GetUserFromToken(tempToken), Times.Once);
         });
     }
 }

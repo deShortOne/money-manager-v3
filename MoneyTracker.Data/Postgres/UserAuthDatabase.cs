@@ -54,7 +54,7 @@ public class UserAuthDatabase : IUserAuthDatabase
         using var reader = await _database.GetTable(query, queryParams);
     }
 
-    public async Task<TokenMapToUserDTO> GetUserFromGuid(Guid userGuid)
+    public async Task<TokenMapToUserDTO?> GetUserFromToken(Guid userGuid)
     {
         var query = """
             SELECT user_id, expires
@@ -72,6 +72,6 @@ public class UserAuthDatabase : IUserAuthDatabase
             return new TokenMapToUserDTO(reader.GetInt32("user_id"), reader.GetDateTime("expires"));
         }
 
-        throw new InvalidDataException("Guid does not map to a user!");
+        return null;
     }
 }
