@@ -1,4 +1,5 @@
 ﻿
+using MoneyTracker.Calculation.Bill;
 using MoneyTracker.Core;
 using MoneyTracker.Data.Postgres;
 using MoneyTracker.Shared.Auth;
@@ -52,7 +53,8 @@ public sealed class AddBillTest
             mockDateProvider.Object,
             mockUserAuthService.Object,
             mockAccountDatabase.Object,
-            mockIdGenerator.Object);
+            mockIdGenerator.Object,
+            new FrequencyCalculation());
 
         await billService.AddBill(tokenToDecode, newBillRequest);
 

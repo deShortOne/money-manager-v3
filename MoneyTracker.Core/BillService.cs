@@ -17,18 +17,21 @@ public class BillService : IBillService
     private readonly IUserAuthenticationService _userAuthService;
     private readonly IAccountDatabase _accountDatabase;
     private readonly IIdGenerator _idGenerator;
+    private readonly IFrequencyCalculation _frequencyCalculation;
 
     public BillService(IBillDatabase dbService,
         IDateProvider dateProvider,
         IUserAuthenticationService userAuthService,
         IAccountDatabase accountDatabase,
-        IIdGenerator idGenerator)
+        IIdGenerator idGenerator,
+        IFrequencyCalculation frequencyCalculation)
     {
         _dbService = dbService;
         _dateProvider = dateProvider;
         _userAuthService = userAuthService;
         _accountDatabase = accountDatabase;
         _idGenerator = idGenerator;
+        _frequencyCalculation = frequencyCalculation;
     }
 
     public async Task<List<BillResponseDTO>> GetAllBills(string token)
@@ -107,7 +110,7 @@ public class BillService : IBillService
         }
 
         var bill = await _dbService.GetBillById(user, skipBillDTO.Id);
-        var newDueDate = BillCalculation.CalculateNextDueDate(bill.Frequency, bill.MonthDay, skipBillDTO.SkipDatePastThisDate);
+        var newDueDate = _frequencyCalculation.CalculateNextDueDate(bill.Frequency, bill.MonthDay, skipBillDTO.SkipDatePastThisDate);
 
         var editBill = new EditBillDTO(skipBillDTO.Id, nextDueDate: newDueDate);
         await _dbService.EditBill(editBill);
@@ -125,7 +128,7 @@ public class BillService : IBillService
                bill.NextDueDate,
                bill.Frequency,
                bill.Category,
-               BillCalculation.CalculateOverDueBillInfo(bill.MonthDay, bill.Frequency,
+               _frequencyCalculation.CalculateOverDueBillInfo(bill.MonthDay, bill.Frequency,
                    bill.NextDueDate, _dateProvider),
                bill.AccountName
            ));

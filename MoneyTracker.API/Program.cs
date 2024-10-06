@@ -1,5 +1,6 @@
 ﻿using Microsoft.OpenApi.Models;
 using MoneyTracker.API;
+using MoneyTracker.Calculation.Bill;
 using MoneyTracker.Core;
 using MoneyTracker.Data.Global;
 using MoneyTracker.Data.Postgres;
@@ -48,6 +49,8 @@ Startup.SetBudgetDependencyInjection(builder.Services);
 Startup.SetCategoryDependencyInjection(builder.Services);
 Startup.SetRegisterDependencyInjection(builder.Services);
 Startup.SetupAuthentication(builder);
+
+builder.Services.AddSingleton<IFrequencyCalculation, FrequencyCalculation>();
 
 var dbResult = Migration.CheckMigration(dbConnString, new MigrationOption(false));
 if (!dbResult.Successful)

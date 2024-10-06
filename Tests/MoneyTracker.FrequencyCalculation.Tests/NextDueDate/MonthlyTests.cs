@@ -1,7 +1,7 @@
 ﻿
 using MoneyTracker.Calculation.Bill.Frequencies;
 
-namespace MoneyTracker.Tests.Unit.Calculation.Bill.NextDueDate;
+namespace MoneyTracker.FrequencyCalculation.Tests.NextDueDate;
 public sealed class MonthlyTests
 {
     [Fact]
