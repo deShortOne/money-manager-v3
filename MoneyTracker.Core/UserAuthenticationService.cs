@@ -91,6 +91,10 @@ public class UserAuthenticationService : IUserAuthenticationService
 
         var userGuid = ((JwtSecurityToken)data).Claims.First(claim => claim.Type == "UserGuid");
         var userInfoFromDb = await _dbService.GetUserFromToken(Guid.Parse(userGuid.Value));
+        if (userInfoFromDb == null)
+        {
+            throw new InvalidDataException("Token is not valid");
+        }
 
         if (userInfoFromDb.Expires < _dateTimeProvider.Now)
         {
