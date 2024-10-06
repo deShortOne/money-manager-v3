@@ -12,4 +12,5 @@ public interface IBillDatabase
     public Task<List<BillEntityDTO>> DeleteBill(AuthenticatedUser user, DeleteBillDTO editBillDTO);
     public Task<BillEntityDTO> GetBillById(AuthenticatedUser user, int id);
     Task<bool> IsBillAssociatedWithUser(AuthenticatedUser user, int billId);
+    public Task<int> GetLastId();
 }

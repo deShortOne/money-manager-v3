@@ -237,4 +237,16 @@ public class BillDatabase : IBillDatabase
         }
         return false;
     }
+
+    public async Task<int> GetLastId()
+    {
+        string query = """
+            SELECT max(id)
+            FROM bill
+            """;
+        using var reader = await _database.GetTable(query);
+        await reader.ReadAsync();
+
+        return reader[0] == DBNull.Value ? 0 : reader.GetInt32(0); ;
+    }
 }

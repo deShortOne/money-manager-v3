@@ -44,7 +44,8 @@ public sealed class AddBillTest
         var billService = new BillService(mockBillDatabase.Object,
             mockDateProvider.Object,
             mockUserAuthService.Object,
-            mockAccountDatabase.Object, new IdGenerator());
+            mockAccountDatabase.Object,
+            new IdGenerator());
 
         await billService.AddBill(tokenToDecode, newBillRequest);
 
