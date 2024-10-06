@@ -20,6 +20,9 @@ public sealed class AddBillTest
         var authedUser = new AuthenticatedUser(userId);
         var tokenToDecode = "tokenToDecode";
 
+        int prevBillId = 7;
+        int nextBillId = 14;
+
         var payee = "bree";
         var amount = 75.24m;
         var nextDueDate = new DateOnly(2024, 1, 24);
@@ -28,7 +31,7 @@ public sealed class AddBillTest
         var monthDay = 24;
         var accountId = 2;
         var newBillRequest = new NewBillRequestDTO(payee, amount, nextDueDate, frequency, category, monthDay, accountId);
-        var newBillEntity = new NewBillEntity(1, payee, amount, nextDueDate, frequency, category, monthDay, accountId);
+        var newBillEntity = new NewBillEntity(nextBillId, payee, amount, nextDueDate, frequency, category, monthDay, accountId);
 
         var mockDateProvider = new Mock<IDateProvider>();
 
@@ -40,12 +43,16 @@ public sealed class AddBillTest
 
         var mockBillDatabase = new Mock<IBillDatabase>();
         mockBillDatabase.Setup(x => x.AddBill(newBillEntity));
+        mockBillDatabase.Setup(x => x.GetLastId()).Returns(Task.FromResult(prevBillId));
+
+        var mockIdGenerator = new Mock<IIdGenerator>();
+        mockIdGenerator.Setup(x => x.NewInt(prevBillId)).Returns(nextBillId);
 
         var billService = new BillService(mockBillDatabase.Object,
             mockDateProvider.Object,
             mockUserAuthService.Object,
             mockAccountDatabase.Object,
-            new IdGenerator());
+            mockIdGenerator.Object);
 
         await billService.AddBill(tokenToDecode, newBillRequest);
 
@@ -54,6 +61,8 @@ public sealed class AddBillTest
             mockUserAuthService.Verify(x => x.DecodeToken(tokenToDecode), Times.Once);
             mockAccountDatabase.Verify(x => x.IsAccountOwnedByUser(authedUser, accountId), Times.Once);
             mockBillDatabase.Verify(x => x.AddBill(newBillEntity), Times.Once);
+            mockBillDatabase.Verify(x => x.GetLastId(), Times.Once);
+            mockIdGenerator.Verify(x => x.NewInt(prevBillId), Times.Once);
         });
     }
 }

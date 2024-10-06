@@ -71,11 +71,12 @@ public class BillDatabase : IBillDatabase
     public async Task AddBill(NewBillEntity newBillDTO)
     {
         string query = """
-            INSERT INTO bill (payee, amount, nextduedate, frequency, category_id, monthday, account_id)
-            VALUES (@payee, @amount, @nextduedate, @frequency, @category_id, @monthday, @account_id);
+            INSERT INTO bill (id, payee, amount, nextduedate, frequency, category_id, monthday, account_id)
+            VALUES (@id, @payee, @amount, @nextduedate, @frequency, @category_id, @monthday, @account_id);
             """;
         var queryParams = new List<DbParameter>()
             {
+                new NpgsqlParameter("id", newBillDTO.Id),
                 new NpgsqlParameter("payee", newBillDTO.Payee),
                 new NpgsqlParameter("amount", newBillDTO.Amount),
                 new NpgsqlParameter("nextduedate", newBillDTO.NextDueDate),
