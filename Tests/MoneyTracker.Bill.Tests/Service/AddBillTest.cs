@@ -7,6 +7,7 @@ using MoneyTracker.Shared.Data;
 using MoneyTracker.Shared.DateManager;
 using MoneyTracker.Shared.Models.ControllerToService.Bill;
 using MoneyTracker.Shared.Models.ServiceToRepository.Bill;
+using MoneyTracker.Shared.Shared;
 using Moq;
 
 namespace MoneyTracker.Bill.Tests.Service;
@@ -43,7 +44,7 @@ public sealed class AddBillTest
         var billService = new BillService(mockBillDatabase.Object,
             mockDateProvider.Object,
             mockUserAuthService.Object,
-            mockAccountDatabase.Object);
+            mockAccountDatabase.Object, new IdGenerator());
 
         await billService.AddBill(tokenToDecode, newBillRequest);
 

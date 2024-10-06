@@ -7,6 +7,7 @@ using MoneyTracker.Shared.Models.ControllerToService.Bill;
 using MoneyTracker.Shared.Models.RepositoryToService.Bill;
 using MoneyTracker.Shared.Models.ServiceToController.Bill;
 using MoneyTracker.Shared.Models.ServiceToRepository.Bill;
+using MoneyTracker.Shared.Shared;
 
 namespace MoneyTracker.Core;
 public class BillService : IBillService
@@ -19,8 +20,8 @@ public class BillService : IBillService
     public BillService(IBillDatabase dbService,
         IDateProvider dateProvider,
         IUserAuthenticationService userAuthService,
-        IAccountDatabase accountDatabase
-        )
+        IAccountDatabase accountDatabase,
+        IIdGenerator idGenerator)
     {
         _dbService = dbService;
         _dateProvider = dateProvider;
