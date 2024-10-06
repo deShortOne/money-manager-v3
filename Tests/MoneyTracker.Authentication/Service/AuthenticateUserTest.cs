@@ -2,6 +2,7 @@
 using MoneyTracker.Shared.Auth;
 using MoneyTracker.Shared.Data;
 using MoneyTracker.Shared.DateManager;
+using MoneyTracker.Shared.Shared;
 using Moq;
 
 namespace MoneyTracker.Authentication.Service;
@@ -24,7 +25,7 @@ public class AuthenticateUserTest
 
         var jwtToken = new JwtConfig("", "", "", 0);
         var userAuthService = new UserAuthenticationService(mockUserDb.Object, jwtToken, new DateTimeProvider(),
-            mockPasswordHasher.Object);
+            mockPasswordHasher.Object, new IdGenerator());
 
         Assert.Multiple(async () =>
         {
@@ -51,7 +52,7 @@ public class AuthenticateUserTest
 
         var jwtToken = new JwtConfig("", "", "", 0);
         var userAuthService = new UserAuthenticationService(mockUserDb.Object, jwtToken, new DateTimeProvider(),
-            mockPasswordHasher.Object);
+            mockPasswordHasher.Object, new IdGenerator());
 
         Assert.Multiple(async () =>
         {
@@ -76,8 +77,11 @@ public class AuthenticateUserTest
             .Returns(false);
 
         var jwtToken = new JwtConfig("", "", "", 0);
-        var userAuthService = new UserAuthenticationService(mockUserDb.Object, jwtToken, new DateTimeProvider(),
-            mockPasswordHasher.Object);
+        var userAuthService = new UserAuthenticationService(mockUserDb.Object,
+            jwtToken,
+            new DateTimeProvider(),
+            mockPasswordHasher.Object,
+            new IdGenerator());
 
         Assert.Multiple(async () =>
         {
@@ -101,8 +105,11 @@ public class AuthenticateUserTest
         userDb.Setup(x => x.GetUserByUsername(It.IsAny<string>()))
             .Returns(Task.FromResult<UserEntity?>(null));
         var jwtToken = new JwtConfig("", "", "", 0);
-        var userAuthService = new UserAuthenticationService(userDb.Object, jwtToken, new DateTimeProvider(),
-            new PasswordHasher());
+        var userAuthService = new UserAuthenticationService(userDb.Object,
+            jwtToken,
+            new DateTimeProvider(),
+            new PasswordHasher(),
+            new IdGenerator());
 
         Assert.Multiple(async () =>
         {

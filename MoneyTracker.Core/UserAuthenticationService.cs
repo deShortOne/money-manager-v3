@@ -7,6 +7,7 @@ using MoneyTracker.Shared.Auth;
 using MoneyTracker.Shared.Core;
 using MoneyTracker.Shared.Data;
 using MoneyTracker.Shared.DateManager;
+using MoneyTracker.Shared.Shared;
 
 namespace MoneyTracker.Core;
 public class UserAuthenticationService : IUserAuthenticationService
@@ -15,14 +16,19 @@ public class UserAuthenticationService : IUserAuthenticationService
     private readonly IJwtConfig _jwtToken;
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly IPasswordHasher _passwordHasher;
+    private readonly IIdGenerator _idGenerator;
 
-    public UserAuthenticationService(IUserAuthDatabase dbService, IJwtConfig jwtConfig,
-        IDateTimeProvider dateTimeProvider, IPasswordHasher passwordHasher)
+    public UserAuthenticationService(IUserAuthDatabase dbService,
+        IJwtConfig jwtConfig,
+        IDateTimeProvider dateTimeProvider,
+        IPasswordHasher passwordHasher,
+        IIdGenerator idGenerator)
     {
         _dbService = dbService;
         _jwtToken = jwtConfig;
         _dateTimeProvider = dateTimeProvider;
         _passwordHasher = passwordHasher;
+        _idGenerator = idGenerator;
     }
 
     public async Task<AuthenticatedUser> AuthenticateUser(LoginWithUsernameAndPassword user)

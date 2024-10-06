@@ -7,6 +7,7 @@ using MoneyTracker.DatabaseMigration;
 using MoneyTracker.DatabaseMigration.Models;
 using MoneyTracker.Shared.Auth;
 using MoneyTracker.Shared.DateManager;
+using MoneyTracker.Shared.Shared;
 using Moq;
 using Testcontainers.PostgreSql;
 
@@ -46,8 +47,11 @@ public sealed class UserAuthenticationTest : IAsyncLifetime
         var db = new PostgresDatabase(_postgres.GetConnectionString());
         var userDb = new UserAuthDatabase(db);
         var jwtToken = new JwtConfig("", "", "", 0);
-        var userAuthService = new UserAuthenticationService(userDb, jwtToken, new DateTimeProvider(),
-            new PasswordHasher());
+        var userAuthService = new UserAuthenticationService(userDb,
+            jwtToken,
+            new DateTimeProvider(),
+            new PasswordHasher(),
+            new IdGenerator());
 
         var userAuthController = new UserAuthenticationController(null, userAuthService, mockHttpContextAccessor.Object);
         var token = userAuthController.RepeatAuthTokenBack();
