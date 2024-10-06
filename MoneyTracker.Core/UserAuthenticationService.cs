@@ -26,6 +26,7 @@ public class UserAuthenticationService : IUserAuthenticationService
         IIdGenerator idGenerator,
         SecurityTokenHandler securityTokenHandler)
     {
+        var a = new JwtSecurityTokenHandler();
         _dbService = dbService;
         _jwtToken = jwtConfig;
         _dateTimeProvider = dateTimeProvider;
@@ -80,7 +81,7 @@ public class UserAuthenticationService : IUserAuthenticationService
 
     public async Task<AuthenticatedUser> DecodeToken(string token)
     {
-        var data = new JwtSecurityTokenHandler().ReadJwtToken(token);
+        var data = _securityTokenHandler.ReadToken(token);
 
         var tokenExpiryDate = data.ValidTo;
         if (tokenExpiryDate < _dateTimeProvider.Now)
@@ -88,7 +89,7 @@ public class UserAuthenticationService : IUserAuthenticationService
             throw new InvalidDataException("Token has expired!");
         }
 
-        var userGuid = data.Claims.First(claim => claim.Type == "UserGuid");
+        var userGuid = ((JwtSecurityToken)data).Claims.First(claim => claim.Type == "UserGuid");
         var userInfoFromDb = await _dbService.GetUserFromGuid(Guid.Parse(userGuid.Value));
 
         if (userInfoFromDb.Expires < _dateTimeProvider.Now)

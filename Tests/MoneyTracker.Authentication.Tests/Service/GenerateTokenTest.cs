@@ -25,7 +25,7 @@ public sealed class GenerateTokenTest
         var jwtConfigAud = "aud_company b";
         var jwtConfigKey = "TOPSECRETTOPSECRETTOPSECRETTOPSE";
         var jwtConfigExp = 15;
-        var dateTimeNow = new DateTime(2024, 10, 06, 9, 0, 0);
+        var dateTimeNow = new DateTime(2024, 10, 6, 9, 0, 0, DateTimeKind.Utc);
         var dateTimeExp = dateTimeNow.AddMinutes(jwtConfigExp);
 
         var userToAuthenticate = new LoginWithUsernameAndPassword(username, userProvidedpassword);
