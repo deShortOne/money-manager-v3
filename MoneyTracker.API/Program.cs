@@ -9,6 +9,7 @@ using MoneyTracker.Shared.Auth;
 using MoneyTracker.Shared.Core;
 using MoneyTracker.Shared.Data;
 using MoneyTracker.Shared.DateManager;
+using MoneyTracker.Shared.Shared;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,7 +30,8 @@ builder.Services.AddSwaggerGen(c =>
 var dbConnString = builder.Configuration["Database:Paelagus_RO"];
 builder.Services.AddSingleton<IDatabase>(_ => new PostgresDatabase(dbConnString))
     .AddSingleton<IDateProvider, DateProvider>()
-    .AddSingleton<IDateTimeProvider, DateTimeProvider>();
+    .AddSingleton<IDateTimeProvider, DateTimeProvider>()
+    .AddSingleton<IIdGenerator, IdGenerator>();
 builder.Services
     .AddSingleton<IUserAuthDatabase, UserAuthDatabase>()
     .AddSingleton<IUserAuthenticationService, UserAuthenticationService>()

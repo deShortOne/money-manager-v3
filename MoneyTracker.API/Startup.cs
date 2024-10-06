@@ -1,9 +1,11 @@
-﻿using System.Text;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MoneyTracker.Core;
 using MoneyTracker.Data.Postgres;
+using MoneyTracker.Shared.Auth;
 using MoneyTracker.Shared.Core;
 using MoneyTracker.Shared.Data;
 
@@ -92,5 +94,7 @@ public class Startup
 
         builder.Services.AddAuthorization();
         builder.Services.AddHttpContextAccessor();
+        builder.Services.AddSingleton<SecurityTokenHandler, JwtSecurityTokenHandler>()
+            .AddSingleton<IPasswordHasher, PasswordHasher>();
     }
 }
