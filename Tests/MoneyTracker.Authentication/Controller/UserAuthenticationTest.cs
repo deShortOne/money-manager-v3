@@ -28,17 +28,17 @@ public sealed class UserAuthenticationTest : IAsyncLifetime
     public async Task InitializeAsync()
     {
         await _postgres.StartAsync();
-        Migration.CheckMigration(_postgres.GetConnectionString(), new MigrationOption(true));
+        //Migration.CheckMigration(_postgres.GetConnectionString(), new MigrationOption(true));
 
         //var db = new PostgresDatabase(_postgres.GetConnectionString());
         //var userDb = new UserAuthDatabase(db);
         //var jwtToken = new JwtConfig("", "", "", 0);
-        //var userAuthService = new UserAuthenticationService(userDb, jwtToken, new DateTimeProvider());
+        //var userAuthService = new UserAuthenticationService(userDb, jwtToken, new DateTimeProvider(), new PasswordHasher());
         //var mockHttpContextAccessor = new Mock<IHttpContextAccessor>();
         //var httpContext = new DefaultHttpContext();
         //httpContext.Request.Headers.Authorization = "Bearer test-token-fds1200";
         //mockHttpContextAccessor.Setup(_ => _.HttpContext).Returns(httpContext);
-        //_userAuthController = new UserAuthenticationController(null, userAuthService, )
+        //_userAuthController = new UserAuthenticationController(null, userAuthService, mockHttpContextAccessor.Object);
 
         return;
     }
@@ -48,16 +48,14 @@ public sealed class UserAuthenticationTest : IAsyncLifetime
         return _postgres.DisposeAsync().AsTask();
     }
 
-    //[Fact]
-    //public async void SuccessfullyLogInUser()
-    //{
-    //    var userToAuthenticate = new LoginWithUsernameAndPassword("root");
-    //    var expected = new AuthenticatedUser(1);
+    [Fact]
+    public async void SuccessfullyLogInUser()
+    {
+        //var userToAuthenticate = new LoginWithUsernameAndPassword("root", "root-pass");
+        //var expected = new AuthenticatedUser(1);
 
-
-
-    //    Assert.Equal(expected, await userAuthService.AuthenticateUser(userToAuthenticate));
-    //}
+        //Assert.Equal(expected, await _userAuthController.AuthenticateUser(userToAuthenticate));
+    }
 
     //[Fact]
     //public async void FailToLogInUserThatDoesntExist()

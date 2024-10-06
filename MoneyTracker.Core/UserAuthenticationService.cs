@@ -1,5 +1,4 @@
 ﻿
-using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -33,7 +32,7 @@ public class UserAuthenticationService : IUserAuthenticationService
         {
             throw new InvalidDataException("User does not exist");
         }
-        if (!_passwordHasher.VerifyPassword(userEntity.UserName, user.Username, userEntity.UserName))
+        if (!_passwordHasher.VerifyPassword(userEntity.Password, user.Password, "salt goes here"))
         {
             throw new InvalidDataException("User does not exist");
         }

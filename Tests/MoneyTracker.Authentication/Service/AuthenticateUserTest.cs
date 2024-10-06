@@ -15,12 +15,16 @@ public class AuthenticateUserTest
         var expected = new AuthenticatedUser(1);
 
         var userDb = new Mock<IUserAuthDatabase>();
-        userDb.Setup(x => x.GetUserByUsername(It.Is<string>(y => y == "root")))
+        userDb.Setup(x => x.GetUserByUsername("root"))
             .Returns(Task.FromResult<UserEntity?>(new UserEntity(1, "root", "root-pass")));
+
+        var mockPasswordHasher = new Mock<IPasswordHasher>();
+        mockPasswordHasher.Setup(x => x.VerifyPassword("root-pass", "root-pass", "salt goes here"))
+            .Returns(true);
 
         var jwtToken = new JwtConfig("", "", "", 0);
         var userAuthService = new UserAuthenticationService(userDb.Object, jwtToken, new DateTimeProvider(),
-            new PasswordHasher());
+            mockPasswordHasher.Object);
 
         Assert.Equal(expected, await userAuthService.AuthenticateUser(userToAuthenticate));
     }
@@ -33,11 +37,15 @@ public class AuthenticateUserTest
 
         var userDb = new Mock<IUserAuthDatabase>();
         userDb.Setup(x => x.GetUserByUsername(It.Is<string>(y => y == "secondary root")))
-            .Returns(Task.FromResult<UserEntity?>(new UserEntity(2, "secondary root", "secondary-root")));
+            .Returns(Task.FromResult<UserEntity?>(new UserEntity(2, "secondary root", "secondary root-pass")));
+
+        var mockPasswordHasher = new Mock<IPasswordHasher>();
+        mockPasswordHasher.Setup(x => x.VerifyPassword("secondary root-pass", "secondary root-pass", "salt goes here"))
+            .Returns(true);
 
         var jwtToken = new JwtConfig("", "", "", 0);
         var userAuthService = new UserAuthenticationService(userDb.Object, jwtToken, new DateTimeProvider(),
-            new PasswordHasher());
+            mockPasswordHasher.Object);
 
         Assert.Equal(expected, await userAuthService.AuthenticateUser(userToAuthenticate));
     }
