@@ -46,7 +46,8 @@ public sealed class UserAuthenticationTest : IAsyncLifetime
         var db = new PostgresDatabase(_postgres.GetConnectionString());
         var userDb = new UserAuthDatabase(db);
         var jwtToken = new JwtConfig("", "", "", 0);
-        var userAuthService = new UserAuthenticationService(userDb, jwtToken, new DateTimeProvider());
+        var userAuthService = new UserAuthenticationService(userDb, jwtToken, new DateTimeProvider(),
+            new PasswordHasher());
 
         var userAuthController = new UserAuthenticationController(null, userAuthService, mockHttpContextAccessor.Object);
         var token = userAuthController.RepeatAuthTokenBack();

@@ -15,19 +15,25 @@ public class UserAuthenticationService : IUserAuthenticationService
     private readonly IUserAuthDatabase _dbService;
     private readonly IJwtConfig _jwtToken;
     private readonly IDateTimeProvider _dateTimeProvider;
+    private readonly IPasswordHasher _passwordHasher;
 
     public UserAuthenticationService(IUserAuthDatabase dbService, IJwtConfig jwtConfig,
-        IDateTimeProvider dateTimeProvider)
+        IDateTimeProvider dateTimeProvider, IPasswordHasher passwordHasher)
     {
         _dbService = dbService;
         _jwtToken = jwtConfig;
         _dateTimeProvider = dateTimeProvider;
+        _passwordHasher = passwordHasher;
     }
 
     public async Task<AuthenticatedUser> AuthenticateUser(LoginWithUsernameAndPassword user)
     {
         var userEntity = await _dbService.GetUserByUsername(user.Username);
         if (userEntity == null)
+        {
+            throw new InvalidDataException("User does not exist");
+        }
+        if (!_passwordHasher.VerifyPassword(userEntity.UserName, user.Username, userEntity.UserName))
         {
             throw new InvalidDataException("User does not exist");
         }

@@ -19,7 +19,7 @@ public class UserAuthDatabase : IUserAuthDatabase
     public async Task<UserEntity?> GetUserByUsername(string username)
     {
         var query = """
-            SELECT id, name
+            SELECT id, name, password
             FROM users
             WHERE name = @username
          """;
@@ -32,7 +32,7 @@ public class UserAuthDatabase : IUserAuthDatabase
 
         if (await reader.ReadAsync())
         {
-            return new UserEntity(reader.GetInt32("id"), reader.GetString("name"));
+            return new UserEntity(reader.GetInt32("id"), reader.GetString("name"), reader.GetString("password"));
         }
 
         return null;
@@ -41,9 +41,9 @@ public class UserAuthDatabase : IUserAuthDatabase
     public async Task<Guid> GenerateTempGuidForUser(AuthenticatedUser user, DateTime expiration)
     {
         var query = """
-            INSERT INTO user_id_to_guid VALUES
+            INSERT INTO user_id_to_token VALUES
             (@userId, (SELECT gen_random_uuid()), @expire)
-            RETURNING (guid);
+            RETURNING (token);
          """;
         var queryParams = new List<DbParameter>()
         {
@@ -55,17 +55,17 @@ public class UserAuthDatabase : IUserAuthDatabase
 
         if (await reader.ReadAsync())
         {
-            return reader.GetGuid("guid");
+            return reader.GetGuid("token");
         }
         throw new InvalidDataException("User does not exist!");
     }
 
-    public async Task<GuidMapToUserDTO> GetUserFromGuid(Guid userGuid)
+    public async Task<TokenMapToUserDTO> GetUserFromGuid(Guid userGuid)
     {
         var query = """
             SELECT user_id, expires
-            FROM user_id_to_guid
-            WHERE guid = @guid
+            FROM user_id_to_token
+            WHERE token = @guid
          """;
         var queryParams = new List<DbParameter>()
         {
@@ -75,7 +75,7 @@ public class UserAuthDatabase : IUserAuthDatabase
 
         if (await reader.ReadAsync())
         {
-            return new GuidMapToUserDTO(reader.GetInt32("user_id"), reader.GetDateTime("expires"));
+            return new TokenMapToUserDTO(reader.GetInt32("user_id"), reader.GetDateTime("expires"));
         }
 
         throw new InvalidDataException("Guid does not map to a user!");

@@ -17,9 +17,9 @@ INSERT INTO BudgetGroup (name) VALUES
 	('Savings & Debt'),
 	('Retirement');
 
-INSERT INTO users(name) VALUES
-    ('root'),
-    ('secondary root');
+INSERT INTO users(name, password) VALUES
+    ('root', 'root-pass'),
+    ('secondary root', 'secondary root-pass');
 
 INSERT INTO account(name, users_id) VALUES
     ('bank a', 1),
