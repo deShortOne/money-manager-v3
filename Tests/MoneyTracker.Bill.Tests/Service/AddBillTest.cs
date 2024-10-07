@@ -54,7 +54,8 @@ public sealed class AddBillTest
             mockUserAuthService.Object,
             mockAccountDatabase.Object,
             mockIdGenerator.Object,
-            new FrequencyCalculation(), new MonthDayCalculator());
+            new FrequencyCalculation(),
+            new MonthDayCalculator());
 
         await billService.AddBill(tokenToDecode, newBillRequest);
 
@@ -65,6 +66,55 @@ public sealed class AddBillTest
             mockBillDatabase.Verify(x => x.AddBill(newBillEntity), Times.Once);
             mockBillDatabase.Verify(x => x.GetLastId(), Times.Once);
             mockIdGenerator.Verify(x => x.NewInt(prevBillId), Times.Once);
+        });
+    }
+
+    [Fact]
+    public void FailToAddNewBillDueToAccountNotBelongingToUser()
+    {
+        var userId = 52;
+        var authedUser = new AuthenticatedUser(userId);
+        var tokenToDecode = "tokenToDecode";
+
+        var payee = "bree";
+        var amount = 75.24m;
+        var nextDueDate = new DateOnly(2024, 1, 24);
+        var frequency = "Monthly";
+        var category = 1;
+        var accountId = 2;
+        var newBillRequest = new NewBillRequestDTO(payee, amount, nextDueDate, frequency, category, accountId);
+
+        var mockDateProvider = new Mock<IDateProvider>();
+
+        var mockUserAuthService = new Mock<IUserAuthenticationService>();
+        mockUserAuthService.Setup(x => x.DecodeToken(tokenToDecode)).Returns(Task.FromResult(authedUser));
+
+        var mockAccountDatabase = new Mock<IAccountDatabase>();
+        mockAccountDatabase.Setup(x => x.IsAccountOwnedByUser(authedUser, accountId)).Returns(Task.FromResult(false));
+
+        var mockBillDatabase = new Mock<IBillDatabase>();
+
+        var mockIdGenerator = new Mock<IIdGenerator>();
+
+        var billService = new BillService(mockBillDatabase.Object,
+            mockDateProvider.Object,
+            mockUserAuthService.Object,
+            mockAccountDatabase.Object,
+            mockIdGenerator.Object,
+            new FrequencyCalculation(),
+            new MonthDayCalculator());
+
+
+        Assert.Multiple(async () =>
+        {
+            var error = await Assert.ThrowsAsync<InvalidDataException>(async () =>
+            {
+                await billService.AddBill(tokenToDecode, newBillRequest);
+            });
+            Assert.Equal("Account not found", error.Message);
+
+            mockUserAuthService.Verify(x => x.DecodeToken(tokenToDecode), Times.Once);
+            mockAccountDatabase.Verify(x => x.IsAccountOwnedByUser(authedUser, accountId), Times.Once);
         });
     }
 }
