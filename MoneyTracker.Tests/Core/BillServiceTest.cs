@@ -68,7 +68,7 @@ public class BillServiceTest : IAsyncLifetime
         mockUserAuth.Setup(x => x.DecodeToken(It.IsAny<string>()))
             .Returns(Task.FromResult(new AuthenticatedUser(1)));
         var billService = new BillService(_billDb, dateProvider, mockUserAuth.Object, _accountDb, new IdGenerator(),
-            new FrequencyCalculation());
+            new FrequencyCalculation(), new MonthDayCalculator());
 
         await billService.DeleteBill("", new DeleteBillRequestDTO(1));
 
@@ -90,7 +90,7 @@ public class BillServiceTest : IAsyncLifetime
         mockUserAuth.Setup(x => x.DecodeToken(It.IsAny<string>()))
             .Returns(Task.FromResult(new AuthenticatedUser(1)));
         var billService = new BillService(_billDb, dateProvider, mockUserAuth.Object, _accountDb, new IdGenerator(),
-            new FrequencyCalculation());
+            new FrequencyCalculation(), new MonthDayCalculator());
 
         await billService.EditBill("", new EditBillRequestDTO(1, payee: "supermarket b"));
 
@@ -113,9 +113,9 @@ public class BillServiceTest : IAsyncLifetime
         mockUserAuth.Setup(x => x.DecodeToken(It.IsAny<string>()))
             .Returns(Task.FromResult(new AuthenticatedUser(1)));
         var billService = new BillService(_billDb, dateProvider, mockUserAuth.Object, _accountDb, new IdGenerator(),
-            new FrequencyCalculation());
+            new FrequencyCalculation(), new MonthDayCalculator());
 
-        await billService.AddBill("", new NewBillRequestDTO("flight sim", 420, new DateOnly(2024, 09, 05), "Daily", 5, 5, 1));
+        await billService.AddBill("", new NewBillRequestDTO("flight sim", 420, new DateOnly(2024, 09, 05), "Daily", 5, 1));
 
         var expected = new List<BillResponseDTO>()
         {
@@ -137,7 +137,7 @@ public class BillServiceTest : IAsyncLifetime
         mockUserAuth.Setup(x => x.DecodeToken(It.IsAny<string>()))
             .Returns(Task.FromResult(new AuthenticatedUser(1)));
         var billService = new BillService(_billDb, dateProvider, mockUserAuth.Object, _accountDb, new IdGenerator(),
-            new FrequencyCalculation());
+            new FrequencyCalculation(), new MonthDayCalculator());
 
         var expected = new List<BillResponseDTO>()
         {
@@ -160,7 +160,7 @@ public class BillServiceTest : IAsyncLifetime
         mockUserAuth.Setup(x => x.DecodeToken(It.IsAny<string>()))
             .Returns(Task.FromResult(new AuthenticatedUser(1)));
         var billService = new BillService(_billDb, dateProvider, mockUserAuth.Object, _accountDb, new IdGenerator(),
-            new FrequencyCalculation());
+            new FrequencyCalculation(), new MonthDayCalculator());
 
         DateOnly[] dates = [new DateOnly(2024, 9, 3), new DateOnly(2024, 9, 10), new DateOnly(2024, 9, 17),
             new DateOnly(2024, 9, 24), new DateOnly(2024, 10, 1)];
@@ -185,7 +185,7 @@ public class BillServiceTest : IAsyncLifetime
         mockUserAuth.Setup(x => x.DecodeToken(It.IsAny<string>()))
             .Returns(Task.FromResult(new AuthenticatedUser(1)));
         var billService = new BillService(_billDb, dateProvider, mockUserAuth.Object, _accountDb, new IdGenerator(),
-            new FrequencyCalculation());
+            new FrequencyCalculation(), new MonthDayCalculator());
 
         DateOnly[] dates = [new DateOnly(2024, 9, 3), new DateOnly(2024, 9, 10), new DateOnly(2024, 9, 17),
             new DateOnly(2024, 9, 24), new DateOnly(2024, 10, 1)];
@@ -210,7 +210,7 @@ public class BillServiceTest : IAsyncLifetime
         mockUserAuth.Setup(x => x.DecodeToken(It.IsAny<string>()))
             .Returns(Task.FromResult(new AuthenticatedUser(1)));
         var billService = new BillService(_billDb, dateProvider, mockUserAuth.Object, _accountDb, new IdGenerator(),
-            new FrequencyCalculation());
+            new FrequencyCalculation(), new MonthDayCalculator());
 
         await billService.SkipOccurence("", new SkipBillOccurrenceRequestDTO(1,
             new DateOnly(2024, 9, 17)));
@@ -236,7 +236,7 @@ public class BillServiceTest : IAsyncLifetime
         mockUserAuth.Setup(x => x.DecodeToken(It.IsAny<string>()))
             .Returns(Task.FromResult(new AuthenticatedUser(2)));
         var billService = new BillService(_billDb, dateProvider, mockUserAuth.Object, _accountDb, new IdGenerator(),
-            new FrequencyCalculation());
+            new FrequencyCalculation(), new MonthDayCalculator());
 
         var editBillMessage = await Assert.ThrowsAsync<InvalidDataException>(async () =>
         {
@@ -253,7 +253,7 @@ public class BillServiceTest : IAsyncLifetime
         mockUserAuth.Setup(x => x.DecodeToken(It.IsAny<string>()))
             .Returns(Task.FromResult(new AuthenticatedUser(2)));
         var billService = new BillService(_billDb, dateProvider, mockUserAuth.Object, _accountDb, new IdGenerator(),
-            new FrequencyCalculation());
+            new FrequencyCalculation(), new MonthDayCalculator());
 
         var editBillMessage = await Assert.ThrowsAsync<InvalidDataException>(async () =>
         {
@@ -270,7 +270,7 @@ public class BillServiceTest : IAsyncLifetime
         mockUserAuth.Setup(x => x.DecodeToken(It.IsAny<string>()))
             .Returns(Task.FromResult(new AuthenticatedUser(2)));
         var billService = new BillService(_billDb, dateProvider, mockUserAuth.Object, _accountDb, new IdGenerator(),
-            new FrequencyCalculation());
+            new FrequencyCalculation(), new MonthDayCalculator());
 
         var editBillMessage = await Assert.ThrowsAsync<InvalidDataException>(async () =>
         {
@@ -287,11 +287,11 @@ public class BillServiceTest : IAsyncLifetime
         mockUserAuth.Setup(x => x.DecodeToken(It.IsAny<string>()))
             .Returns(Task.FromResult(new AuthenticatedUser(2)));
         var billService = new BillService(_billDb, dateProvider, mockUserAuth.Object, _accountDb, new IdGenerator(),
-            new FrequencyCalculation());
+            new FrequencyCalculation(), new MonthDayCalculator());
 
         var addBillMessage = await Assert.ThrowsAsync<InvalidDataException>(async () =>
         {
-            await billService.AddBill("", new NewBillRequestDTO("", 0, new DateOnly(), "", 1, 1, 1));
+            await billService.AddBill("", new NewBillRequestDTO("", 0, new DateOnly(), "", 1, 1));
         });
         Assert.Equal("Account not found", addBillMessage.Message);
     }
@@ -304,7 +304,7 @@ public class BillServiceTest : IAsyncLifetime
         mockUserAuth.Setup(x => x.DecodeToken(It.IsAny<string>()))
             .Returns(Task.FromResult(new AuthenticatedUser(2)));
         var billService = new BillService(_billDb, dateProvider, mockUserAuth.Object, _accountDb, new IdGenerator(),
-            new FrequencyCalculation());
+            new FrequencyCalculation(), new MonthDayCalculator());
 
         var addBillMessage = await Assert.ThrowsAsync<InvalidDataException>(async () =>
         {

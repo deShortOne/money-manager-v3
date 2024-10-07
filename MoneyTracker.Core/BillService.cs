@@ -18,13 +18,15 @@ public class BillService : IBillService
     private readonly IAccountDatabase _accountDatabase;
     private readonly IIdGenerator _idGenerator;
     private readonly IFrequencyCalculation _frequencyCalculation;
+    private readonly IMonthDayCalculator _monthDayCalculator;
 
     public BillService(IBillDatabase dbService,
         IDateProvider dateProvider,
         IUserAuthenticationService userAuthService,
         IAccountDatabase accountDatabase,
         IIdGenerator idGenerator,
-        IFrequencyCalculation frequencyCalculation)
+        IFrequencyCalculation frequencyCalculation,
+        IMonthDayCalculator monthDayCalculator)
     {
         _dbService = dbService;
         _dateProvider = dateProvider;
@@ -32,6 +34,7 @@ public class BillService : IBillService
         _accountDatabase = accountDatabase;
         _idGenerator = idGenerator;
         _frequencyCalculation = frequencyCalculation;
+        _monthDayCalculator = monthDayCalculator;
     }
 
     public async Task<List<BillResponseDTO>> GetAllBills(string token)
@@ -55,7 +58,7 @@ public class BillService : IBillService
             newBill.NextDueDate,
             newBill.Frequency,
             newBill.Category,
-            newBill.MonthDay,
+            _monthDayCalculator.Calculate(newBill.NextDueDate),
             newBill.AccountId
         );
         await _dbService.AddBill(dtoToDb);

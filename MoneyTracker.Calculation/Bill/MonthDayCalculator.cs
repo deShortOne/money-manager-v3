@@ -1,6 +1,12 @@
 ﻿
 namespace MoneyTracker.Calculation.Bill;
-public class MonthDayCalculator
+
+public interface IMonthDayCalculator
+{
+    int Calculate(DateOnly date);
+}
+
+public class MonthDayCalculator : IMonthDayCalculator
 {
     public int Calculate(DateOnly date)
     {

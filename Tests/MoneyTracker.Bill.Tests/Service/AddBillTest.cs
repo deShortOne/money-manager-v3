@@ -31,7 +31,7 @@ public sealed class AddBillTest
         var category = 1;
         var monthDay = 24;
         var accountId = 2;
-        var newBillRequest = new NewBillRequestDTO(payee, amount, nextDueDate, frequency, category, monthDay, accountId);
+        var newBillRequest = new NewBillRequestDTO(payee, amount, nextDueDate, frequency, category, accountId);
         var newBillEntity = new NewBillEntity(nextBillId, payee, amount, nextDueDate, frequency, category, monthDay, accountId);
 
         var mockDateProvider = new Mock<IDateProvider>();
@@ -54,7 +54,7 @@ public sealed class AddBillTest
             mockUserAuthService.Object,
             mockAccountDatabase.Object,
             mockIdGenerator.Object,
-            new FrequencyCalculation());
+            new FrequencyCalculation(), new MonthDayCalculator());
 
         await billService.AddBill(tokenToDecode, newBillRequest);
 
