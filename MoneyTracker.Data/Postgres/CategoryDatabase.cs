@@ -1,6 +1,5 @@
 ﻿using System.Data;
 using System.Data.Common;
-using System.Runtime.InteropServices;
 using MoneyTracker.Data.Global;
 using MoneyTracker.Shared.Data;
 using MoneyTracker.Shared.Models.RepositoryToService.Category;
@@ -81,6 +80,24 @@ namespace MoneyTracker.Data.Postgres
 
             // get category id
             await _database.UpdateTable(query, queryParams);
+        }
+
+        public async Task<bool> DoesCategoryExist(int categoryId)
+        {
+            var query = """
+                SELECT 1
+                FROM category
+                WHERE id = @id;
+                """;
+            var queryParams = new List<DbParameter>()
+            {
+                new NpgsqlParameter("id", categoryId),
+            };
+
+            var reader = await _database.GetTable(query, queryParams);
+            await reader.ReadAsync();
+
+            return reader.HasRows;
         }
     }
 }

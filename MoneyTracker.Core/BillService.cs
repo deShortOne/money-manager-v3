@@ -19,6 +19,7 @@ public class BillService : IBillService
     private readonly IIdGenerator _idGenerator;
     private readonly IFrequencyCalculation _frequencyCalculation;
     private readonly IMonthDayCalculator _monthDayCalculator;
+    private readonly ICategoryDatabase _categoryDatabase;
 
     public BillService(IBillDatabase dbService,
         IDateProvider dateProvider,
@@ -26,7 +27,8 @@ public class BillService : IBillService
         IAccountDatabase accountDatabase,
         IIdGenerator idGenerator,
         IFrequencyCalculation frequencyCalculation,
-        IMonthDayCalculator monthDayCalculator)
+        IMonthDayCalculator monthDayCalculator,
+        ICategoryDatabase categoryDatabase)
     {
         _dbService = dbService;
         _dateProvider = dateProvider;
@@ -35,6 +37,7 @@ public class BillService : IBillService
         _idGenerator = idGenerator;
         _frequencyCalculation = frequencyCalculation;
         _monthDayCalculator = monthDayCalculator;
+        _categoryDatabase = categoryDatabase;
     }
 
     public async Task<List<BillResponseDTO>> GetAllBills(string token)
@@ -53,6 +56,10 @@ public class BillService : IBillService
         if (!_frequencyCalculation.DoesFrequencyExist(newBill.Frequency))
         {
             throw new InvalidDataException("Invalid frequency");
+        }
+        if (!await _categoryDatabase.DoesCategoryExist(newBill.Category))
+        {
+            throw new InvalidDataException("Invalid category");
         }
 
         var dtoToDb = new NewBillEntity(
@@ -76,7 +83,7 @@ public class BillService : IBillService
             editBill.Frequency == null && editBill.Category == null &&
             editBill.AccountId == null)
         {
-            throw new InvalidDataException("Must have at least one value changed");
+            throw new InvalidDataException("Must have at least one non-null value");
         }
 
         if (!await _dbService.IsBillAssociatedWithUser(user, editBill.Id))
@@ -87,6 +94,10 @@ public class BillService : IBillService
             !await _accountDatabase.IsAccountOwnedByUser(user, (int)editBill.AccountId))
         {
             throw new InvalidDataException("Account not found");
+        }
+        if (editBill.Category != null && !await _categoryDatabase.DoesCategoryExist((int)editBill.Category))
+        {
+            throw new InvalidDataException("Invalid category");
         }
 
         var dtoToDb = new EditBillEntity(
