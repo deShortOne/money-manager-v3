@@ -95,6 +95,11 @@ public class BillService : IBillService
         {
             throw new InvalidDataException("Account not found");
         }
+        if (editBill.Frequency != null &&
+            !_frequencyCalculation.DoesFrequencyExist((string)editBill.Frequency))
+        {
+            throw new InvalidDataException("Invalid frequency");
+        }
         if (editBill.Category != null && !await _categoryDatabase.DoesCategoryExist((int)editBill.Category))
         {
             throw new InvalidDataException("Invalid category");
