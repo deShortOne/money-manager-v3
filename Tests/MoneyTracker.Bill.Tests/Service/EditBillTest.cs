@@ -182,4 +182,48 @@ public sealed class EditBillTest
             mockUserAuthService.Verify(x => x.DecodeToken(tokenToDecode), Times.Once);
         });
     }
+
+    [Fact]
+    public void FailToEditBill_AllValuesInAreNull()
+    {
+        var userId = 52;
+        var authedUser = new AuthenticatedUser(userId);
+        var tokenToDecode = "tokenToDecode";
+        var billId = 1;
+        var editBillRequest = new EditBillRequestDTO(billId, null, null, null, null, null, null);
+
+        var mockDateProvider = new Mock<IDateProvider>();
+
+        var mockUserAuthService = new Mock<IUserAuthenticationService>();
+        mockUserAuthService.Setup(x => x.DecodeToken(tokenToDecode)).Returns(Task.FromResult(authedUser));
+
+        var mockAccountDatabase = new Mock<IAccountDatabase>();
+
+        var mockBillDatabase = new Mock<IBillDatabase>();
+        mockBillDatabase.Setup(x => x.IsBillAssociatedWithUser(authedUser, billId)).Returns(Task.FromResult(true));
+
+        var mockIdGenerator = new Mock<IIdGenerator>();
+
+        var billService = new BillService(mockBillDatabase.Object,
+            mockDateProvider.Object,
+            mockUserAuthService.Object,
+            mockAccountDatabase.Object,
+            mockIdGenerator.Object,
+            new FrequencyCalculation(),
+            new MonthDayCalculator());
+
+
+        Assert.Multiple(async () =>
+        {
+            var error = await Assert.ThrowsAsync<InvalidDataException>(async () =>
+            {
+                await billService.EditBill(tokenToDecode, editBillRequest);
+            });
+            Assert.Equal("Must have at least one value changed", error.Message);
+
+            mockBillDatabase.Verify(x => x.IsBillAssociatedWithUser(It.IsAny<AuthenticatedUser>(), It.IsAny<int>()), Times.Never);
+            mockAccountDatabase.Verify(x => x.IsAccountOwnedByUser(It.IsAny<AuthenticatedUser>(), It.IsAny<int>()), Times.Never);
+            mockUserAuthService.Verify(x => x.DecodeToken(tokenToDecode), Times.Once);
+        });
+    }
 }

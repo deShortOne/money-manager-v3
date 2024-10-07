@@ -71,6 +71,14 @@ public class BillService : IBillService
     public async Task EditBill(string token, EditBillRequestDTO editBill)
     {
         var user = await _userAuthService.DecodeToken(token);
+        if (editBill.Payee == null && editBill.Amount == null &&
+            editBill.Amount == null && editBill.NextDueDate == null &&
+            editBill.Frequency == null && editBill.Category == null &&
+            editBill.AccountId == null)
+        {
+            throw new InvalidDataException("Must have at least one value changed");
+        }
+
         if (!await _dbService.IsBillAssociatedWithUser(user, editBill.Id))
         {
             throw new InvalidDataException("Bill not found");
