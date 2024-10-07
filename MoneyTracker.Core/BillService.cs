@@ -81,7 +81,7 @@ public class BillService : IBillService
             throw new InvalidDataException("Account not found");
         }
 
-        var dtoToDb = new EditBillDTO(
+        var dtoToDb = new EditBillEntity(
             editBill.Id,
             editBill.Payee,
             editBill.Amount,
@@ -119,7 +119,7 @@ public class BillService : IBillService
         var bill = await _dbService.GetBillById(user, skipBillDTO.Id);
         var newDueDate = _frequencyCalculation.CalculateNextDueDate(bill.Frequency, bill.MonthDay, skipBillDTO.SkipDatePastThisDate);
 
-        var editBill = new EditBillDTO(skipBillDTO.Id, nextDueDate: newDueDate);
+        var editBill = new EditBillEntity(skipBillDTO.Id, nextDueDate: newDueDate);
         await _dbService.EditBill(editBill);
     }
 

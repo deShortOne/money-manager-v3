@@ -89,7 +89,7 @@ public class BillDatabase : IBillDatabase
         await _database.UpdateTable(query, queryParams);
     }
 
-    public async Task EditBill(EditBillDTO editBillDTO)
+    public async Task EditBill(EditBillEntity editBillDTO)
     {
         var setParamsLis = new List<string>();
         var queryParams = new List<DbParameter>()
