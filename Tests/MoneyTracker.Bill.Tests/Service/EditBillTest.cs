@@ -1,5 +1,7 @@
 ﻿
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using MoneyTracker.Calculation.Bill;
+using MoneyTracker.Calculation.Bill.Frequencies;
 using MoneyTracker.Core;
 using MoneyTracker.Data.Postgres;
 using MoneyTracker.Shared.Auth;
@@ -77,6 +79,107 @@ public sealed class EditBillTest
             }
 
             mockBillDatabase.Verify(x => x.EditBill(editBillEntity), Times.Once);
+        });
+    }
+
+    [Fact]
+    public void FailToEditBill_BillDoesNotBelongToUser()
+    {
+        var userId = 52;
+        var authedUser = new AuthenticatedUser(userId);
+        var tokenToDecode = "tokenToDecode";
+        var billId = 1;
+        var payee = "bree";
+        var amount = 75.24m;
+        var nextDueDate = new DateOnly(2024, 1, 24);
+        var frequency = "Weekly";
+        var category = 1;
+        var accountId = 2;
+        var editBillRequest = new EditBillRequestDTO(billId, payee, amount, nextDueDate, frequency, category, accountId);
+
+        var mockDateProvider = new Mock<IDateProvider>();
+
+        var mockUserAuthService = new Mock<IUserAuthenticationService>();
+        mockUserAuthService.Setup(x => x.DecodeToken(tokenToDecode)).Returns(Task.FromResult(authedUser));
+
+        var mockAccountDatabase = new Mock<IAccountDatabase>();
+
+
+        var mockBillDatabase = new Mock<IBillDatabase>();
+        mockBillDatabase.Setup(x => x.IsBillAssociatedWithUser(authedUser, billId)).Returns(Task.FromResult(false));
+
+        var mockIdGenerator = new Mock<IIdGenerator>();
+
+        var billService = new BillService(mockBillDatabase.Object,
+            mockDateProvider.Object,
+            mockUserAuthService.Object,
+            mockAccountDatabase.Object,
+            mockIdGenerator.Object,
+            new FrequencyCalculation(),
+            new MonthDayCalculator());
+
+
+        Assert.Multiple(async () =>
+        {
+            var error = await Assert.ThrowsAsync<InvalidDataException>(async () =>
+            {
+                await billService.EditBill(tokenToDecode, editBillRequest);
+            });
+            Assert.Equal("Bill not found", error.Message);
+
+            mockBillDatabase.Verify(x => x.IsBillAssociatedWithUser(authedUser, billId), Times.Once);
+            mockUserAuthService.Verify(x => x.DecodeToken(tokenToDecode), Times.Once);
+        });
+    }
+
+    [Fact]
+    public void FailToEditBill_AccountDoesNotBelongToUser()
+    {
+        var userId = 52;
+        var authedUser = new AuthenticatedUser(userId);
+        var tokenToDecode = "tokenToDecode";
+        var billId = 1;
+        var payee = "bree";
+        var amount = 75.24m;
+        var nextDueDate = new DateOnly(2024, 1, 24);
+        var frequency = "Weekly";
+        var category = 1;
+        var accountId = 2;
+        var editBillRequest = new EditBillRequestDTO(billId, payee, amount, nextDueDate, frequency, category, accountId);
+
+        var mockDateProvider = new Mock<IDateProvider>();
+
+        var mockUserAuthService = new Mock<IUserAuthenticationService>();
+        mockUserAuthService.Setup(x => x.DecodeToken(tokenToDecode)).Returns(Task.FromResult(authedUser));
+
+        var mockAccountDatabase = new Mock<IAccountDatabase>();
+        mockAccountDatabase.Setup(x => x.IsAccountOwnedByUser(authedUser, accountId)).Returns(Task.FromResult(false));
+
+        var mockBillDatabase = new Mock<IBillDatabase>();
+        mockBillDatabase.Setup(x => x.IsBillAssociatedWithUser(authedUser, billId)).Returns(Task.FromResult(true));
+
+        var mockIdGenerator = new Mock<IIdGenerator>();
+
+        var billService = new BillService(mockBillDatabase.Object,
+            mockDateProvider.Object,
+            mockUserAuthService.Object,
+            mockAccountDatabase.Object,
+            mockIdGenerator.Object,
+            new FrequencyCalculation(),
+            new MonthDayCalculator());
+
+
+        Assert.Multiple(async () =>
+        {
+            var error = await Assert.ThrowsAsync<InvalidDataException>(async () =>
+            {
+                await billService.EditBill(tokenToDecode, editBillRequest);
+            });
+            Assert.Equal("Account not found", error.Message);
+
+            mockBillDatabase.Verify(x => x.IsBillAssociatedWithUser(authedUser, billId), Times.Once);
+            mockAccountDatabase.Verify(x => x.IsAccountOwnedByUser(authedUser, accountId), Times.Once);
+            mockUserAuthService.Verify(x => x.DecodeToken(tokenToDecode), Times.Once);
         });
     }
 }
