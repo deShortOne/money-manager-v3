@@ -50,6 +50,10 @@ public class BillService : IBillService
         {
             throw new InvalidDataException("Account not found");
         }
+        if (!_frequencyCalculation.DoesFrequencyExist(newBill.Frequency))
+        {
+            throw new InvalidDataException("Invalid frequency");
+        }
 
         var dtoToDb = new NewBillEntity(
             _idGenerator.NewInt(await _dbService.GetLastId()),

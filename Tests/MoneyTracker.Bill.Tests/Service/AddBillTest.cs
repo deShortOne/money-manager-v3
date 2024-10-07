@@ -117,4 +117,53 @@ public sealed class AddBillTest
             mockAccountDatabase.Verify(x => x.IsAccountOwnedByUser(authedUser, accountId), Times.Once);
         });
     }
+
+    [Fact]
+    public void FailToAddNewBillDueToInvalidFrequency()
+    {
+        var userId = 52;
+        var authedUser = new AuthenticatedUser(userId);
+        var tokenToDecode = "tokenToDecode";
+
+        var payee = "bree";
+        var amount = 75.24m;
+        var nextDueDate = new DateOnly(2024, 1, 24);
+        var frequency = "One day at a time";
+        var category = 1;
+        var accountId = 2;
+        var newBillRequest = new NewBillRequestDTO(payee, amount, nextDueDate, frequency, category, accountId);
+
+        var mockDateProvider = new Mock<IDateProvider>();
+
+        var mockUserAuthService = new Mock<IUserAuthenticationService>();
+        mockUserAuthService.Setup(x => x.DecodeToken(tokenToDecode)).Returns(Task.FromResult(authedUser));
+
+        var mockAccountDatabase = new Mock<IAccountDatabase>();
+        mockAccountDatabase.Setup(x => x.IsAccountOwnedByUser(authedUser, accountId)).Returns(Task.FromResult(true));
+
+        var mockBillDatabase = new Mock<IBillDatabase>();
+
+        var mockIdGenerator = new Mock<IIdGenerator>();
+
+        var billService = new BillService(mockBillDatabase.Object,
+            mockDateProvider.Object,
+            mockUserAuthService.Object,
+            mockAccountDatabase.Object,
+            mockIdGenerator.Object,
+            new FrequencyCalculation(),
+            new MonthDayCalculator());
+
+
+        Assert.Multiple(async () =>
+        {
+            var error = await Assert.ThrowsAsync<InvalidDataException>(async () =>
+            {
+                await billService.AddBill(tokenToDecode, newBillRequest);
+            });
+            Assert.Equal("Invalid frequency", error.Message);
+
+            mockUserAuthService.Verify(x => x.DecodeToken(tokenToDecode), Times.Once);
+            mockAccountDatabase.Verify(x => x.IsAccountOwnedByUser(authedUser, accountId), Times.Once);
+        });
+    }
 }
