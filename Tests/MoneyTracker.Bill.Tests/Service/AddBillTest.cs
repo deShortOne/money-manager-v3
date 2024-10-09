@@ -12,41 +12,8 @@ using MoneyTracker.Shared.Shared;
 using Moq;
 
 namespace MoneyTracker.Bill.Tests.Service;
-public sealed class AddBillTest
+public sealed class AddBillTest : BillTestHelper
 {
-    private readonly Mock<IDateProvider> _mockDateProvider = new();
-    private readonly Mock<IUserAuthenticationService> _mockUserAuthService = new();
-    private readonly Mock<IAccountDatabase> _mockAccountDatabase = new();
-    private readonly Mock<IBillDatabase> _mockBillDatabase = new();
-    private readonly Mock<IIdGenerator> _mockIdGenerator = new();
-    private readonly Mock<IFrequencyCalculation> _mockFrequencyCalculation = new();
-    private readonly Mock<IMonthDayCalculator> _mockMonthDayCalculator = new();
-    private readonly Mock<ICategoryDatabase> _mockCategoryDatabase = new();
-
-    private BillService _billService;
-
-    public AddBillTest()
-    {
-        _billService = new BillService(_mockBillDatabase.Object,
-            _mockDateProvider.Object,
-            _mockUserAuthService.Object,
-            _mockAccountDatabase.Object,
-            _mockIdGenerator.Object,
-            _mockFrequencyCalculation.Object,
-            _mockMonthDayCalculator.Object,
-            _mockCategoryDatabase.Object);
-    }
-
-    private void EnsureAllMocksHadNoOtherCalls()
-    {
-        _mockDateProvider.VerifyNoOtherCalls();
-        _mockUserAuthService.VerifyNoOtherCalls();
-        _mockAccountDatabase.VerifyNoOtherCalls();
-        _mockBillDatabase.VerifyNoOtherCalls();
-        _mockFrequencyCalculation.VerifyNoOtherCalls();
-        _mockMonthDayCalculator.VerifyNoOtherCalls();
-        _mockCategoryDatabase.VerifyNoOtherCalls();
-    }
 
     [Fact]
     public async void SuccessfullyAddNewBill()
