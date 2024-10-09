@@ -125,11 +125,7 @@ public class BillService : IBillService
             throw new InvalidDataException("Bill not found");
         }
 
-        var dtoToDb = new DeleteBillDTO(
-            deleteBill.Id
-        );
-
-        await _dbService.DeleteBill(user, dtoToDb);
+        await _dbService.DeleteBill(deleteBill.Id);
     }
 
     public async Task SkipOccurence(string token, SkipBillOccurrenceRequestDTO skipBillDTO)

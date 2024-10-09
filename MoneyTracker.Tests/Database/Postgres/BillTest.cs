@@ -71,7 +71,7 @@ public class BillTest : IAsyncLifetime
         var user = new AuthenticatedUser(1);
         var db = new PostgresDatabase(_postgres.GetConnectionString());
         var bill = new BillDatabase(db);
-        await bill.DeleteBill(user, new DeleteBillDTO(1));
+        await bill.DeleteBill(1);
 
         var expected = new List<BillEntityDTO>()
         {

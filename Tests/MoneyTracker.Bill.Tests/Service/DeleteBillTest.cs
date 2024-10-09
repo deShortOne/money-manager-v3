@@ -1,5 +1,4 @@
 ﻿
-using MoneyTracker.Calculation.Bill;
 using MoneyTracker.Shared.Auth;
 using MoneyTracker.Shared.Models.ControllerToService.Bill;
 using MoneyTracker.Shared.Models.ServiceToRepository.Bill;
@@ -21,7 +20,7 @@ public sealed class DeleteBillTest : BillTestHelper
         _mockUserAuthService.Setup(x => x.DecodeToken(tokenToDecode)).Returns(Task.FromResult(authedUser));
 
         _mockBillDatabase.Setup(x => x.IsBillAssociatedWithUser(authedUser, billId)).Returns(Task.FromResult(true));
-        _mockBillDatabase.Setup(x => x.DeleteBill(authedUser, deleteBillEntity));
+        _mockBillDatabase.Setup(x => x.DeleteBill(billId));
 
         await _billService.DeleteBill(tokenToDecode, deleteBillRequest);
 
@@ -29,7 +28,7 @@ public sealed class DeleteBillTest : BillTestHelper
         {
             _mockUserAuthService.Verify(x => x.DecodeToken(tokenToDecode), Times.Once);
             _mockBillDatabase.Verify(x => x.IsBillAssociatedWithUser(authedUser, billId), Times.Once);
-            _mockBillDatabase.Verify(x => x.DeleteBill(authedUser, deleteBillEntity), Times.Once);
+            _mockBillDatabase.Verify(x => x.DeleteBill(billId), Times.Once);
 
             EnsureAllMocksHadNoOtherCalls();
         });

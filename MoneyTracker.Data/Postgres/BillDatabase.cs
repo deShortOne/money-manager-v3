@@ -139,21 +139,15 @@ public class BillDatabase : IBillDatabase
         await _database.UpdateTable(query, queryParams);
     }
 
-    public async Task<List<BillEntityDTO>> DeleteBill(AuthenticatedUser user, DeleteBillDTO deleteBillDTO)
+    public async Task<List<BillEntityDTO>> DeleteBill(int billIdToDelete)
     {
         string query = """
             DELETE FROM bill
-            WHERE id = @id
-            AND account_id IN (
-                SELECT id
-                FROM account
-                WHERE users_id = @user_id
-            );
+            WHERE id = @id;
             """;
         var queryParams = new List<DbParameter>()
             {
-                new NpgsqlParameter("id", deleteBillDTO.Id),
-                new NpgsqlParameter("user_id", user.UserId),
+                new NpgsqlParameter("id", billIdToDelete),
             };
 
         await _database.UpdateTable(query, queryParams);
