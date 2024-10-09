@@ -1,18 +1,11 @@
 ﻿
-using MoneyTracker.Calculation.Bill;
-using MoneyTracker.Core;
-using MoneyTracker.Data.Postgres;
 using MoneyTracker.Shared.Auth;
-using MoneyTracker.Shared.Core;
-using MoneyTracker.Shared.Data;
-using MoneyTracker.Shared.DateManager;
 using MoneyTracker.Shared.Models.RepositoryToService.Bill;
 using MoneyTracker.Shared.Models.ServiceToController.Bill;
-using MoneyTracker.Shared.Shared;
 using Moq;
 
 namespace MoneyTracker.Bill.Tests.Service;
-public sealed class GetAllBillsTest
+public sealed class GetAllBillsTest : BillTestHelper
 {
     [Fact]
     public void SuccessfullyGetBills()
@@ -30,39 +23,23 @@ public sealed class GetAllBillsTest
             new(2, "jgf", 999, new DateOnly(2023, 4, 23), "Weekly", "Hobby", secondResponseOverdueBillInfo, "account"),
         ];
 
-        var mockDateProvider = new Mock<IDateProvider>();
+        _mockUserAuthService.Setup(x => x.DecodeToken(tokenToDecode)).Returns(Task.FromResult(authedUser));
 
-        var mockUserAuthService = new Mock<IUserAuthenticationService>();
-        mockUserAuthService.Setup(x => x.DecodeToken(tokenToDecode)).Returns(Task.FromResult(authedUser));
+        _mockBillDatabase.Setup(x => x.GetAllBills(authedUser)).Returns(Task.FromResult(billDatabaseReturn));
 
-        var mockAccountDatabase = new Mock<IAccountDatabase>();
-
-        var mockBillDatabase = new Mock<IBillDatabase>();
-        mockBillDatabase.Setup(x => x.GetAllBills(authedUser)).Returns(Task.FromResult(billDatabaseReturn));
-
-        var mockIdGenerator = new Mock<IIdGenerator>();
-
-        var mockCategoryDatabase = new Mock<ICategoryDatabase>();
-
-        var mockFrequencyCalculation = new Mock<IFrequencyCalculation>();
-        mockFrequencyCalculation.Setup(x => x.CalculateOverDueBillInfo(8, "Daily", new DateOnly(2024, 10, 8), mockDateProvider.Object)).Returns<OverDueBillInfo?>(null);
-        mockFrequencyCalculation.Setup(x => x.CalculateOverDueBillInfo(23, "Weekly", new DateOnly(2023, 4, 23), mockDateProvider.Object)).Returns(secondResponseOverdueBillInfo);
-
-        var billService = new BillService(mockBillDatabase.Object,
-            mockDateProvider.Object,
-            mockUserAuthService.Object,
-            mockAccountDatabase.Object,
-            mockIdGenerator.Object,
-            mockFrequencyCalculation.Object,
-            new MonthDayCalculator(),
-            mockCategoryDatabase.Object);
+        _mockFrequencyCalculation.Setup(x => x.CalculateOverDueBillInfo(8, "Daily", new DateOnly(2024, 10, 8), _mockDateProvider.Object)).Returns((OverDueBillInfo?)null);
+        _mockFrequencyCalculation.Setup(x => x.CalculateOverDueBillInfo(23, "Weekly", new DateOnly(2023, 4, 23), _mockDateProvider.Object)).Returns(secondResponseOverdueBillInfo);
 
         Assert.Multiple(async () =>
         {
-            Assert.Equal(expected, await billService.GetAllBills(tokenToDecode));
+            Assert.Equal(expected, await _billService.GetAllBills(tokenToDecode));
 
-            mockUserAuthService.Verify(x => x.DecodeToken(tokenToDecode), Times.Once);
-            mockBillDatabase.Verify(x => x.GetAllBills(authedUser), Times.Once);
+            _mockUserAuthService.Verify(x => x.DecodeToken(tokenToDecode), Times.Once);
+            _mockBillDatabase.Verify(x => x.GetAllBills(authedUser), Times.Once);
+            _mockFrequencyCalculation.Verify(x => x.CalculateOverDueBillInfo(8, "Daily", new DateOnly(2024, 10, 8), _mockDateProvider.Object), Times.Once);
+            _mockFrequencyCalculation.Verify(x => x.CalculateOverDueBillInfo(23, "Weekly", new DateOnly(2023, 4, 23), _mockDateProvider.Object), Times.Once);
+
+            EnsureAllMocksHadNoOtherCalls();
         });
     }
 }
