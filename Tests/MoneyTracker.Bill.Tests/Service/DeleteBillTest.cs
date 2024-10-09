@@ -1,17 +1,12 @@
 ﻿
 using MoneyTracker.Calculation.Bill;
-using MoneyTracker.Core;
-using MoneyTracker.Data.Postgres;
 using MoneyTracker.Shared.Auth;
-using MoneyTracker.Shared.Core;
-using MoneyTracker.Shared.Data;
-using MoneyTracker.Shared.DateManager;
 using MoneyTracker.Shared.Models.ControllerToService.Bill;
-using MoneyTracker.Shared.Shared;
+using MoneyTracker.Shared.Models.ServiceToRepository.Bill;
 using Moq;
 
 namespace MoneyTracker.Bill.Tests.Service;
-public sealed class DeleteBillTest
+public sealed class DeleteBillTest : BillTestHelper
 {
     [Fact]
     public async void SuccessfullyDeleteBill()
@@ -20,36 +15,23 @@ public sealed class DeleteBillTest
         var authedUser = new AuthenticatedUser(userId);
         var tokenToDecode = "tokenToDecode";
         var billId = 1;
-        var editBillRequest = new DeleteBillRequestDTO(billId);
+        var deleteBillRequest = new DeleteBillRequestDTO(billId);
+        var deleteBillEntity = new DeleteBillDTO(billId);
 
-        var mockDateProvider = new Mock<IDateProvider>();
+        _mockUserAuthService.Setup(x => x.DecodeToken(tokenToDecode)).Returns(Task.FromResult(authedUser));
 
-        var mockUserAuthService = new Mock<IUserAuthenticationService>();
-        mockUserAuthService.Setup(x => x.DecodeToken(tokenToDecode)).Returns(Task.FromResult(authedUser));
+        _mockBillDatabase.Setup(x => x.IsBillAssociatedWithUser(authedUser, billId)).Returns(Task.FromResult(true));
+        _mockBillDatabase.Setup(x => x.DeleteBill(authedUser, deleteBillEntity));
 
-        var mockAccountDatabase = new Mock<IAccountDatabase>();
+        await _billService.DeleteBill(tokenToDecode, deleteBillRequest);
 
-        var mockBillDatabase = new Mock<IBillDatabase>();
-        mockBillDatabase.Setup(x => x.IsBillAssociatedWithUser(authedUser, billId)).Returns(Task.FromResult(true));
-
-        var mockIdGenerator = new Mock<IIdGenerator>();
-
-        var mockCategoryDatabase = new Mock<ICategoryDatabase>();
-
-        var billService = new BillService(mockBillDatabase.Object,
-            mockDateProvider.Object,
-            mockUserAuthService.Object,
-            mockAccountDatabase.Object,
-            mockIdGenerator.Object,
-            new FrequencyCalculation(),
-            new MonthDayCalculator(),
-            mockCategoryDatabase.Object);
-
-        await billService.DeleteBill(tokenToDecode, editBillRequest);
         Assert.Multiple(() =>
         {
-            mockBillDatabase.Verify(x => x.IsBillAssociatedWithUser(authedUser, billId), Times.Once);
-            mockUserAuthService.Verify(x => x.DecodeToken(tokenToDecode), Times.Once);
+            _mockUserAuthService.Verify(x => x.DecodeToken(tokenToDecode), Times.Once);
+            _mockBillDatabase.Verify(x => x.IsBillAssociatedWithUser(authedUser, billId), Times.Once);
+            _mockBillDatabase.Verify(x => x.DeleteBill(authedUser, deleteBillEntity), Times.Once);
+
+            EnsureAllMocksHadNoOtherCalls();
         });
     }
 
@@ -62,39 +44,22 @@ public sealed class DeleteBillTest
         var billId = 1;
         var editBillRequest = new DeleteBillRequestDTO(billId);
 
-        var mockDateProvider = new Mock<IDateProvider>();
+        _mockUserAuthService.Setup(x => x.DecodeToken(tokenToDecode)).Returns(Task.FromResult(authedUser));
 
-        var mockUserAuthService = new Mock<IUserAuthenticationService>();
-        mockUserAuthService.Setup(x => x.DecodeToken(tokenToDecode)).Returns(Task.FromResult(authedUser));
-
-        var mockAccountDatabase = new Mock<IAccountDatabase>();
-
-        var mockBillDatabase = new Mock<IBillDatabase>();
-        mockBillDatabase.Setup(x => x.IsBillAssociatedWithUser(authedUser, billId)).Returns(Task.FromResult(false));
-
-        var mockIdGenerator = new Mock<IIdGenerator>();
-
-        var mockCategoryDatabase = new Mock<ICategoryDatabase>();
-
-        var billService = new BillService(mockBillDatabase.Object,
-            mockDateProvider.Object,
-            mockUserAuthService.Object,
-            mockAccountDatabase.Object,
-            mockIdGenerator.Object,
-            new FrequencyCalculation(),
-            new MonthDayCalculator(),
-            mockCategoryDatabase.Object);
+        _mockBillDatabase.Setup(x => x.IsBillAssociatedWithUser(authedUser, billId)).Returns(Task.FromResult(false));
 
         Assert.Multiple(async () =>
         {
             var error = await Assert.ThrowsAsync<InvalidDataException>(async () =>
             {
-                await billService.DeleteBill(tokenToDecode, editBillRequest);
+                await _billService.DeleteBill(tokenToDecode, editBillRequest);
             });
             Assert.Equal("Bill not found", error.Message);
 
-            mockBillDatabase.Verify(x => x.IsBillAssociatedWithUser(authedUser, billId), Times.Once);
-            mockUserAuthService.Verify(x => x.DecodeToken(tokenToDecode), Times.Once);
+            _mockUserAuthService.Verify(x => x.DecodeToken(tokenToDecode), Times.Once);
+            _mockBillDatabase.Verify(x => x.IsBillAssociatedWithUser(authedUser, billId), Times.Once);
+
+            EnsureAllMocksHadNoOtherCalls();
         });
     }
 }
