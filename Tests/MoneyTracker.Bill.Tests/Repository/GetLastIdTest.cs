@@ -1,5 +1,4 @@
 ﻿
-using MoneyTracker.Data.Global;
 using MoneyTracker.Data.Postgres;
 using MoneyTracker.DatabaseMigration;
 using MoneyTracker.DatabaseMigration.Models;
@@ -17,9 +16,7 @@ public sealed class GetLastIdTest : IAsyncLifetime
         .WithCleanUp(true)
         .Build();
 
-#pragma warning disable CS8618 // disable nullable
     private IBillDatabase _billRepo;
-#pragma warning restore CS8618
 
     public async Task InitializeAsync()
     {
@@ -36,13 +33,13 @@ public sealed class GetLastIdTest : IAsyncLifetime
     }
 
     [Fact]
-    public async void GetLastWithNoDataInTables()
+    public async void GetLastIdWithNoDataInTables()
     {
         Assert.Equal(0, await _billRepo.GetLastId());
     }
 
     [Fact]
-    public async void GetLastWithDataInTables()
+    public async void GetLastIdWithDataInTables()
     {
         Migration.CheckMigration(_postgres.GetConnectionString(), new MigrationOption(true));
 
