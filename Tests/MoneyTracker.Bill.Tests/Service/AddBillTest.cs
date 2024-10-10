@@ -1,74 +1,72 @@
-﻿
-using MoneyTracker.Calculation.Bill;
-using MoneyTracker.Core;
-using MoneyTracker.Data.Postgres;
-using MoneyTracker.Shared.Auth;
-using MoneyTracker.Shared.Core;
-using MoneyTracker.Shared.Data;
-using MoneyTracker.Shared.DateManager;
+﻿using MoneyTracker.Shared.Auth;
 using MoneyTracker.Shared.Models.ControllerToService.Bill;
 using MoneyTracker.Shared.Models.ServiceToRepository.Bill;
-using MoneyTracker.Shared.Shared;
 using Moq;
 
 namespace MoneyTracker.Bill.Tests.Service;
 public sealed class AddBillTest : BillTestHelper
 {
+    private readonly int _userId = 52;
+    private readonly AuthenticatedUser _authedUser;
+    private readonly string _tokenToDecode = "tokenToDecode";
+
+    private readonly int _prevBillId = 7;
+    private readonly int _nextBillId = 14;
+
+    private readonly string _payee = "bree";
+    private readonly decimal _amount = 75.24m;
+    private readonly DateOnly _nextDueDate = new DateOnly(2024, 1, 24);
+    private readonly string _frequency = "Weekly";
+    private readonly int _category = 1;
+    private readonly int _monthDay = 24;
+    private readonly int _accountId = 2;
+    private readonly NewBillRequestDTO _newBillRequest;
+    private readonly NewBillEntity _newBillEntity;
+
+    public AddBillTest()
+    {
+        _authedUser = new AuthenticatedUser(_userId);
+        _newBillRequest = new NewBillRequestDTO(_payee, _amount, _nextDueDate, _frequency, _category, _accountId);
+        _newBillEntity = new NewBillEntity(_nextBillId, _payee, _amount, _nextDueDate, _frequency, _category, _monthDay, _accountId);
+    }
 
     [Fact]
     public async void SuccessfullyAddNewBill()
     {
-        var userId = 52;
-        var authedUser = new AuthenticatedUser(userId);
-        var tokenToDecode = "tokenToDecode";
+        _mockUserAuthService.Setup(x => x.DecodeToken(_tokenToDecode))
+            .Returns(Task.FromResult(_authedUser));
 
-        int prevBillId = 7;
-        int nextBillId = 14;
-
-        var payee = "bree";
-        var amount = 75.24m;
-        var nextDueDate = new DateOnly(2024, 1, 24);
-        var frequency = "Weekly";
-        var category = 1;
-        var monthDay = 24;
-        var accountId = 2;
-        var newBillRequest = new NewBillRequestDTO(payee, amount, nextDueDate, frequency, category, accountId);
-        var newBillEntity = new NewBillEntity(nextBillId, payee, amount, nextDueDate, frequency, category, monthDay, accountId);
-
-        _mockUserAuthService.Setup(x => x.DecodeToken(tokenToDecode))
-            .Returns(Task.FromResult(authedUser));
-
-        _mockAccountDatabase.Setup(x => x.IsAccountOwnedByUser(authedUser, accountId))
+        _mockAccountDatabase.Setup(x => x.IsAccountOwnedByUser(_authedUser, _accountId))
             .Returns(Task.FromResult(true));
 
-        _mockFrequencyCalculation.Setup(x => x.DoesFrequencyExist(frequency)).Returns(true);
+        _mockFrequencyCalculation.Setup(x => x.DoesFrequencyExist(_frequency)).Returns(true);
 
-        _mockCategoryDatabase.Setup(x => x.DoesCategoryExist(category))
+        _mockCategoryDatabase.Setup(x => x.DoesCategoryExist(_category))
             .Returns(Task.FromResult(true));
 
         _mockBillDatabase.Setup(x => x.GetLastId())
-            .Returns(Task.FromResult(prevBillId));
+            .Returns(Task.FromResult(_prevBillId));
 
-        _mockIdGenerator.Setup(x => x.NewInt(prevBillId))
-            .Returns(nextBillId);
+        _mockIdGenerator.Setup(x => x.NewInt(_prevBillId))
+            .Returns(_nextBillId);
 
-        _mockMonthDayCalculator.Setup(x => x.Calculate(nextDueDate)).Returns(monthDay);
+        _mockMonthDayCalculator.Setup(x => x.Calculate(_nextDueDate)).Returns(_monthDay);
 
-        _mockBillDatabase.Setup(x => x.AddBill(newBillEntity));
+        _mockBillDatabase.Setup(x => x.AddBill(_newBillEntity));
 
-        await _billService.AddBill(tokenToDecode, newBillRequest);
+        await _billService.AddBill(_tokenToDecode, _newBillRequest);
 
         Assert.Multiple(() =>
         {
-            _mockUserAuthService.Verify(x => x.DecodeToken(tokenToDecode), Times.Once);
-            _mockAccountDatabase.Verify(x => x.IsAccountOwnedByUser(authedUser, accountId), Times.Once);
-            _mockFrequencyCalculation.Verify(x => x.DoesFrequencyExist(frequency), Times.Once);
-            _mockCategoryDatabase.Verify(x => x.DoesCategoryExist(category), Times.Once);
+            _mockUserAuthService.Verify(x => x.DecodeToken(_tokenToDecode), Times.Once);
+            _mockAccountDatabase.Verify(x => x.IsAccountOwnedByUser(_authedUser, _accountId), Times.Once);
+            _mockFrequencyCalculation.Verify(x => x.DoesFrequencyExist(_frequency), Times.Once);
+            _mockCategoryDatabase.Verify(x => x.DoesCategoryExist(_category), Times.Once);
             _mockBillDatabase.Verify(x => x.GetLastId(), Times.Once);
-            _mockIdGenerator.Verify(x => x.NewInt(prevBillId), Times.Once);
-            _mockFrequencyCalculation.Verify(x => x.DoesFrequencyExist(frequency), Times.Once);
-            _mockMonthDayCalculator.Verify(x => x.Calculate(nextDueDate), Times.Once);
-            _mockBillDatabase.Verify(x => x.AddBill(newBillEntity), Times.Once);
+            _mockIdGenerator.Verify(x => x.NewInt(_prevBillId), Times.Once);
+            _mockFrequencyCalculation.Verify(x => x.DoesFrequencyExist(_frequency), Times.Once);
+            _mockMonthDayCalculator.Verify(x => x.Calculate(_nextDueDate), Times.Once);
+            _mockBillDatabase.Verify(x => x.AddBill(_newBillEntity), Times.Once);
 
             EnsureAllMocksHadNoOtherCalls();
         });
@@ -77,33 +75,39 @@ public sealed class AddBillTest : BillTestHelper
     [Fact]
     public void FailToAddNewBillDueToAccountNotBelongingToUser()
     {
-        var userId = 52;
-        var authedUser = new AuthenticatedUser(userId);
-        var tokenToDecode = "tokenToDecode";
+        _mockUserAuthService.Setup(x => x.DecodeToken(_tokenToDecode))
+            .Returns(Task.FromResult(_authedUser));
 
-        var payee = "bree";
-        var amount = 75.24m;
-        var nextDueDate = new DateOnly(2024, 1, 24);
-        var frequency = "Monthly";
-        var category = 1;
-        var accountId = 2;
-        var newBillRequest = new NewBillRequestDTO(payee, amount, nextDueDate, frequency, category, accountId);
+        _mockAccountDatabase.Setup(x => x.IsAccountOwnedByUser(_authedUser, _accountId))
+            .Returns(Task.FromResult(false));
 
-        _mockUserAuthService.Setup(x => x.DecodeToken(tokenToDecode)).Returns(Task.FromResult(authedUser));
+        _mockFrequencyCalculation.Setup(x => x.DoesFrequencyExist(_frequency)).Returns(true);
 
-        _mockAccountDatabase.Setup(x => x.IsAccountOwnedByUser(authedUser, accountId)).Returns(Task.FromResult(false));
+        _mockCategoryDatabase.Setup(x => x.DoesCategoryExist(_category))
+            .Returns(Task.FromResult(true));
 
+        _mockBillDatabase.Setup(x => x.GetLastId())
+            .Returns(Task.FromResult(_prevBillId));
+
+        _mockIdGenerator.Setup(x => x.NewInt(_prevBillId))
+            .Returns(_nextBillId);
+
+        _mockMonthDayCalculator.Setup(x => x.Calculate(_nextDueDate)).Returns(_monthDay);
 
         Assert.Multiple(async () =>
         {
             var error = await Assert.ThrowsAsync<InvalidDataException>(async () =>
             {
-                await _billService.AddBill(tokenToDecode, newBillRequest);
+                await _billService.AddBill(_tokenToDecode, _newBillRequest);
             });
             Assert.Equal("Account not found", error.Message);
 
-            _mockUserAuthService.Verify(x => x.DecodeToken(tokenToDecode), Times.Once);
-            _mockAccountDatabase.Verify(x => x.IsAccountOwnedByUser(authedUser, accountId), Times.Once);
+            _mockUserAuthService.Verify(x => x.DecodeToken(_tokenToDecode), Times.Once);
+            _mockAccountDatabase.Verify(x => x.IsAccountOwnedByUser(_authedUser, _accountId), Times.AtMostOnce);
+            _mockFrequencyCalculation.Verify(x => x.DoesFrequencyExist(_frequency), Times.AtMostOnce);
+            _mockCategoryDatabase.Verify(x => x.DoesCategoryExist(_category), Times.AtMostOnce);
+            _mockBillDatabase.Verify(x => x.GetLastId(), Times.AtMostOnce);
+            _mockIdGenerator.Verify(x => x.NewInt(_prevBillId), Times.AtMostOnce);
 
             EnsureAllMocksHadNoOtherCalls();
         });
@@ -112,35 +116,39 @@ public sealed class AddBillTest : BillTestHelper
     [Fact]
     public void FailToAddNewBillDueToInvalidFrequency()
     {
-        var userId = 52;
-        var authedUser = new AuthenticatedUser(userId);
-        var tokenToDecode = "tokenToDecode";
+        _mockUserAuthService.Setup(x => x.DecodeToken(_tokenToDecode))
+            .Returns(Task.FromResult(_authedUser));
 
-        var payee = "bree";
-        var amount = 75.24m;
-        var nextDueDate = new DateOnly(2024, 1, 24);
-        var frequency = "One day at a time";
-        var category = 1;
-        var accountId = 2;
-        var newBillRequest = new NewBillRequestDTO(payee, amount, nextDueDate, frequency, category, accountId);
+        _mockAccountDatabase.Setup(x => x.IsAccountOwnedByUser(_authedUser, _accountId))
+            .Returns(Task.FromResult(true));
 
-        _mockUserAuthService.Setup(x => x.DecodeToken(tokenToDecode)).Returns(Task.FromResult(authedUser));
+        _mockFrequencyCalculation.Setup(x => x.DoesFrequencyExist(_frequency)).Returns(false);
 
-        _mockAccountDatabase.Setup(x => x.IsAccountOwnedByUser(authedUser, accountId)).Returns(Task.FromResult(true));
+        _mockCategoryDatabase.Setup(x => x.DoesCategoryExist(_category))
+            .Returns(Task.FromResult(true));
 
-        _mockFrequencyCalculation.Setup(x => x.DoesFrequencyExist(frequency)).Returns(false);
+        _mockBillDatabase.Setup(x => x.GetLastId())
+            .Returns(Task.FromResult(_prevBillId));
+
+        _mockIdGenerator.Setup(x => x.NewInt(_prevBillId))
+            .Returns(_nextBillId);
+
+        _mockMonthDayCalculator.Setup(x => x.Calculate(_nextDueDate)).Returns(_monthDay);
 
         Assert.Multiple(async () =>
         {
             var error = await Assert.ThrowsAsync<InvalidDataException>(async () =>
             {
-                await _billService.AddBill(tokenToDecode, newBillRequest);
+                await _billService.AddBill(_tokenToDecode, _newBillRequest);
             });
             Assert.Equal("Invalid frequency", error.Message);
 
-            _mockUserAuthService.Verify(x => x.DecodeToken(tokenToDecode), Times.Once);
-            _mockAccountDatabase.Verify(x => x.IsAccountOwnedByUser(authedUser, accountId), Times.Once);
-            _mockFrequencyCalculation.Verify(x => x.DoesFrequencyExist(frequency), Times.Once);
+            _mockUserAuthService.Verify(x => x.DecodeToken(_tokenToDecode), Times.Once);
+            _mockAccountDatabase.Verify(x => x.IsAccountOwnedByUser(_authedUser, _accountId), Times.AtMostOnce);
+            _mockFrequencyCalculation.Verify(x => x.DoesFrequencyExist(_frequency), Times.AtMostOnce);
+            _mockCategoryDatabase.Verify(x => x.DoesCategoryExist(_category), Times.AtMostOnce);
+            _mockBillDatabase.Verify(x => x.GetLastId(), Times.AtMostOnce);
+            _mockIdGenerator.Verify(x => x.NewInt(_prevBillId), Times.AtMostOnce);
 
             EnsureAllMocksHadNoOtherCalls();
         });
@@ -149,38 +157,39 @@ public sealed class AddBillTest : BillTestHelper
     [Fact]
     public void InvalidCategory_Fails()
     {
-        var userId = 52;
-        var authedUser = new AuthenticatedUser(userId);
-        var tokenToDecode = "tokenToDecode";
+        _mockUserAuthService.Setup(x => x.DecodeToken(_tokenToDecode))
+            .Returns(Task.FromResult(_authedUser));
 
-        var payee = "bree";
-        var amount = 75.24m;
-        var nextDueDate = new DateOnly(2024, 1, 24);
-        var frequency = "BiWeekly";
-        var category = 1;
-        var accountId = 2;
-        var newBillRequest = new NewBillRequestDTO(payee, amount, nextDueDate, frequency, category, accountId);
+        _mockAccountDatabase.Setup(x => x.IsAccountOwnedByUser(_authedUser, _accountId))
+            .Returns(Task.FromResult(true));
 
-        _mockUserAuthService.Setup(x => x.DecodeToken(tokenToDecode)).Returns(Task.FromResult(authedUser));
+        _mockFrequencyCalculation.Setup(x => x.DoesFrequencyExist(_frequency)).Returns(true);
 
-        _mockAccountDatabase.Setup(x => x.IsAccountOwnedByUser(authedUser, accountId)).Returns(Task.FromResult(true));
+        _mockCategoryDatabase.Setup(x => x.DoesCategoryExist(_category))
+            .Returns(Task.FromResult(false));
 
-        _mockCategoryDatabase.Setup(x => x.DoesCategoryExist(category)).Returns(Task.FromResult(false));
+        _mockBillDatabase.Setup(x => x.GetLastId())
+            .Returns(Task.FromResult(_prevBillId));
 
-        _mockFrequencyCalculation.Setup(x => x.DoesFrequencyExist(frequency)).Returns(true);
+        _mockIdGenerator.Setup(x => x.NewInt(_prevBillId))
+            .Returns(_nextBillId);
+
+        _mockMonthDayCalculator.Setup(x => x.Calculate(_nextDueDate)).Returns(_monthDay);
 
         Assert.Multiple(async () =>
         {
             var error = await Assert.ThrowsAsync<InvalidDataException>(async () =>
             {
-                await _billService.AddBill(tokenToDecode, newBillRequest);
+                await _billService.AddBill(_tokenToDecode, _newBillRequest);
             });
             Assert.Equal("Invalid category", error.Message);
 
-            _mockUserAuthService.Verify(x => x.DecodeToken(tokenToDecode), Times.Once);
-            _mockAccountDatabase.Verify(x => x.IsAccountOwnedByUser(authedUser, accountId), Times.Once);
-            _mockCategoryDatabase.Verify(x => x.DoesCategoryExist(category), Times.Once);
-            _mockFrequencyCalculation.Verify(x => x.DoesFrequencyExist(frequency), Times.Once);
+            _mockUserAuthService.Verify(x => x.DecodeToken(_tokenToDecode), Times.Once);
+            _mockAccountDatabase.Verify(x => x.IsAccountOwnedByUser(_authedUser, _accountId), Times.AtMostOnce);
+            _mockFrequencyCalculation.Verify(x => x.DoesFrequencyExist(_frequency), Times.AtMostOnce);
+            _mockCategoryDatabase.Verify(x => x.DoesCategoryExist(_category), Times.AtMostOnce);
+            _mockBillDatabase.Verify(x => x.GetLastId(), Times.AtMostOnce);
+            _mockIdGenerator.Verify(x => x.NewInt(_prevBillId), Times.AtMostOnce);
 
             EnsureAllMocksHadNoOtherCalls();
         });
