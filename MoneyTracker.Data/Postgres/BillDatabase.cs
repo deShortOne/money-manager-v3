@@ -142,7 +142,7 @@ public class BillDatabase : IBillDatabase
         await _database.UpdateTable(query, queryParams);
     }
 
-    public async Task<List<BillEntityDTO>> DeleteBill(int billIdToDelete)
+    public async Task DeleteBill(int billIdToDelete)
     {
         string query = """
             DELETE FROM bill
@@ -154,8 +154,6 @@ public class BillDatabase : IBillDatabase
             };
 
         await _database.UpdateTable(query, queryParams);
-
-        return await GetAllBills(new AuthenticatedUser(1));
     }
 
     public async Task<BillEntityDTO> GetBillById(AuthenticatedUser user, int id)
