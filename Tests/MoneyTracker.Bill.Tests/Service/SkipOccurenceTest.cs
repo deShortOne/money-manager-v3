@@ -25,7 +25,7 @@ public sealed class SkipOccurenceTest : BillTestHelper
 
         _mockBillDatabase.Setup(x => x.IsBillAssociatedWithUser(authedUser, billId)).Returns(Task.FromResult(true));
         _mockBillDatabase.Setup(x => x.GetBillById(billId))
-            .Returns(Task.FromResult(new BillEntityDTO(userId, "", 0, new DateOnly(), frequencyToCheck, "", monthDay, "")));
+            .Returns(Task.FromResult<BillEntityDTO?>(new BillEntityDTO(userId, "", 0, new DateOnly(), frequencyToCheck, "", monthDay, "")));
         _mockBillDatabase.Setup(x => x.EditBill(editBillEntity));
 
         _mockFrequencyCalculation.Setup(x => x.CalculateNextDueDate(frequencyToCheck, monthDay, dateToEvaluate))
