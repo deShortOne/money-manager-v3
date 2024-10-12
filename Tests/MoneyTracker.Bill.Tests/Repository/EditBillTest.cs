@@ -1,8 +1,6 @@
 ﻿
-using System.Data;
 using MoneyTracker.DatabaseMigration;
 using MoneyTracker.DatabaseMigration.Models;
-using MoneyTracker.Shared.Models.ControllerToService.Bill;
 using MoneyTracker.Shared.Models.ServiceToRepository.Bill;
 using Npgsql;
 
@@ -17,12 +15,6 @@ public sealed class EditBillTest : BillRespositoryTestHelper
     private readonly int _categoryId = 4;
     private readonly int _monthDay = 16;
     private readonly int _accountId = 2;
-
-    private readonly BillEntity _baseEntity;
-    public EditBillTest()
-    {
-        _baseEntity = new BillEntity(_id, _payee, _amount, _nextDueDate, _frequency, _categoryId, _monthDay, _accountId);
-    }
 
     private async Task SetupDb()
     {
@@ -47,32 +39,6 @@ public sealed class EditBillTest : BillRespositoryTestHelper
         commandAddBaseBillData.Parameters.Add(new NpgsqlParameter("@monthDay", _monthDay));
         commandAddBaseBillData.Parameters.Add(new NpgsqlParameter("@accountId", _accountId));
         await commandAddBaseBillData.ExecuteNonQueryAsync();
-    }
-
-    private async Task<List<BillEntity>> GetAllBillEntity()
-    {
-        var getBillQuery = @"
-                            SELECT id, payee, amount, nextduedate, frequency, category_id, monthday, account_id
-                            FROM bill;
-                            ";
-        await using var conn = new NpgsqlConnection(_postgres.GetConnectionString());
-        await using var commandGetBillInfo = new NpgsqlCommand(getBillQuery, conn);
-        await conn.OpenAsync();
-        using var reader = commandGetBillInfo.ExecuteReader();
-        List<BillEntity> results = [];
-        while (reader.Read())
-        {
-            results.Add(new BillEntity(id: reader.GetInt32("id"),
-                payee: reader.GetString("payee"),
-                amount: reader.GetDecimal("amount"),
-                nextDueDate: DateOnly.FromDateTime(reader.GetDateTime("nextduedate")),
-                frequency: reader.GetString("frequency"),
-                category: reader.GetInt32("category_id"),
-                monthDay: reader.GetInt32("monthday"),
-                accountId: reader.GetInt32("account_id"))
-            );
-        }
-        return results;
     }
 
     public static TheoryData<string?, decimal?, DateOnly?, int?, string?, int?, int?> OnlyOneItemNotNull = new() {

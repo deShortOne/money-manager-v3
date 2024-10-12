@@ -1,5 +1,4 @@
 ﻿
-using System.Data;
 using MoneyTracker.DatabaseMigration;
 using MoneyTracker.DatabaseMigration.Models;
 using MoneyTracker.Shared.Models.ServiceToRepository.Bill;
@@ -38,19 +37,8 @@ public sealed class AddBillTest : BillRespositoryTestHelper
                             ";
         await using var commandGetBillInfo = new NpgsqlCommand(getBillQuery, conn);
         using var reader = commandGetBillInfo.ExecuteReader();
-        List<BillEntity> results = [];
-        while (reader.Read())
-        {
-            results.Add(new BillEntity(id: reader.GetInt32("id"),
-                payee: reader.GetString("payee"),
-                amount: reader.GetDecimal("amount"),
-                nextDueDate: DateOnly.FromDateTime(reader.GetDateTime("nextduedate")),
-                frequency: reader.GetString("frequency"),
-                category: reader.GetInt32("category_id"),
-                monthDay: reader.GetInt32("monthday"),
-                accountId: reader.GetInt32("account_id"))
-            );
-        }
+        List<BillEntity> results = await GetAllBillEntity();
+
         Assert.Multiple(() =>
         {
             Assert.Single(results);

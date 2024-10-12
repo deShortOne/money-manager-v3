@@ -1,8 +1,11 @@
 ﻿
+using System.Data;
 using MoneyTracker.Data.Postgres;
 using MoneyTracker.DatabaseMigration;
 using MoneyTracker.DatabaseMigration.Models;
 using MoneyTracker.Shared.Data;
+using MoneyTracker.Shared.Models.ServiceToRepository.Bill;
+using Npgsql;
 using Testcontainers.PostgreSql;
 
 namespace MoneyTracker.Bill.Tests.Repository;
@@ -30,5 +33,31 @@ public class BillRespositoryTestHelper : IAsyncLifetime
     public Task DisposeAsync()
     {
         return _postgres.DisposeAsync().AsTask();
+    }
+
+    protected async Task<List<BillEntity>> GetAllBillEntity()
+    {
+        var getBillQuery = @"
+                            SELECT id, payee, amount, nextduedate, frequency, category_id, monthday, account_id
+                            FROM bill;
+                            ";
+        await using var conn = new NpgsqlConnection(_postgres.GetConnectionString());
+        await using var commandGetBillInfo = new NpgsqlCommand(getBillQuery, conn);
+        await conn.OpenAsync();
+        using var reader = commandGetBillInfo.ExecuteReader();
+        List<BillEntity> results = [];
+        while (reader.Read())
+        {
+            results.Add(new BillEntity(id: reader.GetInt32("id"),
+                payee: reader.GetString("payee"),
+                amount: reader.GetDecimal("amount"),
+                nextDueDate: DateOnly.FromDateTime(reader.GetDateTime("nextduedate")),
+                frequency: reader.GetString("frequency"),
+                category: reader.GetInt32("category_id"),
+                monthDay: reader.GetInt32("monthday"),
+                accountId: reader.GetInt32("account_id"))
+            );
+        }
+        return results;
     }
 }
