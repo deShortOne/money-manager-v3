@@ -15,25 +15,25 @@ namespace MoneyTracker.Bill.Tests.Service;
 public sealed class EditBillTest : BillTestHelper
 {
 
-    public static TheoryData<int, string?, decimal?, DateOnly?, string?, int?, int?> OnlyOneItemNotNull = new() {
-        { 1, "something funky here", null, null, null, null, null },
-        { 2, null, 245.23m, null, null, null, null },
-        { 3, null, null, new DateOnly(2023, 2, 21), null, null, null },
-        { 4, null, null, null, "Daily", null, null },
-        { 5, null, null, null, null, 5, null },
-        { 6, null, null, null, null, null, 2 },
+    public static TheoryData<int, string?, decimal?, DateOnly?, int?, string?, int?, int?> OnlyOneItemNotNull = new() {
+        { 1, "something funky here", null, null, null, null, null, null },
+        { 2, null, 245.23m, null, null, null, null, null },
+        { 3, null, null, new DateOnly(2023, 2, 21), null, null, null, null },
+        { 4, null, null, null, null, "Daily", null, null },
+        { 5, null, null, null, null, null, 5, null },
+        { 6, null, null, null, null, null, null, 2 },
     };
 
     [Theory, MemberData(nameof(OnlyOneItemNotNull))]
     public async void SuccessfullyEditBill_OnlyChangeOneItem(int id, string? payee,
-        decimal? amount, DateOnly? nextDueDate, string? frequency, int? category, int? accountId)
+        decimal? amount, DateOnly? nextDueDate, int? monthDay, string? frequency, int? category, int? accountId)
     {
         var userId = 52;
         var authedUser = new AuthenticatedUser(userId);
         var tokenToDecode = "tokenToDecode";
 
         var editBillRequest = new EditBillRequestDTO(id, payee, amount, nextDueDate, frequency, category, accountId);
-        var editBillEntity = new EditBillEntity(id, payee, amount, nextDueDate, frequency, category, accountId);
+        var editBillEntity = new EditBillEntity(id, payee, amount, nextDueDate, monthDay, frequency, category, accountId);
 
         _mockUserAuthService.Setup(x => x.DecodeToken(tokenToDecode)).Returns(Task.FromResult(authedUser));
 
@@ -53,6 +53,11 @@ public sealed class EditBillTest : BillTestHelper
         if (frequency != null)
         {
             _mockFrequencyCalculation.Setup(x => x.DoesFrequencyExist(frequency)).Returns(true);
+        }
+
+        if (nextDueDate != null)
+        {
+            _mockMonthDayCalculator.Setup(x => x.Calculate((DateOnly)nextDueDate)).Returns(21); // constant!! :/
         }
 
         await _billService.EditBill(tokenToDecode, editBillRequest);
@@ -86,6 +91,15 @@ public sealed class EditBillTest : BillTestHelper
             else
             {
                 _mockFrequencyCalculation.Verify(x => x.DoesFrequencyExist(It.IsAny<string>()), Times.Never);
+            }
+
+            if (nextDueDate != null)
+            {
+                _mockMonthDayCalculator.Verify(x => x.Calculate((DateOnly)nextDueDate), Times.Once);
+            }
+            else
+            {
+                _mockMonthDayCalculator.Verify(x => x.Calculate(It.IsAny<DateOnly>()), Times.Never);
             }
 
             _mockBillDatabase.Verify(x => x.EditBill(editBillEntity), Times.Once);

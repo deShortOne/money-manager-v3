@@ -75,22 +75,23 @@ public sealed class EditBillTest : BillRespositoryTestHelper
         return results;
     }
 
-    public static TheoryData<string?, decimal?, DateOnly?, string?, int?, int?> OnlyOneItemNotNull = new() {
-        { "something funky here", null, null, null, null, null },
-        { null, 245.23m, null, null, null, null },
-        { null, null, new DateOnly(2023, 2, 21), null, null, null },
-        { null, null, null, "Daily", null, null },
-        { null, null, null, null, 5, null },
-        { null, null, null, null, null, 1 },
+    public static TheoryData<string?, decimal?, DateOnly?, int?, string?, int?, int?> OnlyOneItemNotNull = new() {
+        { "something funky here", null, null, null, null, null, null },
+        { null, 245.23m,  null, null, null, null, null },
+        { null, null, new DateOnly(2023, 2, 21), null, null, null, null },
+        { null, null, null, 1, null, null, null },
+        { null, null, null, null, "Daily", null, null },
+        { null, null, null, null, null, 5, null },
+        { null, null, null, null, null, null, 1 },
     };
 
     [Theory, MemberData(nameof(OnlyOneItemNotNull))]
     public async void EditBaseBillItemInDatabase(string? payee,
-        decimal? amount, DateOnly? nextDueDate, string? frequency, int? category, int? accountId)
+        decimal? amount, DateOnly? nextDueDate, int? monthDay, string? frequency, int? category, int? accountId)
     {
         await SetupDb();
 
-        var editBillRequest = new EditBillEntity(_id, payee, amount, nextDueDate, frequency, category, accountId);
+        var editBillRequest = new EditBillEntity(_id, payee, amount, nextDueDate, monthDay, frequency, category, accountId);
         await _billRepo.EditBill(editBillRequest);
 
         var expectedBillEntity = new BillEntity(_id,
@@ -99,7 +100,7 @@ public sealed class EditBillTest : BillRespositoryTestHelper
             nextDueDate ?? _nextDueDate,
             frequency ?? _frequency,
             category ?? _categoryId,
-            nextDueDate?.Day ?? _monthDay, // yuck
+            monthDay ?? _monthDay,
             accountId ?? _accountId);
 
         var results = await GetAllBillEntity();

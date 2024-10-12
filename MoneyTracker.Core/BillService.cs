@@ -96,7 +96,7 @@ public class BillService : IBillService
             throw new InvalidDataException("Account not found");
         }
         if (editBill.Frequency != null &&
-            !_frequencyCalculation.DoesFrequencyExist((string)editBill.Frequency))
+            !_frequencyCalculation.DoesFrequencyExist(editBill.Frequency))
         {
             throw new InvalidDataException("Invalid frequency");
         }
@@ -105,11 +105,18 @@ public class BillService : IBillService
             throw new InvalidDataException("Invalid category");
         }
 
+        int? monthDay = null;
+        if (editBill.NextDueDate != null)
+        {
+            monthDay = _monthDayCalculator.Calculate((DateOnly)editBill.NextDueDate);
+        }
+
         var dtoToDb = new EditBillEntity(
             editBill.Id,
             editBill.Payee,
             editBill.Amount,
             editBill.NextDueDate,
+            monthDay,
             editBill.Frequency,
             editBill.Category,
             editBill.AccountId

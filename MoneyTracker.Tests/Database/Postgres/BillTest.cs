@@ -103,26 +103,6 @@ public class BillTest : IAsyncLifetime
     }
 
     [Fact]
-    public async void EditBill_UpdateNextDueDate_MonthDayAlsoUpdates()
-    {
-        var user = new AuthenticatedUser(1);
-        var db = new PostgresDatabase(_postgres.GetConnectionString());
-        var bill = new BillDatabase(db);
-        await bill.EditBill(new EditBillEntity(1, nextDueDate: new DateOnly(2024, 5, 5)));
-        await bill.EditBill(new EditBillEntity(2, nextDueDate: new DateOnly(2024, 10, 17)));
-
-        var expected = new List<BillEntityDTO>()
-        {
-            new(1, "supermarket a", 23, new DateOnly(2024, 05, 05), "Weekly", "Groceries", 5, "bank a"),
-            new(2, "company a", 100, new DateOnly(2024, 10, 17), "Monthly", "Wages & Salary : Net Pay", 17, "bank b"),
-        };
-
-        var actual = await bill.GetAllBills(user);
-
-        Assert.Equal(expected, actual);
-    }
-
-    [Fact]
     public async void AddBill()
     {
         var user = new AuthenticatedUser(1);
