@@ -4,7 +4,7 @@ using MoneyTracker.Shared.Models.RepositoryToService.Bill;
 using MoneyTracker.Shared.Models.ServiceToRepository.Bill;
 using Moq;
 
-namespace MoneyTracker.Bill.Tests.Service;
+namespace MoneyTracker.Tests.BillTests.Service;
 public sealed class SkipOccurenceTest : BillTestHelper
 {
     [Fact]

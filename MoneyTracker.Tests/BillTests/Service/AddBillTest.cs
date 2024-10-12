@@ -3,7 +3,7 @@ using MoneyTracker.Shared.Models.ControllerToService.Bill;
 using MoneyTracker.Shared.Models.ServiceToRepository.Bill;
 using Moq;
 
-namespace MoneyTracker.Bill.Tests.Service;
+namespace MoneyTracker.Tests.BillTests.Service;
 public sealed class AddBillTest : BillTestHelper
 {
     private readonly int _userId = 52;

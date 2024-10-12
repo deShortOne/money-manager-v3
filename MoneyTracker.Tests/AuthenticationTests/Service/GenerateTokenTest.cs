@@ -1,5 +1,4 @@
-﻿
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using System.Linq.Expressions;
 using Microsoft.IdentityModel.Tokens;
 using MoneyTracker.Core;
@@ -9,7 +8,7 @@ using MoneyTracker.Shared.DateManager;
 using MoneyTracker.Shared.Shared;
 using Moq;
 
-namespace MoneyTracker.Authentication.Tests.Service;
+namespace MoneyTracker.Tests.AuthenticationTests.Service;
 public sealed class GenerateTokenTest
 {
     [Fact]

@@ -1,10 +1,9 @@
-﻿
-using MoneyTracker.Shared.Auth;
+﻿using MoneyTracker.Shared.Auth;
 using MoneyTracker.Shared.Models.ControllerToService.Bill;
 using MoneyTracker.Shared.Models.ServiceToRepository.Bill;
 using Moq;
 
-namespace MoneyTracker.Bill.Tests.Service;
+namespace MoneyTracker.Tests.BillTests.Service;
 public sealed class DeleteBillTest : BillTestHelper
 {
     [Fact]

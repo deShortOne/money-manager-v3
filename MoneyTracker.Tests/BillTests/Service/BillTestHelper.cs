@@ -7,7 +7,7 @@ using MoneyTracker.Shared.DateManager;
 using MoneyTracker.Shared.Shared;
 using Moq;
 
-namespace MoneyTracker.Bill.Tests.Service;
+namespace MoneyTracker.Tests.BillTests.Service;
 public class BillTestHelper
 {
     public readonly Mock<IDateProvider> _mockDateProvider = new();

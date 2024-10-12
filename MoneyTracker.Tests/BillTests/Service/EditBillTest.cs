@@ -1,17 +1,9 @@
-﻿
-using MoneyTracker.Calculation.Bill;
-using MoneyTracker.Core;
-using MoneyTracker.Data.Postgres;
-using MoneyTracker.Shared.Auth;
-using MoneyTracker.Shared.Core;
-using MoneyTracker.Shared.Data;
-using MoneyTracker.Shared.DateManager;
+﻿using MoneyTracker.Shared.Auth;
 using MoneyTracker.Shared.Models.ControllerToService.Bill;
 using MoneyTracker.Shared.Models.ServiceToRepository.Bill;
-using MoneyTracker.Shared.Shared;
 using Moq;
 
-namespace MoneyTracker.Bill.Tests.Service;
+namespace MoneyTracker.Tests.BillTests.Service;
 public sealed class EditBillTest : BillTestHelper
 {
 

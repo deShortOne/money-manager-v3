@@ -1,5 +1,5 @@
 ﻿
-namespace MoneyTracker.FrequencyCalculation.Tests.MonthDayCalculator;
+namespace MoneyTracker.Tests.FrequencyCalculationTests.MonthDayCalculator;
 public sealed class Calculate
 {
     [Theory]

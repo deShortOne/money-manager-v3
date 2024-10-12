@@ -3,10 +3,9 @@
 using MoneyTracker.Data.Postgres;
 using MoneyTracker.DatabaseMigration;
 using MoneyTracker.DatabaseMigration.Models;
-using MoneyTracker.Shared.Models.RepositoryToService.Category;
 using Testcontainers.PostgreSql;
 
-namespace MoneyTracker.Category.Tests.Repository;
+namespace MoneyTracker.Tests.CategoryTests.Service;
 public sealed class DoesCategoryExistTest : IAsyncLifetime
 {
     private readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder()

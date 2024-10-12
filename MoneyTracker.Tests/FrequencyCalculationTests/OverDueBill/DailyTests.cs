@@ -1,10 +1,9 @@
-﻿
-using MoneyTracker.Calculation.Bill.Frequencies;
-using MoneyTracker.FrequencyCalculation.Tests.Local;
+﻿using MoneyTracker.Calculation.Bill.Frequencies;
 using MoneyTracker.Shared.DateManager;
 using MoneyTracker.Shared.Models.ServiceToController.Bill;
+using MoneyTracker.Tests.FrequencyCalculationTests.Local;
 
-namespace MoneyTracker.FrequencyCalculation.Tests.OverDueBill;
+namespace MoneyTracker.Tests.FrequencyCalculationTests.OverDueBill;
 public sealed class DailyTests
 {
     [Fact]

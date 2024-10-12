@@ -1,7 +1,6 @@
-﻿
-using MoneyTracker.Calculation.Bill.Frequencies;
+﻿using MoneyTracker.Calculation.Bill.Frequencies;
 
-namespace MoneyTracker.FrequencyCalculation.Tests.NextDueDate;
+namespace MoneyTracker.Tests.FrequencyCalculationTests.NextDueDate;
 public sealed class BiWeeklyTests
 {
 

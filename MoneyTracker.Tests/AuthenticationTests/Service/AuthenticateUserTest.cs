@@ -6,8 +6,7 @@ using MoneyTracker.Shared.DateManager;
 using MoneyTracker.Shared.Shared;
 using Moq;
 
-namespace MoneyTracker.Authentication.Tests.Service;
-
+namespace MoneyTracker.Tests.AuthenticationTests.Service;
 public class AuthenticateUserTest
 {
     [Fact]

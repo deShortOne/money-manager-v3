@@ -1,10 +1,9 @@
-﻿
-using MoneyTracker.DatabaseMigration;
+﻿using MoneyTracker.DatabaseMigration;
 using MoneyTracker.DatabaseMigration.Models;
 using MoneyTracker.Shared.Models.ServiceToRepository.Bill;
 using Npgsql;
 
-namespace MoneyTracker.Bill.Tests.Repository;
+namespace MoneyTracker.Tests.BillTests.Repository;
 public sealed class AddBillTest : BillRespositoryTestHelper
 {
     [Fact]

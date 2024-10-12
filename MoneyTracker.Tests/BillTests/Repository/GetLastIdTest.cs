@@ -2,7 +2,7 @@
 using MoneyTracker.DatabaseMigration;
 using MoneyTracker.DatabaseMigration.Models;
 
-namespace MoneyTracker.Bill.Tests.Repository;
+namespace MoneyTracker.Tests.BillTests.Repository;
 public sealed class GetLastIdTest : BillRespositoryTestHelper
 {
     [Fact]

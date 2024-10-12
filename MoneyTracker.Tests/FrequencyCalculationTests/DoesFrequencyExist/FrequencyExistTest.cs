@@ -1,5 +1,5 @@
 ﻿
-namespace MoneyTracker.FrequencyCalculation.Tests.DoesFrequencyExist;
+namespace MoneyTracker.Tests.FrequencyCalculationTests.DoesFrequencyExist;
 public sealed class FrequencyExistTest
 {
     [Fact]

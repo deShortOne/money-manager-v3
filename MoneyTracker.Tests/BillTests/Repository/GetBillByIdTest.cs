@@ -3,7 +3,7 @@ using MoneyTracker.DatabaseMigration;
 using MoneyTracker.DatabaseMigration.Models;
 using MoneyTracker.Shared.Models.RepositoryToService.Bill;
 
-namespace MoneyTracker.Bill.Tests.Repository;
+namespace MoneyTracker.Tests.BillTests.Repository;
 public sealed class GetBillByIdTest : BillRespositoryTestHelper
 {
     [Fact]

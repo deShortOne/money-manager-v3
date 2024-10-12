@@ -8,7 +8,7 @@ using MoneyTracker.Shared.Data;
 using Npgsql;
 using Testcontainers.PostgreSql;
 
-namespace MoneyTracker.Authentication.Tests.Repository;
+namespace MoneyTracker.Tests.AuthenticationTests.Repository;
 public sealed class GetUserByUsernameTest : IAsyncLifetime
 {
     private readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder()

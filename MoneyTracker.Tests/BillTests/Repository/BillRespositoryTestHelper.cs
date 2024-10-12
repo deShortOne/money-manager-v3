@@ -1,5 +1,4 @@
-﻿
-using System.Data;
+﻿using System.Data;
 using MoneyTracker.Data.Postgres;
 using MoneyTracker.DatabaseMigration;
 using MoneyTracker.DatabaseMigration.Models;
@@ -8,7 +7,7 @@ using MoneyTracker.Shared.Models.ServiceToRepository.Bill;
 using Npgsql;
 using Testcontainers.PostgreSql;
 
-namespace MoneyTracker.Bill.Tests.Repository;
+namespace MoneyTracker.Tests.BillTests.Repository;
 public class BillRespositoryTestHelper : IAsyncLifetime
 {
     public readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder()
