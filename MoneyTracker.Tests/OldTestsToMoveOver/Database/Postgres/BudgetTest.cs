@@ -6,7 +6,7 @@ using MoneyTracker.Shared.Models.ServiceToRepository.Budget;
 using MoneyTracker.Shared.Models.ServiceToRepository.Transaction;
 using Testcontainers.PostgreSql;
 
-namespace MoneyTracker.Tests.Database.Postgres
+namespace MoneyTracker.Tests.OldTestsToMoveOver.Database.Postgres
 {
     public sealed class BudgetTest : IAsyncLifetime
     {

@@ -12,7 +12,7 @@ using MoneyTracker.Shared.Shared;
 using Moq;
 using Testcontainers.PostgreSql;
 
-namespace MoneyTracker.Tests.Controller;
+namespace MoneyTracker.Tests.OldTestsToMoveOver.Controller;
 public sealed class UserAuthenticationTest : IAsyncLifetime
 {
     private readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder()

@@ -1,5 +1,4 @@
-﻿
-using MoneyTracker.Core;
+﻿using MoneyTracker.Core;
 using MoneyTracker.Data.Postgres;
 using MoneyTracker.DatabaseMigration;
 using MoneyTracker.DatabaseMigration.Models;
@@ -7,7 +6,7 @@ using MoneyTracker.Shared.Auth;
 using MoneyTracker.Shared.Models.ServiceToController.Account;
 using Testcontainers.PostgreSql;
 
-namespace MoneyTracker.Tests.Core;
+namespace MoneyTracker.Tests.OldTestsToMoveOver.Core;
 public sealed class AccountServiceTest : IAsyncLifetime
 {
     private readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder()

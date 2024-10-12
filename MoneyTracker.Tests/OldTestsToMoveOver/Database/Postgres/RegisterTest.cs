@@ -1,5 +1,4 @@
-﻿
-using MoneyTracker.Data.Postgres;
+﻿using MoneyTracker.Data.Postgres;
 using MoneyTracker.DatabaseMigration;
 using MoneyTracker.DatabaseMigration.Models;
 using MoneyTracker.Shared.Auth;
@@ -7,7 +6,7 @@ using MoneyTracker.Shared.Models.RepositoryToService.Transaction;
 using MoneyTracker.Shared.Models.ServiceToRepository.Transaction;
 using Testcontainers.PostgreSql;
 
-namespace MoneyTracker.Tests.Database.Postgres
+namespace MoneyTracker.Tests.OldTestsToMoveOver.Database.Postgres
 {
     public sealed class RegisterTest : IAsyncLifetime
     {

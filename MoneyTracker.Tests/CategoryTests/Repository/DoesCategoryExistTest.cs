@@ -14,9 +14,7 @@ public sealed class DoesCategoryExistTest : IAsyncLifetime
         .WithDockerEndpoint("tcp://localhost:2375")
 #endif
         .WithImage("postgres:16")
-        .WithName("bb")
-        .WithReuse(true)
-        .WithCleanUp(false)
+        .WithCleanUp(true)
         .Build();
 
     public async Task InitializeAsync()

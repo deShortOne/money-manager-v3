@@ -7,7 +7,7 @@ using MoneyTracker.Shared.Models.RepositoryToService.Category;
 using MoneyTracker.Shared.Models.ServiceToRepository.Category;
 using Testcontainers.PostgreSql;
 
-namespace MoneyTracker.Tests.Database.Postgres
+namespace MoneyTracker.Tests.OldTestsToMoveOver.Database.Postgres
 {
     public sealed class CategoryTest : IAsyncLifetime
     {
@@ -16,9 +16,7 @@ namespace MoneyTracker.Tests.Database.Postgres
             .WithDockerEndpoint("tcp://localhost:2375")
 #endif
             .WithImage("postgres:16")
-            .WithName("bb")
-            .WithReuse(true)
-            .WithCleanUp(false)
+            .WithCleanUp(true)
             .Build();
 
         public async Task InitializeAsync()
