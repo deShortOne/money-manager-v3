@@ -32,4 +32,10 @@ public sealed class GetBillByIdTest : BillRespositoryTestHelper
 
         Assert.Equal(expected, await _billRepo.GetBillById(3));
     }
+
+    [Fact]
+    public async void GetBillThatDoesntExist()
+    {
+        Assert.Null(await _billRepo.GetBillById(1));
+    }
 }

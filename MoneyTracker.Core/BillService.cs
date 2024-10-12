@@ -144,6 +144,10 @@ public class BillService : IBillService
         }
 
         var bill = await _dbService.GetBillById(skipBillDTO.Id);
+        if (bill == null)
+        {
+            throw new InvalidDataException("Unexpected database error - bill not found"); // log this
+        }
         var newDueDate = _frequencyCalculation.CalculateNextDueDate(bill.Frequency, bill.MonthDay, skipBillDTO.SkipDatePastThisDate);
 
         var editBill = new EditBillEntity(skipBillDTO.Id, nextDueDate: newDueDate);

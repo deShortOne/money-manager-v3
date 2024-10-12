@@ -156,7 +156,7 @@ public class BillDatabase : IBillDatabase
         await _database.UpdateTable(query, queryParams);
     }
 
-    public async Task<BillEntityDTO> GetBillById(int id)
+    public async Task<BillEntityDTO?> GetBillById(int id)
     {
         string query = """
             SELECT b.id,
@@ -198,7 +198,7 @@ public class BillDatabase : IBillDatabase
             );
         }
 
-        throw new ArgumentException("Bill id was not found");
+        return null;
     }
 
     public async Task<bool> IsBillAssociatedWithUser(AuthenticatedUser user, int billId)

@@ -10,7 +10,7 @@ public interface IBillDatabase
     public Task AddBill(BillEntity bill);
     public Task EditBill(EditBillEntity editBillDTO);
     public Task DeleteBill(int billIdToDelete);
-    public Task<BillEntityDTO> GetBillById(int id);
+    public Task<BillEntityDTO?> GetBillById(int id);
     Task<bool> IsBillAssociatedWithUser(AuthenticatedUser user, int billId);
     public Task<int> GetLastId();
 }
