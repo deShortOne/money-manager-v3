@@ -1,6 +1,6 @@
 ﻿
 namespace MoneyTracker.Shared.Models.ServiceToRepository.Bill;
-public class NewBillEntity(int id, string payee, decimal amount, DateOnly nextDueDate, string frequency,
+public class BillEntity(int id, string payee, decimal amount, DateOnly nextDueDate, string frequency,
     int category, int monthDay, int accountId)
 {
     public int Id { get; } = id;
@@ -14,7 +14,7 @@ public class NewBillEntity(int id, string payee, decimal amount, DateOnly nextDu
 
     public override bool Equals(object? obj)
     {
-        var other = obj as NewBillEntity;
+        var other = obj as BillEntity;
         if (other == null) return false;
         return Id == other.Id &&
             Payee == other.Payee &&

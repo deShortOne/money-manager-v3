@@ -21,13 +21,13 @@ public sealed class AddBillTest : BillTestHelper
     private readonly int _monthDay = 24;
     private readonly int _accountId = 2;
     private readonly NewBillRequestDTO _newBillRequest;
-    private readonly NewBillEntity _newBillEntity;
+    private readonly BillEntity _newBillEntity;
 
     public AddBillTest()
     {
         _authedUser = new AuthenticatedUser(_userId);
         _newBillRequest = new NewBillRequestDTO(_payee, _amount, _nextDueDate, _frequency, _category, _accountId);
-        _newBillEntity = new NewBillEntity(_nextBillId, _payee, _amount, _nextDueDate, _frequency, _category, _monthDay, _accountId);
+        _newBillEntity = new BillEntity(_nextBillId, _payee, _amount, _nextDueDate, _frequency, _category, _monthDay, _accountId);
     }
 
     [Fact]

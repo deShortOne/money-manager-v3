@@ -18,10 +18,10 @@ public sealed class EditBillTest : BillRespositoryTestHelper
     private readonly int _monthDay = 16;
     private readonly int _accountId = 2;
 
-    private readonly NewBillEntity _baseEntity;
+    private readonly BillEntity _baseEntity;
     public EditBillTest()
     {
-        _baseEntity = new NewBillEntity(_id, _payee, _amount, _nextDueDate, _frequency, _categoryId, _monthDay, _accountId);
+        _baseEntity = new BillEntity(_id, _payee, _amount, _nextDueDate, _frequency, _categoryId, _monthDay, _accountId);
     }
 
     private async Task SetupDb()
@@ -49,7 +49,7 @@ public sealed class EditBillTest : BillRespositoryTestHelper
         await commandAddBaseBillData.ExecuteNonQueryAsync();
     }
 
-    private async Task<List<NewBillEntity>> GetAllBillEntity()
+    private async Task<List<BillEntity>> GetAllBillEntity()
     {
         var getBillQuery = @"
                             SELECT id, payee, amount, nextduedate, frequency, category_id, monthday, account_id
@@ -59,10 +59,10 @@ public sealed class EditBillTest : BillRespositoryTestHelper
         await using var commandGetBillInfo = new NpgsqlCommand(getBillQuery, conn);
         await conn.OpenAsync();
         using var reader = commandGetBillInfo.ExecuteReader();
-        List<NewBillEntity> results = [];
+        List<BillEntity> results = [];
         while (reader.Read())
         {
-            results.Add(new NewBillEntity(id: reader.GetInt32("id"),
+            results.Add(new BillEntity(id: reader.GetInt32("id"),
                 payee: reader.GetString("payee"),
                 amount: reader.GetDecimal("amount"),
                 nextDueDate: DateOnly.FromDateTime(reader.GetDateTime("nextduedate")),
@@ -93,7 +93,7 @@ public sealed class EditBillTest : BillRespositoryTestHelper
         var editBillRequest = new EditBillEntity(_id, payee, amount, nextDueDate, frequency, category, accountId);
         await _billRepo.EditBill(editBillRequest);
 
-        var expectedBillEntity = new NewBillEntity(_id,
+        var expectedBillEntity = new BillEntity(_id,
             payee ?? _payee,
             amount ?? _amount,
             nextDueDate ?? _nextDueDate,

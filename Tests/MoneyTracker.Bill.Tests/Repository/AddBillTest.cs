@@ -26,7 +26,7 @@ public sealed class AddBillTest : BillRespositoryTestHelper
         var categoryId = 4;
         var monthDay = 16;
         var accountId = 2;
-        var newBillEntity = new NewBillEntity(id, payee, amount, nextDueDate, frequency, categoryId, monthDay, accountId);
+        var newBillEntity = new BillEntity(id, payee, amount, nextDueDate, frequency, categoryId, monthDay, accountId);
 
 
         await _billRepo.AddBill(newBillEntity);
@@ -38,10 +38,10 @@ public sealed class AddBillTest : BillRespositoryTestHelper
                             ";
         await using var commandGetBillInfo = new NpgsqlCommand(getBillQuery, conn);
         using var reader = commandGetBillInfo.ExecuteReader();
-        List<NewBillEntity> results = [];
+        List<BillEntity> results = [];
         while (reader.Read())
         {
-            results.Add(new NewBillEntity(id: reader.GetInt32("id"),
+            results.Add(new BillEntity(id: reader.GetInt32("id"),
                 payee: reader.GetString("payee"),
                 amount: reader.GetDecimal("amount"),
                 nextDueDate: DateOnly.FromDateTime(reader.GetDateTime("nextduedate")),

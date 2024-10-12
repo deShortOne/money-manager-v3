@@ -62,7 +62,7 @@ public class BillService : IBillService
             throw new InvalidDataException("Invalid category");
         }
 
-        var dtoToDb = new NewBillEntity(
+        var dtoToDb = new BillEntity(
             _idGenerator.NewInt(await _dbService.GetLastId()),
             newBill.Payee,
             newBill.Amount,
