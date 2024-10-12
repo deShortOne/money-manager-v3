@@ -34,7 +34,7 @@ builder.Services.AddSingleton<IDatabase>(_ => new PostgresDatabase(dbConnString)
     .AddSingleton<IDateTimeProvider, DateTimeProvider>()
     .AddSingleton<IIdGenerator, IdGenerator>();
 builder.Services
-    .AddSingleton<IUserAuthDatabase, UserAuthDatabase>()
+    .AddSingleton<IUserAuthRepository, UserAuthRepository>()
     .AddSingleton<IUserAuthenticationService, UserAuthenticationService>()
     .AddSingleton<IJwtConfig>(_ => new JwtConfig(
         builder.Configuration["Jwt:Iss"],
@@ -42,7 +42,7 @@ builder.Services
         builder.Configuration["Jwt:Key"],
         int.Parse(builder.Configuration["Jwt:Expires"])
     ))
-    .AddSingleton<IAccountDatabase, AccountDatabase>();
+    .AddSingleton<IAccountRepository, AccountRepository>();
 
 Startup.SetBillDependencyInjection(builder.Services);
 Startup.SetBudgetDependencyInjection(builder.Services);

@@ -38,8 +38,8 @@ public sealed class RegisterServiceTest : IAsyncLifetime
     public async void AddTransaction_AttemptToYseAccountNotOwnedByUser_Errors()
     {
         var db = new PostgresDatabase(_postgres.GetConnectionString());
-        var registerDb = new RegisterDatabase(db);
-        var accountDb = new AccountDatabase(db);
+        var registerDb = new RegisterRepository(db);
+        var accountDb = new AccountRepository(db);
 
         var mockAuthService = new Mock<IUserAuthenticationService>();
         mockAuthService.Setup(x => x.DecodeToken(It.IsAny<string>())).Returns(Task.FromResult(new AuthenticatedUser(1)));
@@ -57,8 +57,8 @@ public sealed class RegisterServiceTest : IAsyncLifetime
     public async void EditTransaction_ChangeCategory_Succeeds()
     {
         var db = new PostgresDatabase(_postgres.GetConnectionString());
-        var registerDb = new RegisterDatabase(db);
-        var accountDb = new AccountDatabase(db);
+        var registerDb = new RegisterRepository(db);
+        var accountDb = new AccountRepository(db);
 
         var mockAuthService = new Mock<IUserAuthenticationService>();
         mockAuthService.Setup(x => x.DecodeToken(It.IsAny<string>())).Returns(Task.FromResult(new AuthenticatedUser(1)));
@@ -86,8 +86,8 @@ public sealed class RegisterServiceTest : IAsyncLifetime
     public async void EditTransaction_ChangeTransactionToAccountNotOwnedByUser_Errors()
     {
         var db = new PostgresDatabase(_postgres.GetConnectionString());
-        var registerDb = new RegisterDatabase(db);
-        var accountDb = new AccountDatabase(db);
+        var registerDb = new RegisterRepository(db);
+        var accountDb = new AccountRepository(db);
 
         var mockAuthService = new Mock<IUserAuthenticationService>();
         mockAuthService.Setup(x => x.DecodeToken(It.IsAny<string>())).Returns(Task.FromResult(new AuthenticatedUser(1)));
@@ -105,8 +105,8 @@ public sealed class RegisterServiceTest : IAsyncLifetime
     public async void EditTransaction_ChangeTransactionNotOwnedByUser_Errors()
     {
         var db = new PostgresDatabase(_postgres.GetConnectionString());
-        var registerDb = new RegisterDatabase(db);
-        var accountDb = new AccountDatabase(db);
+        var registerDb = new RegisterRepository(db);
+        var accountDb = new AccountRepository(db);
 
         var mockAuthService = new Mock<IUserAuthenticationService>();
         mockAuthService.Setup(x => x.DecodeToken(It.IsAny<string>())).Returns(Task.FromResult(new AuthenticatedUser(1)));
@@ -124,8 +124,8 @@ public sealed class RegisterServiceTest : IAsyncLifetime
     public async void DeleteTransaction_ChangeTransactionNotOwnedByUser_Errors()
     {
         var db = new PostgresDatabase(_postgres.GetConnectionString());
-        var registerDb = new RegisterDatabase(db);
-        var accountDb = new AccountDatabase(db);
+        var registerDb = new RegisterRepository(db);
+        var accountDb = new AccountRepository(db);
 
         var mockAuthService = new Mock<IUserAuthenticationService>();
         mockAuthService.Setup(x => x.DecodeToken(It.IsAny<string>())).Returns(Task.FromResult(new AuthenticatedUser(1)));

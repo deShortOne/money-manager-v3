@@ -8,10 +8,10 @@ using MoneyTracker.Shared.Models.ServiceToRepository.Bill;
 using Npgsql;
 
 namespace MoneyTracker.Data.Postgres;
-public class BillDatabase : IBillDatabase
+public class BillRepository : IBillRepository
 {
     private readonly IDatabase _database;
-    public BillDatabase(IDatabase db)
+    public BillRepository(IDatabase db)
     {
         _database = db;
     }

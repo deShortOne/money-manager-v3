@@ -6,9 +6,9 @@ using MoneyTracker.Shared.Models.ServiceToController.Account;
 namespace MoneyTracker.Core;
 public class AccountService : IAccountService
 {
-    private readonly IAccountDatabase _dbService;
+    private readonly IAccountRepository _dbService;
 
-    public AccountService(IAccountDatabase dbService)
+    public AccountService(IAccountRepository dbService)
     {
         _dbService = dbService;
     }

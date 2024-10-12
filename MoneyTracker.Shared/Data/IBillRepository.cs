@@ -4,7 +4,7 @@ using MoneyTracker.Shared.Models.RepositoryToService.Bill;
 using MoneyTracker.Shared.Models.ServiceToRepository.Bill;
 
 namespace MoneyTracker.Shared.Data;
-public interface IBillDatabase
+public interface IBillRepository
 {
     public Task<List<BillEntityDTO>> GetAllBills(AuthenticatedUser user);
     public Task AddBill(BillEntity bill);

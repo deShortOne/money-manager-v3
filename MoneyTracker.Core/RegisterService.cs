@@ -8,13 +8,13 @@ using MoneyTracker.Shared.Models.ServiceToRepository.Transaction;
 namespace MoneyTracker.Core;
 public class RegisterService : IRegisterService
 {
-    private readonly IRegisterDatabase _dbService;
+    private readonly IRegisterRepository _dbService;
     private readonly IUserAuthenticationService _userAuthService;
-    private readonly IAccountDatabase _accountDb;
+    private readonly IAccountRepository _accountDb;
 
-    public RegisterService(IRegisterDatabase dbService,
+    public RegisterService(IRegisterRepository dbService,
         IUserAuthenticationService userAuthService,
-        IAccountDatabase accountDb)
+        IAccountRepository accountDb)
     {
         _dbService = dbService;
         _userAuthService = userAuthService;

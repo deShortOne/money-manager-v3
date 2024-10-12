@@ -33,7 +33,7 @@ public sealed class DecodeTokenTest
         var mockDateTimeProvider = new Mock<IDateTimeProvider>();
         mockDateTimeProvider.Setup(x => x.Now).Returns(dateTimeNow);
 
-        var mockUserDb = new Mock<IUserAuthDatabase>();
+        var mockUserDb = new Mock<IUserAuthRepository>();
         mockUserDb.Setup(x => x.GetUserFromToken(tempToken))
             .Returns(Task.FromResult<TokenMapToUserDTO?>(new TokenMapToUserDTO(userId, dateTimeExp)));
 
@@ -103,7 +103,7 @@ public sealed class DecodeTokenTest
         var mockDateTimeProvider = new Mock<IDateTimeProvider>();
         mockDateTimeProvider.Setup(x => x.Now).Returns(dateTimeNow);
 
-        var mockUserDb = new Mock<IUserAuthDatabase>();
+        var mockUserDb = new Mock<IUserAuthRepository>();
 
         var mockPasswordHasher = new Mock<IPasswordHasher>();
 
@@ -174,7 +174,7 @@ public sealed class DecodeTokenTest
         var mockDateTimeProvider = new Mock<IDateTimeProvider>();
         mockDateTimeProvider.Setup(x => x.Now).Returns(dateTimeNow);
 
-        var mockUserDb = new Mock<IUserAuthDatabase>();
+        var mockUserDb = new Mock<IUserAuthRepository>();
         mockUserDb.Setup(x => x.GetUserFromToken(tempToken))
             .Returns(Task.FromResult<TokenMapToUserDTO?>(new TokenMapToUserDTO(userId, dateTimeNow.AddMinutes(-5))));
 
@@ -248,7 +248,7 @@ public sealed class DecodeTokenTest
         var mockDateTimeProvider = new Mock<IDateTimeProvider>();
         mockDateTimeProvider.Setup(x => x.Now).Returns(dateTimeNow);
 
-        var mockUserDb = new Mock<IUserAuthDatabase>();
+        var mockUserDb = new Mock<IUserAuthRepository>();
         mockUserDb.Setup(x => x.GetUserFromToken(tempToken))
             .Returns(Task.FromResult<TokenMapToUserDTO?>(null));
 

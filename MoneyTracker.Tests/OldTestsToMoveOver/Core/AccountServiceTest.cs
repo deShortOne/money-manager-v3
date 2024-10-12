@@ -35,7 +35,7 @@ public sealed class AccountServiceTest : IAsyncLifetime
     public async void FirstLoadCheckTablesThatDataAreThere()
     {
         var db = new PostgresDatabase(_postgres.GetConnectionString());
-        var accountDb = new AccountDatabase(db);
+        var accountDb = new AccountRepository(db);
         var accountService = new AccountService(accountDb);
 
         var actual = await accountService.GetAccounts(new AuthenticatedUser(1));

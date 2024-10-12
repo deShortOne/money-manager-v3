@@ -20,7 +20,7 @@ public sealed class StoreTokenForUserTest : IAsyncLifetime
         .Build();
 
 #pragma warning disable CS8618 // disable nullable
-    private IUserAuthDatabase _userAuthRepo;
+    private IUserAuthRepository _userAuthRepo;
     private IDatabase _database;
 #pragma warning restore CS8618
 
@@ -30,7 +30,7 @@ public sealed class StoreTokenForUserTest : IAsyncLifetime
         Migration.CheckMigration(_postgres.GetConnectionString(), new MigrationOption());
 
         _database = new PostgresDatabase(_postgres.GetConnectionString());
-        _userAuthRepo = new UserAuthDatabase(_database);
+        _userAuthRepo = new UserAuthRepository(_database);
     }
 
     public Task DisposeAsync()

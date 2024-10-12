@@ -1,5 +1,4 @@
-﻿
-using System.Data;
+﻿using System.Data;
 using System.Data.Common;
 using MoneyTracker.Data.Global;
 using MoneyTracker.Shared.Auth;
@@ -7,11 +6,10 @@ using MoneyTracker.Shared.Models.RepositoryToService.Account;
 using Npgsql;
 
 namespace MoneyTracker.Data.Postgres;
-
-public class AccountDatabase : IAccountDatabase
+public class AccountRepository : IAccountRepository
 {
     private readonly IDatabase _database;
-    public AccountDatabase(IDatabase db)
+    public AccountRepository(IDatabase db)
     {
         _database = db;
     }

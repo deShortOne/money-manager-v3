@@ -36,7 +36,7 @@ namespace MoneyTracker.Tests.OldTestsToMoveOver.Database.Postgres
         public async void FirstLoadCheckTablesThatDataAreThere()
         {
             var db = new PostgresDatabase(_postgres.GetConnectionString());
-            var budget = new BudgetDatabase(db);
+            var budget = new BudgetRepository(db);
 
             var expected = new List<BudgetGroupEntityDTO>()
             {
@@ -67,7 +67,7 @@ namespace MoneyTracker.Tests.OldTestsToMoveOver.Database.Postgres
         public async void AddBudgetCategory_AddCategory_ReturnsBudgetWithNewCategory()
         {
             var db = new PostgresDatabase(_postgres.GetConnectionString());
-            var budget = new BudgetDatabase(db);
+            var budget = new BudgetRepository(db);
             var newBudget = new NewBudgetCategoryDTO(2, 6, 180);
             await budget.AddBudgetCategory(newBudget);
 
@@ -107,10 +107,10 @@ namespace MoneyTracker.Tests.OldTestsToMoveOver.Database.Postgres
         public async void GetBudget_AddBillUpdatesBudgetInCategory_ReturnsSameBudgetButWithActualUpdated()
         {
             var db = new PostgresDatabase(_postgres.GetConnectionString());
-            var transaction = new RegisterDatabase(db);
+            var transaction = new RegisterRepository(db);
             await transaction.AddTransaction(new NewTransactionDTO("bob", 17, new DateOnly(2024, 08, 29), 4, 1));
 
-            var budget = new BudgetDatabase(db);
+            var budget = new BudgetRepository(db);
 
             var expected = new List<BudgetGroupEntityDTO>()
             {
@@ -141,7 +141,7 @@ namespace MoneyTracker.Tests.OldTestsToMoveOver.Database.Postgres
         public async void AddBudgetCategory_AddDuplicateCategory_UpdatesCategory()
         {
             var db = new PostgresDatabase(_postgres.GetConnectionString());
-            var budget = new BudgetDatabase(db);
+            var budget = new BudgetRepository(db);
             var newBudget = new NewBudgetCategoryDTO(2, 4, 150);
             await budget.AddBudgetCategory(newBudget);
 
@@ -174,7 +174,7 @@ namespace MoneyTracker.Tests.OldTestsToMoveOver.Database.Postgres
         public async void EditBudgetCategory_ChangePlanned_UpdatesPlanned()
         {
             var db = new PostgresDatabase(_postgres.GetConnectionString());
-            var budget = new BudgetDatabase(db);
+            var budget = new BudgetRepository(db);
             var newBudget = new EditBudgetCategoryDTO(4, budgetCategoryPlanned: 150);
             await budget.EditBudgetCategory(newBudget);
 

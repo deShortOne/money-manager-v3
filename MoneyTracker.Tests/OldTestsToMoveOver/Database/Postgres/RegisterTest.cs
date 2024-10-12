@@ -36,7 +36,7 @@ namespace MoneyTracker.Tests.OldTestsToMoveOver.Database.Postgres
         public async void FirstLoadCheckTablesThatDataAreThere()
         {
             var db = new PostgresDatabase(_postgres.GetConnectionString());
-            var register = new RegisterDatabase(db);
+            var register = new RegisterRepository(db);
 
             var expected = new List<TransactionEntityDTO>()
             {
@@ -105,7 +105,7 @@ namespace MoneyTracker.Tests.OldTestsToMoveOver.Database.Postgres
         public async void FirstLoadCheckTablesThatDataAreThereForUser2()
         {
             var db = new PostgresDatabase(_postgres.GetConnectionString());
-            var register = new RegisterDatabase(db);
+            var register = new RegisterRepository(db);
 
             var expected = new List<TransactionEntityDTO>()
             {
@@ -142,7 +142,7 @@ namespace MoneyTracker.Tests.OldTestsToMoveOver.Database.Postgres
         public async void AddItemAfterFirstLoad()
         {
             var db = new PostgresDatabase(_postgres.GetConnectionString());
-            var register = new RegisterDatabase(db);
+            var register = new RegisterRepository(db);
             var transactionToAdd = new TransactionEntityDTO(
                 11,
                 "Super star",
@@ -227,7 +227,7 @@ namespace MoneyTracker.Tests.OldTestsToMoveOver.Database.Postgres
         public async void EditATransaction()
         {
             var db = new PostgresDatabase(_postgres.GetConnectionString());
-            var register = new RegisterDatabase(db);
+            var register = new RegisterRepository(db);
 
             await register.EditTransaction(new EditTransactionDTO(
                 6,
@@ -302,7 +302,7 @@ namespace MoneyTracker.Tests.OldTestsToMoveOver.Database.Postgres
         public async void DeleteTransaction()
         {
             var db = new PostgresDatabase(_postgres.GetConnectionString());
-            var register = new RegisterDatabase(db);
+            var register = new RegisterRepository(db);
 
             await register.DeleteTransaction(new DeleteTransactionDTO(6));
 

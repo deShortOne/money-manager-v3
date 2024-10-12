@@ -12,14 +12,14 @@ using MoneyTracker.Shared.Shared;
 namespace MoneyTracker.Core;
 public class UserAuthenticationService : IUserAuthenticationService
 {
-    private readonly IUserAuthDatabase _dbService;
+    private readonly IUserAuthRepository _dbService;
     private readonly IJwtConfig _jwtToken;
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly IPasswordHasher _passwordHasher;
     private readonly IIdGenerator _idGenerator;
     private readonly SecurityTokenHandler _securityTokenHandler;
 
-    public UserAuthenticationService(IUserAuthDatabase dbService,
+    public UserAuthenticationService(IUserAuthRepository dbService,
         IJwtConfig jwtConfig,
         IDateTimeProvider dateTimeProvider,
         IPasswordHasher passwordHasher,

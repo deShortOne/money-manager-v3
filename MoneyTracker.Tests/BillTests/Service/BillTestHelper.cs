@@ -12,12 +12,12 @@ public class BillTestHelper
 {
     public readonly Mock<IDateProvider> _mockDateProvider = new();
     public readonly Mock<IUserAuthenticationService> _mockUserAuthService = new();
-    public readonly Mock<IAccountDatabase> _mockAccountDatabase = new();
-    public readonly Mock<IBillDatabase> _mockBillDatabase = new();
+    public readonly Mock<IAccountRepository> _mockAccountDatabase = new();
+    public readonly Mock<IBillRepository> _mockBillDatabase = new();
     public readonly Mock<IIdGenerator> _mockIdGenerator = new();
     public readonly Mock<IFrequencyCalculation> _mockFrequencyCalculation = new();
     public readonly Mock<IMonthDayCalculator> _mockMonthDayCalculator = new();
-    public readonly Mock<ICategoryDatabase> _mockCategoryDatabase = new();
+    public readonly Mock<ICategoryRepository> _mockCategoryDatabase = new();
 
     public readonly BillService _billService;
 

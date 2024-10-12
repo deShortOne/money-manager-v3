@@ -15,7 +15,7 @@ public class AuthenticateUserTest
         var userToAuthenticate = new LoginWithUsernameAndPassword("root", "root-pass");
         var expected = new AuthenticatedUser(1);
 
-        var mockUserDb = new Mock<IUserAuthDatabase>();
+        var mockUserDb = new Mock<IUserAuthRepository>();
         mockUserDb.Setup(x => x.GetUserByUsername("root"))
             .Returns(Task.FromResult<UserEntity?>(new UserEntity(1, "root", "root-pass")));
 
@@ -46,7 +46,7 @@ public class AuthenticateUserTest
         var userToAuthenticate = new LoginWithUsernameAndPassword("secondary root", "secondary root-pass");
         var expected = new AuthenticatedUser(2);
 
-        var mockUserDb = new Mock<IUserAuthDatabase>();
+        var mockUserDb = new Mock<IUserAuthRepository>();
         mockUserDb.Setup(x => x.GetUserByUsername(It.Is<string>(y => y == "secondary root")))
             .Returns(Task.FromResult<UserEntity?>(new UserEntity(2, "secondary root", "secondary root-pass")));
 
@@ -76,7 +76,7 @@ public class AuthenticateUserTest
     {
         var userToAuthenticate = new LoginWithUsernameAndPassword("root", "root-");
 
-        var mockUserDb = new Mock<IUserAuthDatabase>();
+        var mockUserDb = new Mock<IUserAuthRepository>();
         mockUserDb.Setup(x => x.GetUserByUsername("root"))
             .Returns(Task.FromResult<UserEntity?>(new UserEntity(1, "root", "root-pass")));
 
@@ -110,7 +110,7 @@ public class AuthenticateUserTest
     {
         var userToAuthenticate = new LoginWithUsernameAndPassword("broken root", "broken root-pass");
 
-        var userDb = new Mock<IUserAuthDatabase>();
+        var userDb = new Mock<IUserAuthRepository>();
         userDb.Setup(x => x.GetUserByUsername(It.IsAny<string>()))
             .Returns(Task.FromResult<UserEntity?>(null));
         var jwtToken = new JwtConfig("", "", "", 0);

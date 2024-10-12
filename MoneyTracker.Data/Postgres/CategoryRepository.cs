@@ -8,11 +8,11 @@ using Npgsql;
 
 namespace MoneyTracker.Data.Postgres
 {
-    public class CategoryDatabase : ICategoryDatabase
+    public class CategoryRepository : ICategoryRepository
     {
         private readonly IDatabase _database;
 
-        public CategoryDatabase(IDatabase db)
+        public CategoryRepository(IDatabase db)
         {
             _database = db;
         }

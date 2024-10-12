@@ -17,28 +17,28 @@ public class Startup
     {
         services
             .AddSingleton<IBillService, BillService>()
-            .AddSingleton<IBillDatabase, BillDatabase>();
+            .AddSingleton<IBillRepository, BillRepository>();
     }
 
     public static void SetBudgetDependencyInjection(IServiceCollection services)
     {
         services
             .AddSingleton<IBudgetService, BudgetService>()
-            .AddSingleton<IBudgetDatabase, BudgetDatabase>();
+            .AddSingleton<IBudgetRepository, BudgetRepository>();
     }
 
     public static void SetCategoryDependencyInjection(IServiceCollection services)
     {
         services
             .AddSingleton<ICategoryService, CategoryService>()
-            .AddSingleton<ICategoryDatabase, CategoryDatabase>();
+            .AddSingleton<ICategoryRepository, CategoryRepository>();
     }
 
     public static void SetRegisterDependencyInjection(IServiceCollection services)
     {
         services
             .AddSingleton<IRegisterService, RegisterService>()
-            .AddSingleton<IRegisterDatabase, RegisterDatabase>();
+            .AddSingleton<IRegisterRepository, RegisterRepository>();
     }
 
     public static void SetupAuthentication(WebApplicationBuilder builder)

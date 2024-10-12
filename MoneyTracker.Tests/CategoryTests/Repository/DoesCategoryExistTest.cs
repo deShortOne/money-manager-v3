@@ -40,7 +40,7 @@ public sealed class DoesCategoryExistTest : IAsyncLifetime
     public async void ValidCategoryIdFromSeed(int categoryId)
     {
         var db = new PostgresDatabase(_postgres.GetConnectionString());
-        var category = new CategoryDatabase(db);
+        var category = new CategoryRepository(db);
 
         Assert.True(await category.DoesCategoryExist(categoryId));
     }
@@ -54,7 +54,7 @@ public sealed class DoesCategoryExistTest : IAsyncLifetime
     public async void InvalidCategoryIdFromSeed(int categoryId)
     {
         var db = new PostgresDatabase(_postgres.GetConnectionString());
-        var category = new CategoryDatabase(db);
+        var category = new CategoryRepository(db);
 
         Assert.False(await category.DoesCategoryExist(categoryId));
     }

@@ -18,7 +18,7 @@ public class BillRespositoryTestHelper : IAsyncLifetime
         .WithCleanUp(true)
         .Build();
 
-    public IBillDatabase _billRepo;
+    public IBillRepository _billRepo;
 
     public async Task InitializeAsync()
     {
@@ -26,7 +26,7 @@ public class BillRespositoryTestHelper : IAsyncLifetime
         Migration.CheckMigration(_postgres.GetConnectionString(), new MigrationOption());
 
         var _database = new PostgresDatabase(_postgres.GetConnectionString());
-        _billRepo = new BillDatabase(_database);
+        _billRepo = new BillRepository(_database);
     }
 
     public Task DisposeAsync()

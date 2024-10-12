@@ -8,9 +8,9 @@ using MoneyTracker.Shared.Models.ServiceToRepository.Budget;
 namespace MoneyTracker.Core;
 public class BudgetService : IBudgetService
 {
-    private readonly IBudgetDatabase _dbService;
+    private readonly IBudgetRepository _dbService;
 
-    public BudgetService(IBudgetDatabase dbService)
+    public BudgetService(IBudgetRepository dbService)
     {
         _dbService = dbService;
     }

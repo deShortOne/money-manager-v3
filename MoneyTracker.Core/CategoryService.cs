@@ -7,9 +7,9 @@ using MoneyTracker.Shared.Models.ServiceToRepository.Category;
 namespace MoneyTracker.Core;
 public class CategoryService : ICategoryService
 {
-    private readonly ICategoryDatabase _dbService;
+    private readonly ICategoryRepository _dbService;
 
-    public CategoryService(ICategoryDatabase dbService)
+    public CategoryService(ICategoryRepository dbService)
     {
         _dbService = dbService;
     }

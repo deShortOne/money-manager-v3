@@ -12,23 +12,23 @@ using MoneyTracker.Shared.Shared;
 namespace MoneyTracker.Core;
 public class BillService : IBillService
 {
-    private readonly IBillDatabase _dbService;
+    private readonly IBillRepository _dbService;
     private readonly IDateProvider _dateProvider;
     private readonly IUserAuthenticationService _userAuthService;
-    private readonly IAccountDatabase _accountDatabase;
+    private readonly IAccountRepository _accountDatabase;
     private readonly IIdGenerator _idGenerator;
     private readonly IFrequencyCalculation _frequencyCalculation;
     private readonly IMonthDayCalculator _monthDayCalculator;
-    private readonly ICategoryDatabase _categoryDatabase;
+    private readonly ICategoryRepository _categoryDatabase;
 
-    public BillService(IBillDatabase dbService,
+    public BillService(IBillRepository dbService,
         IDateProvider dateProvider,
         IUserAuthenticationService userAuthService,
-        IAccountDatabase accountDatabase,
+        IAccountRepository accountDatabase,
         IIdGenerator idGenerator,
         IFrequencyCalculation frequencyCalculation,
         IMonthDayCalculator monthDayCalculator,
-        ICategoryDatabase categoryDatabase)
+        ICategoryRepository categoryDatabase)
     {
         _dbService = dbService;
         _dateProvider = dateProvider;

@@ -5,7 +5,7 @@ using MoneyTracker.Shared.Models.ServiceToRepository.Transaction;
 
 namespace MoneyTracker.Shared.Data
 {
-    public interface IRegisterDatabase
+    public interface IRegisterRepository
     {
         public Task<List<TransactionEntityDTO>> GetAllTransactions(AuthenticatedUser user);
         public Task AddTransaction(NewTransactionDTO transaction);

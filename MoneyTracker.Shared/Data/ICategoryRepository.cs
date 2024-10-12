@@ -4,7 +4,7 @@ using MoneyTracker.Shared.Models.ServiceToRepository.Category;
 
 namespace MoneyTracker.Shared.Data
 {
-    public interface ICategoryDatabase
+    public interface ICategoryRepository
     {
         public Task<List<CategoryEntityDTO>> GetAllCategories();
         public Task AddCategory(NewCategoryDTO categoryName);

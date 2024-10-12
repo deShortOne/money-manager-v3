@@ -38,7 +38,7 @@ public sealed class GenerateTokenTest
         var mockDateTimeProvider = new Mock<IDateTimeProvider>();
         mockDateTimeProvider.Setup(x => x.Now).Returns(dateTimeNow);
 
-        var mockUserDb = new Mock<IUserAuthDatabase>();
+        var mockUserDb = new Mock<IUserAuthRepository>();
         mockUserDb.Setup(x => x.GetUserByUsername(username))
             .Returns(Task.FromResult<UserEntity?>(new UserEntity(userId, username, databasePassword)));
         mockUserDb.Setup(x => x.StoreTemporaryTokenToUser(expected, tempToken, dateTimeExp));
@@ -100,7 +100,7 @@ public sealed class GenerateTokenTest
 
         var mockDateTimeProvider = new Mock<IDateTimeProvider>();
 
-        var mockUserDb = new Mock<IUserAuthDatabase>();
+        var mockUserDb = new Mock<IUserAuthRepository>();
         mockUserDb.Setup(x => x.GetUserByUsername(username))
             .Returns(Task.FromResult<UserEntity?>(new UserEntity(userId, username, databasePassword)));
 
