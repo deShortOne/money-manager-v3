@@ -1,17 +1,16 @@
-﻿namespace MoneyTracker.API.Controllers
+﻿
+namespace MoneyTracker.API.Controllers;
+public class ControllerHelper
 {
-    public class ControllerHelper
+    public static string GetToken(IHttpContextAccessor httpContextAccessor)
     {
-        public static string GetToken(IHttpContextAccessor httpContextAccessor)
-        {
-            var authHeader = httpContextAccessor.HttpContext.Request
-                .Headers.Authorization.ToString();
+        var authHeader = httpContextAccessor.HttpContext.Request
+            .Headers.Authorization.ToString();
 
-            if (!string.IsNullOrEmpty(authHeader) && authHeader.StartsWith("Bearer "))
-            {
-                return authHeader.Substring("Bearer ".Length).Trim();
-            }
-            return "";
+        if (!string.IsNullOrEmpty(authHeader) && authHeader.StartsWith("Bearer "))
+        {
+            return authHeader.Substring("Bearer ".Length).Trim();
         }
+        return "";
     }
 }

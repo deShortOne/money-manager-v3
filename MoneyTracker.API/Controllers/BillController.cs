@@ -5,6 +5,8 @@ using MoneyTracker.Shared.Models.ControllerToService.Bill;
 using MoneyTracker.Shared.Models.ServiceToController.Bill;
 
 namespace MoneyTracker.API.Controllers;
+[ApiController]
+[Route("/api/budget/")]
 public class BillController : ControllerBase
 {
 

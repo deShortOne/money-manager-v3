@@ -3,48 +3,47 @@ using MoneyTracker.Shared.Core;
 using MoneyTracker.Shared.Models.ControllerToService.Category;
 using MoneyTracker.Shared.Models.ServiceToController.Category;
 
-namespace MoneyTracker.API.Controllers
+namespace MoneyTracker.API.Controllers;
+
+[ApiController]
+[Route("/api/category/")]
+public class CategoryController : ControllerBase
 {
-    [ApiController]
-    [Route("/api/category/")]
-    public class CategoryController : ControllerBase
+
+    private readonly ILogger<CategoryController> _logger;
+    private readonly ICategoryService _service;
+
+    public CategoryController(ILogger<CategoryController> logger, ICategoryService service)
     {
+        _logger = logger;
+        _service = service;
+    }
 
-        private readonly ILogger<CategoryController> _logger;
-        private readonly ICategoryService _service;
+    [HttpGet]
+    [Route("get")]
+    public Task<List<CategoryResponseDTO>> GetCategories()
+    {
+        return _service.GetAllCategories();
+    }
 
-        public CategoryController(ILogger<CategoryController> logger, ICategoryService service)
-        {
-            _logger = logger;
-            _service = service;
-        }
+    [HttpPost]
+    [Route("add")]
+    public Task AddCategory([FromBody] NewCategoryRequestDTO categoryName)
+    {
+        return _service.AddCategory(categoryName);
+    }
 
-        [HttpGet]
-        [Route("get")]
-        public Task<List<CategoryResponseDTO>> GetCategories()
-        {
-            return _service.GetAllCategories();
-        }
+    [HttpPut]
+    [Route("edit")]
+    public Task EditCategory([FromBody] EditCategoryRequestDTO editCategory)
+    {
+        return _service.EditCategory(editCategory);
+    }
 
-        [HttpPost]
-        [Route("add")]
-        public Task AddCategory([FromBody] NewCategoryRequestDTO categoryName)
-        {
-            return _service.AddCategory(categoryName);
-        }
-
-        [HttpPut]
-        [Route("edit")]
-        public Task EditCategory([FromBody] EditCategoryRequestDTO editCategory)
-        {
-            return _service.EditCategory(editCategory);
-        }
-
-        [HttpDelete]
-        [Route("delete")]
-        public Task DeleteCategory([FromBody] DeleteCategoryRequestDTO deleteCategory)
-        {
-            return _service.DeleteCategory(deleteCategory);
-        }
+    [HttpDelete]
+    [Route("delete")]
+    public Task DeleteCategory([FromBody] DeleteCategoryRequestDTO deleteCategory)
+    {
+        return _service.DeleteCategory(deleteCategory);
     }
 }
