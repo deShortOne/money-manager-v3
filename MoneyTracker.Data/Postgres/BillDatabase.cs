@@ -156,7 +156,7 @@ public class BillDatabase : IBillDatabase
         await _database.UpdateTable(query, queryParams);
     }
 
-    public async Task<BillEntityDTO> GetBillById(AuthenticatedUser user, int id)
+    public async Task<BillEntityDTO> GetBillById(int id)
     {
         string query = """
             SELECT b.id,
@@ -172,17 +172,11 @@ public class BillDatabase : IBillDatabase
             	ON b.category_id = c.id
             INNER JOIN account a
                 ON b.account_id = a.id
-            WHERE b.id = @id
-            AND b.account_id IN (
-                SELECT a.id
-                FROM account
-                WHERE a.users_id = @user_id
-            );
+            WHERE b.id = @id;
             """;
         var queryParams = new List<DbParameter>()
         {
             new NpgsqlParameter("id", id),
-            new NpgsqlParameter("user_id", user.UserId),
         };
         using var reader = await _database.GetTable(query, queryParams);
 
