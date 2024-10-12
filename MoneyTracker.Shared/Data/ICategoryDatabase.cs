@@ -10,5 +10,6 @@ namespace MoneyTracker.Shared.Data
         public Task AddCategory(NewCategoryDTO categoryName);
         public Task EditCategory(EditCategoryDTO editCategoryDTO);
         public Task DeleteCategory(DeleteCategoryDTO deleteCategoryDTO);
+        Task<bool> DoesCategoryExist(int categoryId);
     }
 }

@@ -1,5 +1,4 @@
 ﻿
-using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -8,6 +7,7 @@ using MoneyTracker.Shared.Auth;
 using MoneyTracker.Shared.Core;
 using MoneyTracker.Shared.Data;
 using MoneyTracker.Shared.DateManager;
+using MoneyTracker.Shared.Shared;
 
 namespace MoneyTracker.Core;
 public class UserAuthenticationService : IUserAuthenticationService
@@ -15,31 +15,52 @@ public class UserAuthenticationService : IUserAuthenticationService
     private readonly IUserAuthDatabase _dbService;
     private readonly IJwtConfig _jwtToken;
     private readonly IDateTimeProvider _dateTimeProvider;
+    private readonly IPasswordHasher _passwordHasher;
+    private readonly IIdGenerator _idGenerator;
+    private readonly SecurityTokenHandler _securityTokenHandler;
 
-    public UserAuthenticationService(IUserAuthDatabase dbService, IJwtConfig jwtConfig,
-        IDateTimeProvider dateTimeProvider)
+    public UserAuthenticationService(IUserAuthDatabase dbService,
+        IJwtConfig jwtConfig,
+        IDateTimeProvider dateTimeProvider,
+        IPasswordHasher passwordHasher,
+        IIdGenerator idGenerator,
+        SecurityTokenHandler securityTokenHandler)
     {
+        var a = new JwtSecurityTokenHandler();
         _dbService = dbService;
         _jwtToken = jwtConfig;
         _dateTimeProvider = dateTimeProvider;
+        _passwordHasher = passwordHasher;
+        _idGenerator = idGenerator;
+        _securityTokenHandler = securityTokenHandler;
     }
 
-    public Task<AuthenticatedUser> AuthenticateUser(LoginWithUsernameAndPassword user)
+    public async Task<AuthenticatedUser> AuthenticateUser(LoginWithUsernameAndPassword user)
     {
-        return _dbService.AuthenticateUser(user);
+        var userEntity = await _dbService.GetUserByUsername(user.Username);
+        if (userEntity == null)
+        {
+            throw new InvalidDataException("User does not exist");
+        }
+        if (!_passwordHasher.VerifyPassword(userEntity.Password, user.Password, "salt goes here"))
+        {
+            throw new InvalidDataException("User does not exist");
+        }
+        return new AuthenticatedUser(userEntity.Id);
     }
 
     public async Task<string> GenerateToken(LoginWithUsernameAndPassword user)
     {
-        var userInfo = await _dbService.AuthenticateUser(user);
+        var userInfo = await AuthenticateUser(user);
 
         var expiration = _dateTimeProvider.Now.AddMinutes(_jwtToken.Expires);
-        var userGuid = await _dbService.GenerateTempGuidForUser(userInfo, expiration);
+        var tokenMappedToUser = _idGenerator.NewGuid;
+        await _dbService.StoreTemporaryTokenToUser(userInfo, tokenMappedToUser, expiration);
 
         var claims = new[]
         {
-            new Claim("UserGuid", userGuid.ToString()),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            new Claim("UserGuid", tokenMappedToUser.ToString()),
+            new Claim(JwtRegisteredClaimNames.Jti, _idGenerator.NewGuid.ToString())
         };
 
         // Create signing key
@@ -55,12 +76,12 @@ public class UserAuthenticationService : IUserAuthenticationService
             signingCredentials: creds
         );
 
-        return new JwtSecurityTokenHandler().WriteToken(token);
+        return _securityTokenHandler.WriteToken(token);
     }
 
     public async Task<AuthenticatedUser> DecodeToken(string token)
     {
-        var data = new JwtSecurityTokenHandler().ReadJwtToken(token);
+        var data = _securityTokenHandler.ReadToken(token);
 
         var tokenExpiryDate = data.ValidTo;
         if (tokenExpiryDate < _dateTimeProvider.Now)
@@ -68,8 +89,12 @@ public class UserAuthenticationService : IUserAuthenticationService
             throw new InvalidDataException("Token has expired!");
         }
 
-        var userGuid = data.Claims.First(claim => claim.Type == "UserGuid");
-        var userInfoFromDb = await _dbService.GetUserFromGuid(Guid.Parse(userGuid.Value));
+        var userGuid = ((JwtSecurityToken)data).Claims.First(claim => claim.Type == "UserGuid");
+        var userInfoFromDb = await _dbService.GetUserFromToken(Guid.Parse(userGuid.Value));
+        if (userInfoFromDb == null)
+        {
+            throw new InvalidDataException("Token is not valid");
+        }
 
         if (userInfoFromDb.Expires < _dateTimeProvider.Now)
         {

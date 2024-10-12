@@ -7,9 +7,10 @@ namespace MoneyTracker.Shared.Data;
 public interface IBillDatabase
 {
     public Task<List<BillEntityDTO>> GetAllBills(AuthenticatedUser user);
-    public Task AddBill(NewBillDTO bill);
-    public Task EditBill(EditBillDTO editBillDTO);
-    public Task<List<BillEntityDTO>> DeleteBill(AuthenticatedUser user, DeleteBillDTO editBillDTO);
-    public Task<BillEntityDTO> GetBillById(AuthenticatedUser user, int id);
+    public Task AddBill(BillEntity bill);
+    public Task EditBill(EditBillEntity editBillDTO);
+    public Task DeleteBill(int billIdToDelete);
+    public Task<BillEntityDTO?> GetBillById(int id);
     Task<bool> IsBillAssociatedWithUser(AuthenticatedUser user, int billId);
+    public Task<int> GetLastId();
 }

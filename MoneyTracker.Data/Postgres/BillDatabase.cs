@@ -68,14 +68,15 @@ public class BillDatabase : IBillDatabase
         return res;
     }
 
-    public async Task AddBill(NewBillDTO newBillDTO)
+    public async Task AddBill(BillEntity newBillDTO)
     {
         string query = """
-            INSERT INTO bill (payee, amount, nextduedate, frequency, category_id, monthday, account_id)
-            VALUES (@payee, @amount, @nextduedate, @frequency, @category_id, @monthday, @account_id);
+            INSERT INTO bill (id, payee, amount, nextduedate, frequency, category_id, monthday, account_id)
+            VALUES (@id, @payee, @amount, @nextduedate, @frequency, @category_id, @monthday, @account_id);
             """;
         var queryParams = new List<DbParameter>()
             {
+                new NpgsqlParameter("id", newBillDTO.Id),
                 new NpgsqlParameter("payee", newBillDTO.Payee),
                 new NpgsqlParameter("amount", newBillDTO.Amount),
                 new NpgsqlParameter("nextduedate", newBillDTO.NextDueDate),
@@ -88,7 +89,7 @@ public class BillDatabase : IBillDatabase
         await _database.UpdateTable(query, queryParams);
     }
 
-    public async Task EditBill(EditBillDTO editBillDTO)
+    public async Task EditBill(EditBillEntity editBillDTO)
     {
         var setParamsLis = new List<string>();
         var queryParams = new List<DbParameter>()
@@ -110,8 +111,11 @@ public class BillDatabase : IBillDatabase
         {
             setParamsLis.Add("nextduedate = @nextduedate");
             queryParams.Add(new NpgsqlParameter("nextduedate", editBillDTO.NextDueDate));
+        }
+        if (editBillDTO.MonthDay != null)
+        {
             setParamsLis.Add("monthday = @monthday");
-            queryParams.Add(new NpgsqlParameter("monthday", ((DateOnly)editBillDTO.NextDueDate).Day));
+            queryParams.Add(new NpgsqlParameter("monthday", editBillDTO.MonthDay));
         }
         if (editBillDTO.Frequency != null)
         {
@@ -138,29 +142,21 @@ public class BillDatabase : IBillDatabase
         await _database.UpdateTable(query, queryParams);
     }
 
-    public async Task<List<BillEntityDTO>> DeleteBill(AuthenticatedUser user, DeleteBillDTO deleteBillDTO)
+    public async Task DeleteBill(int billIdToDelete)
     {
         string query = """
             DELETE FROM bill
-            WHERE id = @id
-            AND account_id IN (
-                SELECT id
-                FROM account
-                WHERE users_id = @user_id
-            );
+            WHERE id = @id;
             """;
         var queryParams = new List<DbParameter>()
             {
-                new NpgsqlParameter("id", deleteBillDTO.Id),
-                new NpgsqlParameter("user_id", user.UserId),
+                new NpgsqlParameter("id", billIdToDelete),
             };
 
         await _database.UpdateTable(query, queryParams);
-
-        return await GetAllBills(new AuthenticatedUser(1));
     }
 
-    public async Task<BillEntityDTO> GetBillById(AuthenticatedUser user, int id)
+    public async Task<BillEntityDTO?> GetBillById(int id)
     {
         string query = """
             SELECT b.id,
@@ -176,17 +172,11 @@ public class BillDatabase : IBillDatabase
             	ON b.category_id = c.id
             INNER JOIN account a
                 ON b.account_id = a.id
-            WHERE b.id = @id
-            AND b.account_id IN (
-                SELECT a.id
-                FROM account
-                WHERE a.users_id = @user_id
-            );
+            WHERE b.id = @id;
             """;
         var queryParams = new List<DbParameter>()
         {
             new NpgsqlParameter("id", id),
-            new NpgsqlParameter("user_id", user.UserId),
         };
         using var reader = await _database.GetTable(query, queryParams);
 
@@ -208,7 +198,7 @@ public class BillDatabase : IBillDatabase
             );
         }
 
-        throw new ArgumentException("Bill id was not found");
+        return null;
     }
 
     public async Task<bool> IsBillAssociatedWithUser(AuthenticatedUser user, int billId)
@@ -236,5 +226,17 @@ public class BillDatabase : IBillDatabase
             return reader.GetInt32(0) == 1;
         }
         return false;
+    }
+
+    public async Task<int> GetLastId()
+    {
+        string query = """
+            SELECT max(id)
+            FROM bill
+            """;
+        using var reader = await _database.GetTable(query);
+        await reader.ReadAsync();
+
+        return reader[0] == DBNull.Value ? 0 : reader.GetInt32(0); ;
     }
 }
