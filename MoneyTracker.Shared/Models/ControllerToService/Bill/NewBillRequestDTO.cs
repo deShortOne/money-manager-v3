@@ -3,10 +3,10 @@ namespace MoneyTracker.Shared.Models.ControllerToService.Bill;
 public class NewBillRequestDTO(string payee, decimal amount, DateOnly nextDueDate, string frequency,
     int category, int accountId)
 {
-    public string Payee { get; private set; } = payee;
-    public decimal Amount { get; private set; } = amount;
-    public DateOnly NextDueDate { get; private set; } = nextDueDate;
-    public string Frequency { get; private set; } = frequency;
-    public int Category { get; private set; } = category;
+    public string Payee { get; } = payee;
+    public decimal Amount { get; } = amount;
+    public DateOnly NextDueDate { get; } = nextDueDate;
+    public string Frequency { get; } = frequency;
+    public int Category { get; } = category;
     public int AccountId { get; } = accountId;
 }
