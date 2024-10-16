@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="6.0.0" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
+    <PackageReference Include="Moq" Version="4.20.71" />
+    <PackageReference Include="Testcontainers.PostgreSql" Version="3.9.0" />
+    <PackageReference Include="xunit" Version="2.5.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Shared\MoneyTracker.Common\MoneyTracker.Common.csproj" />
+    <ProjectReference Include="..\MoneyTracker.Commands.Application\MoneyTracker.Commands.Application.csproj" />
+    <ProjectReference Include="..\MoneyTracker.Commands.DatabaseMigration\MoneyTracker.Commands.DatabaseMigration.csproj" />
+    <ProjectReference Include="..\MoneyTracker.Commands.Domain\MoneyTracker.Commands.Domain.csproj" />
+    <ProjectReference Include="..\MoneyTracker.Commands.Infrastructure\MoneyTracker.Commands.Infrastructure.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <PropertyGroup Condition="'$(COMPUTERNAME)' != ''">
+    <DefineConstants>$(DefineConstants);RUN_LOCAL</DefineConstants>
+  </PropertyGroup>
+
+</Project>
