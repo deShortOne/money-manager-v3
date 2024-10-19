@@ -6,30 +6,32 @@ namespace MoneyTracker.Common.Utilities.CalculationUtil;
 public interface IFrequencyCalculation
 {
     DateOnly CalculateNextDueDate(string frequency, int monthDay, DateOnly currDueDate);
-    OverDueBillInfo? CalculateOverDueBillInfo(int monthDay, string frequency, DateOnly nextDueDate, IDateTimeProvider dateProvider);
+    OverDueBillInfo? CalculateOverDueBillInfo(int monthDay, string frequency, DateOnly nextDueDate);
     bool DoesFrequencyExist(string frequency);
 }
 
 public class FrequencyCalculation : IFrequencyCalculation
 {
+    private readonly IDateTimeProvider _dateProvider;
     private readonly IEnumerable<IFrequency> _frequencies;
 
-    public FrequencyCalculation() : this(new Daily(), new Weekly(), new BiWeekly(), new Monthly())
+    public FrequencyCalculation(IDateTimeProvider dateProvider) : this(dateProvider, new Daily(), new Weekly(), new BiWeekly(), new Monthly())
     {
     }
 
-    public FrequencyCalculation(params IFrequency[] frequencies)
+    public FrequencyCalculation(IDateTimeProvider dateProvider, params IFrequency[] frequencies)
     {
+        _dateProvider = dateProvider;
         _frequencies = frequencies;
     }
 
-    public OverDueBillInfo? CalculateOverDueBillInfo(int monthDay, string frequency, DateOnly nextDueDate, IDateTimeProvider dateProvider)
+    public OverDueBillInfo? CalculateOverDueBillInfo(int monthDay, string frequency, DateOnly nextDueDate)
     {
         foreach (var f in _frequencies)
         {
             if (f.MatchCommand(frequency))
             {
-                return f.CalculateOverDueBill(monthDay, nextDueDate, dateProvider);
+                return f.CalculateOverDueBill(monthDay, nextDueDate, _dateProvider);
             }
         }
         throw new NotImplementedException($"Frequency type \"{frequency}\" not found");

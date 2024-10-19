@@ -27,8 +27,10 @@ public sealed class GetAllBillsTest : BillTestHelper
 
         _mockBillDatabase.Setup(x => x.GetAllBills(authedUser)).Returns(Task.FromResult(billDatabaseReturn));
 
-        _mockFrequencyCalculation.Setup(x => x.CalculateOverDueBillInfo(8, "Daily", new DateOnly(2024, 10, 8), _mockDateTimeProvider.Object)).Returns((OverDueBillInfo?)null);
-        _mockFrequencyCalculation.Setup(x => x.CalculateOverDueBillInfo(23, "Weekly", new DateOnly(2023, 4, 23), _mockDateTimeProvider.Object)).Returns(secondResponseOverdueBillInfo);
+        _mockFrequencyCalculation.Setup(x => x.CalculateOverDueBillInfo(8, "Daily", new DateOnly(2024, 10, 8)))
+            .Returns((OverDueBillInfo?)null);
+        _mockFrequencyCalculation.Setup(x => x.CalculateOverDueBillInfo(23, "Weekly", new DateOnly(2023, 4, 23)))
+            .Returns(secondResponseOverdueBillInfo);
 
         Assert.Multiple(async () =>
         {
@@ -36,8 +38,8 @@ public sealed class GetAllBillsTest : BillTestHelper
 
             _mockUserAuthService.Verify(x => x.DecodeToken(tokenToDecode), Times.Once);
             _mockBillDatabase.Verify(x => x.GetAllBills(authedUser), Times.Once);
-            _mockFrequencyCalculation.Verify(x => x.CalculateOverDueBillInfo(8, "Daily", new DateOnly(2024, 10, 8), _mockDateTimeProvider.Object), Times.Once);
-            _mockFrequencyCalculation.Verify(x => x.CalculateOverDueBillInfo(23, "Weekly", new DateOnly(2023, 4, 23), _mockDateTimeProvider.Object), Times.Once);
+            _mockFrequencyCalculation.Verify(x => x.CalculateOverDueBillInfo(8, "Daily", new DateOnly(2024, 10, 8)), Times.Once);
+            _mockFrequencyCalculation.Verify(x => x.CalculateOverDueBillInfo(23, "Weekly", new DateOnly(2023, 4, 23)), Times.Once);
 
             EnsureAllMocksHadNoOtherCalls();
         });

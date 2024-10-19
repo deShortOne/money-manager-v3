@@ -10,17 +10,14 @@ namespace MoneyTracker.Queries.Application;
 public class BillService : IBillService
 {
     private readonly IBillRepository _dbService;
-    private readonly IDateTimeProvider _dateProvider;
     private readonly IUserAuthenticationService _userAuthService;
     private readonly IFrequencyCalculation _frequencyCalculation;
 
     public BillService(IBillRepository dbService,
-        IDateTimeProvider dateProvider,
         IUserAuthenticationService userAuthService,
         IFrequencyCalculation frequencyCalculation)
     {
         _dbService = dbService;
-        _dateProvider = dateProvider;
         _userAuthService = userAuthService;
         _frequencyCalculation = frequencyCalculation;
     }
@@ -44,7 +41,7 @@ public class BillService : IBillService
                bill.Frequency,
                bill.CategoryName,
                _frequencyCalculation.CalculateOverDueBillInfo(bill.MonthDay, bill.Frequency,
-                   bill.NextDueDate, _dateProvider),
+                   bill.NextDueDate),
                bill.AccountName
            ));
         }

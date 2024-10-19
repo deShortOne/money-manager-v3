@@ -9,7 +9,6 @@ namespace MoneyTracker.Queries.Tests.BillTests.Service;
 public class BillTestHelper
 {
     public readonly Mock<IBillRepository> _mockBillDatabase = new();
-    public readonly Mock<IDateTimeProvider> _mockDateTimeProvider = new();
     public readonly Mock<IUserAuthenticationService> _mockUserAuthService = new();
     public readonly Mock<IFrequencyCalculation> _mockFrequencyCalculation = new();
 
@@ -18,7 +17,6 @@ public class BillTestHelper
     public BillTestHelper()
     {
         _billService = new BillService(_mockBillDatabase.Object,
-            _mockDateTimeProvider.Object,
             _mockUserAuthService.Object,
             _mockFrequencyCalculation.Object);
     }
@@ -26,7 +24,6 @@ public class BillTestHelper
     public void EnsureAllMocksHadNoOtherCalls()
     {
         _mockBillDatabase.VerifyNoOtherCalls();
-        _mockDateTimeProvider.VerifyNoOtherCalls();
         _mockUserAuthService.VerifyNoOtherCalls();
         _mockFrequencyCalculation.VerifyNoOtherCalls();
     }
