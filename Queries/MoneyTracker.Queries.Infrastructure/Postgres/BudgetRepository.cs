@@ -1,4 +1,6 @@
 ﻿using System.Data;
+using System.Data.Common;
+using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Common.Interfaces;
 using MoneyTracker.Queries.Domain.Entities.BudgetCategory;
 using MoneyTracker.Queries.Domain.Repositories;
@@ -13,7 +15,7 @@ public class BudgetRepository : IBudgetRepository
         _database = db;
     }
 
-    public async Task<List<BudgetGroupEntity>> GetBudget()
+    public async Task<List<BudgetGroupEntity>> GetBudget(AuthenticatedUser user)
     {
         string query = """
             SELECT bg.id,
@@ -21,16 +23,22 @@ public class BudgetRepository : IBudgetRepository
             	c.name AS category_name,
             	COALESCE(category_sum.amount, 0) AS actual,
             	bc.planned
-            FROM budgetcategory bc
+            FROM (
+            	SELECT category_id,
+            		budget_group_id,
+            		planned
+            	FROM budgetcategory
+            	WHERE users_id = @userId
+            	) bc
             LEFT JOIN (
             	SELECT category_id,
-            		sum(amount) AS amount
+            		SUM(amount) AS amount
             	FROM register
-                WHERE account_id IN (
-                    SELECT id
-                    FROM account
-                    WHERE users_id = 1
-                )
+            	WHERE account_id IN (
+            			SELECT id
+            			FROM account
+            			WHERE users_id = @userId
+            			)
             	GROUP BY category_id
             	) category_sum
             	ON category_sum.category_id = bc.category_id
@@ -41,9 +49,13 @@ public class BudgetRepository : IBudgetRepository
             ORDER BY bg.id,
             	bg."name",
             	c.name;
+            
             """;
-
-        using var reader = await _database.GetTable(query);
+        var queryParams = new List<DbParameter>
+        {
+            new NpgsqlParameter("userId", user.Id),
+        };
+        using var reader = await _database.GetTable(query, queryParams);
 
         Dictionary<int, BudgetGroupEntity> res = [];
         while (await reader.ReadAsync())

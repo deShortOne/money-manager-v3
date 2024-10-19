@@ -21,6 +21,6 @@ public class BudgetController
     [Route("get")]
     public Task<List<BudgetGroupResponse>> GetBudget()
     {
-        return _budgetService.GetBudget();
+        return _budgetService.GetBudget(ControllerHelper.GetToken(_httpContextAccessor));
     }
 }

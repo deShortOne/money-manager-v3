@@ -1,4 +1,5 @@
-﻿using MoneyTracker.Contracts.Responses.Budget;
+﻿using MoneyTracker.Authentication.Authentication;
+using MoneyTracker.Contracts.Responses.Budget;
 using MoneyTracker.Queries.Domain.Entities.BudgetCategory;
 using MoneyTracker.Queries.Domain.Handlers;
 using MoneyTracker.Queries.Domain.Repositories;
@@ -6,16 +7,20 @@ using MoneyTracker.Queries.Domain.Repositories;
 namespace MoneyTracker.Queries.Application;
 public class BudgetService : IBudgetService
 {
+    private readonly UserAuthenticationService _userAuthService;
     private readonly IBudgetRepository _dbService;
 
-    public BudgetService(IBudgetRepository dbService)
+    public BudgetService(UserAuthenticationService userAuthService,
+        IBudgetRepository dbService)
     {
+        _userAuthService = userAuthService;
         _dbService = dbService;
     }
 
-    public async Task<List<BudgetGroupResponse>> GetBudget()
+    public async Task<List<BudgetGroupResponse>> GetBudget(string token)
     {
-        return ConvertFromRepoDTOToDTO(await _dbService.GetBudget());
+        var user = await _userAuthService.DecodeToken(token);
+        return ConvertFromRepoDTOToDTO(await _dbService.GetBudget(user));
     }
 
     private List<BudgetGroupResponse> ConvertFromRepoDTOToDTO(List<BudgetGroupEntity> billRepoDTO)

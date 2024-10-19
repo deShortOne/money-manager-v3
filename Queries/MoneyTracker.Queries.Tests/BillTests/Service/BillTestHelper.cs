@@ -11,9 +11,7 @@ public class BillTestHelper
     public readonly Mock<IBillRepository> _mockBillDatabase = new();
     public readonly Mock<IDateTimeProvider> _mockDateTimeProvider = new();
     public readonly Mock<IUserAuthenticationService> _mockUserAuthService = new();
-    public readonly Mock<IAccountRepository> _mockAccountDatabase = new();
     public readonly Mock<IFrequencyCalculation> _mockFrequencyCalculation = new();
-    public readonly Mock<ICategoryRepository> _mockCategoryDatabase = new();
 
     public readonly BillService _billService;
 
@@ -22,9 +20,7 @@ public class BillTestHelper
         _billService = new BillService(_mockBillDatabase.Object,
             _mockDateTimeProvider.Object,
             _mockUserAuthService.Object,
-            _mockAccountDatabase.Object,
-            _mockFrequencyCalculation.Object,
-            _mockCategoryDatabase.Object);
+            _mockFrequencyCalculation.Object);
     }
 
     public void EnsureAllMocksHadNoOtherCalls()
@@ -32,8 +28,6 @@ public class BillTestHelper
         _mockBillDatabase.VerifyNoOtherCalls();
         _mockDateTimeProvider.VerifyNoOtherCalls();
         _mockUserAuthService.VerifyNoOtherCalls();
-        _mockAccountDatabase.VerifyNoOtherCalls();
         _mockFrequencyCalculation.VerifyNoOtherCalls();
-        _mockCategoryDatabase.VerifyNoOtherCalls();
     }
 }

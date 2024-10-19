@@ -3,5 +3,5 @@
 namespace MoneyTracker.Queries.Domain.Handlers;
 public interface IBudgetService
 {
-    Task<List<BudgetGroupResponse>> GetBudget();
+    Task<List<BudgetGroupResponse>> GetBudget(string token);
 }
