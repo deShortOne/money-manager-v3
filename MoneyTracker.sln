@@ -37,6 +37,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoneyTracker.Queries.Tests"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoneyTracker.Queries.DataMigration", "Queries\MoneyTracker.Queries.DataMigration\MoneyTracker.Queries.DataMigration.csproj", "{4B81AD87-8B54-4A75-AF03-99E22A274E52}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoneyTracker.Queries.API", "Queries\MoneyTracker.Queries.API\MoneyTracker.Queries.API.csproj", "{3B6A0A34-5DF3-45C0-A404-C725E22079D2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -99,6 +101,10 @@ Global
 		{4B81AD87-8B54-4A75-AF03-99E22A274E52}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4B81AD87-8B54-4A75-AF03-99E22A274E52}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4B81AD87-8B54-4A75-AF03-99E22A274E52}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B6A0A34-5DF3-45C0-A404-C725E22079D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B6A0A34-5DF3-45C0-A404-C725E22079D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B6A0A34-5DF3-45C0-A404-C725E22079D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B6A0A34-5DF3-45C0-A404-C725E22079D2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -118,6 +124,7 @@ Global
 		{0279861F-218F-41B5-96EE-2C1D7E8F9FA3} = {73D7E682-5743-413C-BC9D-04F2BC2B5044}
 		{F7BB2847-98B6-457B-8234-9A202654AD32} = {8A3E641C-AC44-4217-A765-9CAD289AC7E6}
 		{4B81AD87-8B54-4A75-AF03-99E22A274E52} = {8A3E641C-AC44-4217-A765-9CAD289AC7E6}
+		{3B6A0A34-5DF3-45C0-A404-C725E22079D2} = {8A3E641C-AC44-4217-A765-9CAD289AC7E6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C05BF204-356E-4503-B959-74ED22AB7CB0}

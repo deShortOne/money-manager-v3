@@ -1,0 +1,26 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using MoneyTracker.Contracts.Responses.Transaction;
+using MoneyTracker.Queries.Domain.Handlers;
+
+namespace MoneyTracker.Queries.API.Controllers;
+[ApiController]
+[Route("[controller]")]
+public class RegisterController
+{
+    private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly IRegisterService _registerService;
+
+    public RegisterController(IHttpContextAccessor httpContextAccessor,
+        IRegisterService registerService)
+    {
+        _httpContextAccessor = httpContextAccessor;
+        _registerService = registerService;
+    }
+
+    [HttpPost]
+    [Route("get")]
+    public Task<List<TransactionResponse>> GetAllTransactions()
+    {
+        return _registerService.GetAllTransactions(ControllerHelper.GetToken(_httpContextAccessor));
+    }
+}

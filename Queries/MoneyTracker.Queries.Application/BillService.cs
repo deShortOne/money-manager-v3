@@ -12,23 +12,17 @@ public class BillService : IBillService
     private readonly IBillRepository _dbService;
     private readonly IDateTimeProvider _dateProvider;
     private readonly IUserAuthenticationService _userAuthService;
-    private readonly IAccountRepository _accountDatabase;
-    private readonly ICategoryRepository _categoryDatabase;
     private readonly IFrequencyCalculation _frequencyCalculation;
 
     public BillService(IBillRepository dbService,
         IDateTimeProvider dateProvider,
         IUserAuthenticationService userAuthService,
-        IAccountRepository accountDatabase,
-        IFrequencyCalculation frequencyCalculation,
-        ICategoryRepository categoryDatabase)
+        IFrequencyCalculation frequencyCalculation)
     {
         _dbService = dbService;
         _dateProvider = dateProvider;
         _userAuthService = userAuthService;
-        _accountDatabase = accountDatabase;
         _frequencyCalculation = frequencyCalculation;
-        _categoryDatabase = categoryDatabase;
     }
 
     public async Task<List<BillResponse>> GetAllBills(string token)

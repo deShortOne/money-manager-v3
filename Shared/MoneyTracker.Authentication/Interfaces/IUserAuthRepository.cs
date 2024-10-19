@@ -1,7 +1,7 @@
 ﻿using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Authentication.Entities;
 
-namespace MoneyTracker.Commands.Domain.Repositories;
+namespace MoneyTracker.Authentication.Interfaces;
 public interface IUserAuthRepository
 {
     public Task<UserEntity?> GetUserByUsername(string username);

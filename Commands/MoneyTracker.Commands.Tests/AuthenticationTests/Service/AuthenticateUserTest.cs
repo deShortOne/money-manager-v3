@@ -2,8 +2,8 @@
 using MoneyTracker.Authentication.Authentication;
 using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Authentication.Entities;
+using MoneyTracker.Authentication.Interfaces;
 using MoneyTracker.Authentication.Utils;
-using MoneyTracker.Commands.Domain.Repositories;
 using MoneyTracker.Common.Interfaces;
 using MoneyTracker.Common.Utilities.DateTimeUtil;
 using MoneyTracker.Common.Utilities.IdGeneratorUtil;

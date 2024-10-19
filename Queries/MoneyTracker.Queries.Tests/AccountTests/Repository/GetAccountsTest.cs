@@ -1,9 +1,11 @@
 ﻿using MoneyTracker.Authentication.DTOs;
+using MoneyTracker.Authentication.Interfaces;
 using MoneyTracker.Contracts.Responses.Account;
 using MoneyTracker.Queries.Application;
 using MoneyTracker.Queries.DatabaseMigration;
 using MoneyTracker.Queries.DatabaseMigration.Models;
 using MoneyTracker.Queries.Infrastructure.Postgres;
+using Moq;
 using Testcontainers.PostgreSql;
 
 namespace MoneyTracker.Tests.OldTestsToMoveOver.Core;
@@ -34,11 +36,16 @@ public sealed class GetAccountsTest : IAsyncLifetime
     [Fact]
     public async void FirstLoadCheckTablesThatDataAreThere()
     {
+        var token = "ASDFDSA";
+
+        var mockAuthToken = new Mock<IUserAuthenticationService>();
+        mockAuthToken.Setup(x => x.DecodeToken(token)).ReturnsAsync(new AuthenticatedUser(1));
+
         var db = new PostgresDatabase(_postgres.GetConnectionString());
         var accountDb = new AccountRepository(db);
-        var accountService = new AccountService(accountDb);
+        var accountService = new AccountService(mockAuthToken.Object, accountDb);
 
-        var actual = await accountService.GetAccounts(new AuthenticatedUser(1));
+        var actual = await accountService.GetAccounts(token);
 
         var expected = new List<AccountResponse>()
         {

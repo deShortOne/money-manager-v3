@@ -4,7 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using MoneyTracker.Authentication.Authentication;
 using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Authentication.Entities;
-using MoneyTracker.Commands.Domain.Repositories;
+using MoneyTracker.Authentication.Interfaces;
 using MoneyTracker.Common.Interfaces;
 using MoneyTracker.Common.Utilities.DateTimeUtil;
 using MoneyTracker.Common.Utilities.IdGeneratorUtil;

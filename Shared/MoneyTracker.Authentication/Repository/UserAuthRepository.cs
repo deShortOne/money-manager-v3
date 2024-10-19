@@ -2,7 +2,7 @@
 using System.Data.Common;
 using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Authentication.Entities;
-using MoneyTracker.Commands.Domain.Repositories;
+using MoneyTracker.Authentication.Interfaces;
 using MoneyTracker.Common.Interfaces;
 using Npgsql;
 

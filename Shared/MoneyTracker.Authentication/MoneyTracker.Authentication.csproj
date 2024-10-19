@@ -10,10 +10,10 @@
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="7.1.2" />
     <PackageReference Include="Npgsql" Version="8.0.4" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="7.1.2" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\MoneyTracker.Shared\MoneyTracker.Shared.csproj" />
     <ProjectReference Include="..\MoneyTracker.Common\MoneyTracker.Common.csproj" />
     <ProjectReference Include="..\MoneyTracker.Contracts\MoneyTracker.Contracts.csproj" />
   </ItemGroup>

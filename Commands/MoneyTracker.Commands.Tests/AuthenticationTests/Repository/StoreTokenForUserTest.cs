@@ -1,8 +1,8 @@
 ﻿using System.Data.Common;
 using MoneyTracker.Authentication.DTOs;
+using MoneyTracker.Authentication.Interfaces;
 using MoneyTracker.Commands.DatabaseMigration;
 using MoneyTracker.Commands.DatabaseMigration.Models;
-using MoneyTracker.Commands.Domain.Repositories;
 using MoneyTracker.Commands.Infrastructure.Postgres;
 using MoneyTracker.Common.Interfaces;
 using Npgsql;

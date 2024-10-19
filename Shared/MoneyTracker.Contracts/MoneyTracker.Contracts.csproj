@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\MoneyTracker.Shared\MoneyTracker.Shared.csproj" />
     <ProjectReference Include="..\MoneyTracker.Common\MoneyTracker.Common.csproj" />
   </ItemGroup>
 
