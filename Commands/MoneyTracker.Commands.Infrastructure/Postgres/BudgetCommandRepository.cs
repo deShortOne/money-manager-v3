@@ -14,15 +14,15 @@ public class BudgetCommandRepository : IBudgetCommandRepository
     }
     public async Task AddBudgetCategory(BudgetCategoryEntity newBudgetCategory)
     {
-        // TODO - USERS ID
         var queryInsertIntoBudgetCategory = """
             INSERT INTO budgetcategory VALUES
-                (1, @budgetGroupId, @categoryId, @planned)
+                (@userId, @budgetGroupId, @categoryId, @planned)
             ON CONFLICT (users_id, budget_group_id, category_id) DO UPDATE
                 SET planned = @planned;
             """;
         var queryInsertIntoBudgetCategoryParams = new List<DbParameter>()
         {
+            new NpgsqlParameter("userId", newBudgetCategory.UserId),
             new NpgsqlParameter("budgetGroupId", newBudgetCategory.BudgetGroupId),
             new NpgsqlParameter("planned", newBudgetCategory.Planned),
             new NpgsqlParameter("categoryId", newBudgetCategory.CategoryId),

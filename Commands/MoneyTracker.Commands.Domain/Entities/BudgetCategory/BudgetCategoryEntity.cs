@@ -1,7 +1,8 @@
 ﻿
 namespace MoneyTracker.Commands.Domain.Entities.BudgetCategory;
-public class BudgetCategoryEntity(int budgetGroupId, int categoryId, decimal planned)
+public class BudgetCategoryEntity(int userId, int budgetGroupId, int categoryId, decimal planned)
 {
+    public int UserId { get; } = userId;
     public int BudgetGroupId { get; } = budgetGroupId;
     public int CategoryId { get; } = categoryId;
     public decimal Planned { get; } = planned;

@@ -6,8 +6,7 @@ using MoneyTracker.Commands.Domain.Repositories;
 using MoneyTracker.Common.Interfaces;
 using Npgsql;
 
-namespace MoneyTracker.Commands.Infrastructure
-    .Postgres;
+namespace MoneyTracker.Commands.Infrastructure.Postgres;
 public class BillCommandRepository : IBillCommandRepository
 {
     private readonly IDatabase _database;
