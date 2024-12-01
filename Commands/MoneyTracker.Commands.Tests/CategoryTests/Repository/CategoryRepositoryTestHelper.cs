@@ -38,7 +38,8 @@ public class CategoryRespositoryTestHelper : IAsyncLifetime
     {
         var getBudgetQuery = @"
                             SELECT id, name
-                            FROM category;
+                            FROM category
+                            ORDER BY id asc;
                             ";
         await using var conn = new NpgsqlConnection(_postgres.GetConnectionString());
         await using var commandGetBudgetInfo = new NpgsqlCommand(getBudgetQuery, conn);
