@@ -17,11 +17,12 @@ public class CategoryCommandRepository : ICategoryCommandRepository
     public async Task AddCategory(CategoryEntity category)
     {
         var queryGetIdOfCategoryName = """
-            INSERT INTO category (name) VALUES
-                (@categoryName);
+            INSERT INTO category (id, name) VALUES
+                (@categoryId, @categoryName);
             """;
         var queryGetIdOfCategoryNameParams = new List<DbParameter>()
         {
+            new NpgsqlParameter("categoryId", category.Id),
             new NpgsqlParameter("categoryName", category.Name),
         };
 

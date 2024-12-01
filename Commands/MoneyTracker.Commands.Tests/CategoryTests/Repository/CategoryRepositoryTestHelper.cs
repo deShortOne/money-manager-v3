@@ -1,14 +1,14 @@
 ﻿using System.Data;
 using MoneyTracker.Commands.DatabaseMigration;
 using MoneyTracker.Commands.DatabaseMigration.Models;
-using MoneyTracker.Commands.Domain.Entities.BudgetCategory;
+using MoneyTracker.Commands.Domain.Entities.Category;
 using MoneyTracker.Commands.Domain.Repositories;
 using MoneyTracker.Commands.Infrastructure.Postgres;
 using Npgsql;
 using Testcontainers.PostgreSql;
 
-namespace MoneyTracker.Commands.Tests.BudgetTests.Repository;
-public class BudgetRespositoryTestHelper : IAsyncLifetime
+namespace MoneyTracker.Commands.Tests.CategoryTests.Repository;
+public class CategoryRespositoryTestHelper : IAsyncLifetime
 {
     public readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder()
 #if RUN_LOCAL
@@ -18,7 +18,7 @@ public class BudgetRespositoryTestHelper : IAsyncLifetime
         .WithCleanUp(true)
         .Build();
 
-    public IBudgetCommandRepository _budgetRepo;
+    public ICategoryCommandRepository _categoryRepo;
 
     public async Task InitializeAsync()
     {
@@ -26,7 +26,7 @@ public class BudgetRespositoryTestHelper : IAsyncLifetime
         Migration.CheckMigration(_postgres.GetConnectionString(), new MigrationOption());
 
         var _database = new PostgresDatabase(_postgres.GetConnectionString());
-        _budgetRepo = new BudgetCommandRepository(_database);
+        _categoryRepo = new CategoryCommandRepository(_database);
     }
 
     public Task DisposeAsync()
@@ -34,23 +34,22 @@ public class BudgetRespositoryTestHelper : IAsyncLifetime
         return _postgres.DisposeAsync().AsTask();
     }
 
-    protected async Task<List<BudgetCategoryEntity>> GetAllBudgetCategoryEntities()
+    protected async Task<List<CategoryEntity>> GetAllCategoryEntities()
     {
         var getBudgetQuery = @"
-                            SELECT users_id, budget_group_id, planned, category_id
-                            FROM budgetcategory;
+                            SELECT id, name
+                            FROM category;
                             ";
         await using var conn = new NpgsqlConnection(_postgres.GetConnectionString());
         await using var commandGetBudgetInfo = new NpgsqlCommand(getBudgetQuery, conn);
         await conn.OpenAsync();
         using var reader = commandGetBudgetInfo.ExecuteReader();
-        List<BudgetCategoryEntity> results = [];
+        List<CategoryEntity> results = [];
         while (reader.Read())
         {
-            results.Add(new BudgetCategoryEntity(userId: reader.GetInt32("users_id"),
-                budgetGroupId: reader.GetInt32("budget_group_id"),
-                planned: reader.GetDecimal("planned"),
-                categoryId: reader.GetInt32("category_id")
+            results.Add(new CategoryEntity(
+                id: reader.GetInt32("id"),
+                name: reader.GetString("name")
             ));
         }
         return results;
