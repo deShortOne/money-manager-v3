@@ -11,7 +11,8 @@ public class BudgetCategoryEntity(int userId, int budgetGroupId, int categoryId,
     {
         var other = obj as BudgetCategoryEntity;
         if (other == null) return false;
-        return BudgetGroupId == other.BudgetGroupId &&
+        return UserId == other.UserId &&
+            BudgetGroupId == other.BudgetGroupId &&
             CategoryId == other.CategoryId &&
             Planned == other.Planned;
     }
