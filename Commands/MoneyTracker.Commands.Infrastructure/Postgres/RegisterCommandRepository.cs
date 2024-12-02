@@ -18,11 +18,12 @@ public class RegisterCommandRepository : IRegisterCommandRepository
     public async Task AddTransaction(TransactionEntity transaction)
     {
         var query = """
-            INSERT INTO register (payee, amount, datePaid, category_id, account_id) VALUES
-                (@payee, @amount, @datePaid, @category_id, @account_id);
+            INSERT INTO register (id, payee, amount, datePaid, category_id, account_id) VALUES
+                (@id, @payee, @amount, @datePaid, @category_id, @account_id);
             """;
         var queryParams = new List<DbParameter>()
         {
+            new NpgsqlParameter("id", transaction.Id),
             new NpgsqlParameter("payee", transaction.Payee),
             new NpgsqlParameter("amount", transaction.Amount),
             new NpgsqlParameter("datePaid", transaction.DatePaid),
