@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Mvc;
 using MoneyTracker.Commands.Domain.Handlers;
 using MoneyTracker.Contracts.Requests.Budget;
 
 namespace MoneyTracker.Commands.API.Controllers;
 [ApiController]
 [Route("[controller]")]
+[ExcludeFromCodeCoverage]
 public class BudgetController
 {
     private readonly IHttpContextAccessor _httpContextAccessor;
