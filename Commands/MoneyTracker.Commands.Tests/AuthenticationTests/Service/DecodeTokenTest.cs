@@ -37,7 +37,7 @@ public sealed class DecodeTokenTest
 
         var mockUserDb = new Mock<IUserAuthRepository>();
         mockUserDb.Setup(x => x.GetUserFromToken(tempToken))
-            .Returns(Task.FromResult<TokenMapToUserEntity?>(new TokenMapToUserEntity(userId, dateTimeExp)));
+            .Returns(Task.FromResult(new TokenMapToUserEntity(userId, dateTimeExp)));
 
         var mockPasswordHasher = new Mock<IPasswordHasher>();
 
@@ -178,7 +178,7 @@ public sealed class DecodeTokenTest
 
         var mockUserDb = new Mock<IUserAuthRepository>();
         mockUserDb.Setup(x => x.GetUserFromToken(tempToken))
-            .Returns(Task.FromResult<TokenMapToUserEntity?>(new TokenMapToUserEntity(userId, dateTimeNow.AddMinutes(-5))));
+            .Returns(Task.FromResult(new TokenMapToUserEntity(userId, dateTimeNow.AddMinutes(-5))));
 
         var mockPasswordHasher = new Mock<IPasswordHasher>();
 
@@ -252,7 +252,7 @@ public sealed class DecodeTokenTest
 
         var mockUserDb = new Mock<IUserAuthRepository>();
         mockUserDb.Setup(x => x.GetUserFromToken(tempToken))
-            .Returns(Task.FromResult<TokenMapToUserEntity?>(null));
+            .Returns(Task.FromResult<TokenMapToUserEntity>(null));
 
         var mockPasswordHasher = new Mock<IPasswordHasher>();
 

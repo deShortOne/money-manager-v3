@@ -7,7 +7,7 @@ namespace MoneyTracker.Commands.Tests.BillTests.Service;
 public sealed class EditBillTest : BillTestHelper
 {
 
-    public static TheoryData<int, string?, decimal?, DateOnly?, int?, string?, int?, int?> OnlyOneItemNotNull = new() {
+    public static TheoryData<int, string, decimal?, DateOnly?, int?, string, int?, int?> OnlyOneItemNotNull = new() {
         { 1, "something funky here", null, null, null, null, null, null },
         { 2, null, 245.23m, null, null, null, null, null },
         { 3, null, null, new DateOnly(2023, 2, 21), 21, null, null, null }, // When date is updated, monthday is auto updated
@@ -17,8 +17,8 @@ public sealed class EditBillTest : BillTestHelper
     };
 
     [Theory, MemberData(nameof(OnlyOneItemNotNull))]
-    public async void SuccessfullyEditBill_OnlyChangeOneItem(int id, string? payee,
-        decimal? amount, DateOnly? nextDueDate, int? monthDay, string? frequency, int? category, int? accountId)
+    public async void SuccessfullyEditBill_OnlyChangeOneItem(int id, string payee,
+        decimal? amount, DateOnly? nextDueDate, int? monthDay, string frequency, int? category, int? accountId)
     {
         var userId = 52;
         var authedUser = new AuthenticatedUser(userId);

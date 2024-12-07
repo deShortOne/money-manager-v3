@@ -35,7 +35,7 @@ public sealed class EditRegisterTest : RegisterRespositoryTestHelper
         await commandAddBaseBillData.ExecuteNonQueryAsync();
     }
 
-    public static TheoryData<string?, int?, DateOnly?, int?, int?> OnlyOneItemNotNull = new() {
+    public static TheoryData<string, int?, DateOnly?, int?, int?> OnlyOneItemNotNull = new() {
         { "", null, null, null, null },
         { null, 500, null, null, null },
         { null, null, new DateOnly(2023, 2, 1), null, null },
@@ -44,7 +44,7 @@ public sealed class EditRegisterTest : RegisterRespositoryTestHelper
     };
 
     [Theory, MemberData(nameof(OnlyOneItemNotNull))]
-    public async void EditBaseBillItemInDatabase(string? payee, int? amount, DateOnly? datePaid, int? categoryId, int? accountId)
+    public async void EditBaseBillItemInDatabase(string payee, int? amount, DateOnly? datePaid, int? categoryId, int? accountId)
     {
         await SetupDb();
 

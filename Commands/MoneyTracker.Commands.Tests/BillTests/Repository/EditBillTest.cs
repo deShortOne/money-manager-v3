@@ -40,7 +40,7 @@ public sealed class EditBillTest : BillRespositoryTestHelper
         await commandAddBaseBillData.ExecuteNonQueryAsync();
     }
 
-    public static TheoryData<string?, decimal?, DateOnly?, int?, string?, int?, int?> OnlyOneItemNotNull = new() {
+    public static TheoryData<string, decimal?, DateOnly?, int?, string, int?, int?> OnlyOneItemNotNull = new() {
         { "something funky here", null, null, null, null, null, null },
         { null, 245.23m,  null, null, null, null, null },
         { null, null, new DateOnly(2023, 2, 21), null, null, null, null },
@@ -51,8 +51,8 @@ public sealed class EditBillTest : BillRespositoryTestHelper
     };
 
     [Theory, MemberData(nameof(OnlyOneItemNotNull))]
-    public async void EditBaseBillItemInDatabase(string? payee,
-        decimal? amount, DateOnly? nextDueDate, int? monthDay, string? frequency, int? category, int? accountId)
+    public async void EditBaseBillItemInDatabase(string payee,
+        decimal? amount, DateOnly? nextDueDate, int? monthDay, string frequency, int? category, int? accountId)
     {
         await SetupDb();
 
