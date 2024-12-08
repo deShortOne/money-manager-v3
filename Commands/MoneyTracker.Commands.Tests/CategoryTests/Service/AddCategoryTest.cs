@@ -1,6 +1,7 @@
 
 using MoneyTracker.Commands.Domain.Entities.Category;
 using MoneyTracker.Contracts.Requests.Category;
+using Moq;
 
 namespace MoneyTracker.Commands.Tests.CategoryTests.Service;
 public sealed class AddCategoryTest : CategoryTestHelper
@@ -22,9 +23,9 @@ public sealed class AddCategoryTest : CategoryTestHelper
 
         Assert.Multiple(() =>
         {
-            _mockCategoryDatabase.Verify(x => x.GetLastCategoryId());
-            _mockCategoryDatabase.Verify(x => x.AddCategory(newCategory));
-            _mockIdGenerator.Verify(x => x.NewInt(_lastCategoryId));
+            _mockCategoryDatabase.Verify(x => x.GetLastCategoryId(), Times.Once);
+            _mockCategoryDatabase.Verify(x => x.AddCategory(newCategory), Times.Once);
+            _mockIdGenerator.Verify(x => x.NewInt(_lastCategoryId), Times.Once);
 
             EnsureAllMocksHadNoOtherCalls();
         });
