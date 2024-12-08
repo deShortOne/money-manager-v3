@@ -35,7 +35,8 @@ public class BudgetService : IBudgetService
 
     public async Task DeleteBudgetCategory(string token, DeleteBudgetCategoryRequest deleteBudgetCategory)
     {
-        var dtoToDb = new DeleteBudgetCategoryEntity(deleteBudgetCategory.BudgetGroupId, deleteBudgetCategory.BudgetCategoryId);
+        var user = await _userAuthService.DecodeToken(token);
+        var dtoToDb = new DeleteBudgetCategoryEntity(user.Id, deleteBudgetCategory.BudgetGroupId, deleteBudgetCategory.BudgetCategoryId);
 
         await _dbService.DeleteBudgetCategory(dtoToDb);
     }
