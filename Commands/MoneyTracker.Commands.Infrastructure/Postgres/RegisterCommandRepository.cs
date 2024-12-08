@@ -1,4 +1,5 @@
-﻿using System.Data.Common;
+﻿using System.Data;
+using System.Data.Common;
 using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Commands.Domain.Entities.Transaction;
 using MoneyTracker.Commands.Domain.Repositories;
@@ -117,5 +118,21 @@ public class RegisterCommandRepository : IRegisterCommandRepository
             return reader.GetInt32(0) == 1;
         }
         return false;
+    }
+
+    public async Task<int> GetLastTransactionId() 
+    {
+        var query = """
+            SELECT MAX(id) AS last_id
+            FROM register;
+        """;
+
+        var reader = await _database.GetTable(query);
+
+        if (await reader.ReadAsync())
+        {
+            return reader.GetInt32("last_id");
+        }
+        return 0;
     }
 }
