@@ -7,5 +7,6 @@ public interface ICategoryCommandRepository
     public Task AddCategory(CategoryEntity categoryName);
     public Task EditCategory(EditCategoryEntity editCategoryDTO);
     public Task DeleteCategory(int categoryId);
-    Task<bool> DoesCategoryExist(int categoryId);
+    public Task<bool> DoesCategoryExist(int categoryId);
+    public Task<int> GetLastCategoryId() ;
 }
