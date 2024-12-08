@@ -27,7 +27,8 @@ public class BudgetService : IBudgetService
 
     public async Task EditBudgetCategory(string token, EditBudgetCategoryRequest editBudgetCategory)
     {
-        var dtoToDb = new EditBudgetCategoryEntity(editBudgetCategory.BudgetCategoryId, editBudgetCategory.BudgetGroupId, editBudgetCategory.BudgetCategoryPlanned);
+        var user = await _userAuthService.DecodeToken(token);
+        var dtoToDb = new EditBudgetCategoryEntity(user.Id, editBudgetCategory.BudgetCategoryId, editBudgetCategory.BudgetGroupId, editBudgetCategory.BudgetCategoryPlanned);
 
         await _dbService.EditBudgetCategory(dtoToDb);
     }
