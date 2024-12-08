@@ -2,6 +2,7 @@
 using MoneyTracker.Commands.Domain.Entities.Transaction;
 using MoneyTracker.Commands.Domain.Handlers;
 using MoneyTracker.Commands.Domain.Repositories;
+using MoneyTracker.Common.Utilities.IdGeneratorUtil;
 using MoneyTracker.Contracts.Requests.Transaction;
 
 namespace MoneyTracker.Commands.Application;
@@ -10,14 +11,17 @@ public class RegisterService : IRegisterService
     private readonly IRegisterCommandRepository _dbService;
     private readonly IUserAuthenticationService _userAuthService;
     private readonly IAccountCommandRepository _accountDb;
+    private readonly IIdGenerator _idGenerator;
 
     public RegisterService(IRegisterCommandRepository dbService,
         IUserAuthenticationService userAuthService,
-        IAccountCommandRepository accountDb)
+        IAccountCommandRepository accountDb,
+        IIdGenerator idGenerator)
     {
         _dbService = dbService;
         _userAuthService = userAuthService;
         _accountDb = accountDb;
+        _idGenerator = idGenerator;
     }
 
     public async Task AddTransaction(string token, NewTransactionRequest newTransaction)
@@ -27,8 +31,9 @@ public class RegisterService : IRegisterService
         {
             throw new InvalidDataException("Account not found");
         }
+        var newTransactionId = _idGenerator.NewInt(await _dbService.GetLastTransactionId());
 
-        var dtoToDb = new TransactionEntity(1, // FIXME Set id
+        var dtoToDb = new TransactionEntity(newTransactionId,
             newTransaction.Payee,
             newTransaction.Amount,
             newTransaction.DatePaid,
