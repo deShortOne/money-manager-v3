@@ -1,4 +1,5 @@
-﻿using MoneyTracker.Authentication;
+﻿using System.Diagnostics.CodeAnalysis;
+using MoneyTracker.Authentication;
 using MoneyTracker.Common.Interfaces;
 using MoneyTracker.Common.Utilities.CalculationUtil;
 using MoneyTracker.Common.Utilities.DateTimeUtil;
@@ -7,6 +8,7 @@ using MoneyTracker.Queries.Domain.Handlers;
 using MoneyTracker.Queries.Domain.Repositories;
 using MoneyTracker.Queries.Infrastructure.Postgres;
 
+[ExcludeFromCodeCoverage]
 internal class Program
 {
     private static void Main(string[] args)

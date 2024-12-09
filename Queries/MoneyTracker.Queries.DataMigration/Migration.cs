@@ -1,10 +1,12 @@
-﻿using System.Reflection;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using DbUp;
 using DbUp.Engine;
 using MoneyTracker.Queries.DatabaseMigration.Models;
 using Npgsql;
 
 namespace MoneyTracker.Queries.DatabaseMigration;
+[ExcludeFromCodeCoverage]
 public class Migration
 {
     public static DatabaseUpgradeResult CheckMigration(string connectionString, MigrationOption migrationOption)

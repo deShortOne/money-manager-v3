@@ -1,8 +1,10 @@
 ﻿
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Configuration;
 using MoneyTracker.Queries.DatabaseMigration.Models;
 
 namespace MoneyTracker.Queries.DatabaseMigration;
+[ExcludeFromCodeCoverage]
 public class Program
 {
     public static int Main(string[] args)

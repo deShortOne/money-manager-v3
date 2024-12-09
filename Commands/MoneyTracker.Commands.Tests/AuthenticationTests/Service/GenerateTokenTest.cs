@@ -42,18 +42,16 @@ public sealed class GenerateTokenTest
 
         var mockUserDb = new Mock<IUserAuthRepository>();
         mockUserDb.Setup(x => x.GetUserByUsername(username))
-            .Returns(Task.FromResult<UserEntity?>(new UserEntity(userId, username, databasePassword)));
+            .Returns(Task.FromResult(new UserEntity(userId, username, databasePassword)));
         mockUserDb.Setup(x => x.StoreTemporaryTokenToUser(expected, tempToken, dateTimeExp));
 
         var mockPasswordHasher = new Mock<IPasswordHasher>();
         mockPasswordHasher.Setup(x => x.VerifyPassword(databasePassword, userProvidedpassword, "salt goes here"))
             .Returns(true);
 
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
         Expression<Func<JwtSecurityToken, bool>> checkSomeValuesOfJwtSecurityToken = x =>
             x.Claims.FirstOrDefault(y => y.Type == "UserGuid").Value == tempToken.ToString() &&
             x.Claims.FirstOrDefault(y => y.Type == JwtRegisteredClaimNames.Jti).Value == tempJti.ToString();
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
         var mockJwtTokenCreator = new Mock<SecurityTokenHandler>();
         mockJwtTokenCreator.Setup(x => x.WriteToken(It.Is(checkSomeValuesOfJwtSecurityToken))).Returns("Successfully tokenised");
 
@@ -104,7 +102,7 @@ public sealed class GenerateTokenTest
 
         var mockUserDb = new Mock<IUserAuthRepository>();
         mockUserDb.Setup(x => x.GetUserByUsername(username))
-            .Returns(Task.FromResult<UserEntity?>(new UserEntity(userId, username, databasePassword)));
+            .Returns(Task.FromResult(new UserEntity(userId, username, databasePassword)));
 
         var mockPasswordHasher = new Mock<IPasswordHasher>();
 

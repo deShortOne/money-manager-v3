@@ -1,7 +1,8 @@
 ﻿
 namespace MoneyTracker.Commands.Domain.Entities.BudgetCategory;
-public class DeleteBudgetCategoryEntity(int budgetGroupId, int budgetCategoryId)
+public class DeleteBudgetCategoryEntity(int userId, int budgetGroupId, int budgetCategoryId)
 {
+    public int UserId { get; } = userId;
     public int BudgetGroupId { get; } = budgetGroupId;
     public int BudgetCategoryId { get; } = budgetCategoryId;
 

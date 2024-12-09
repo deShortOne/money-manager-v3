@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.AspNetCore.Mvc;
 using MoneyTracker.Contracts.Responses.Account;
 using MoneyTracker.Queries.Domain.Handlers;
 
 namespace MoneyTracker.Queries.API.Controllers;
 [ApiController]
 [Route("[controller]")]
+[ExcludeFromCodeCoverage]
 public class AccountController
 {
     private readonly IHttpContextAccessor _httpContextAccessor;

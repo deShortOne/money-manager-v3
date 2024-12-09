@@ -1,5 +1,8 @@
 ﻿
+using System.Diagnostics.CodeAnalysis;
+
 namespace MoneyTracker.Commands.API.Controllers;
+[ExcludeFromCodeCoverage]
 public class ControllerHelper
 {
     public static string GetToken(IHttpContextAccessor httpContextAccessor)

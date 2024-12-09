@@ -20,7 +20,7 @@ public class AuthenticateUserTest
 
         var mockUserDb = new Mock<IUserAuthRepository>();
         mockUserDb.Setup(x => x.GetUserByUsername("root"))
-            .Returns(Task.FromResult<UserEntity?>(new UserEntity(1, "root", "root-pass")));
+            .Returns(Task.FromResult(new UserEntity(1, "root", "root-pass")));
 
         var mockPasswordHasher = new Mock<IPasswordHasher>();
         mockPasswordHasher.Setup(x => x.VerifyPassword("root-pass", "root-pass", "salt goes here"))
@@ -51,7 +51,7 @@ public class AuthenticateUserTest
 
         var mockUserDb = new Mock<IUserAuthRepository>();
         mockUserDb.Setup(x => x.GetUserByUsername(It.Is<string>(y => y == "secondary root")))
-            .Returns(Task.FromResult<UserEntity?>(new UserEntity(2, "secondary root", "secondary root-pass")));
+            .Returns(Task.FromResult(new UserEntity(2, "secondary root", "secondary root-pass")));
 
         var mockPasswordHasher = new Mock<IPasswordHasher>();
         mockPasswordHasher.Setup(x => x.VerifyPassword("secondary root-pass", "secondary root-pass", "salt goes here"))
@@ -81,7 +81,7 @@ public class AuthenticateUserTest
 
         var mockUserDb = new Mock<IUserAuthRepository>();
         mockUserDb.Setup(x => x.GetUserByUsername("root"))
-            .Returns(Task.FromResult<UserEntity?>(new UserEntity(1, "root", "root-pass")));
+            .Returns(Task.FromResult(new UserEntity(1, "root", "root-pass")));
 
         var mockPasswordHasher = new Mock<IPasswordHasher>();
         mockPasswordHasher.Setup(x => x.VerifyPassword("root-pass", "root-", "salt goes here"))
@@ -115,7 +115,7 @@ public class AuthenticateUserTest
 
         var userDb = new Mock<IUserAuthRepository>();
         userDb.Setup(x => x.GetUserByUsername(It.IsAny<string>()))
-            .Returns(Task.FromResult<UserEntity?>(null));
+            .Returns(Task.FromResult<UserEntity>(null));
         var jwtToken = new JwtConfig("", "", "", 0);
         var userAuthService = new UserAuthenticationService(userDb.Object,
             jwtToken,

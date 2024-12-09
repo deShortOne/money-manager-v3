@@ -1,21 +1,26 @@
-﻿using MoneyTracker.Commands.Domain.Entities.Category;
+﻿using System.Data.Common;
+using MoneyTracker.Commands.Domain.Entities.Category;
 using MoneyTracker.Commands.Domain.Handlers;
 using MoneyTracker.Commands.Domain.Repositories;
+using MoneyTracker.Common.Utilities.IdGeneratorUtil;
 using MoneyTracker.Contracts.Requests.Category;
 
 namespace MoneyTracker.Commands.Application;
 public class CategoryService : ICategoryService
 {
     private readonly ICategoryCommandRepository _dbService;
+    private readonly IIdGenerator _idGenerator;
 
-    public CategoryService(ICategoryCommandRepository dbService)
+    public CategoryService(ICategoryCommandRepository dbService, IIdGenerator idGenerator)
     {
         _dbService = dbService;
+        _idGenerator = idGenerator;
     }
 
     public async Task AddCategory(NewCategoryRequest newCategory)
     {
-        var dtoToDb = new CategoryEntity(1, newCategory.Name); // FIXME generate id
+        var newCategoryId = _idGenerator.NewInt(await _dbService.GetLastCategoryId());
+        var dtoToDb = new CategoryEntity(newCategoryId, newCategory.Name);
 
         await _dbService.AddCategory(dtoToDb);
     }

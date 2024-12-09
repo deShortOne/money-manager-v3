@@ -19,10 +19,8 @@ public sealed class GetUserFromTokenTest : IAsyncLifetime
         .WithCleanUp(true)
         .Build();
 
-#pragma warning disable CS8618 // disable nullable
     private IUserAuthRepository _userAuthRepo;
     private IDatabase _database;
-#pragma warning restore CS8618
 
     public async Task InitializeAsync()
     {

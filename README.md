@@ -22,3 +22,9 @@ The run
 ```bash
 sudo dockerd
 ```
+
+## Code coverage
+Run this in root directory
+```bash
+rm -rf coverage/ && dotnet build && dotnet test --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory coverage && dotnet-coverage merge coverage/**/coverage.cobertura.xml -f cobertura -o coverage/coverage.xml && pycobertura show coverage/coverage.xml
+```

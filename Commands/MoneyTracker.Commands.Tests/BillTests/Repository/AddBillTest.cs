@@ -26,16 +26,8 @@ public sealed class AddBillTest : BillRespositoryTestHelper
         var accountId = 2;
         var newBillEntity = new BillEntity(id, payee, amount, nextDueDate, monthDay, frequency, categoryId, accountId);
 
-
         await _billRepo.AddBill(newBillEntity);
 
-
-        var getBillQuery = @"
-                            SELECT id, payee, amount, nextduedate, frequency, category_id, monthday, account_id
-                            FROM bill;
-                            ";
-        await using var commandGetBillInfo = new NpgsqlCommand(getBillQuery, conn);
-        using var reader = commandGetBillInfo.ExecuteReader();
         List<BillEntity> results = await GetAllBillEntity();
 
         Assert.Multiple(() =>

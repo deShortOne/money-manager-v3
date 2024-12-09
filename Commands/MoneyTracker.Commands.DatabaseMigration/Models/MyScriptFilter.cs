@@ -1,7 +1,9 @@
-﻿using DbUp.Engine;
+﻿using System.Diagnostics.CodeAnalysis;
+using DbUp.Engine;
 using DbUp.Support;
 
 namespace MoneyTracker.Commands.DatabaseMigration.Models;
+[ExcludeFromCodeCoverage]
 internal class MyScriptFilter : IScriptFilter
 {
     public IEnumerable<SqlScript> Filter(

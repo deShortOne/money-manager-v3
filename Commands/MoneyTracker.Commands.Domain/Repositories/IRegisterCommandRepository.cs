@@ -8,4 +8,5 @@ public interface IRegisterCommandRepository
     public Task EditTransaction(EditTransactionEntity tramsaction);
     public Task DeleteTransaction(int transactionId);
     public Task<bool> IsTransactionOwnedByUser(AuthenticatedUser user, int transactionId);
+    public Task<int> GetLastTransactionId();
 }

@@ -1,4 +1,5 @@
-﻿using System.Data.Common;
+﻿using System.Data;
+using System.Data.Common;
 using MoneyTracker.Commands.Domain.Entities.Category;
 using MoneyTracker.Commands.Domain.Repositories;
 using MoneyTracker.Common.Interfaces;
@@ -17,11 +18,12 @@ public class CategoryCommandRepository : ICategoryCommandRepository
     public async Task AddCategory(CategoryEntity category)
     {
         var queryGetIdOfCategoryName = """
-            INSERT INTO category (name) VALUES
-                (@categoryName);
+            INSERT INTO category (id, name) VALUES
+                (@categoryId, @categoryName);
             """;
         var queryGetIdOfCategoryNameParams = new List<DbParameter>()
         {
+            new NpgsqlParameter("categoryId", category.Id),
             new NpgsqlParameter("categoryName", category.Name),
         };
 
@@ -75,5 +77,21 @@ public class CategoryCommandRepository : ICategoryCommandRepository
         await reader.ReadAsync();
 
         return reader.HasRows;
+    }
+
+    public async Task<int> GetLastCategoryId() 
+    {
+        var query = """
+            SELECT MAX(id) as last_id
+            FROM category;
+            """;
+
+        var reader = await _database.GetTable(query);
+
+        if (await reader.ReadAsync())
+        {
+            return reader.GetInt32("last_id");
+        }
+        return 0;
     }
 }

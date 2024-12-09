@@ -1,4 +1,5 @@
-﻿using System.Data.Common;
+﻿using System.Data;
+using System.Data.Common;
 using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Commands.Domain.Entities.Transaction;
 using MoneyTracker.Commands.Domain.Repositories;
@@ -18,11 +19,12 @@ public class RegisterCommandRepository : IRegisterCommandRepository
     public async Task AddTransaction(TransactionEntity transaction)
     {
         var query = """
-            INSERT INTO register (payee, amount, datePaid, category_id, account_id) VALUES
-                (@payee, @amount, @datePaid, @category_id, @account_id);
+            INSERT INTO register (id, payee, amount, datePaid, category_id, account_id) VALUES
+                (@id, @payee, @amount, @datePaid, @category_id, @account_id);
             """;
         var queryParams = new List<DbParameter>()
         {
+            new NpgsqlParameter("id", transaction.Id),
             new NpgsqlParameter("payee", transaction.Payee),
             new NpgsqlParameter("amount", transaction.Amount),
             new NpgsqlParameter("datePaid", transaction.DatePaid),
@@ -116,5 +118,21 @@ public class RegisterCommandRepository : IRegisterCommandRepository
             return reader.GetInt32(0) == 1;
         }
         return false;
+    }
+
+    public async Task<int> GetLastTransactionId() 
+    {
+        var query = """
+            SELECT MAX(id) AS last_id
+            FROM register;
+        """;
+
+        var reader = await _database.GetTable(query);
+
+        if (await reader.ReadAsync())
+        {
+            return reader.GetInt32("last_id");
+        }
+        return 0;
     }
 }
