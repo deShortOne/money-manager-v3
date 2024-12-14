@@ -1,4 +1,4 @@
-﻿using MoneyTracker.Authentication.Authentication;
+﻿using MoneyTracker.Authentication.Interfaces;
 using MoneyTracker.Contracts.Responses.Budget;
 using MoneyTracker.Queries.Domain.Entities.BudgetCategory;
 using MoneyTracker.Queries.Domain.Handlers;
@@ -7,10 +7,10 @@ using MoneyTracker.Queries.Domain.Repositories;
 namespace MoneyTracker.Queries.Application;
 public class BudgetService : IBudgetService
 {
-    private readonly UserAuthenticationService _userAuthService;
+    private readonly IUserAuthenticationService _userAuthService;
     private readonly IBudgetRepository _dbService;
 
-    public BudgetService(UserAuthenticationService userAuthService,
+    public BudgetService(IUserAuthenticationService userAuthService,
         IBudgetRepository dbService)
     {
         _userAuthService = userAuthService;
