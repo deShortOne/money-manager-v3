@@ -1,4 +1,3 @@
-using MoneyTracker.Authentication.Interfaces;
 using MoneyTracker.Queries.Application;
 using MoneyTracker.Queries.Domain.Repositories;
 using Moq;

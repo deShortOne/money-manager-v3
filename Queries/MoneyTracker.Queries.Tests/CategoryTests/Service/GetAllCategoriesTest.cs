@@ -1,7 +1,4 @@
-using MoneyTracker.Authentication.DTOs;
-using MoneyTracker.Contracts.Responses.Budget;
 using MoneyTracker.Contracts.Responses.Category;
-using MoneyTracker.Queries.Domain.Entities.BudgetCategory;
 using MoneyTracker.Queries.Domain.Entities.Category;
 using Moq;
 
