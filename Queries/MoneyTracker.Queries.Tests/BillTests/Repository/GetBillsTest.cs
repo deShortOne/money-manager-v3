@@ -1,12 +1,8 @@
 ﻿using MoneyTracker.Authentication.DTOs;
-using MoneyTracker.Authentication.Interfaces;
-using MoneyTracker.Contracts.Responses.Account;
-using MoneyTracker.Queries.Application;
 using MoneyTracker.Queries.DatabaseMigration;
 using MoneyTracker.Queries.DatabaseMigration.Models;
 using MoneyTracker.Queries.Domain.Entities.Bill;
 using MoneyTracker.Queries.Infrastructure.Postgres;
-using Moq;
 using Testcontainers.PostgreSql;
 
 namespace MoneyTracker.Tests.BillTests.Repository;
@@ -35,7 +31,7 @@ public sealed class GetBillsTest : IAsyncLifetime
     }
 
     [Fact]
-    public async void FirstLoadCheckTablesThatDataAreThere()
+    public async void FirstLoadCheckTablesThatDataAreThereForUserId1()
     {
         var db = new PostgresDatabase(_postgres.GetConnectionString());
         var billDb = new BillRepository(db);
@@ -46,6 +42,22 @@ public sealed class GetBillsTest : IAsyncLifetime
         {
             new(2, "company a", 100, new DateOnly(2024, 8, 30), 30, "Monthly", "Wages & Salary : Net Pay", "bank b"),
             new(1, "supermarket a", 23, new DateOnly(2024, 9, 3), 3, "Weekly", "Groceries", "bank a"),
+        };
+
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public async void FirstLoadCheckTablesThatDataAreThereForUserId2()
+    {
+        var db = new PostgresDatabase(_postgres.GetConnectionString());
+        var billDb = new BillRepository(db);
+
+        var actual = await billDb.GetAllBills(new AuthenticatedUser(2));
+
+        var expected = new List<BillEntity>()
+        {
+            new(3, "company a", 100, new DateOnly(2024, 8, 30), 30, "Monthly", "Wages & Salary : Net Pay", "bank a"),
         };
 
         Assert.Equal(expected, actual);
