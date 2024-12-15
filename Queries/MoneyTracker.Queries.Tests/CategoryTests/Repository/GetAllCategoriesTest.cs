@@ -1,12 +1,11 @@
-﻿using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Queries.DatabaseMigration;
 using MoneyTracker.Queries.DatabaseMigration.Models;
-using MoneyTracker.Queries.Domain.Entities.Account;
+using MoneyTracker.Queries.Domain.Entities.Category;
 using MoneyTracker.Queries.Infrastructure.Postgres;
 using Testcontainers.PostgreSql;
 
-namespace MoneyTracker.Tests.AccountTests.Repository;
-public sealed class GetAccountsTest : IAsyncLifetime
+namespace MoneyTracker.Tests.CategoryTests.Repository;
+public sealed class GetAllCategoriesTest : IAsyncLifetime
 {
     private readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder()
 #if RUN_LOCAL
@@ -21,6 +20,8 @@ public sealed class GetAccountsTest : IAsyncLifetime
         await _postgres.StartAsync();
 
         Migration.CheckMigration(_postgres.GetConnectionString(), new MigrationOption(true));
+
+        return;
     }
 
     public Task DisposeAsync()
@@ -32,14 +33,18 @@ public sealed class GetAccountsTest : IAsyncLifetime
     public async void FirstLoadCheckTablesThatDataAreThere()
     {
         var db = new PostgresDatabase(_postgres.GetConnectionString());
-        var accountDb = new AccountRepository(db);
+        var budgetDb = new CategoryRepository(db);
 
-        var actual = await accountDb.GetAccounts(new AuthenticatedUser(1));
+        var actual = await budgetDb.GetAllCategories();
 
-        var expected = new List<AccountEntity>()
+        var expected = new List<CategoryEntity>()
         {
-            new(1, "bank a"),
-            new(2, "bank b"),
+            new(2, "Bills : Cell Phone"),
+            new(3, "Bills : Rent"),
+            new(4, "Groceries"),
+            new(5, "Hobby"),
+            new(6, "Pet Care"),
+            new(1, "Wages & Salary : Net Pay"),
         };
 
         Assert.Equal(expected, actual);
