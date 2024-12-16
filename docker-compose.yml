@@ -1,0 +1,49 @@
+services:
+  postgres-master:
+    image: "postgres:17-alpine"
+    container_name: postgres-master
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=${DOCKER_DB_DATABASE}
+      - POSTGRES_USER=${DOCKER_DB_USERNAME}
+      - POSTGRES_PASSWORD=${DOCKER_DB_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DOCKER_DB_USERNAME}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - master-database:/var/lib/postgresql/data
+
+  be-queries:
+    build:
+      context: .
+      dockerfile: Dockerfile-Queries
+    ports:
+      - "1235:8080"
+    environment:
+      Database:Paelagus_RO: "User ID=${DOCKER_DB_USERNAME};Password=${DOCKER_DB_PASSWORD};Host=postgres-master;Port=5432;Database=${DOCKER_DB_DATABASE}"
+      ASPNETCORE_ENVIRONMENT: "Development"
+    links:
+      - postgres-master
+    depends_on:
+      postgres-master:
+        condition: service_healthy
+  be-commands:
+    build:
+      context: .
+      dockerfile: Dockerfile-Commands
+    ports:
+      - "1234:8080"
+    environment:
+      Database:Paelagus_RO: "User ID=${DOCKER_DB_USERNAME};Password=${DOCKER_DB_PASSWORD};Host=postgres-master;Port=5432;Database=${DOCKER_DB_DATABASE}"
+      ASPNETCORE_ENVIRONMENT: "Development"
+    links:
+      - postgres-master
+    depends_on:
+      postgres-master:
+        condition: service_healthy
+
+volumes:
+  master-database:

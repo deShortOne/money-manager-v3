@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using MoneyTracker.Authentication;
 using MoneyTracker.Commands.Application;
+using MoneyTracker.Commands.DatabaseMigration;
+using MoneyTracker.Commands.DatabaseMigration.Models;
 using MoneyTracker.Commands.Domain.Handlers;
 using MoneyTracker.Commands.Domain.Repositories;
 using MoneyTracker.Commands.Infrastructure.Postgres;
@@ -23,6 +25,7 @@ internal class Program
         builder.Services.AddSwaggerGen();
 
         var database = new PostgresDatabase(builder.Configuration["Database:Paelagus_RO"]!);
+        Migration.CheckMigration(builder.Configuration["Database:Paelagus_RO"]!, new MigrationOption(true, true));
 
         Startup.Start(builder, database);
         builder.Services

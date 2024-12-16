@@ -2,6 +2,13 @@
 
 A budget tracker for tracking your bills and how much you've spent in different categories
 
+## How to run
+### Backend
+Command and Query is run together by using docker in the root directory
+```bash
+docker compose up
+```
+
 ## How to test
 Either use [act](https://github.com/nektos/act), run dotnet test or run in visual studio(but ensure dockerd is running)
 Will need docker
