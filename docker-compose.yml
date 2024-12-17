@@ -16,10 +16,17 @@ services:
     volumes:
       - master-database:/var/lib/postgresql/data
 
+  be-base:
+    build:
+      context: .
+      dockerfile: Dockerfile-Base
+    image: be-base-image:latest
+    command: ["true"]
+
   be-queries:
     build:
       context: .
-      dockerfile: Dockerfile-Queries
+      dockerfile: ./Queries/Dockerfile
     ports:
       - "1235:8080"
     environment:
@@ -30,10 +37,13 @@ services:
     depends_on:
       postgres-master:
         condition: service_healthy
+      be-base:
+        condition: service_completed_successfully
+
   be-commands:
     build:
       context: .
-      dockerfile: Dockerfile-Commands
+      dockerfile: ./Commands/Dockerfile
     ports:
       - "1234:8080"
     environment:
@@ -44,6 +54,8 @@ services:
     depends_on:
       postgres-master:
         condition: service_healthy
+      be-base:
+        condition: service_completed_successfully
 
 volumes:
   master-database:
