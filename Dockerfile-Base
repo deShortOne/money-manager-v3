@@ -1,0 +1,17 @@
+FROM mcr.microsoft.com/dotnet/sdk:8.0
+WORKDIR /App
+
+COPY ./*.sln .
+# Copy and move packages to their directories
+COPY ./Commands/*/*.csproj .
+RUN for file in $(ls *.csproj); do mkdir -p Commands/${file%.*}/ && mv $file Commands/${file%.*}/; done
+COPY ./Shared/*/*.csproj .
+RUN for file in $(ls *.csproj); do mkdir -p Shared/${file%.*}/ && mv $file Shared/${file%.*}/; done
+COPY ./Queries/*/*.csproj .
+RUN for file in $(ls *.csproj); do mkdir -p Queries/${file%.*}/ && mv $file Queries/${file%.*}/; done
+# Restore as distinct layers
+RUN dotnet restore 
+# Copy everything else
+COPY . .
+# Build and publish a release
+RUN dotnet publish -c Release -o out --no-restore

@@ -1,0 +1,16 @@
+# directories
+**/bin/
+**/obj/
+**/out/
+**/TestResults/
+**/.git/
+**/.github/
+
+# files
+Dockerfile*
+**/*.md
+**/docker-compose.yml
+**/.dockerignore
+**/.env.example
+**/.gitignore
+**/.editorconfig
