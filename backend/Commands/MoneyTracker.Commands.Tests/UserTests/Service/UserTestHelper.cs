@@ -1,5 +1,9 @@
+using Microsoft.AspNetCore.Identity;
+using MoneyTracker.Authentication.Interfaces;
 using MoneyTracker.Commands.Application;
 using MoneyTracker.Commands.Domain.Repositories;
+using MoneyTracker.Common.Interfaces;
+using MoneyTracker.Common.Utilities.DateTimeUtil;
 using MoneyTracker.Common.Utilities.IdGeneratorUtil;
 using Moq;
 
@@ -8,6 +12,9 @@ public class UserTestHelper
 {
     public readonly Mock<IUserCommandRepository> _mockUserDatabase = new();
     public readonly Mock<IIdGenerator> _mockIdGenerator = new();
+    public readonly Mock<IPasswordHasher> _mockPasswordHasher = new();
+    public readonly Mock<IAuthenticationService> _mockAuthService = new();
+    public readonly Mock<IDateTimeProvider> _mockDateTimeProvider = new();
 
     public readonly UserService _userService;
 
@@ -15,7 +22,10 @@ public class UserTestHelper
     {
         _userService = new UserService(
             _mockUserDatabase.Object, 
-            _mockIdGenerator.Object
+            _mockIdGenerator.Object,
+            _mockPasswordHasher.Object,
+            _mockAuthService.Object,
+            _mockDateTimeProvider.Object
         );
     }
 
@@ -23,5 +33,8 @@ public class UserTestHelper
     {
         _mockUserDatabase.VerifyNoOtherCalls();
         _mockIdGenerator.VerifyNoOtherCalls();
+        _mockPasswordHasher.VerifyNoOtherCalls();
+        _mockAuthService.VerifyNoOtherCalls();
+        _mockDateTimeProvider.VerifyNoOtherCalls();
     }
 }

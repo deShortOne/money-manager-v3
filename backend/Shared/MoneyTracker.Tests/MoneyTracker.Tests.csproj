@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MoneyTracker.Common\MoneyTracker.Common.csproj" />
+    <ProjectReference Include="..\MoneyTracker.Authentication\MoneyTracker.Authentication.csproj" />
   </ItemGroup>
 
   <ItemGroup>

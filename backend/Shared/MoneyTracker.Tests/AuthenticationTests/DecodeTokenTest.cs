@@ -4,21 +4,19 @@ using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using MoneyTracker.Authentication.Authentication;
 using MoneyTracker.Authentication.DTOs;
-using MoneyTracker.Authentication.Entities;
 using MoneyTracker.Authentication.Interfaces;
 using MoneyTracker.Common.Interfaces;
 using MoneyTracker.Common.Utilities.DateTimeUtil;
 using MoneyTracker.Common.Utilities.IdGeneratorUtil;
 using Moq;
 
-namespace MoneyTracker.Tests.AuthenticationTests.Service;
+namespace MoneyTracker.Tests.AuthenticationTests;
 public sealed class DecodeTokenTest
 {
     [Fact]
-    public void FailToDecodeTokenDueToTokenBeingTooOldFromDatabase()
+    public void SuccessfullyDecodeToken()
     {
-        var userId = 1;
-        var tempToken = Guid.NewGuid();
+        var userId = Guid.NewGuid().ToString();
         var tempJti = Guid.NewGuid();
         var jwtConfigIss = "iss_company a";
         var jwtConfigAud = "aud_company b";
@@ -28,23 +26,19 @@ public sealed class DecodeTokenTest
         var dateTimeExp = dateTimeNow.AddMinutes(jwtConfigExp);
         var tokenToDecode = "DeToken to dcode";
 
-        var expected = new AuthenticatedUser(userId);
-
-        var mockIdGenerator = new Mock<IIdGenerator>();
+        var expected = new UserIdentity(userId);
 
         var mockDateTimeProvider = new Mock<IDateTimeProvider>();
         mockDateTimeProvider.Setup(x => x.Now).Returns(dateTimeNow);
 
-        var mockUserDb = new Mock<IUserAuthRepository>();
-        mockUserDb.Setup(x => x.GetUserFromToken(tempToken))
-            .Returns(Task.FromResult(new TokenMapToUserEntity(userId, dateTimeNow.AddMinutes(-5))));
-
         var mockPasswordHasher = new Mock<IPasswordHasher>();
 
+        var mockIdGenerator = new Mock<IIdGenerator>();
+        
         ///////////////
         var claims = new[]
         {
-            new Claim("UserGuid", tempToken.ToString()),
+            new Claim("UserGuid", userId),
             new Claim(JwtRegisteredClaimNames.Jti, tempJti.ToString())
         };
         // Create signing key
@@ -68,28 +62,21 @@ public sealed class DecodeTokenTest
             jwtConfigExp
         );
 
-        var userAuthService = new UserAuthenticationService(mockUserDb.Object,
-            jwtToken,
+        var userAuthService = new AuthenticationService(jwtToken,
             mockDateTimeProvider.Object,
-            mockPasswordHasher.Object,
             mockIdGenerator.Object,
             mockJwtTokenCreator.Object);
 
-        Assert.Multiple(async () =>
+        Assert.Multiple(() =>
         {
-            var error = await Assert.ThrowsAsync<InvalidDataException>(async () =>
-            {
-                await userAuthService.DecodeToken(tokenToDecode);
-            });
-            Assert.Equal("Invalid token: expired", error.Message);
+            Assert.Equal(expected, userAuthService.DecodeToken(tokenToDecode));
 
             mockJwtTokenCreator.Verify(x => x.ReadToken(tokenToDecode), Times.Once);
-            mockUserDb.Verify(x => x.GetUserFromToken(tempToken), Times.Once);
         });
     }
 
     [Fact]
-    public void TokenDoesNotExistInDb()
+    public void FailToDecodeTokenDueToTokenItselfBeingTooOld()
     {
         var userId = 1;
         var tempToken = Guid.NewGuid();
@@ -110,8 +97,6 @@ public sealed class DecodeTokenTest
         mockDateTimeProvider.Setup(x => x.Now).Returns(dateTimeNow);
 
         var mockUserDb = new Mock<IUserAuthRepository>();
-        mockUserDb.Setup(x => x.GetUserFromToken(tempToken))
-            .Returns(Task.FromResult<TokenMapToUserEntity>(null));
 
         var mockPasswordHasher = new Mock<IPasswordHasher>();
 
@@ -129,7 +114,7 @@ public sealed class DecodeTokenTest
             issuer: jwtConfigIss,
             audience: jwtConfigAud,
             claims: claims,
-            expires: dateTimeExp,
+            expires: dateTimeNow.AddMinutes(-5),
             signingCredentials: creds
         );
         var mockJwtTokenCreator = new Mock<SecurityTokenHandler>();
@@ -155,10 +140,9 @@ public sealed class DecodeTokenTest
             {
                 await userAuthService.DecodeToken(tokenToDecode);
             });
-            Assert.Equal("Token is not valid", error.Message);
+            Assert.Equal("Token has expired!", error.Message);
 
             mockJwtTokenCreator.Verify(x => x.ReadToken(tokenToDecode), Times.Once);
-            mockUserDb.Verify(x => x.GetUserFromToken(tempToken), Times.Once);
         });
     }
 }
