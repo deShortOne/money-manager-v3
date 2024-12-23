@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Identity;
 using MoneyTracker.Authentication.Interfaces;
 using MoneyTracker.Commands.Application;
 using MoneyTracker.Commands.Domain.Repositories;

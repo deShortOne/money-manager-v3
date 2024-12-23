@@ -17,7 +17,7 @@ public sealed class GetUserTokenTest : UserTestHelper
         _mockUserDatabase.Setup(x => x.GetUserByUsername(_username))
             .ReturnsAsync(user);
 
-        _mockPasswordHasher.Setup(x => x.VerifyPassword(_passwordFromDb, _passwordFromUser, ""));
+        _mockPasswordHasher.Setup(x => x.VerifyPassword(_passwordFromDb, _passwordFromUser, "")).Returns(true);
 
         _mockUserDatabase.Setup(x => x.GetUserToken(user));
 

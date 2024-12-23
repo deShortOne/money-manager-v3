@@ -47,10 +47,9 @@ public class UserService : IUserService
         if (!_passwordHasher.VerifyPassword(user.Password, usernameAndPassword.Password, ""))
             throw new InvalidDataException("User does not exist");
         
-        var newToken = _idGenerator.NewGuid;
         var expiration = _dateTimeProvider.Now.AddMinutes(ExpirationTimeInMinutesForAll);
-        var tokenToReturn = _authenticationService.GenerateToken(new UserIdentity(newToken.ToString()), expiration);
+        var tokenToReturn = _authenticationService.GenerateToken(new UserIdentity(user.Id.ToString()), expiration);
         
-        await _userRepository.StoreTemporaryTokenToUser(user, tokenToReturn, expiration);
+        await _userRepository.StoreTemporaryTokenToUser(new UserAuthentication(user, tokenToReturn, expiration));
     }
 }
