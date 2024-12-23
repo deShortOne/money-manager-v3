@@ -20,6 +20,6 @@ public class UserController
     [Route("add")]
     public Task AddUser(LoginWithUsernameAndPassword usernameAndPassword)
     {
-        return _authService.AddNewUser(usernameAndPassword);
+        return _authService.GetUserToken(usernameAndPassword);
     }
 }
