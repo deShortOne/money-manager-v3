@@ -49,7 +49,6 @@ public class UserService : IUserService
         
         var expiration = _dateTimeProvider.Now.AddMinutes(ExpirationTimeInMinutesForAll);
         var tokenToReturn = _authenticationService.GenerateToken(new UserIdentity(user.Id.ToString()), expiration);
-        
-        await _userRepository.StoreTemporaryTokenToUser(new UserAuthentication(user, tokenToReturn, expiration));
+        await _userRepository.StoreTemporaryTokenToUser(new UserAuthentication(user, tokenToReturn, expiration, _dateTimeProvider));
     }
 }

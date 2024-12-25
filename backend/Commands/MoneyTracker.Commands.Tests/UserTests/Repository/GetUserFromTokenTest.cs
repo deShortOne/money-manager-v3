@@ -5,6 +5,8 @@ using MoneyTracker.Commands.DatabaseMigration;
 using MoneyTracker.Commands.DatabaseMigration.Models;
 using MoneyTracker.Commands.Infrastructure.Postgres;
 using MoneyTracker.Common.Interfaces;
+using MoneyTracker.Common.Utilities.DateTimeUtil;
+using Moq;
 using Npgsql;
 using Testcontainers.PostgreSql;
 
@@ -19,7 +21,7 @@ public sealed class GetUserFromTokenTest : IAsyncLifetime
         .WithCleanUp(true)
         .Build();
 
-    private IUserAuthRepository _userAuthRepo;
+    private UserCommandRepository _userAuthRepo;
     private IDatabase _database;
 
     public async Task InitializeAsync()
@@ -28,7 +30,7 @@ public sealed class GetUserFromTokenTest : IAsyncLifetime
         Migration.CheckMigration(_postgres.GetConnectionString(), new MigrationOption());
 
         _database = new PostgresDatabase(_postgres.GetConnectionString());
-        _userAuthRepo = new UserAuthRepository(_database);
+        _userAuthRepo = new UserCommandRepository(_database, Mock.Of<IDateTimeProvider>());
     }
 
     public Task DisposeAsync()
@@ -42,7 +44,10 @@ public sealed class GetUserFromTokenTest : IAsyncLifetime
         var userId = 28934;
         var token = Guid.NewGuid();
         var expires = new DateTime(2024, 10, 6, 13, 00, 00, DateTimeKind.Utc);
-        var expected = new TokenMapToUserEntity(userId, expires);
+        var dateTimeProvider = new Mock<IDateTimeProvider>();
+        dateTimeProvider.Setup(x => x.Now).Returns(new DateTime(2024, 6, 5, 0, 0, 0));
+        var expected = new UserAuthentication(new UserEntity(userId, "a", "b"), token.ToString(),
+            expires, dateTimeProvider.Object);
 
         var queryInsertUser = """
             INSERT INTO users VALUES (@id, @name, @password);
@@ -67,7 +72,7 @@ public sealed class GetUserFromTokenTest : IAsyncLifetime
         };
         await _database.UpdateTable(queryInsertTokenForUser, queryInsertTokenForUserParams); // Insert user token
 
-        var actual = await _userAuthRepo.GetUserFromToken(token);
+        var actual = await _userAuthRepo.GetUserAuthFromToken(token.ToString());
         Assert.Equal(expected, actual);
     }
 
@@ -76,9 +81,8 @@ public sealed class GetUserFromTokenTest : IAsyncLifetime
     public async void ReturnNullForIncorrectToken()
     {
         var userId = 28934;
-        var token = Guid.NewGuid();
+        var token = Guid.NewGuid().ToString();
         var expires = new DateTime(2024, 10, 6, 13, 00, 00, DateTimeKind.Utc);
-        var expected = new TokenMapToUserEntity(userId, expires);
 
         var queryInsertUser = """
             INSERT INTO users VALUES (@id, @name, @password);
@@ -103,7 +107,7 @@ public sealed class GetUserFromTokenTest : IAsyncLifetime
         };
         await _database.UpdateTable(queryInsertTokenForUser, queryInsertTokenForUserParams); // Insert user token
 
-        var actual = await _userAuthRepo.GetUserFromToken(Guid.NewGuid());
+        var actual = await _userAuthRepo.GetUserAuthFromToken(Guid.NewGuid().ToString());
         Assert.Null(actual);
     }
 }

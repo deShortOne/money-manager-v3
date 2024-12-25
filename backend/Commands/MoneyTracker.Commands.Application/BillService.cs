@@ -1,4 +1,5 @@
-﻿using MoneyTracker.Authentication.Interfaces;
+﻿using MoneyTracker.Authentication.DTOs;
+using MoneyTracker.Authentication.Interfaces;
 using MoneyTracker.Commands.Domain.Entities.Bill;
 using MoneyTracker.Commands.Domain.Handlers;
 using MoneyTracker.Commands.Domain.Repositories;
@@ -11,36 +12,38 @@ namespace MoneyTracker.Commands.Application;
 public class BillService : IBillService
 {
     private readonly IBillCommandRepository _dbService;
-    private readonly IDateTimeProvider _dateProvider;
-    private readonly IUserAuthenticationService _userAuthService;
     private readonly IAccountCommandRepository _accountDatabase;
     private readonly IIdGenerator _idGenerator;
     private readonly IFrequencyCalculation _frequencyCalculation;
     private readonly IMonthDayCalculator _monthDayCalculator;
     private readonly ICategoryCommandRepository _categoryDatabase;
+    private readonly IUserCommandRepository _userRepository;
 
     public BillService(IBillCommandRepository dbService,
-        IDateTimeProvider dateProvider,
-        IUserAuthenticationService userAuthService,
         IAccountCommandRepository accountDatabase,
         IIdGenerator idGenerator,
         IFrequencyCalculation frequencyCalculation,
         IMonthDayCalculator monthDayCalculator,
-        ICategoryCommandRepository categoryDatabase)
+        ICategoryCommandRepository categoryDatabase,
+        IUserCommandRepository userRepository)
     {
         _dbService = dbService;
-        _dateProvider = dateProvider;
-        _userAuthService = userAuthService;
         _accountDatabase = accountDatabase;
         _idGenerator = idGenerator;
         _frequencyCalculation = frequencyCalculation;
         _monthDayCalculator = monthDayCalculator;
         _categoryDatabase = categoryDatabase;
+        _userRepository = userRepository;
     }
 
     public async Task AddBill(string token, NewBillRequest newBill)
     {
-        var user = await _userAuthService.DecodeToken(token);
+        var userAuth = await _userRepository.GetUserAuthFromToken(token);
+        if (userAuth == null)
+            throw new InvalidDataException("Token not found");
+        userAuth.ThrowIfInvalid();
+
+        var user = new AuthenticatedUser(userAuth.User.Id);
         if (!await _accountDatabase.IsAccountOwnedByUser(user, newBill.AccountId))
         {
             throw new InvalidDataException("Account not found");
@@ -69,7 +72,12 @@ public class BillService : IBillService
 
     public async Task EditBill(string token, EditBillRequest editBill)
     {
-        var user = await _userAuthService.DecodeToken(token);
+        var userAuth = await _userRepository.GetUserAuthFromToken(token);
+        if (userAuth == null)
+            throw new InvalidDataException("Token not found");
+        userAuth.ThrowIfInvalid();
+        
+        var user = new AuthenticatedUser(userAuth.User.Id);
         if (editBill.Payee == null && editBill.Amount == null &&
             editBill.Amount == null && editBill.NextDueDate == null &&
             editBill.Frequency == null && editBill.Category == null &&
@@ -118,7 +126,12 @@ public class BillService : IBillService
 
     public async Task DeleteBill(string token, DeleteBillRequest deleteBill)
     {
-        var user = await _userAuthService.DecodeToken(token);
+        var userAuth = await _userRepository.GetUserAuthFromToken(token);
+        if (userAuth == null)
+            throw new InvalidDataException("Token not found");
+        userAuth.ThrowIfInvalid();
+        
+        var user = new AuthenticatedUser(userAuth.User.Id);
         if (!await _dbService.IsBillAssociatedWithUser(user, deleteBill.Id))
         {
             throw new InvalidDataException("Bill not found");
@@ -129,7 +142,12 @@ public class BillService : IBillService
 
     public async Task SkipOccurence(string token, SkipBillOccurrenceRequest skipBillDTO)
     {
-        var user = await _userAuthService.DecodeToken(token);
+        var userAuth = await _userRepository.GetUserAuthFromToken(token);
+        if (userAuth == null)
+            throw new InvalidDataException("Token not found");
+        userAuth.ThrowIfInvalid();
+        
+        var user = new AuthenticatedUser(userAuth.User.Id);
         if (!await _dbService.IsBillAssociatedWithUser(user, skipBillDTO.Id))
         {
             throw new InvalidDataException("Bill not found");

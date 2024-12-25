@@ -32,6 +32,9 @@ services:
     environment:
       Database:Paelagus_RO: "User ID=${DOCKER_DB_USERNAME};Password=${DOCKER_DB_PASSWORD};Host=postgres-master;Port=5432;Database=${DOCKER_DB_DATABASE}"
       ASPNETCORE_ENVIRONMENT: "Development"
+      Jwt:iss: ${jwt_iss}
+      Jwt:aud: ${jwt_aud}
+      Jwt:key: ${jwt_key}
     links:
       - postgres-master
     depends_on:
@@ -49,6 +52,9 @@ services:
     environment:
       Database:Paelagus_RO: "User ID=${DOCKER_DB_USERNAME};Password=${DOCKER_DB_PASSWORD};Host=postgres-master;Port=5432;Database=${DOCKER_DB_DATABASE}"
       ASPNETCORE_ENVIRONMENT: "Development"
+      Jwt:iss: ${jwt_iss}
+      Jwt:aud: ${jwt_aud}
+      Jwt:key: ${jwt_key}
     links:
       - postgres-master
     depends_on:

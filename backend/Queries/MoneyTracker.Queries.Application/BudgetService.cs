@@ -1,4 +1,5 @@
-﻿using MoneyTracker.Authentication.Interfaces;
+﻿using MoneyTracker.Authentication.DTOs;
+using MoneyTracker.Authentication.Interfaces;
 using MoneyTracker.Contracts.Responses.Budget;
 using MoneyTracker.Queries.Domain.Entities.BudgetCategory;
 using MoneyTracker.Queries.Domain.Handlers;
@@ -7,19 +8,25 @@ using MoneyTracker.Queries.Domain.Repositories;
 namespace MoneyTracker.Queries.Application;
 public class BudgetService : IBudgetService
 {
-    private readonly IUserAuthenticationService _userAuthService;
     private readonly IBudgetRepository _dbService;
+    private readonly IUserRepository _userRepository;
 
-    public BudgetService(IUserAuthenticationService userAuthService,
-        IBudgetRepository dbService)
+    public BudgetService(
+        IBudgetRepository dbService,
+        IUserRepository userRepository)
     {
-        _userAuthService = userAuthService;
         _dbService = dbService;
+        _userRepository = userRepository;
     }
 
     public async Task<List<BudgetGroupResponse>> GetBudget(string token)
     {
-        var user = await _userAuthService.DecodeToken(token);
+        var userAuth = await _userRepository.GetUserAuthFromToken(token);
+        if (userAuth == null)
+            throw new InvalidDataException("Token not found");
+        userAuth.ThrowIfInvalid();
+
+        var user = new AuthenticatedUser(userAuth.User.Id);
         return ConvertFromRepoDTOToDTO(await _dbService.GetBudget(user));
     }
 

@@ -19,7 +19,7 @@ public sealed class GetUserTokenTest : UserTestHelper
 
         _mockPasswordHasher.Setup(x => x.VerifyPassword(_passwordFromDb, _passwordFromUser, "")).Returns(true);
 
-        _mockUserDatabase.Setup(x => x.GetUserToken(user));
+        _mockUserDatabase.Setup(x => x.GetUserToken(user)).ReturnsAsync("a new token");
 
         Assert.Multiple(async () =>
         {

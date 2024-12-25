@@ -1,6 +1,7 @@
 
 using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Common.Interfaces;
+using MoneyTracker.Queries.Domain.Handlers;
 
 public class UserService : IUserService
 {
@@ -21,6 +22,9 @@ public class UserService : IUserService
         if (!_passwordHasher.VerifyPassword(user.Password, userLogin.Password, ""))
             throw new InvalidDataException("User does not exist");
 
-        return await _userRepository.GetUserToken(user);
+        var token = await _userRepository.GetUserToken(user);
+        if (token == null)
+            throw new InvalidDataException("Token not found");
+        return token;
     }
 }

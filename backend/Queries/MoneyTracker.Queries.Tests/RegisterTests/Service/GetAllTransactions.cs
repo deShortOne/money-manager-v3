@@ -1,4 +1,6 @@
 using MoneyTracker.Authentication.DTOs;
+using MoneyTracker.Authentication.Entities;
+using MoneyTracker.Common.Utilities.DateTimeUtil;
 using MoneyTracker.Contracts.Responses.Transaction;
 using MoneyTracker.Queries.Domain.Entities.Transaction;
 using Moq;
@@ -21,7 +23,11 @@ public sealed class GetAllTransactionsTest : RegisterTestHelper
             new(3, "Payee B", 70.50M, new DateOnly(2024, 7, 25), "Category 2", "Account B"),
         ];
 
-        _mockUserAuthService.Setup(x => x.DecodeToken(tokenToDecode)).Returns(Task.FromResult(authedUser));
+        var mockDateTime = new Mock<IDateTimeProvider>();
+        mockDateTime.Setup(x => x.Now).Returns(new DateTime(2024, 6, 6, 10, 0, 0));
+        _mockUserRepository.Setup(x => x.GetUserAuthFromToken(tokenToDecode))
+            .ReturnsAsync(new UserAuthentication(new UserEntity(userId, "", ""), tokenToDecode, 
+            new DateTime(2024, 6, 6, 10, 0, 0), mockDateTime.Object));
 
         _mockRegisterDatabase.Setup(x => x.GetAllTransactions(authedUser)).Returns(Task.FromResult(budgetDatabaseReturn));
 
@@ -29,7 +35,7 @@ public sealed class GetAllTransactionsTest : RegisterTestHelper
         {
             Assert.Equal(expected, await _budgetService.GetAllTransactions(tokenToDecode));
 
-            _mockUserAuthService.Verify(x => x.DecodeToken(tokenToDecode), Times.Once);
+            _mockUserRepository.Verify(x => x.GetUserAuthFromToken(tokenToDecode), Times.Once);
             _mockRegisterDatabase.Verify(x => x.GetAllTransactions(authedUser), Times.Once);
 
             EnsureAllMocksHadNoOtherCalls();

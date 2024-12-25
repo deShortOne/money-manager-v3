@@ -1,5 +1,7 @@
 ﻿using MoneyTracker.Authentication.DTOs;
+using MoneyTracker.Authentication.Entities;
 using MoneyTracker.Common.DTOs;
+using MoneyTracker.Common.Utilities.DateTimeUtil;
 using MoneyTracker.Contracts.Responses.Bill;
 using MoneyTracker.Queries.Domain.Entities.Bill;
 using Moq;
@@ -23,7 +25,11 @@ public sealed class GetAllBillsTest : BillTestHelper
             new(2, "jgf", 999, new DateOnly(2023, 4, 23), "Weekly", "Hobby", secondResponseOverdueBillInfo, "account"),
         ];
 
-        _mockUserAuthService.Setup(x => x.DecodeToken(tokenToDecode)).Returns(Task.FromResult(authedUser));
+        var mockDateTime = new Mock<IDateTimeProvider>();
+        mockDateTime.Setup(x => x.Now).Returns(new DateTime(2024, 6, 6, 10, 0, 0));
+        _mockUserRepository.Setup(x => x.GetUserAuthFromToken(tokenToDecode))
+            .ReturnsAsync(new UserAuthentication(new UserEntity(userId, "", ""), tokenToDecode, 
+            new DateTime(2024, 6, 6, 10, 0, 0), mockDateTime.Object));
 
         _mockBillDatabase.Setup(x => x.GetAllBills(authedUser)).Returns(Task.FromResult(billDatabaseReturn));
 
@@ -36,7 +42,7 @@ public sealed class GetAllBillsTest : BillTestHelper
         {
             Assert.Equal(expected, await _billService.GetAllBills(tokenToDecode));
 
-            _mockUserAuthService.Verify(x => x.DecodeToken(tokenToDecode), Times.Once);
+            _mockUserRepository.Verify(x => x.GetUserAuthFromToken(tokenToDecode), Times.Once);
             _mockBillDatabase.Verify(x => x.GetAllBills(authedUser), Times.Once);
             _mockFrequencyCalculation.Verify(x => x.CalculateOverDueBillInfo(8, "Daily", new DateOnly(2024, 10, 8)), Times.Once);
             _mockFrequencyCalculation.Verify(x => x.CalculateOverDueBillInfo(23, "Weekly", new DateOnly(2023, 4, 23)), Times.Once);

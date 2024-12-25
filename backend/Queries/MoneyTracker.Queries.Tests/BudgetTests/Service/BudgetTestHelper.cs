@@ -7,19 +7,20 @@ namespace MoneyTracker.Queries.Tests.BudgetTests.Service;
 public class BudgetTestHelper
 {
     public readonly Mock<IBudgetRepository> _mockBudgetDatabase = new();
-    public readonly Mock<IUserAuthenticationService> _mockUserAuthService = new();
+    public readonly Mock<IUserRepository> _mockUserRepository = new();
 
     public readonly BudgetService _budgetService;
 
     public BudgetTestHelper()
     {
-        _budgetService = new BudgetService(_mockUserAuthService.Object,
-            _mockBudgetDatabase.Object);
+        _budgetService = new BudgetService(
+            _mockBudgetDatabase.Object,
+            _mockUserRepository.Object);
     }
 
     public void EnsureAllMocksHadNoOtherCalls()
     {
         _mockBudgetDatabase.VerifyNoOtherCalls();
-        _mockUserAuthService.VerifyNoOtherCalls();
+        _mockUserRepository.VerifyNoOtherCalls();
     }
 }

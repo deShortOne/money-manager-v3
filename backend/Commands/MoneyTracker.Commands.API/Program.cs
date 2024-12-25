@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using MoneyTracker.Authentication;
+using MoneyTracker.Authentication.Authentication;
+using MoneyTracker.Authentication.Interfaces;
 using MoneyTracker.Commands.Application;
 using MoneyTracker.Commands.DatabaseMigration;
 using MoneyTracker.Commands.DatabaseMigration.Models;
@@ -33,7 +35,10 @@ internal class Program
 
         builder.Services
             .AddHttpContextAccessor()
-            .AddSingleton<IDatabase>(_ => database);
+            .AddSingleton<IDatabase>(_ => database)
+            .AddSingleton<IUserService, UserService>()
+            .AddSingleton<IUserCommandRepository, UserCommandRepository>()
+            .AddSingleton<IAuthenticationService, AuthenticationService>();
 
         builder.Services
             .AddSingleton<IBillService, BillService>()

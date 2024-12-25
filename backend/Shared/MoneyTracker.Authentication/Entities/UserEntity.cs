@@ -10,9 +10,9 @@ public class UserEntity(int id, string username, string password)
     {
         var other = obj as UserEntity;
         if (other == null) return false;
-        return Id == other.Id &&
-            UserName == other.UserName &&
-            Password == other.Password;
+        return Id == other.Id
+            && UserName == other.UserName
+            && Password == other.Password;
     }
 
     public override int GetHashCode()

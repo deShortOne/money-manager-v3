@@ -8,22 +8,22 @@ namespace MoneyTracker.Queries.Tests.BillTests.Service;
 public class BillTestHelper
 {
     public readonly Mock<IBillRepository> _mockBillDatabase = new();
-    public readonly Mock<IUserAuthenticationService> _mockUserAuthService = new();
     public readonly Mock<IFrequencyCalculation> _mockFrequencyCalculation = new();
+    public readonly Mock<IUserRepository> _mockUserRepository = new();
 
     public readonly BillService _billService;
 
     public BillTestHelper()
     {
         _billService = new BillService(_mockBillDatabase.Object,
-            _mockUserAuthService.Object,
-            _mockFrequencyCalculation.Object);
+            _mockFrequencyCalculation.Object,
+            _mockUserRepository.Object);
     }
 
     public void EnsureAllMocksHadNoOtherCalls()
     {
         _mockBillDatabase.VerifyNoOtherCalls();
-        _mockUserAuthService.VerifyNoOtherCalls();
         _mockFrequencyCalculation.VerifyNoOtherCalls();
+        _mockUserRepository.VerifyNoOtherCalls();
     }
 }

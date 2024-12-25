@@ -19,7 +19,7 @@ public sealed class LoginUserTest : UserTestHelper
     {
         var user = new UserEntity(_userId, _username, _passwordFromDatabase);
         var userIdentity = new UserIdentity(_userId.ToString());
-        var userAuthentication = new UserAuthentication(user, _newToken.ToString(), _timeExpire);
+        var userAuthentication = new UserAuthentication(user, _newToken.ToString(), _timeExpire, _mockDateTimeProvider.Object);
 
         _mockUserDatabase.Setup(x => x.GetUserByUsername(_username))
             .ReturnsAsync(user);

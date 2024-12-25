@@ -1,15 +1,16 @@
 ﻿using System.Data.Common;
-using MoneyTracker.Authentication.DTOs;
-using MoneyTracker.Authentication.Interfaces;
+using MoneyTracker.Authentication.Entities;
 using MoneyTracker.Commands.DatabaseMigration;
 using MoneyTracker.Commands.DatabaseMigration.Models;
 using MoneyTracker.Commands.Infrastructure.Postgres;
 using MoneyTracker.Common.Interfaces;
+using MoneyTracker.Common.Utilities.DateTimeUtil;
+using Moq;
 using Npgsql;
 using Testcontainers.PostgreSql;
 
 namespace MoneyTracker.Tests.AuthenticationTests.Repository;
-public sealed class StoreTokenForUserTest : IAsyncLifetime
+public sealed class GetUserByUsernameTest : IAsyncLifetime
 {
     private readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder()
 #if RUN_LOCAL
@@ -19,7 +20,7 @@ public sealed class StoreTokenForUserTest : IAsyncLifetime
         .WithCleanUp(true)
         .Build();
 
-    private IUserAuthRepository _userAuthRepo;
+    private UserCommandRepository _userRepo;
     private IDatabase _database;
 
     public async Task InitializeAsync()
@@ -28,7 +29,7 @@ public sealed class StoreTokenForUserTest : IAsyncLifetime
         Migration.CheckMigration(_postgres.GetConnectionString(), new MigrationOption());
 
         _database = new PostgresDatabase(_postgres.GetConnectionString());
-        _userAuthRepo = new UserAuthRepository(_database);
+        _userRepo = new UserCommandRepository(_database, Mock.Of<IDateTimeProvider>());
     }
 
     public Task DisposeAsync()
@@ -37,11 +38,12 @@ public sealed class StoreTokenForUserTest : IAsyncLifetime
     }
 
     [Fact]
-    public async void StoreTokenForUserSuccessfully()
+    public async void GetUserByUsernameSuccessfully()
     {
         var userId = 5623;
-        var token = Guid.NewGuid();
-        var expiration = new DateTime(2024, 10, 6, 15, 0, 0, DateTimeKind.Utc);
+        var username = "bob";
+        var password = "scree";
+        var expected = new UserEntity(userId, username, password);
 
         var queryInsertUser = """
             INSERT INTO users VALUES (@id, @name, @password);
@@ -49,27 +51,19 @@ public sealed class StoreTokenForUserTest : IAsyncLifetime
         var queryInsertUserParams = new List<DbParameter>()
         {
             new NpgsqlParameter("id", userId),
-            new NpgsqlParameter("name", "a"),
-            new NpgsqlParameter("password", "b"),
+            new NpgsqlParameter("name", username),
+            new NpgsqlParameter("password", password),
         };
         await _database.UpdateTable(queryInsertUser, queryInsertUserParams); // Insert user
 
-        await _userAuthRepo.StoreTemporaryTokenToUser(new AuthenticatedUser(userId), token, expiration);
+        var actual = await _userRepo.GetUserByUsername(username);
+        Assert.Equal(expected, actual);
+    }
 
-        var query = """
-            SELECT 1
-            FROM user_id_to_token
-            WHERE user_id = @id
-            AND token = @token
-            AND expires = @expiration;
-        """;
-        var queryParams = new List<DbParameter>()
-        {
-            new NpgsqlParameter("id", userId),
-            new NpgsqlParameter("token", token),
-            new NpgsqlParameter("expiration", expiration),
-        };
-        var reader = await _database.GetTable(query, queryParams);
-        Assert.True(reader.HasRows);
+    [Fact]
+    public async void GetUserByUsernameFailDueToNameNotBeingInDatabase()
+    {
+        var actual = await _userRepo.GetUserByUsername("asd");
+        Assert.Null(actual);
     }
 }

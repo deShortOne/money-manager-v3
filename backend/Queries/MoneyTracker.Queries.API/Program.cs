@@ -1,5 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using MoneyTracker.Authentication;
+using MoneyTracker.Authentication.Authentication;
+using MoneyTracker.Authentication.Interfaces;
 using MoneyTracker.Common.Interfaces;
 using MoneyTracker.Common.Utilities.CalculationUtil;
 using MoneyTracker.Common.Utilities.DateTimeUtil;
@@ -28,7 +30,10 @@ internal class Program
 
         builder.Services
             .AddHttpContextAccessor()
-            .AddSingleton<IDatabase>(_ => database);
+            .AddSingleton<IDatabase>(_ => database)
+            .AddSingleton<IUserService, UserService>()
+            .AddSingleton<IUserRepository, UserRepository>()
+            .AddSingleton<IAuthenticationService, AuthenticationService>();
 
         builder.Services
             .AddSingleton<IAccountService, AccountService>()

@@ -1,9 +1,5 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Linq.Expressions;
-using Microsoft.IdentityModel.Tokens;
-using MoneyTracker.Authentication.Authentication;
-using MoneyTracker.Common.Utilities.DateTimeUtil;
-using MoneyTracker.Common.Utilities.IdGeneratorUtil;
 using Moq;
 
 namespace MoneyTracker.Tests.AuthenticationTests.Service;
@@ -22,7 +18,6 @@ public sealed class GenerateTokenTest : AuthenticationTestHelper
 
         _mockIdGenerator.SetupSequence(x => x.NewGuid)
             .Returns(tempJti);
-
 
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
         Expression<Func<JwtSecurityToken, bool>> checkSomeValuesOfJwtSecurityToken = x =>
