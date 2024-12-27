@@ -1,5 +1,7 @@
 'use client'
 
+import { useCookies } from 'react-cookie'
+import { loginUser } from "./action"
 import { Button } from "@/components/ui/button"
 import {
     Card,
@@ -25,24 +27,24 @@ import { useForm } from "react-hook-form"
 import { z } from "zod"
 
 export default function A() {
+    const [, setCookies] = useCookies(['token']);
 
     const formSchema = z.object({
         // TODO: add validation
         username: z.string(),
         password: z.string(),
-    })
+    });
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             username: "",
             password: "",
         },
-    })
+    });
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        // Do something with the form values.
-        // ✅ This will be type-safe and validated.
-        console.log(values)
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+        var cookie: string = await loginUser(values.username, values.password);
+        setCookies("token", cookie);
     }
 
     return (
