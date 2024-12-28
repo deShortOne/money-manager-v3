@@ -12,22 +12,22 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
-    FormLabel,
     FormMessage,
 } from "@/components/ui/form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
+import { Result } from '@/types/result'
+import { useState } from 'react'
 
 export default function A() {
     const [, setCookies] = useCookies(['token']);
+    const [signInButtonErrorMsg, setSignInButtonErrorMsg] = useState("");
 
     const formSchema = z.object({
         // TODO: add validation
@@ -43,8 +43,12 @@ export default function A() {
     });
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        var cookie: string = await loginUser(values.username, values.password);
-        setCookies("token", cookie);
+        var cookie: Result<string> = await loginUser(values.username, values.password);
+        if (cookie.hasError) {
+            setSignInButtonErrorMsg(cookie.errorMessage);
+        } else {
+            setCookies("token", cookie.item, {sameSite: 'strict'});
+        }
     }
 
     return (
@@ -83,8 +87,9 @@ export default function A() {
                                 )}
                             />
                         </CardContent>
-                        <CardFooter className="flex justify-between">
+                        <CardFooter className="block">
                             <Button type="submit">Sign in</Button>
+                            <FormMessage>{signInButtonErrorMsg}</FormMessage>
                         </CardFooter>
                     </form>
                 </Form>

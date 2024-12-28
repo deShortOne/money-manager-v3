@@ -1,6 +1,8 @@
-"use server"
+'use server'
 
-export async function loginUser(username: string, password: string): Promise<string> {
+import { ErrorResult, SuccessResult, Result } from "@/types/result";
+
+export async function loginUser(username: string, password: string): Promise<Result<string>> {
     const response = await fetch(`http://localhost:1234/User/login`, {
         method: "POST",
         headers: {
@@ -12,16 +14,13 @@ export async function loginUser(username: string, password: string): Promise<str
         }),
     });
     if (response.ok) {
-        const responseUserToken = await getUserToken(username, password);
-        return responseUserToken;
-    } else {
-        console.log("error returned login user");
-        console.log(response);
+        return JSON.parse(JSON.stringify(await getUserToken(username, password)));
     }
-    return "";
+    console.log("error returned login user");
+    return JSON.parse(JSON.stringify(new ErrorResult("Username and password not found", false)));
 }
 
-async function getUserToken(username: string, password: string) : Promise<string> {
+async function getUserToken(username: string, password: string) : Promise<Result<string>> {
     const response = await fetch(`http://localhost:1235/User/get-token`, {
         method: "POST",
         headers: {
@@ -33,14 +32,8 @@ async function getUserToken(username: string, password: string) : Promise<string
         }),
     });
     if (response.ok) {
-        const result = await response.text();
-        console.log(response)
-        console.log("ABC");
-        console.log(result);
-        return result;
-    } else {
-        console.log("error returned user token")
-        console.log(response)
+        return new SuccessResult(await response.text());
     }
-    return "";
+    console.log("error returned cannot find user token");
+    return new ErrorResult("Username and password not found", false);
 }
