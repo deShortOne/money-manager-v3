@@ -113,11 +113,8 @@ public class RegisterCommandRepository : IRegisterCommandRepository
             new NpgsqlParameter("user_id", user.Id),
         };
         var reader = await _database.GetTable(query, queryParams);
-        if (await reader.ReadAsync())
-        {
-            return reader.GetInt32(0) == 1;
-        }
-        return false;
+
+        return reader.Rows.Count != 0 && reader.Rows[0].Field<int>(0) == 1;
     }
 
     public async Task<int> GetLastTransactionId() 
@@ -129,9 +126,9 @@ public class RegisterCommandRepository : IRegisterCommandRepository
 
         var reader = await _database.GetTable(query);
 
-        if (await reader.ReadAsync())
+        if (reader.Rows.Count != 0)
         {
-            return reader.GetInt32("last_id");
+            return reader.Rows[0].Field<int>("last_id");
         }
         return 0;
     }

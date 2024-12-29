@@ -76,6 +76,6 @@ public sealed class StoreTokenForUserTest : IAsyncLifetime
             new NpgsqlParameter("expiration", expiration),
         };
         var reader = await _database.GetTable(query, queryParams);
-        Assert.True(reader.HasRows);
+        Assert.True(reader.Rows.Count != 0);
     }
 }

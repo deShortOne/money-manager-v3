@@ -42,15 +42,15 @@ public class RegisterRepository : IRegisterRepository
         using var reader = await _database.GetTable(query, queryParams);
 
         var res = new List<TransactionEntity>();
-        while (await reader.ReadAsync())
+        foreach (DataRow row in reader.Rows)
         {
             res.Add(new TransactionEntity(
-                reader.GetInt32("id"),
-                reader.GetString("payee"),
-                reader.GetDecimal("amount"),
-                DateOnly.FromDateTime(reader.GetDateTime("datePaid")),
-                reader.GetString("category_name"),
-                reader.GetString("account_name")
+                row.Field<int>("id"),
+                row.Field<string>("payee")!,
+                row.Field<decimal>("amount"),
+                DateOnly.FromDateTime(row.Field<DateTime>("datePaid")),
+                row.Field<string>("category_name")!,
+                row.Field<string>("account_name")!
             ));
         }
         return res;

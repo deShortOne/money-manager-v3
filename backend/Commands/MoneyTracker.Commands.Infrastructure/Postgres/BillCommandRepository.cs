@@ -123,17 +123,19 @@ public class BillCommandRepository : IBillCommandRepository
         };
         using var reader = await _database.GetTable(query, queryParams);
 
-        if (await reader.ReadAsync())
+        if (reader.Rows.Count != 0)
         {
+            var currRow = reader.Rows[0];
+
             return new BillEntity(
-                reader.GetInt32("id"),
-                reader.GetString("payee"),
-                reader.GetDecimal("amount"),
-                DateOnly.FromDateTime(reader.GetDateTime("nextduedate")),
-                reader.GetInt32("monthday"),
-                reader.GetString("frequency"),
-                reader.GetInt32("category_id"),
-                reader.GetInt32("account_id")
+                currRow.Field<int>("id"),
+                currRow.Field<string>("payee")!,
+                currRow.Field<decimal>("amount"),
+                DateOnly.FromDateTime(currRow.Field<DateTime>("nextduedate")),
+                currRow.Field<int>("monthday"),
+                currRow.Field<string>("frequency")!,
+                currRow.Field<int>("category_id"),
+                currRow.Field<int>("account_id")
             );
         }
 
@@ -159,23 +161,21 @@ public class BillCommandRepository : IBillCommandRepository
         };
         using var reader = await _database.GetTable(query, queryParams);
 
-        List<BillEntity> res = [];
-        if (await reader.ReadAsync())
-        {
-            return reader.GetInt32(0) == 1;
-        }
-        return false;
+        return reader.Rows.Count != 0 && reader.Rows[0].Field<int>(0) == 1;
     }
 
     public async Task<int> GetLastId()
     {
         string query = """
-            SELECT max(id)
-            FROM bill
-            """;
+            SELECT max(id) as last_id
+            FROM bill;
+        """;
         using var reader = await _database.GetTable(query);
-        await reader.ReadAsync();
 
-        return reader[0] == DBNull.Value ? 0 : reader.GetInt32(0); ;
+        var a = reader.Rows.Count;
+        var b = reader.Rows[0];
+
+        var returnDefaultValue = reader.Rows.Count == 0 || reader.Rows[0].ItemArray[0] == DBNull.Value;
+        return  returnDefaultValue ? 0 : reader.Rows[0].Field<int>(0);
     }
 }

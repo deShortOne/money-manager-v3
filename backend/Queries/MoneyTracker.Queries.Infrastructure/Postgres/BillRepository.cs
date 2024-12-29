@@ -47,17 +47,17 @@ public class BillRepository : IBillRepository
         using var reader = await _database.GetTable(query, queryParams);
 
         List<BillEntity> res = [];
-        while (await reader.ReadAsync())
+        foreach (DataRow row in reader.Rows)
         {
             res.Add(new BillEntity(
-                reader.GetInt32("id"),
-                reader.GetString("payee"),
-                reader.GetDecimal("amount"),
-                DateOnly.FromDateTime(reader.GetDateTime("nextduedate")),
-                reader.GetInt32("monthday"),
-                reader.GetString("frequency"),
-                reader.GetString("name"),
-                reader.GetString("account_name")
+                row.Field<int>("id"),
+                row.Field<string>("payee")!,
+                row.Field<decimal>("amount"),
+                DateOnly.FromDateTime(row.Field<DateTime>("nextduedate")),
+                row.Field<int>("monthday"),
+                row.Field<string>("frequency")!,
+                row.Field<string>("name")!,
+                row.Field<string>("account_name")!
             ));
         }
 

@@ -42,7 +42,13 @@ public class UserCommandRepository : IUserCommandRepository
          """;
          using var reader = await _database.GetTable(query);
 
-        return await reader.ReadAsync() ? reader.GetInt32("last_id") : 0;
+        foreach(DataColumn column in reader.Columns)
+        {
+            
+            Console.WriteLine(column.ColumnName);
+        }
+
+        return reader.Rows.Count == 0 ? reader.Rows[0].Field<int>("last_id") : 0;
     }
 
     public async Task<UserAuthentication?> GetUserAuthFromToken(string token)
@@ -60,10 +66,11 @@ public class UserCommandRepository : IUserCommandRepository
         };
         using var reader = await _database.GetTable(query, queryParams);
 
-        if (await reader.ReadAsync())
+        if (reader.Rows.Count != 0)
         {
-            var user = new UserEntity(reader.GetInt32("user_id"), reader.GetString("name"), reader.GetString("password"));
-            return new UserAuthentication(user, token, reader.GetDateTime("expires"), _dateTimeProvider);
+            var currRow = reader.Rows[0];
+            var user = new UserEntity(currRow.Field<int>("user_id"), currRow.Field<string>("name")!, currRow.Field<string>("password")!);
+            return new UserAuthentication(user, token, currRow.Field<DateTime>("expires"), _dateTimeProvider);
         }
 
         return null;
@@ -83,9 +90,10 @@ public class UserCommandRepository : IUserCommandRepository
 
         using var reader = await _database.GetTable(query, queryParams);
 
-        if (await reader.ReadAsync())
+        if (reader.Rows.Count != 0)
         {
-            return new UserEntity(reader.GetInt32("id"), reader.GetString("name"), reader.GetString("password"));
+            var currRow = reader.Rows[0];
+            return new UserEntity(currRow.Field<int>("id"), currRow.Field<string>("name")!, currRow.Field<string>("password")!);
         }
 
         return null;

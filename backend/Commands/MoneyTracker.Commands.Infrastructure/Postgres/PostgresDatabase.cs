@@ -1,4 +1,5 @@
-﻿using System.Data.Common;
+﻿using System.Data;
+using System.Data.Common;
 using MoneyTracker.Common.Interfaces;
 using Npgsql;
 
@@ -14,9 +15,9 @@ public class PostgresDatabase : IDatabase
         _dataSource_rw = dataSourceBuilder_ro.Build();
     }
 
-    public async Task<DbDataReader> GetTable(string query, List<DbParameter>? parameters = null)
+    public async Task<DataTable> GetTable(string query, List<DbParameter>? parameters = null)
     {
-        await using (var conn = await _dataSource_rw.OpenConnectionAsync()
+        await using (var conn = await _dataSource_rw.OpenConnectionAsync())
         {
             await using (var cmd = new NpgsqlCommand(query, conn))
             {
@@ -27,10 +28,12 @@ public class PostgresDatabase : IDatabase
                         cmd.Parameters.Add(parameter);
                     }
                 }
-                return await cmd.ExecuteReaderAsync();
+                
+                var dataTable = new DataTable();
+                dataTable.Load(await cmd.ExecuteReaderAsync());
+                return dataTable;
             }
         }
-
     }
 
     public async Task<int> UpdateTable(string query, List<DbParameter>? parameters = null)

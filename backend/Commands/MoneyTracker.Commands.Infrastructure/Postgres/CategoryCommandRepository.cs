@@ -74,9 +74,8 @@ public class CategoryCommandRepository : ICategoryCommandRepository
         };
 
         var reader = await _database.GetTable(query, queryParams);
-        await reader.ReadAsync();
 
-        return reader.HasRows;
+        return reader.Rows.Count != 0;
     }
 
     public async Task<int> GetLastCategoryId() 
@@ -88,9 +87,9 @@ public class CategoryCommandRepository : ICategoryCommandRepository
 
         var reader = await _database.GetTable(query);
 
-        if (await reader.ReadAsync())
+        if (reader.Rows.Count != 0)
         {
-            return reader.GetInt32("last_id");
+            return reader.Rows[0].Field<int>("last_id");
         }
         return 0;
     }

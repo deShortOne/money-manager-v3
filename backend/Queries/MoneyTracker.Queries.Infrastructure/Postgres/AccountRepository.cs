@@ -31,11 +31,11 @@ public class AccountRepository : IAccountRepository
         var reader = await _database.GetTable(query, queryParams);
 
         List<AccountEntity> res = [];
-        while (await reader.ReadAsync())
+        foreach (DataRow row in reader.Rows)
         {
             res.Add(new AccountEntity(
-                reader.GetInt32("id"),
-                reader.GetString("name")
+                row.Field<int>("id"),
+                row.Field<string>("name")!
             ));
         }
 

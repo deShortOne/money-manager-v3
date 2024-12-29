@@ -1,4 +1,5 @@
-﻿using System.Data.Common;
+﻿using System.Data;
+using System.Data.Common;
 using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Commands.Domain.Repositories;
 using MoneyTracker.Common.Interfaces;
@@ -29,11 +30,6 @@ public class AccountCommandRepository : IAccountCommandRepository
 
         var reader = await _database.GetTable(query, queryParams);
 
-        if (await reader.ReadAsync())
-        {
-            return reader.GetInt32(0) == 1;
-
-        }
-        return false;
+        return reader.Rows.Count != 0 && reader.Rows[0].Field<int>(0) == 1;
     }
 }
