@@ -48,6 +48,7 @@ export default function A() {
             setSignInButtonErrorMsg(cookie.errorMessage);
         } else {
             setCookies("token", cookie.item, {sameSite: 'strict'});
+            setSignInButtonErrorMsg("");
         }
     }
 

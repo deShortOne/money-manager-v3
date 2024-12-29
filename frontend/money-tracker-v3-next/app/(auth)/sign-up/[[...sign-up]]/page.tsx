@@ -1,5 +1,6 @@
 'use client'
 
+import { addUserAndLogin } from "./action"
 import { Button } from "@/components/ui/button"
 import {
     Card,
@@ -10,21 +11,23 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
-    FormLabel,
     FormMessage,
 } from "@/components/ui/form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
+import { Result } from "@/types/result"
+import { useState } from "react"
+import { useCookies } from "react-cookie"
 
 export default function A() {
+    const [, setCookies] = useCookies(['token']);
+    const [signInButtonErrorMsg, setSignInButtonErrorMsg] = useState("");
 
     const formSchema = z.object({
         // TODO: add validation
@@ -39,10 +42,14 @@ export default function A() {
         },
     })
 
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        // Do something with the form values.
-        // ✅ This will be type-safe and validated.
-        console.log(values)
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+        var cookie: Result<string> = await addUserAndLogin(values.username, values.password);
+        if (cookie.hasError) {
+            setSignInButtonErrorMsg(cookie.errorMessage);
+        } else {
+            setCookies("token", cookie.item, {sameSite: 'strict'});
+            setSignInButtonErrorMsg("");
+        }
     }
 
     return (
@@ -81,8 +88,9 @@ export default function A() {
                                 )}
                             />
                         </CardContent>
-                        <CardFooter className="flex justify-between">
+                        <CardFooter className="block">
                             <Button type="submit">Sign up</Button>
+                            <FormMessage>{signInButtonErrorMsg}</FormMessage>
                         </CardFooter>
                     </form>
                 </Form>
