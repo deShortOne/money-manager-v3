@@ -22,7 +22,7 @@ public class UserService : IUserService
         if (!_passwordHasher.VerifyPassword(user.Password, userLogin.Password, ""))
             throw new InvalidDataException("User does not exist");
 
-        var token = await _userRepository.GetUserToken(user);
+        var token = await _userRepository.GetLastUserTokenForUser(user);
         if (token == null)
             throw new InvalidDataException("Token not found");
         return token;

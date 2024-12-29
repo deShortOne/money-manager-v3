@@ -63,12 +63,13 @@ public class UserRepository : IUserRepository
 
         return null;
     }
-    public async Task<string?> GetUserToken(UserEntity user)
+    public async Task<string?> GetLastUserTokenForUser(UserEntity user)
     {
         var query = """
             SELECT token
             FROM user_id_to_token
-            WHERE user_id = @userId;
+            WHERE user_id = @userId
+            ORDER BY expires desc;
             """;
         var queryParams = new List<DbParameter>()
         {

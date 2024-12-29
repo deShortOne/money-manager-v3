@@ -2,7 +2,7 @@ using MoneyTracker.Authentication.Entities;
 using Moq;
 
 namespace MoneyTracker.Queries.Tests.UserTests.Service;
-public sealed class GetUserTokenTest : UserTestHelper
+public sealed class GetLastUserTokenForUserTest : UserTestHelper
 {
     private int _userId = 1;
     private string _username = "";
@@ -19,7 +19,7 @@ public sealed class GetUserTokenTest : UserTestHelper
 
         _mockPasswordHasher.Setup(x => x.VerifyPassword(_passwordFromDb, _passwordFromUser, "")).Returns(true);
 
-        _mockUserDatabase.Setup(x => x.GetUserToken(user)).ReturnsAsync("a new token");
+        _mockUserDatabase.Setup(x => x.GetLastUserTokenForUser(user)).ReturnsAsync("a new token");
 
         Assert.Multiple(async () =>
         {
@@ -27,7 +27,7 @@ public sealed class GetUserTokenTest : UserTestHelper
 
             _mockUserDatabase.Verify(x => x.GetUserByUsername(_username), Times.Once);
             _mockPasswordHasher.Verify(x => x.VerifyPassword(_passwordFromDb, _passwordFromUser, ""), Times.Once);
-            _mockUserDatabase.Verify(x => x.GetUserToken(user), Times.Once);
+            _mockUserDatabase.Verify(x => x.GetLastUserTokenForUser(user), Times.Once);
             EnsureAllMocksHadNoOtherCalls();
         });
     }
