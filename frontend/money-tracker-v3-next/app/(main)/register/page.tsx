@@ -1,0 +1,18 @@
+'use client'
+
+import TransactionsDisplay from "./components/table";
+
+import {
+    QueryClient,
+    QueryClientProvider,
+} from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
+
+export default function Register() {
+    return (
+        <QueryClientProvider client={queryClient}>
+            <TransactionsDisplay />
+        </QueryClientProvider>
+    )
+}

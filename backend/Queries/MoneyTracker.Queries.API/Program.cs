@@ -45,6 +45,10 @@ internal class Program
                     Array.Empty<string>()
                 }
             });
+            config.MapType<DateOnly>(() => new OpenApiSchema { 
+                Type = "string",
+                Format = "date"
+            });
         });
 
         var database = new PostgresDatabase(builder.Configuration["Database:Paelagus_RO"]!);
