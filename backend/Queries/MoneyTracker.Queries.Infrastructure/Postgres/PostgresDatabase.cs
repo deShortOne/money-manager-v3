@@ -16,35 +16,37 @@ public class PostgresDatabase : IDatabase
 
     public async Task<DbDataReader> GetTable(string query, List<DbParameter>? parameters = null)
     {
-        var conn = await _dataSource_rw.OpenConnectionAsync();
-
-        await using (var cmd = new NpgsqlCommand(query, conn))
+        await using (var conn = await _dataSource_rw.OpenConnectionAsync())
         {
-            if (parameters != null)
+            await using (var cmd = new NpgsqlCommand(query, conn))
             {
-                foreach (var parameter in parameters)
+                if (parameters != null)
                 {
-                    cmd.Parameters.Add(parameter);
+                    foreach (var parameter in parameters)
+                    {
+                        cmd.Parameters.Add(parameter);
+                    }
                 }
+                return await cmd.ExecuteReaderAsync();
             }
-            return await cmd.ExecuteReaderAsync();
         }
     }
 
     public async Task<int> UpdateTable(string query, List<DbParameter>? parameters = null)
     {
-        var conn = await _dataSource_rw.OpenConnectionAsync();
-
-        await using (var cmd = new NpgsqlCommand(query, conn))
+        await using (var conn = await _dataSource_rw.OpenConnectionAsync())
         {
-            if (parameters != null)
+            await using (var cmd = new NpgsqlCommand(query, conn))
             {
-                foreach (var parameter in parameters)
+                if (parameters != null)
                 {
-                    cmd.Parameters.Add(parameter);
+                    foreach (var parameter in parameters)
+                    {
+                        cmd.Parameters.Add(parameter);
+                    }
                 }
+                return cmd.ExecuteNonQuery();
             }
-            return cmd.ExecuteNonQuery();
         }
     }
 }
