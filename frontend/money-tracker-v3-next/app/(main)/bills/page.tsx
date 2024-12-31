@@ -1,5 +1,6 @@
 'use client'
 
+import SideBar from "./components/side-bar";
 import BillsDisplay from "./components/table";
 
 import {
@@ -12,7 +13,10 @@ const queryClient = new QueryClient();
 export default function Register() {
     return (
         <QueryClientProvider client={queryClient}>
-            <BillsDisplay />
+            <div className="flex">
+                <SideBar />
+                <BillsDisplay />
+            </div>
         </QueryClientProvider>
     )
 }
