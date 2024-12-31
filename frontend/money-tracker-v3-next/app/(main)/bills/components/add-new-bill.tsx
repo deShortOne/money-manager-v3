@@ -41,6 +41,7 @@ import {
 
 export function AddNewBill() {
     const [cookies] = useCookies(['token']);
+    const [open, setOpen] = useState(false);
 
     const [accounts, setAccounts] = useState<Account[]>([]);
     const { status, data, error, isFetching } = useQuery<Result<Account[]>>({
@@ -80,6 +81,7 @@ export function AddNewBill() {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
+            payee: "",
             payer: "",
             amount: 0,
             nextDueDate: "",
@@ -91,10 +93,11 @@ export function AddNewBill() {
         // Do something with the form values.
         // ✅ This will be type-safe and validated.
         console.log(values);
+        setOpen(false);
     }
 
     return (
-        <AlertDialog>
+        <AlertDialog open={open} onOpenChange={setOpen}>
             <AlertDialogTrigger asChild>
                 <Button variant="outline">
                     <PlusCircleIcon />
@@ -222,9 +225,9 @@ export function AddNewBill() {
                         </div>
                         <AlertDialogFooter>
                             <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <AlertDialogAction type="submit">
+                            <Button type="submit">
                                 Schedule Payment
-                            </AlertDialogAction>
+                            </Button>
                         </AlertDialogFooter>
                     </form>
                 </Form>
