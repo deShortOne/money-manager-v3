@@ -34,9 +34,7 @@ import { useCookies } from "react-cookie";
 import {
     Select,
     SelectContent,
-    SelectGroup,
     SelectItem,
-    SelectLabel,
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
@@ -60,7 +58,19 @@ export function AddNewBill() {
     }, [data]);
 
     const formSchema = z.object({
-        payee: z.coerce.number().optional().transform(x => x ? x : undefined),
+        payee: z.string()
+            .min(1, { message: "You must select an account" })
+            .transform((val, ctx) => {
+                const parsed = parseInt(val);
+                if (isNaN(parsed)) {
+                    ctx.addIssue({
+                        code: z.ZodIssueCode.custom,
+                        message: "Not a number",
+                    });
+                    return z.NEVER;
+                }
+                return parsed;
+            }),
         payer: z.string(),
         amount: z.number(),
         nextDueDate: z.string(),
@@ -70,7 +80,6 @@ export function AddNewBill() {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            payee: -1,
             payer: "",
             amount: 0,
             nextDueDate: "",
