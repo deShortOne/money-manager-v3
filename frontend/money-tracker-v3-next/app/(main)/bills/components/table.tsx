@@ -29,7 +29,7 @@ export default function BillsDisplay() {
         if (data == null || data.hasError || data.item == undefined) {
 
         } else {
-            setTransactions(data?.item)
+            setTransactions(data.item);
         }
     }, [data]);
 

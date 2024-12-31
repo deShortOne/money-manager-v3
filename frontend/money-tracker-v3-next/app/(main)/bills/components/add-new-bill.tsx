@@ -22,14 +22,45 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
+import { Result } from "@/types/result";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQuery } from "@tanstack/react-query";
 import { PlusCircleIcon } from "lucide-react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { getAllAccounts } from "./action";
+import { useCookies } from "react-cookie";
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 
 export function AddNewBill() {
+    const [cookies] = useCookies(['token']);
+
+    const [accounts, setAccounts] = useState<Account[]>([]);
+    const { status, data, error, isFetching } = useQuery<Result<Account[]>>({
+        queryKey: ['accounts'],
+        queryFn: () => {
+            return getAllAccounts(cookies.token)
+        },
+    });
+    useEffect(() => {
+        if (data == null || data.hasError || data.item == undefined) {
+
+        } else {
+            setAccounts(data.item)
+        }
+    }, [data]);
+
     const formSchema = z.object({
-        payee: z.string(),
+        payee: z.coerce.number().optional().transform(x => x ? x : undefined),
         payer: z.string(),
         amount: z.number(),
         nextDueDate: z.string(),
@@ -39,7 +70,7 @@ export function AddNewBill() {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            payee: "",
+            payee: -1,
             payer: "",
             amount: 0,
             nextDueDate: "",
@@ -77,9 +108,20 @@ export function AddNewBill() {
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Pay to:</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="" {...field} />
-                                    </FormControl>
+                                    <Select onValueChange={field.onChange}>
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select payee's account" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            {accounts.map((account) => (
+                                                <SelectItem key={account.id} value={account.id.toString()}>
+                                                    {account.name}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
                                     <FormDescription>
                                         This is the account you are sending money to.
                                     </FormDescription>
