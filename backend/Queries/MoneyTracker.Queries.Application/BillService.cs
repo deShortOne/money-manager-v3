@@ -32,6 +32,11 @@ public class BillService : IBillService
         return ConvertFromRepoDTOToDTO(await _dbService.GetAllBills(user));
     }
 
+    public Task<List<string>> GetAllFrequencyNames()
+    {
+        return Task.FromResult(_frequencyCalculation.GetFrequencyNames());
+    }
+
     private List<BillResponse> ConvertFromRepoDTOToDTO(List<BillEntity> billRepoDTO)
     {
         List<BillResponse> res = [];

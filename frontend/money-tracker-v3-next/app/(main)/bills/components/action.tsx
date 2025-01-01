@@ -32,6 +32,20 @@ export async function getAllAccounts(authToken: string): Promise<Result<Account[
     return JSON.parse(JSON.stringify(new ErrorResult("Unknown error with getting your accounts. Do TODO", false)));
 }
 
+export async function getAllFrequencyNames(): Promise<Result<string[]>> {
+    const response = await fetch(`http://localhost:1235/Bill/get-all-frequency-names`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+    if (response.ok) {
+        return JSON.parse(JSON.stringify(new SuccessResult(await response.json())));
+    }
+    console.log("error returned get all accounts");
+    return JSON.parse(JSON.stringify(new ErrorResult("Unknown error with getting your accounts. Do TODO", false)));
+}
+
 export async function addNewBill(authToken: string, newBill: NewBillDto): Promise<Result<Bill>> {
     const response = await fetch(`http://localhost:1234/Bill/add`, {
         method: "POST",

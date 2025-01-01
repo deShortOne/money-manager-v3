@@ -4,6 +4,12 @@ using MoneyTracker.Common.Utilities.DateTimeUtil;
 namespace MoneyTracker.Common.Utilities.CalculationUtil.Frequencies;
 internal class BiWeekly : IFrequency
 {
+    private string _name = "BiWeekly";
+
+    public string GetName() => _name;
+
+    public bool MatchCommand(string frequency) => frequency == _name;
+
     public DateOnly CalculateNextDueDate(int monthDay, DateOnly currNextDueDate)
     {
         return currNextDueDate.AddDays(14);
@@ -21,8 +27,6 @@ internal class BiWeekly : IFrequency
 
         return new OverDueBillInfo(numberOfDaysOverdue, GetOverDueDatesLis(nextDueDate, today));
     }
-
-    public bool MatchCommand(string frequency) => frequency == "BiWeekly";
 
     public static DateOnly[] GetOverDueDatesLis(DateOnly date1, DateOnly date2)
     {

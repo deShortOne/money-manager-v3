@@ -29,7 +29,7 @@ import { PlusCircleIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { getAllAccounts } from "./action";
+import { getAllAccounts, getAllFrequencyNames } from "./action";
 import { useCookies } from "react-cookie";
 import {
     Select,
@@ -44,19 +44,30 @@ export function AddNewBill() {
     const [open, setOpen] = useState(false);
 
     const [accounts, setAccounts] = useState<Account[]>([]);
-    const { status, data, error, isFetching } = useQuery<Result<Account[]>>({
+    const { data: dataAccounts } = useQuery<Result<Account[]>>({
         queryKey: ['accounts'],
-        queryFn: () => {
-            return getAllAccounts(cookies.token)
-        },
+        queryFn: () => getAllAccounts(cookies.token),
     });
     useEffect(() => {
-        if (data == null || data.hasError || data.item == undefined) {
+        if (dataAccounts == null || dataAccounts.hasError || dataAccounts.item == undefined) {
 
         } else {
-            setAccounts(data.item)
+            setAccounts(dataAccounts.item)
         }
-    }, [data]);
+    }, [dataAccounts]);
+
+    const [frequencies, setFrequencies] = useState<string[]>([]);
+    const { data: dataFrequencies } = useQuery<Result<string[]>>({
+        queryKey: ['frequencies'],
+        queryFn: () => getAllFrequencyNames(),
+    });
+    useEffect(() => {
+        if (dataFrequencies == null || dataFrequencies.hasError || dataFrequencies.item == undefined) {
+
+        } else {
+            setFrequencies(dataFrequencies.item)
+        }
+    }, [dataFrequencies]);
 
     const formSchema = z.object({
         payee: z.string()
@@ -219,9 +230,20 @@ export function AddNewBill() {
                                 render={({ field }) => (
                                     <FormItem className="my-2">
                                         <FormLabel>Frequency:</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="" {...field} />
-                                        </FormControl>
+                                        <Select onValueChange={field.onChange}>
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select frequency" />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                {frequencies.map((frequency) => (
+                                                    <SelectItem key={frequency} value={frequency}>
+                                                        {frequency}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
                                         <FormDescription>
                                             Number of occurences of payments.
                                         </FormDescription>

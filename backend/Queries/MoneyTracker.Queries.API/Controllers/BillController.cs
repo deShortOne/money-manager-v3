@@ -25,4 +25,11 @@ public class BillController
     {
         return _billService.GetAllBills(ControllerHelper.GetToken(_httpContextAccessor));
     }
+
+    [HttpGet]
+    [Route("get-all-frequency-names")]
+    public Task<List<string>> GetAllFrequencyNames()
+    {
+        return _billService.GetAllFrequencyNames();
+    }
 }
