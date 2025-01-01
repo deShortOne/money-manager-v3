@@ -72,7 +72,19 @@ export function AddNewBill() {
                 }
                 return parsed;
             }),
-        payer: z.string(),
+        payer: z.string()
+            .min(1, { message: "You must select an account" })
+            .transform((val, ctx) => {
+                const parsed = parseInt(val);
+                if (isNaN(parsed)) {
+                    ctx.addIssue({
+                        code: z.ZodIssueCode.custom,
+                        message: "Not a number",
+                    });
+                    return z.NEVER;
+                }
+                return parsed;
+            }),
         amount: z.number(),
         nextDueDate: z.string(),
         frequency: z.string(),
@@ -148,9 +160,20 @@ export function AddNewBill() {
                                 render={({ field }) => (
                                     <FormItem className="mr-2">
                                         <FormLabel>Pay from:</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="" {...field} />
-                                        </FormControl>
+                                        <Select onValueChange={field.onChange}>
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select payee's account" />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                {accounts.map((account) => (
+                                                    <SelectItem key={account.id} value={account.id.toString()}>
+                                                        {account.name}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
                                         <FormDescription>
                                             This is the account you are sending money from.
                                         </FormDescription>
