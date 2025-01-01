@@ -2,7 +2,6 @@
 
 import {
     AlertDialog,
-    AlertDialogAction,
     AlertDialogCancel,
     AlertDialogContent,
     AlertDialogDescription,
@@ -12,6 +11,8 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar"
+import { format } from "date-fns"
 import {
     Form,
     FormControl,
@@ -25,7 +26,7 @@ import { Input } from "@/components/ui/input"
 import { Result } from "@/types/result";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
-import { PlusCircleIcon } from "lucide-react";
+import { CalendarIcon, PlusCircleIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -38,6 +39,8 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 
 export function AddNewBill() {
     const [cookies] = useCookies(['token']);
@@ -70,7 +73,9 @@ export function AddNewBill() {
     }, [dataFrequencies]);
 
     const formSchema = z.object({
-        payee: z.string()
+        payee: z.string({
+            required_error: "You must select the account the funds will go to",
+        })
             .min(1, { message: "You must select an account" })
             .transform((val, ctx) => {
                 const parsed = parseInt(val);
@@ -83,7 +88,9 @@ export function AddNewBill() {
                 }
                 return parsed;
             }),
-        payer: z.string()
+        payer: z.string({
+            required_error: "You must select the account the funds will come from",
+        })
             .min(1, { message: "You must select an account" })
             .transform((val, ctx) => {
                 const parsed = parseInt(val);
@@ -97,17 +104,19 @@ export function AddNewBill() {
                 return parsed;
             }),
         amount: z.number(),
-        nextDueDate: z.string(),
+        nextDueDate: z.date({
+            required_error: "You must select the next date this bill will occur.",
+        }),
         frequency: z.string(),
         category: z.string(),
     });
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            payee: "",
-            payer: "",
+            payee: undefined,
+            payer: undefined,
             amount: 0,
-            nextDueDate: "",
+            nextDueDate: undefined,
             frequency: "",
             category: "",
         },
@@ -198,9 +207,34 @@ export function AddNewBill() {
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Next scheduled date:</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="" {...field} />
-                                        </FormControl>
+                                        <Popover>
+                                            <PopoverTrigger asChild>
+                                                <FormControl>
+                                                    <Button
+                                                        variant={"outline"}
+                                                        className={cn(
+                                                            "w-[240px] pl-3 text-left font-normal",
+                                                            !field.value && "text-muted-foreground"
+                                                        )}
+                                                    >
+                                                        {field.value ? (
+                                                            format(field.value, "PPP")
+                                                        ) : (
+                                                            <span>Pick a date</span>
+                                                        )}
+                                                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                                    </Button>
+                                                </FormControl>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="w-auto p-0" align="start">
+                                                <Calendar
+                                                    mode="single"
+                                                    selected={field.value}
+                                                    onSelect={field.onChange}
+                                                    initialFocus
+                                                />
+                                            </PopoverContent>
+                                        </Popover>
                                         <FormDescription>
                                             This is the account you are sending money to.
                                         </FormDescription>
