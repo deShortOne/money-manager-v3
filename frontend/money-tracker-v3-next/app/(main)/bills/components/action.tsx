@@ -42,8 +42,22 @@ export async function getAllFrequencyNames(): Promise<Result<string[]>> {
     if (response.ok) {
         return JSON.parse(JSON.stringify(new SuccessResult(await response.json())));
     }
-    console.log("error returned get all accounts");
-    return JSON.parse(JSON.stringify(new ErrorResult("Unknown error with getting your accounts. Do TODO", false)));
+    console.log("error returned get all frequencies");
+    return JSON.parse(JSON.stringify(new ErrorResult("Error getting frequency names", false)));
+}
+
+export async function getAllCategories(): Promise<Result<Category[]>> {
+    const response = await fetch(`http://localhost:1235/Category/get`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+    if (response.ok) {
+        return JSON.parse(JSON.stringify(new SuccessResult(await response.json())));
+    }
+    console.log("error returned get all categories");
+    return JSON.parse(JSON.stringify(new ErrorResult("Error getting categories", false)));
 }
 
 export async function addNewBill(authToken: string, newBill: NewBillDto): Promise<Result<Bill>> {

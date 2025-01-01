@@ -30,7 +30,7 @@ import { CalendarIcon, PlusCircleIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { getAllAccounts, getAllFrequencyNames } from "./action";
+import { getAllAccounts, getAllCategories, getAllFrequencyNames } from "./action";
 import { useCookies } from "react-cookie";
 import {
     Select,
@@ -72,6 +72,20 @@ export function AddNewBill() {
         }
     }, [dataFrequencies]);
 
+    const [categories, setCategories] = useState<Category[]>([]);
+    const { data: dataCategories } = useQuery<Result<Category[]>>({
+        queryKey: ['categories'],
+        queryFn: () => getAllCategories(),
+    });
+    useEffect(() => {
+        if (dataCategories == null || dataCategories.hasError || dataCategories.item == undefined) {
+
+        } else {
+            setCategories(dataCategories.item)
+            console.log(dataCategories.item);
+        }
+    }, [dataCategories]);
+
     const formSchema = z.object({
         payee: z.string({
             required_error: "You must select the account the funds will go to",
@@ -107,8 +121,24 @@ export function AddNewBill() {
         nextDueDate: z.date({
             required_error: "You must select the next date this bill will occur.",
         }),
-        frequency: z.string(),
-        category: z.string(),
+        frequency: z.string({
+            required_error: "You must select the frequency of this bill.",
+        }),
+        category: z.string({
+            required_error: "You must select a category.",
+        })
+            .min(1, { message: "You must select a category" })
+            .transform((val, ctx) => {
+                const parsed = parseInt(val);
+                if (isNaN(parsed)) {
+                    ctx.addIssue({
+                        code: z.ZodIssueCode.custom,
+                        message: "Not a number",
+                    });
+                    return z.NEVER;
+                }
+                return parsed;
+            }),
     });
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -117,8 +147,8 @@ export function AddNewBill() {
             payer: undefined,
             amount: 0,
             nextDueDate: undefined,
-            frequency: "",
-            category: "",
+            frequency: undefined,
+            category: undefined,
         },
     });
     function onSubmit(values: z.infer<typeof formSchema>) {
@@ -291,9 +321,20 @@ export function AddNewBill() {
                                 render={({ field }) => (
                                     <FormItem className="col-span-2">
                                         <FormLabel>Category:</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="" {...field} />
-                                        </FormControl>
+                                        <Select onValueChange={field.onChange}>
+                                            <FormControl>
+                                                <SelectTrigger>
+                                                    <SelectValue placeholder="Select category" />
+                                                </SelectTrigger>
+                                            </FormControl>
+                                            <SelectContent>
+                                                {categories.map((categoryA) => (
+                                                    <SelectItem key={categoryA.id} value={categoryA.id.toString()}>
+                                                        {categoryA.name}
+                                                    </SelectItem>
+                                                ))}
+                                            </SelectContent>
+                                        </Select>
                                         <FormDescription>
                                             Category of payment.
                                         </FormDescription>
