@@ -14,10 +14,10 @@ interface Bill {
 }
 
 interface NewBillDto {
-  payee: string,
+  payee: number,
   amount: number,
-  nextDueDate: string,
+  nextDueDate: Date,
   frequency: string,
-  categoryId: string,
-  accountId: string
+  categoryId: number,
+  accountId: number
 }

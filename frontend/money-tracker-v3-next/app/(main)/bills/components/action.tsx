@@ -61,16 +61,28 @@ export async function getAllCategories(): Promise<Result<Category[]>> {
 }
 
 export async function addNewBill(authToken: string, newBill: NewBillDto): Promise<Result<Bill>> {
+    const offset = newBill.nextDueDate.getTimezoneOffset()
+    newBill.nextDueDate = new Date(newBill.nextDueDate.getTime() - (offset * 60 * 1000))
+
+    const dateToPass: string = newBill.nextDueDate.toISOString().split('T')[0]
+
     const response = await fetch(`http://localhost:1234/Bill/add`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
             "Authorization": "Bearer " + authToken,
         },
-        body: JSON.stringify(newBill),
+        body: JSON.stringify({
+            "payee": newBill.payee,
+            "amount": newBill.amount,
+            "nextDueDate": dateToPass,
+            "frequency": newBill.frequency,
+            "categoryId": newBill.categoryId,
+            "payer": newBill.accountId
+        }),
     });
     if (response.ok) {
-        return JSON.parse(JSON.stringify(new SuccessResult(await response.json())));
+        return JSON.parse(JSON.stringify(new SuccessResult(await response.text())));
     }
 
     console.log("error returned add new bill");

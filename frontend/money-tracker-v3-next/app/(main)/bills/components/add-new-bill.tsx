@@ -30,7 +30,12 @@ import { CalendarIcon, PlusCircleIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { getAllAccounts, getAllCategories, getAllFrequencyNames } from "./action";
+import {
+    addNewBill,
+    getAllAccounts,
+    getAllCategories,
+    getAllFrequencyNames,
+} from "./action";
 import { useCookies } from "react-cookie";
 import {
     Select,
@@ -45,6 +50,7 @@ import { cn } from "@/lib/utils";
 export function AddNewBill() {
     const [cookies] = useCookies(['token']);
     const [open, setOpen] = useState(false);
+    const [addNewBillButtonErrorMessage, setAddNewBillButtonErrorMessage] = useState("");
 
     const [accounts, setAccounts] = useState<Account[]>([]);
     const { data: dataAccounts } = useQuery<Result<Account[]>>({
@@ -117,7 +123,9 @@ export function AddNewBill() {
                 }
                 return parsed;
             }),
-        amount: z.number(),
+        amount: z.number({
+            required_error: "You must enter an amount",
+        }),
         nextDueDate: z.date({
             required_error: "You must select the next date this bill will occur.",
         }),
@@ -151,10 +159,19 @@ export function AddNewBill() {
             category: undefined,
         },
     });
-    function onSubmit(values: z.infer<typeof formSchema>) {
-        // Do something with the form values.
-        // ✅ This will be type-safe and validated.
-        console.log(values);
+    async function onSubmit(values: z.infer<typeof formSchema>) {
+        const addNewBillResult = await addNewBill(cookies.token, {
+            payee: values.payee,
+            amount: values.amount,
+            nextDueDate: values.nextDueDate ?? new Date("2024-01-01"),
+            frequency: values.frequency,
+            categoryId: values.category,
+            accountId: values.payer,
+        });
+        if (addNewBillResult.hasError) {
+            setAddNewBillButtonErrorMessage(addNewBillResult.errorMessage);
+            return;
+        }
         setOpen(false);
     }
 
@@ -237,7 +254,7 @@ export function AddNewBill() {
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Next scheduled date:</FormLabel>
-                                        <Popover>
+                                        <Popover modal={true}>
                                             <PopoverTrigger asChild>
                                                 <FormControl>
                                                     <Button
@@ -349,6 +366,7 @@ export function AddNewBill() {
                                 Schedule Payment
                             </Button>
                         </AlertDialogFooter>
+                        <FormMessage>{addNewBillButtonErrorMessage}</FormMessage>
                     </form>
                 </Form>
             </AlertDialogContent>
