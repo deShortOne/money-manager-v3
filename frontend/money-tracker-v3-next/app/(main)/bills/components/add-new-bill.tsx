@@ -25,7 +25,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Result } from "@/types/result";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { CalendarIcon, PlusCircleIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -51,6 +51,7 @@ export function AddNewBill() {
     const [cookies] = useCookies(['token']);
     const [open, setOpen] = useState(false);
     const [addNewBillButtonErrorMessage, setAddNewBillButtonErrorMessage] = useState("");
+    const queryClient = useQueryClient();
 
     const [accounts, setAccounts] = useState<Account[]>([]);
     const { data: dataAccounts } = useQuery<Result<Account[]>>({
@@ -173,6 +174,7 @@ export function AddNewBill() {
             return;
         }
         setOpen(false);
+        queryClient.invalidateQueries({ queryKey: ['bills'] })
     }
 
     return (

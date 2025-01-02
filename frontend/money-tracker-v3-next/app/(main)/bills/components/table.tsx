@@ -19,10 +19,8 @@ export default function BillsDisplay() {
     const [transactions, setTransactions] = useState<Bill[]>([]);
 
     const { status, data, error, isFetching } = useQuery<Result<Bill[]>>({
-        queryKey: ['transactions'],
-        queryFn: () => {
-            return getAllTransactions(cookies.token)
-        },
+        queryKey: ['bills'],
+        queryFn: () => getAllTransactions(cookies.token),
     });
 
     useEffect(() => {
