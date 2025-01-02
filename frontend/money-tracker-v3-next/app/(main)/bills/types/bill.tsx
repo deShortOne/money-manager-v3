@@ -6,11 +6,13 @@ interface Bill {
   nextDueDate: string,
   frequency: string,
   category: string,
-  overDueBill: {
-    daysOverDue: number,
-    pastOccurences: string[]
-  },
+  overDueBill: OverdueBillInfo,
   accountName: string
+}
+
+interface OverdueBillInfo {
+  daysOverDue: number,
+  pastOccurences: string[],
 }
 
 interface NewBillDto {

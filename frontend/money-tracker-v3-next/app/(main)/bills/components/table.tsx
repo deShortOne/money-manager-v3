@@ -12,6 +12,7 @@ import { getAllTransactions } from "./action";
 import { useCookies } from "react-cookie";
 import { useQuery } from "@tanstack/react-query";
 import { Result } from "@/types/result";
+import OverflowBill from "./overflow-bill";
 
 export default function BillsDisplay() {
     const [cookies] = useCookies(['token']);
@@ -48,7 +49,15 @@ export default function BillsDisplay() {
                         <TableCell className="font-medium">{transaction.id}</TableCell>
                         <TableCell>{transaction.payee}</TableCell>
                         <TableCell className="text-right">{transaction.amount}</TableCell>
-                        <TableCell>{transaction.nextDueDate}</TableCell>
+                        <TableCell className="flex">
+                            {transaction.nextDueDate}
+                            {transaction.overDueBill &&
+                                <OverflowBill
+                                    daysOverDue={transaction.overDueBill.daysOverDue}
+                                    pastOccurences={transaction.overDueBill.pastOccurences}
+                                />
+                            }
+                        </TableCell>
                         <TableCell>{transaction.frequency}</TableCell>
                     </TableRow>
                 ))}
