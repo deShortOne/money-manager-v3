@@ -32,4 +32,21 @@ public class AccountCommandRepository : IAccountCommandRepository
 
         return reader.Rows.Count != 0 && reader.Rows[0].Field<int>(0) == 1;
     }
+
+    public async Task<bool> IsValidAccount(int accountId)
+    {
+        var query = """
+            SELECT 1
+            FROM account
+            WHERE id = @account_id;
+         """;
+        var queryParams = new List<DbParameter>()
+        {
+            new NpgsqlParameter("account_id", accountId),
+        };
+
+        var reader = await _database.GetTable(query, queryParams);
+
+        return reader.Rows.Count != 0 && reader.Rows[0].Field<int>(0) == 1;
+    }
 }

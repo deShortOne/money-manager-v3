@@ -4,4 +4,5 @@ namespace MoneyTracker.Commands.Domain.Repositories;
 public interface IAccountCommandRepository
 {
     Task<bool> IsAccountOwnedByUser(AuthenticatedUser user, int accountId);
+    Task<bool> IsValidAccount(int accountId);
 }

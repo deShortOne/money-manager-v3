@@ -48,6 +48,10 @@ public class BillService : IBillService
         {
             throw new InvalidDataException("Account not found");
         }
+        if (!await _accountDatabase.IsValidAccount(newBill.Payee))
+        {
+            throw new InvalidDataException("Payee account not found");
+        }
         if (!_frequencyCalculation.DoesFrequencyExist(newBill.Frequency))
         {
             throw new InvalidDataException("Invalid frequency");
@@ -94,6 +98,11 @@ public class BillService : IBillService
             !await _accountDatabase.IsAccountOwnedByUser(user, (int)editBill.AccountId))
         {
             throw new InvalidDataException("Account not found");
+        }
+        if (editBill.Payee != null &&
+            !await _accountDatabase.IsValidAccount((int)editBill.Payee))
+        {
+            throw new InvalidDataException("Payee account not found");
         }
         if (editBill.Frequency != null &&
             !_frequencyCalculation.DoesFrequencyExist(editBill.Frequency))

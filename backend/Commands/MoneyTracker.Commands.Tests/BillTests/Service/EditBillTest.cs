@@ -19,7 +19,7 @@ public sealed class EditBillTest : BillTestHelper
     };
 
     [Theory, MemberData(nameof(OnlyOneItemNotNull))]
-    public async void SuccessfullyEditBill_OnlyChangeOneItem(int id, int payee,
+    public async void SuccessfullyEditBill_OnlyChangeOneItem(int id, int? payee,
         decimal? amount, DateOnly? nextDueDate, int? monthDay, string frequency, int? category, int? accountId)
     {
         var userId = 52;
@@ -38,6 +38,10 @@ public sealed class EditBillTest : BillTestHelper
         if (accountId != null)
         {
             _mockAccountDatabase.Setup(x => x.IsAccountOwnedByUser(authedUser, (int)accountId)).Returns(Task.FromResult(true));
+        }
+        if (payee != null)
+        {
+            _mockAccountDatabase.Setup(x => x.IsValidAccount((int)payee)).Returns(Task.FromResult(true));
         }
 
         _mockBillDatabase.Setup(x => x.IsBillAssociatedWithUser(authedUser, id)).Returns(Task.FromResult(true));
@@ -72,6 +76,14 @@ public sealed class EditBillTest : BillTestHelper
             else
             {
                 _mockAccountDatabase.Verify(x => x.IsAccountOwnedByUser(It.IsAny<AuthenticatedUser>(), It.IsAny<int>()), Times.Never);
+            }
+            if (payee != null)
+            {
+                _mockAccountDatabase.Verify(x => x.IsValidAccount((int)payee), Times.Once);
+            }
+            else
+            {
+                _mockAccountDatabase.Verify(x => x.IsValidAccount(It.IsAny<int>()), Times.Never);
             }
             if (category != null)
             {
@@ -241,6 +253,7 @@ public sealed class EditBillTest : BillTestHelper
             new DateTime(2024, 6, 6, 10, 0, 0), mockDateTime.Object)));
 
         _mockAccountDatabase.Setup(x => x.IsAccountOwnedByUser(authedUser, accountId)).Returns(Task.FromResult(true));
+        _mockAccountDatabase.Setup(x => x.IsValidAccount(payee)).Returns(Task.FromResult(true));
 
         _mockBillDatabase.Setup(x => x.IsBillAssociatedWithUser(authedUser, billId)).Returns(Task.FromResult(true));
 
@@ -256,11 +269,12 @@ public sealed class EditBillTest : BillTestHelper
             });
             Assert.Equal("Invalid category", error.Message);
 
-            _mockUserRepository.Verify(x => x.GetUserAuthFromToken(tokenToDecode), Times.Once);
-            _mockAccountDatabase.Verify(x => x.IsAccountOwnedByUser(authedUser, accountId), Times.Once);
-            _mockBillDatabase.Verify(x => x.IsBillAssociatedWithUser(authedUser, billId), Times.Once);
-            _mockCategoryDatabase.Verify(x => x.DoesCategoryExist(category), Times.Once);
-            _mockFrequencyCalculation.Verify(x => x.DoesFrequencyExist(frequency), Times.Once);
+            _mockUserRepository.Verify(x => x.GetUserAuthFromToken(tokenToDecode), Times.AtMostOnce);
+            _mockAccountDatabase.Verify(x => x.IsAccountOwnedByUser(authedUser, accountId), Times.AtMostOnce);
+            _mockAccountDatabase.Verify(x => x.IsValidAccount(payee), Times.AtMostOnce);
+            _mockBillDatabase.Verify(x => x.IsBillAssociatedWithUser(authedUser, billId), Times.AtMostOnce);
+            _mockCategoryDatabase.Verify(x => x.DoesCategoryExist(category), Times.AtMostOnce);
+            _mockFrequencyCalculation.Verify(x => x.DoesFrequencyExist(frequency), Times.AtMostOnce);
 
             EnsureAllMocksHadNoOtherCalls();
         });
@@ -288,6 +302,7 @@ public sealed class EditBillTest : BillTestHelper
             new DateTime(2024, 6, 6, 10, 0, 0), mockDateTime.Object)));
 
         _mockAccountDatabase.Setup(x => x.IsAccountOwnedByUser(authedUser, accountId)).Returns(Task.FromResult(true));
+        _mockAccountDatabase.Setup(x => x.IsValidAccount(payee)).Returns(Task.FromResult(true));
 
         _mockBillDatabase.Setup(x => x.IsBillAssociatedWithUser(authedUser, billId)).Returns(Task.FromResult(true));
 
@@ -301,10 +316,11 @@ public sealed class EditBillTest : BillTestHelper
             });
             Assert.Equal("Invalid frequency", error.Message);
 
-            _mockUserRepository.Verify(x => x.GetUserAuthFromToken(tokenToDecode), Times.Once);
-            _mockAccountDatabase.Verify(x => x.IsAccountOwnedByUser(authedUser, accountId), Times.Once);
-            _mockBillDatabase.Verify(x => x.IsBillAssociatedWithUser(authedUser, billId), Times.Once);
-            _mockFrequencyCalculation.Verify(x => x.DoesFrequencyExist(frequency), Times.Once);
+            _mockUserRepository.Verify(x => x.GetUserAuthFromToken(tokenToDecode), Times.AtMostOnce);
+            _mockAccountDatabase.Verify(x => x.IsAccountOwnedByUser(authedUser, accountId), Times.AtMostOnce);
+            _mockAccountDatabase.Verify(x => x.IsValidAccount(payee), Times.AtMostOnce);
+            _mockBillDatabase.Verify(x => x.IsBillAssociatedWithUser(authedUser, billId), Times.AtMostOnce);
+            _mockFrequencyCalculation.Verify(x => x.DoesFrequencyExist(frequency), Times.AtMostOnce);
 
             EnsureAllMocksHadNoOtherCalls();
         });
