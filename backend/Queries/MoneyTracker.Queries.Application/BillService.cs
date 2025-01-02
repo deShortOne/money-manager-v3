@@ -51,7 +51,7 @@ public class BillService : IBillService
                bill.CategoryName,
                _frequencyCalculation.CalculateOverDueBillInfo(bill.MonthDay, bill.Frequency,
                    bill.NextDueDate),
-               bill.AccountName
+               bill.Payer
            ));
         }
 

@@ -64,4 +64,4 @@ services:
         condition: service_completed_successfully
 
 volumes:
-  master-database:
+ master-database:

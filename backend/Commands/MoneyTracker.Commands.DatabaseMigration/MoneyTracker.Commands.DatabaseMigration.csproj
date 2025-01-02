@@ -9,17 +9,11 @@
 
   <ItemGroup>
     <None Remove="Scripts\Migrations\20240914174402_InitialTables.sql" />
-    <None Remove="Scripts\Migrations\20240922141226_UserIdMapToGuid.sql" />
-    <None Remove="Scripts\Migrations\20241006094749_AddPasswordAndRenameToToken.sql" />
-    <None Include="Scripts\Migrations\20241226010101_UserMapToTokenWillBeText.sql" />
     <None Remove="Scripts\Seed.sql" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Scripts\Migrations\20240914174402_InitialTables.sql" />
-    <EmbeddedResource Include="Scripts\Migrations\20240922141226_UserIdMapToGuid.sql" />
-    <EmbeddedResource Include="Scripts\Migrations\20241006094749_AddPasswordAndRenameToToken.sql" />
-    <EmbeddedResource Include="Scripts\Migrations\20241226010101_UserMapToTokenWillBeText.sql" />
     <EmbeddedResource Include="Scripts\Seed.sql" />
   </ItemGroup>
 

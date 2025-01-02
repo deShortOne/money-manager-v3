@@ -44,7 +44,7 @@ public class BillService : IBillService
         userAuth.ThrowIfInvalid();
 
         var user = new AuthenticatedUser(userAuth.User.Id);
-        if (!await _accountDatabase.IsAccountOwnedByUser(user, newBill.AccountId))
+        if (!await _accountDatabase.IsAccountOwnedByUser(user, newBill.Payer))
         {
             throw new InvalidDataException("Account not found");
         }
@@ -65,7 +65,7 @@ public class BillService : IBillService
             _monthDayCalculator.Calculate(newBill.NextDueDate),
             newBill.Frequency,
             newBill.CategoryId,
-            newBill.AccountId
+            newBill.Payer
         );
         await _dbService.AddBill(dtoToDb);
     }
@@ -76,7 +76,7 @@ public class BillService : IBillService
         if (userAuth == null)
             throw new InvalidDataException("Token not found");
         userAuth.ThrowIfInvalid();
-        
+
         var user = new AuthenticatedUser(userAuth.User.Id);
         if (editBill.Payee == null && editBill.Amount == null &&
             editBill.Amount == null && editBill.NextDueDate == null &&
@@ -130,7 +130,7 @@ public class BillService : IBillService
         if (userAuth == null)
             throw new InvalidDataException("Token not found");
         userAuth.ThrowIfInvalid();
-        
+
         var user = new AuthenticatedUser(userAuth.User.Id);
         if (!await _dbService.IsBillAssociatedWithUser(user, deleteBill.Id))
         {
@@ -146,7 +146,7 @@ public class BillService : IBillService
         if (userAuth == null)
             throw new InvalidDataException("Token not found");
         userAuth.ThrowIfInvalid();
-        
+
         var user = new AuthenticatedUser(userAuth.User.Id);
         if (!await _dbService.IsBillAssociatedWithUser(user, skipBillDTO.Id))
         {

@@ -19,13 +19,13 @@ public class BillRepository : IBillRepository
     {
         string query = """
             SELECT b.id,
-               	payee,
+               	all_accounts.name as payee,
                	amount,
                	nextduedate,
                	frequency,
                	c.name,
                 b.monthday,
-                account.name account_name
+                account_owned_by_user.name account_name
             FROM bill b
             INNER JOIN category c
                	ON b.category_id = c.id
@@ -35,8 +35,10 @@ public class BillRepository : IBillRepository
             	INNER JOIN users u
             		ON a.users_id = u.id 
             	WHERE u.id = @user_id
-            ) account
-            	ON b.account_id = account.id
+            ) account_owned_by_user
+            	ON b.account_id = account_owned_by_user.id
+            INNER JOIN account all_accounts
+                ON payee = all_accounts.id
             ORDER BY nextduedate ASC;
             """;
         var queryParams = new List<DbParameter>()

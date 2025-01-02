@@ -28,7 +28,7 @@ public sealed class GetAllBillsTest : BillTestHelper
         var mockDateTime = new Mock<IDateTimeProvider>();
         mockDateTime.Setup(x => x.Now).Returns(new DateTime(2024, 6, 6, 10, 0, 0));
         _mockUserRepository.Setup(x => x.GetUserAuthFromToken(tokenToDecode))
-            .ReturnsAsync(new UserAuthentication(new UserEntity(userId, "", ""), tokenToDecode, 
+            .ReturnsAsync(new UserAuthentication(new UserEntity(userId, "", ""), tokenToDecode,
             new DateTime(2024, 6, 6, 10, 0, 0), mockDateTime.Object));
 
         _mockBillDatabase.Setup(x => x.GetAllBills(authedUser)).Returns(Task.FromResult(billDatabaseReturn));

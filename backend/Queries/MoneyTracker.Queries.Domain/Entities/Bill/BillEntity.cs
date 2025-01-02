@@ -1,7 +1,7 @@
 ﻿
 namespace MoneyTracker.Queries.Domain.Entities.Bill;
 public class BillEntity(int id, string payee, decimal amount, DateOnly nextDueDate, int monthDay,
-    string frequency, string categoryName, string accountName)
+    string frequency, string categoryName, string payer)
 {
     public int Id { get; } = id;
     public string Payee { get; } = payee;
@@ -10,7 +10,7 @@ public class BillEntity(int id, string payee, decimal amount, DateOnly nextDueDa
     public int MonthDay { get; } = monthDay;
     public string Frequency { get; } = frequency;
     public string CategoryName { get; } = categoryName;
-    public string AccountName { get; } = accountName;
+    public string Payer { get; } = payer;
 
     public override bool Equals(object? obj)
     {
@@ -24,7 +24,7 @@ public class BillEntity(int id, string payee, decimal amount, DateOnly nextDueDa
         return Id == other.Id && Payee == other.Payee && Amount == other.Amount &&
             NextDueDate == other.NextDueDate && Frequency == other.Frequency &&
             CategoryName == other.CategoryName && MonthDay == other.MonthDay &&
-            AccountName == other.AccountName;
+            Payee == other.Payee;
     }
 
     public override int GetHashCode()

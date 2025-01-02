@@ -30,7 +30,7 @@ public class BillCommandRepository : IBillCommandRepository
                 new NpgsqlParameter("frequency", newBillDTO.Frequency),
                 new NpgsqlParameter("category_id", newBillDTO.CategoryId),
                 new NpgsqlParameter("monthday", newBillDTO.MonthDay),
-                new NpgsqlParameter("account_id", newBillDTO.AccountId),
+                new NpgsqlParameter("account_id", newBillDTO.Payer),
             };
 
         await _database.UpdateTable(query, queryParams);
@@ -129,7 +129,7 @@ public class BillCommandRepository : IBillCommandRepository
 
             return new BillEntity(
                 currRow.Field<int>("id"),
-                currRow.Field<string>("payee")!,
+                currRow.Field<int>("payee"),
                 currRow.Field<decimal>("amount"),
                 DateOnly.FromDateTime(currRow.Field<DateTime>("nextduedate")),
                 currRow.Field<int>("monthday"),
@@ -172,10 +172,7 @@ public class BillCommandRepository : IBillCommandRepository
         """;
         using var reader = await _database.GetTable(query);
 
-        var a = reader.Rows.Count;
-        var b = reader.Rows[0];
-
         var returnDefaultValue = reader.Rows.Count == 0 || reader.Rows[0].ItemArray[0] == DBNull.Value;
-        return  returnDefaultValue ? 0 : reader.Rows[0].Field<int>(0);
+        return returnDefaultValue ? 0 : reader.Rows[0].Field<int>(0);
     }
 }

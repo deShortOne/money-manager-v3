@@ -9,8 +9,8 @@ namespace MoneyTracker.Commands.Tests.BillTests.Service;
 public sealed class EditBillTest : BillTestHelper
 {
 
-    public static TheoryData<int, string, decimal?, DateOnly?, int?, string, int?, int?> OnlyOneItemNotNull = new() {
-        { 1, "something funky here", null, null, null, null, null, null },
+    public static TheoryData<int, int?, decimal?, DateOnly?, int?, string, int?, int?> OnlyOneItemNotNull = new() {
+        { 1, 7, null, null, null, null, null, null },
         { 2, null, 245.23m, null, null, null, null, null },
         { 3, null, null, new DateOnly(2023, 2, 21), 21, null, null, null }, // When date is updated, monthday is auto updated
         { 4, null, null, null, null, "Daily", null, null },
@@ -19,7 +19,7 @@ public sealed class EditBillTest : BillTestHelper
     };
 
     [Theory, MemberData(nameof(OnlyOneItemNotNull))]
-    public async void SuccessfullyEditBill_OnlyChangeOneItem(int id, string payee,
+    public async void SuccessfullyEditBill_OnlyChangeOneItem(int id, int payee,
         decimal? amount, DateOnly? nextDueDate, int? monthDay, string frequency, int? category, int? accountId)
     {
         var userId = 52;
@@ -32,7 +32,7 @@ public sealed class EditBillTest : BillTestHelper
         var mockDateTime = new Mock<IDateTimeProvider>();
         mockDateTime.Setup(x => x.Now).Returns(new DateTime(2024, 6, 6, 10, 0, 0));
         _mockUserRepository.Setup(x => x.GetUserAuthFromToken(tokenToDecode))
-            .Returns(Task.FromResult(new UserAuthentication(new UserEntity(userId, "", ""), tokenToDecode, 
+            .Returns(Task.FromResult(new UserAuthentication(new UserEntity(userId, "", ""), tokenToDecode,
             new DateTime(2024, 6, 6, 10, 0, 0), mockDateTime.Object)));
 
         if (accountId != null)
@@ -113,7 +113,7 @@ public sealed class EditBillTest : BillTestHelper
         var authedUser = new AuthenticatedUser(userId);
         var tokenToDecode = "tokenToDecode";
         var billId = 1;
-        var payee = "bree";
+        var payee = 174;
         var amount = 75.24m;
         var nextDueDate = new DateOnly(2024, 1, 24);
         var frequency = "Weekly";
@@ -124,7 +124,7 @@ public sealed class EditBillTest : BillTestHelper
         var mockDateTime = new Mock<IDateTimeProvider>();
         mockDateTime.Setup(x => x.Now).Returns(new DateTime(2024, 6, 6, 10, 0, 0));
         _mockUserRepository.Setup(x => x.GetUserAuthFromToken(tokenToDecode))
-            .Returns(Task.FromResult(new UserAuthentication(new UserEntity(userId, "", ""), tokenToDecode, 
+            .Returns(Task.FromResult(new UserAuthentication(new UserEntity(userId, "", ""), tokenToDecode,
             new DateTime(2024, 6, 6, 10, 0, 0), mockDateTime.Object)));
 
         _mockBillDatabase.Setup(x => x.IsBillAssociatedWithUser(authedUser, billId)).Returns(Task.FromResult(false));
@@ -152,7 +152,7 @@ public sealed class EditBillTest : BillTestHelper
         var authedUser = new AuthenticatedUser(userId);
         var tokenToDecode = "tokenToDecode";
         var billId = 1;
-        var payee = "bree";
+        var payee = 263;
         var amount = 75.24m;
         var nextDueDate = new DateOnly(2024, 1, 24);
         var frequency = "Weekly";
@@ -163,7 +163,7 @@ public sealed class EditBillTest : BillTestHelper
         var mockDateTime = new Mock<IDateTimeProvider>();
         mockDateTime.Setup(x => x.Now).Returns(new DateTime(2024, 6, 6, 10, 0, 0));
         _mockUserRepository.Setup(x => x.GetUserAuthFromToken(tokenToDecode))
-            .Returns(Task.FromResult(new UserAuthentication(new UserEntity(userId, "", ""), tokenToDecode, 
+            .Returns(Task.FromResult(new UserAuthentication(new UserEntity(userId, "", ""), tokenToDecode,
             new DateTime(2024, 6, 6, 10, 0, 0), mockDateTime.Object)));
 
         _mockAccountDatabase.Setup(x => x.IsAccountOwnedByUser(authedUser, accountId)).Returns(Task.FromResult(false));
@@ -198,7 +198,7 @@ public sealed class EditBillTest : BillTestHelper
         var mockDateTime = new Mock<IDateTimeProvider>();
         mockDateTime.Setup(x => x.Now).Returns(new DateTime(2024, 6, 6, 10, 0, 0));
         _mockUserRepository.Setup(x => x.GetUserAuthFromToken(tokenToDecode))
-            .Returns(Task.FromResult(new UserAuthentication(new UserEntity(userId, "", ""), tokenToDecode, 
+            .Returns(Task.FromResult(new UserAuthentication(new UserEntity(userId, "", ""), tokenToDecode,
             new DateTime(2024, 6, 6, 10, 0, 0), mockDateTime.Object)));
 
         _mockBillDatabase.Setup(x => x.IsBillAssociatedWithUser(authedUser, billId)).Returns(Task.FromResult(true));
@@ -226,7 +226,7 @@ public sealed class EditBillTest : BillTestHelper
         var authedUser = new AuthenticatedUser(userId);
         var tokenToDecode = "tokenToDecode";
         var billId = 1;
-        var payee = "bree";
+        var payee = 236;
         var amount = 75.24m;
         var nextDueDate = new DateOnly(2024, 1, 24);
         var frequency = "Weekly";
@@ -237,7 +237,7 @@ public sealed class EditBillTest : BillTestHelper
         var mockDateTime = new Mock<IDateTimeProvider>();
         mockDateTime.Setup(x => x.Now).Returns(new DateTime(2024, 6, 6, 10, 0, 0));
         _mockUserRepository.Setup(x => x.GetUserAuthFromToken(tokenToDecode))
-            .Returns(Task.FromResult(new UserAuthentication(new UserEntity(userId, "", ""), tokenToDecode, 
+            .Returns(Task.FromResult(new UserAuthentication(new UserEntity(userId, "", ""), tokenToDecode,
             new DateTime(2024, 6, 6, 10, 0, 0), mockDateTime.Object)));
 
         _mockAccountDatabase.Setup(x => x.IsAccountOwnedByUser(authedUser, accountId)).Returns(Task.FromResult(true));
@@ -273,7 +273,7 @@ public sealed class EditBillTest : BillTestHelper
         var authedUser = new AuthenticatedUser(userId);
         var tokenToDecode = "tokenToDecode";
         var billId = 1;
-        var payee = "bree";
+        var payee = 124;
         var amount = 75.24m;
         var nextDueDate = new DateOnly(2024, 1, 24);
         var frequency = "frequency goes here";
@@ -284,7 +284,7 @@ public sealed class EditBillTest : BillTestHelper
         var mockDateTime = new Mock<IDateTimeProvider>();
         mockDateTime.Setup(x => x.Now).Returns(new DateTime(2024, 6, 6, 10, 0, 0));
         _mockUserRepository.Setup(x => x.GetUserAuthFromToken(tokenToDecode))
-            .Returns(Task.FromResult(new UserAuthentication(new UserEntity(userId, "", ""), tokenToDecode, 
+            .Returns(Task.FromResult(new UserAuthentication(new UserEntity(userId, "", ""), tokenToDecode,
             new DateTime(2024, 6, 6, 10, 0, 0), mockDateTime.Object)));
 
         _mockAccountDatabase.Setup(x => x.IsAccountOwnedByUser(authedUser, accountId)).Returns(Task.FromResult(true));
