@@ -53,8 +53,7 @@ export default function BillsDisplay() {
                             {transaction.nextDueDate}
                             {transaction.overDueBill &&
                                 <OverflowBill
-                                    daysOverDue={transaction.overDueBill.daysOverDue}
-                                    pastOccurences={transaction.overDueBill.pastOccurences}
+                                    overdueBillInfo={transaction.overDueBill}
                                 />
                             }
                         </TableCell>

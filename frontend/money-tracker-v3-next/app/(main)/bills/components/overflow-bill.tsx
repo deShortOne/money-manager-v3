@@ -5,7 +5,7 @@ import {
 } from "@/components/ui/hover-card";
 import { CircleAlert } from "lucide-react";
 
-export default function OverflowBill(overdueBillInfo: OverdueBillInfo) {
+export default function OverflowBill({ overdueBillInfo }: { overdueBillInfo: OverdueBillInfo }) {
     if (overdueBillInfo.daysOverDue == 0)
         return (<></>);
 
