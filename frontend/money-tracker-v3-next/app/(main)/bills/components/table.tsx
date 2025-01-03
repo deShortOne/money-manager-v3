@@ -2,7 +2,6 @@
 import {
     Table,
     TableBody,
-    TableCell,
     TableHead,
     TableHeader,
     TableRow,
@@ -12,7 +11,7 @@ import { getAllTransactions } from "./action";
 import { useCookies } from "react-cookie";
 import { useQuery } from "@tanstack/react-query";
 import { Result } from "@/types/result";
-import OverflowBill from "./overflow-bill";
+import BillTableRow from "./bill-table-row";
 
 export default function BillsDisplay() {
     const [cookies] = useCookies(['token']);
@@ -45,20 +44,7 @@ export default function BillsDisplay() {
             </TableHeader>
             <TableBody>
                 {transactions.map((transaction) => (
-                    <TableRow key={transaction.id}>
-                        <TableCell className="font-medium">{transaction.id}</TableCell>
-                        <TableCell>{transaction.payee}</TableCell>
-                        <TableCell className="text-right">{transaction.amount}</TableCell>
-                        <TableCell className="flex">
-                            {transaction.nextDueDate}
-                            {transaction.overDueBill &&
-                                <OverflowBill
-                                    overdueBillInfo={transaction.overDueBill}
-                                />
-                            }
-                        </TableCell>
-                        <TableCell>{transaction.frequency}</TableCell>
-                    </TableRow>
+                    <BillTableRow transaction={transaction} key={transaction.id} />
                 ))}
             </TableBody>
         </Table>
