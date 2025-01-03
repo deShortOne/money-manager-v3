@@ -1,15 +1,14 @@
 'use client'
 
 import {
-    AlertDialog,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar"
 import { format } from "date-fns"
@@ -178,22 +177,22 @@ export function AddNewBill() {
     }
 
     return (
-        <AlertDialog open={open} onOpenChange={setOpen}>
-            <AlertDialogTrigger asChild>
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
                 <Button variant="outline">
                     <PlusCircleIcon />
                     Add New Bill
                 </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
+            </DialogTrigger>
+            <DialogContent>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="">
-                        <AlertDialogHeader>
-                            <AlertDialogTitle>Make scheduled payments</AlertDialogTitle>
-                            <AlertDialogDescription>
+                        <DialogHeader>
+                            <DialogTitle>Make scheduled payments</DialogTitle>
+                            <DialogDescription>
                                 Schedule payments
-                            </AlertDialogDescription>
-                        </AlertDialogHeader>
+                            </DialogDescription>
+                        </DialogHeader>
 
                         <FormField
                             control={form.control}
@@ -362,16 +361,18 @@ export function AddNewBill() {
                                 )}
                             />
                         </div>
-                        <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <DialogFooter>
+                            <Button type="button" variant="secondary" onClick={() => setOpen(false)}>
+                                Close without saving
+                            </Button>
                             <Button type="submit">
                                 Schedule Payment
                             </Button>
-                        </AlertDialogFooter>
+                        </DialogFooter>
                         <FormMessage>{addNewBillButtonErrorMessage}</FormMessage>
                     </form>
                 </Form>
-            </AlertDialogContent>
-        </AlertDialog>
+            </DialogContent>
+        </Dialog>
     )
 }
