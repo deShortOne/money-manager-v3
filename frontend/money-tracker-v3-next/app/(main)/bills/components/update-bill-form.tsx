@@ -96,11 +96,10 @@ export function UpdateBillForm() {
     }, [dataCategories]);
 
     const formSchema = z.object({
-        payee: z.string({
-            required_error: "You must select the account the funds will go to",
-        })
-            .min(1, { message: "You must select an account" })
-            .transform((val, ctx) => {
+        payee: z.union([
+            z.string({
+                required_error: "You must select the account the funds will go to",
+            }).transform((val, ctx) => {
                 const parsed = parseInt(val);
                 if (isNaN(parsed)) {
                     ctx.addIssue({
@@ -111,11 +110,12 @@ export function UpdateBillForm() {
                 }
                 return parsed;
             }),
-        payer: z.string({
-            required_error: "You must select the account the funds will come from",
-        })
-            .min(1, { message: "You must select an account" })
-            .transform((val, ctx) => {
+            z.number()
+        ]),
+        payer: z.union([
+            z.string({
+                required_error: "You must select the account the funds will come from",
+            }).transform((val, ctx) => {
                 const parsed = parseInt(val);
                 if (isNaN(parsed)) {
                     ctx.addIssue({
@@ -126,6 +126,8 @@ export function UpdateBillForm() {
                 }
                 return parsed;
             }),
+            z.number()
+        ]),
         amount: z.coerce.number({
             required_error: "You must enter an amount",
         }),
@@ -135,11 +137,10 @@ export function UpdateBillForm() {
         frequency: z.string({
             required_error: "You must select the frequency of this bill.",
         }),
-        category: z.string({
-            required_error: "You must select a category.",
-        })
-            .min(1, { message: "You must select a category" })
-            .transform((val, ctx) => {
+        category: z.union([
+            z.string({
+                required_error: "You must select a category.",
+            }).transform((val, ctx) => {
                 const parsed = parseInt(val);
                 if (isNaN(parsed)) {
                     ctx.addIssue({
@@ -150,6 +151,8 @@ export function UpdateBillForm() {
                 }
                 return parsed;
             }),
+            z.number()
+        ]),
     });
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
