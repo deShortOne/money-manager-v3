@@ -126,7 +126,7 @@ export function UpdateBillForm() {
                 }
                 return parsed;
             }),
-        amount: z.number({
+        amount: z.coerce.number({
             required_error: "You must enter an amount",
         }),
         nextDueDate: z.date({
