@@ -12,6 +12,7 @@ import { useCookies } from "react-cookie";
 import { useQuery } from "@tanstack/react-query";
 import { Result } from "@/types/result";
 import BillTableRow from "./bill-table-row";
+import { queryKeyBills } from "@/app/data/queryKeys";
 
 export default function BillsDisplay() {
     const [cookies] = useCookies(['token']);
@@ -19,7 +20,7 @@ export default function BillsDisplay() {
     const [transactions, setTransactions] = useState<Bill[]>([]);
 
     const { status, data, error, isFetching } = useQuery<Result<Bill[]>>({
-        queryKey: ['bills'],
+        queryKey: [queryKeyBills],
         queryFn: () => getAllTransactions(cookies.token),
     });
 

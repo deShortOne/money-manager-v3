@@ -45,6 +45,7 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { useBillModalSetting } from "../hooks/useEditBillForm";
+import { queryKeyAccounts, queryKeyBills, queryKeyCategories, queryKeyFrequencies } from "@/app/data/queryKeys";
 
 export function UpdateBillForm() {
     const [cookies] = useCookies(['token']);
@@ -58,7 +59,7 @@ export function UpdateBillForm() {
 
     const [accounts, setAccounts] = useState<Account[]>([]);
     const { data: dataAccounts } = useQuery<Result<Account[]>>({
-        queryKey: ['accounts'],
+        queryKey: [queryKeyAccounts],
         queryFn: () => getAllAccounts(cookies.token),
     });
     useEffect(() => {
@@ -71,7 +72,7 @@ export function UpdateBillForm() {
 
     const [frequencies, setFrequencies] = useState<string[]>([]);
     const { data: dataFrequencies } = useQuery<Result<string[]>>({
-        queryKey: ['frequencies'],
+        queryKey: [queryKeyFrequencies],
         queryFn: () => getAllFrequencyNames(),
     });
     useEffect(() => {
@@ -84,7 +85,7 @@ export function UpdateBillForm() {
 
     const [categories, setCategories] = useState<Category[]>([]);
     const { data: dataCategories } = useQuery<Result<Category[]>>({
-        queryKey: ['categories'],
+        queryKey: [queryKeyCategories],
         queryFn: () => getAllCategories(),
     });
     useEffect(() => {
@@ -180,7 +181,7 @@ export function UpdateBillForm() {
             return;
         }
         closeUpdateBillForm();
-        queryClient.invalidateQueries({ queryKey: ['bills'] })
+        queryClient.invalidateQueries({ queryKey: [queryKeyBills] })
     }
 
     function CloseWithoutSaving() {

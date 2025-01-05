@@ -8,13 +8,13 @@ import { Result } from "@/types/result";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { queryKeyAccounts, queryKeyBills, queryKeyCategories } from "@/app/data/queryKeys";
 
 interface prop {
     bill: Bill,
 }
 
 export default function BillTableRow({ bill }: prop) {
-    console.log(bill)
     const [cookies] = useCookies(['token']);
     const onOpen = useBillModalSetting(state => state.onOpen);
     const [msg, setMsg] = useState("");
@@ -23,7 +23,7 @@ export default function BillTableRow({ bill }: prop) {
 
     const [accounts, setAccounts] = useState<Account[]>([]);
     const { data: dataAccounts } = useQuery<Result<Account[]>>({
-        queryKey: ['accounts'],
+        queryKey: [queryKeyAccounts],
         queryFn: () => getAllAccounts(cookies.token),
     });
     useEffect(() => {
@@ -36,7 +36,7 @@ export default function BillTableRow({ bill }: prop) {
 
     const [categories, setCategories] = useState<Category[]>([]);
     const { data: dataCategories } = useQuery<Result<Category[]>>({
-        queryKey: ['categories'],
+        queryKey: [queryKeyCategories],
         queryFn: () => getAllCategories(),
     });
     useEffect(() => {
@@ -94,7 +94,7 @@ export default function BillTableRow({ bill }: prop) {
             setMsg(deleteBillResult.errorMessage);
             return;
         }
-        queryClient.invalidateQueries({ queryKey: ['bills'] })
+        queryClient.invalidateQueries({ queryKey: [queryKeyBills] })
     }
 
     return (

@@ -14,6 +14,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Result } from "@/types/result";
 import { Button } from "@/components/ui/button";
 import React from "react";
+import { queryKeyTransactions } from "@/app/data/queryKeys";
 
 export default function BudgetsDisplay() {
     const [expandedBudgetCategory, setExpandedBudgetCategory] = useState<string[]>([])
@@ -28,7 +29,7 @@ export default function BudgetsDisplay() {
     const [cookies] = useCookies(['token']);
     const [transactions, setTransactions] = useState<BudgetGroup[]>([]);
     const { status, data, error, isFetching } = useQuery<Result<BudgetGroup[]>>({
-        queryKey: ['transactions'],
+        queryKey: [queryKeyTransactions],
         queryFn: () => {
             return getAllBudgets(cookies.token)
         },

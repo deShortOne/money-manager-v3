@@ -12,6 +12,7 @@ import { getAllTransactions } from "./action";
 import { useCookies } from "react-cookie";
 import { useQuery } from "@tanstack/react-query";
 import { Result } from "@/types/result";
+import { queryKeyTransactions } from "@/app/data/queryKeys";
 
 export default function TransactionsDisplay() {
     const [cookies] = useCookies(['token']);
@@ -19,7 +20,7 @@ export default function TransactionsDisplay() {
     const [transactions, setTransactions] = useState<Transaction[]>([]);
 
     const { status, data, error, isFetching } = useQuery<Result<Transaction[]>>({
-        queryKey: ['transactions'],
+        queryKey: [queryKeyTransactions],
         queryFn: () => {
             return getAllTransactions(cookies.token)
         },
