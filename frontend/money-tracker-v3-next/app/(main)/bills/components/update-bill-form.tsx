@@ -50,7 +50,7 @@ export function UpdateBillForm() {
     const [cookies] = useCookies(['token']);
     const open = useBillModalSetting(state => state.isOpen);
     const defaultValues = useBillModalSetting(state => state.defaultValues);
-    const onClose = useBillModalSetting(state => state.onClose);
+    const closeUpdateBillForm = useBillModalSetting(state => state.onClose);
 
     const [addNewBillButtonErrorMessage, setAddNewBillButtonErrorMessage] = useState("");
     const queryClient = useQueryClient();
@@ -90,8 +90,7 @@ export function UpdateBillForm() {
         if (dataCategories == null || dataCategories.hasError || dataCategories.item == undefined) {
 
         } else {
-            setCategories(dataCategories.item)
-            console.log(dataCategories.item);
+            setCategories(dataCategories.item);
         }
     }, [dataCategories]);
 
@@ -154,12 +153,12 @@ export function UpdateBillForm() {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            payee: defaultValues.payee,
-            payer: defaultValues.payer,
-            amount: defaultValues.amount,
-            nextDueDate: defaultValues.nextDueDate,
-            frequency: defaultValues.frequency,
-            category: defaultValues.category,
+            payee: undefined,
+            payer: undefined,
+            amount: 0,
+            nextDueDate: undefined,
+            frequency: undefined,
+            category: undefined,
         },
     });
     async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -175,17 +174,28 @@ export function UpdateBillForm() {
             setAddNewBillButtonErrorMessage(addNewBillResult.errorMessage);
             return;
         }
-        onClose();
+        closeUpdateBillForm();
         queryClient.invalidateQueries({ queryKey: ['bills'] })
     }
 
     function CloseWithoutSaving() {
         form.clearErrors();
-        onClose();
+        closeUpdateBillForm();
     }
 
+    useEffect(() => {
+        form.reset({
+            payee: defaultValues.payee,
+            payer: defaultValues.payer,
+            amount: defaultValues.amount,
+            nextDueDate: defaultValues.nextDueDate,
+            frequency: defaultValues.frequency,
+            category: defaultValues.category,
+        });
+    }, [open]);
+
     return (
-        <Dialog open={open} onOpenChange={onClose}>
+        <Dialog open={open} onOpenChange={closeUpdateBillForm}>
             <DialogContent>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="">
@@ -202,7 +212,10 @@ export function UpdateBillForm() {
                             render={({ field }) => (
                                 <FormItem>
                                     <FormLabel>Pay to:</FormLabel>
-                                    <Select onValueChange={field.onChange}>
+                                    <Select
+                                        onValueChange={field.onChange}
+                                        value={field.value?.toString()}
+                                    >
                                         <FormControl>
                                             <SelectTrigger>
                                                 <SelectValue placeholder="Select payee's account" />
@@ -230,7 +243,10 @@ export function UpdateBillForm() {
                                 render={({ field }) => (
                                     <FormItem className="mr-2">
                                         <FormLabel>Pay from:</FormLabel>
-                                        <Select onValueChange={field.onChange}>
+                                        <Select
+                                            onValueChange={field.onChange}
+                                            value={field.value?.toString()}
+                                        >
                                             <FormControl>
                                                 <SelectTrigger>
                                                     <SelectValue placeholder="Select payee's account" />
@@ -314,7 +330,10 @@ export function UpdateBillForm() {
                                 render={({ field }) => (
                                     <FormItem className="my-2">
                                         <FormLabel>Frequency:</FormLabel>
-                                        <Select onValueChange={field.onChange}>
+                                        <Select
+                                            onValueChange={field.onChange}
+                                            value={field.value?.toString()}
+                                        >
                                             <FormControl>
                                                 <SelectTrigger>
                                                     <SelectValue placeholder="Select frequency" />
@@ -341,7 +360,10 @@ export function UpdateBillForm() {
                                 render={({ field }) => (
                                     <FormItem className="col-span-2">
                                         <FormLabel>Category:</FormLabel>
-                                        <Select onValueChange={field.onChange}>
+                                        <Select
+                                            onValueChange={field.onChange}
+                                            value={field.value?.toString()}
+                                        >
                                             <FormControl>
                                                 <SelectTrigger>
                                                     <SelectValue placeholder="Select category" />
