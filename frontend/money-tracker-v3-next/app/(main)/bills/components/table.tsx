@@ -40,7 +40,6 @@ export default function BillsDisplay() {
                     <TableHead className="text-right">Amount</TableHead>
                     <TableHead>Due Date</TableHead>
                     <TableHead>Frequency</TableHead>
-                    <TableHead></TableHead>{/* row actions */}
                 </TableRow>
             </TableHeader>
             <TableBody>
