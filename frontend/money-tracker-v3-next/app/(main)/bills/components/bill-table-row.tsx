@@ -6,14 +6,15 @@ import { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import { Result } from "@/types/result";
 import { useQuery } from "@tanstack/react-query";
-import { Pencil } from "lucide-react";
+import { Pencil, Trash2, Trash2Icon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface prop {
-    transaction: Bill,
+    bill: Bill,
 }
 
-export default function BillTableRow({ transaction }: prop) {
+export default function BillTableRow({ bill }: prop) {
+    console.log(bill)
     const [cookies] = useCookies(['token']);
     const onOpen = useBillModalSetting(state => state.onOpen);
     const [msg, setMsg] = useState("");
@@ -44,20 +45,19 @@ export default function BillTableRow({ transaction }: prop) {
         }
     }, [dataCategories]);
 
-    function asdf() {
-        console.log("FFFFFF");
-        const categoryId = categories.find(x => x.name == transaction.category);
+    function editBillForm() {
+        const categoryId = categories.find(x => x.name == bill.category);
         if (categoryId == null) {
             setMsg("Category not found");
             return;
         }
 
-        const payee = accounts.find(x => x.name == transaction.payee);
+        const payee = accounts.find(x => x.name == bill.payee);
         if (payee == null) {
             setMsg("Payee not found");
             return;
         }
-        const payer = accounts.find(x => x.name == transaction.accountName);
+        const payer = accounts.find(x => x.name == bill.accountName);
         if (payer == null) {
             setMsg("Payer not found");
             return;
@@ -66,7 +66,7 @@ export default function BillTableRow({ transaction }: prop) {
         onOpen(
             (authToken: string, newBill: NewBillDto) => {
                 return editBill(authToken, {
-                    id: transaction.id,
+                    id: bill.id,
                     payee: newBill.payee,
                     amount: newBill.amount,
                     nextDueDate: newBill.nextDueDate,
@@ -76,10 +76,10 @@ export default function BillTableRow({ transaction }: prop) {
                 });
             },
             {
-                amount: transaction.amount,
+                amount: bill.amount,
                 category: categoryId.id,
-                frequency: transaction.frequency,
-                nextDueDate: new Date(transaction.nextDueDate),
+                frequency: bill.frequency,
+                nextDueDate: new Date(bill.nextDueDate),
                 payee: payee.id,
                 payer: payer.id,
             });
@@ -87,22 +87,28 @@ export default function BillTableRow({ transaction }: prop) {
 
     return (
         <TableRow>
-            <TableCell className="fontmedium">{transaction.id}</TableCell>
-            <TableCell>{transaction.payee}</TableCell>
-            <TableCell className="textright">{transaction.amount}</TableCell>
+            <TableCell className="fontmedium">{bill.id}</TableCell>
+            <TableCell>{bill.payee}</TableCell>
+            <TableCell className="textright">{bill.amount}</TableCell>
             <TableCell className="flex">
-                {transaction.nextDueDate}
-                {transaction.overDueBill &&
+                {bill.nextDueDate}
+                {bill.overDueBill &&
                     <OverflowBill
-                        overdueBillInfo={transaction.overDueBill}
+                        overdueBillInfo={bill.overDueBill}
                     />
                 }
             </TableCell>
-            <TableCell>{transaction.frequency}</TableCell>
+            <TableCell>{bill.frequency}</TableCell>
             <TableCell>
                 {msg}
-                <Button onClick={() => asdf()}>
+                <Button onClick={() => editBillForm()}>
                     <Pencil />
+                </Button>
+                <Button onClick={() => editBillForm()}>
+                    <Trash2Icon />
+                </Button>
+                <Button onClick={() => editBillForm()}>
+                    <Trash2 />
                 </Button>
             </TableCell>
         </TableRow>

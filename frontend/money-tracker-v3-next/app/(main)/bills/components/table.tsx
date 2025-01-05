@@ -45,7 +45,7 @@ export default function BillsDisplay() {
             </TableHeader>
             <TableBody>
                 {transactions.map((transaction) => (
-                    <BillTableRow transaction={transaction} key={transaction.id} />
+                    <BillTableRow bill={transaction} key={transaction.id} />
                 ))}
             </TableBody>
         </Table>
