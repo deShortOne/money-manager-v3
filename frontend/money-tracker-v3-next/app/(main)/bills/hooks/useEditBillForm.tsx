@@ -1,3 +1,4 @@
+import { ErrorResult, Result } from "@/types/result";
 import { create } from "zustand";
 
 interface defaultValuesProp {
@@ -21,15 +22,26 @@ const defaultDefaultValues = {
 type BillModalSetting = {
     isOpen: boolean
     defaultValues: defaultValuesProp
-    onOpen: (defaultValues?: defaultValuesProp) => void
+    updateBillAction: (authToken: string, newBill: NewBillDto) => Promise<Result<Bill>>
+    onOpen: (
+        billAction: (authToken: string, newBill: NewBillDto) => Promise<Result<Bill>>,
+        defaultValues?: defaultValuesProp
+    ) => void
     onClose: () => void
 }
 
 export const useBillModalSetting = create<BillModalSetting>((set) => ({
     isOpen: false,
     defaultValues: defaultDefaultValues,
-    onOpen: (defaultValues = defaultDefaultValues) => set(
+    updateBillAction: (authToken: string, newBill: NewBillDto) => {
+        return new Promise(() => new ErrorResult<Bill>("error bill action not updated", true));
+    },
+    onOpen: (
+        billAction: (authToken: string, newBill: NewBillDto) => Promise<Result<Bill>>,
+        defaultValues = defaultDefaultValues
+    ) => set(
         {
+            updateBillAction: billAction,
             isOpen: true,
             defaultValues: defaultValues,
         }

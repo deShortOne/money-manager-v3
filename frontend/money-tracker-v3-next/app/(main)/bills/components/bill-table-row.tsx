@@ -1,7 +1,7 @@
 import { TableRow, TableCell } from "@/components/ui/table";
 import OverflowBill from "./overflow-bill";
 import { useBillModalSetting } from "../hooks/useEditBillForm";
-import { getAllAccounts, getAllCategories } from "./action";
+import { editBill, getAllAccounts, getAllCategories } from "./action";
 import { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import { Result } from "@/types/result";
@@ -63,14 +63,26 @@ export default function BillTableRow({ transaction }: prop) {
             return;
         }
 
-        onOpen({
-            amount: transaction.amount,
-            category: categoryId.id,
-            frequency: transaction.frequency,
-            nextDueDate: new Date(transaction.nextDueDate),
-            payee: payee.id,
-            payer: payer.id,
-        });
+        onOpen(
+            (authToken: string, newBill: NewBillDto) => {
+                return editBill(authToken, {
+                    id: transaction.id,
+                    payee: newBill.payee,
+                    amount: newBill.amount,
+                    nextDueDate: newBill.nextDueDate,
+                    frequency: newBill.frequency,
+                    categoryId: newBill.categoryId,
+                    accountId: newBill.accountId,
+                });
+            },
+            {
+                amount: transaction.amount,
+                category: categoryId.id,
+                frequency: transaction.frequency,
+                nextDueDate: new Date(transaction.nextDueDate),
+                payee: payee.id,
+                payer: payer.id,
+            });
     }
 
     return (

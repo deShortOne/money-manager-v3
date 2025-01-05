@@ -51,6 +51,7 @@ export function UpdateBillForm() {
     const open = useBillModalSetting(state => state.isOpen);
     const defaultValues = useBillModalSetting(state => state.defaultValues);
     const closeUpdateBillForm = useBillModalSetting(state => state.onClose);
+    const billAction = useBillModalSetting(state => state.updateBillAction);
 
     const [addNewBillButtonErrorMessage, setAddNewBillButtonErrorMessage] = useState("");
     const queryClient = useQueryClient();
@@ -162,7 +163,7 @@ export function UpdateBillForm() {
         },
     });
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        const addNewBillResult = await addNewBill(cookies.token, {
+        const addNewBillResult = await billAction(cookies.token, {
             payee: values.payee,
             amount: values.amount,
             nextDueDate: values.nextDueDate,
@@ -170,6 +171,7 @@ export function UpdateBillForm() {
             categoryId: values.category,
             accountId: values.payer,
         });
+
         if (addNewBillResult.hasError) {
             setAddNewBillButtonErrorMessage(addNewBillResult.errorMessage);
             return;

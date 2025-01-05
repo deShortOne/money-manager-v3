@@ -88,3 +88,34 @@ export async function addNewBill(authToken: string, newBill: NewBillDto): Promis
     console.log("error returned add new bill");
     return JSON.parse(JSON.stringify(new ErrorResult("Error adding new bill", false)));
 }
+
+export async function editBill(authToken: string, editBill: EditBillDto): Promise<Result<Bill>> {
+    const offset = editBill.nextDueDate.getTimezoneOffset()
+    editBill.nextDueDate = new Date(editBill.nextDueDate.getTime() - (offset * 60 * 1000))
+
+    const dateToPass: string = editBill.nextDueDate.toISOString().split('T')[0]
+
+    const response = await fetch(`http://localhost:1234/Bill/edit`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + authToken,
+        },
+        body: JSON.stringify({
+            id: editBill.id,
+            payee: editBill.payee,
+            amount: editBill.amount,
+            nextDueDate: dateToPass,
+            frequency: editBill.frequency,
+            categoryId: editBill.categoryId,
+            payer: editBill.accountId
+        }),
+    });
+    if (response.ok) {
+        return JSON.parse(JSON.stringify(new SuccessResult(await response.text())));
+    }
+
+    console.log(response)
+    console.log("error returned edit old bill");
+    return JSON.parse(JSON.stringify(new ErrorResult("Error editing bill", false)));
+}
