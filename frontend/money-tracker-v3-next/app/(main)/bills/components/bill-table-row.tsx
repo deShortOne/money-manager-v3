@@ -1,12 +1,12 @@
 import { TableRow, TableCell } from "@/components/ui/table";
 import OverflowBill from "./overflow-bill";
 import { useBillModalSetting } from "../hooks/useEditBillForm";
-import { editBill, getAllAccounts, getAllCategories } from "./action";
+import { deleteBill, editBill, getAllAccounts, getAllCategories } from "./action";
 import { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
 import { Result } from "@/types/result";
-import { useQuery } from "@tanstack/react-query";
-import { Pencil, Trash2, Trash2Icon } from "lucide-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface prop {
@@ -18,6 +18,8 @@ export default function BillTableRow({ bill }: prop) {
     const [cookies] = useCookies(['token']);
     const onOpen = useBillModalSetting(state => state.onOpen);
     const [msg, setMsg] = useState("");
+
+    const queryClient = useQueryClient();
 
     const [accounts, setAccounts] = useState<Account[]>([]);
     const { data: dataAccounts } = useQuery<Result<Account[]>>({
@@ -85,6 +87,16 @@ export default function BillTableRow({ bill }: prop) {
             });
     }
 
+    async function deleteBillFunc() {
+        const deleteBillResult = await deleteBill(cookies.token, bill.id);
+
+        if (deleteBillResult.hasError) {
+            setMsg(deleteBillResult.errorMessage);
+            return;
+        }
+        queryClient.invalidateQueries({ queryKey: ['bills'] })
+    }
+
     return (
         <TableRow>
             <TableCell className="fontmedium">{bill.id}</TableCell>
@@ -104,10 +116,7 @@ export default function BillTableRow({ bill }: prop) {
                 <Button onClick={() => editBillForm()}>
                     <Pencil />
                 </Button>
-                <Button onClick={() => editBillForm()}>
-                    <Trash2Icon />
-                </Button>
-                <Button onClick={() => editBillForm()}>
+                <Button onClick={() => deleteBillFunc()}>
                     <Trash2 />
                 </Button>
             </TableCell>

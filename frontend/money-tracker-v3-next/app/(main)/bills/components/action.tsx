@@ -119,3 +119,23 @@ export async function editBill(authToken: string, editBill: EditBillDto): Promis
     console.log("error returned edit old bill");
     return JSON.parse(JSON.stringify(new ErrorResult("Error editing bill", false)));
 }
+
+export async function deleteBill(authToken: string, billId: number): Promise<Result<Bill>> {
+    const response = await fetch(`http://localhost:1234/Bill/delete`, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + authToken,
+        },
+        body: JSON.stringify({
+            id: billId,
+        }),
+    });
+    if (response.ok) {
+        return JSON.parse(JSON.stringify(new SuccessResult(await response.text())));
+    }
+
+    console.log(response)
+    console.log("error returned delete bill");
+    return JSON.parse(JSON.stringify(new ErrorResult("Error deleting bill", false)));
+}
