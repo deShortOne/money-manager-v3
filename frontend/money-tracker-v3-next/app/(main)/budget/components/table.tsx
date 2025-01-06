@@ -14,7 +14,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Result } from "@/types/result";
 import { Button } from "@/components/ui/button";
 import React from "react";
-import { queryKeyTransactions } from "@/app/data/queryKeys";
+import { queryKeyBudget } from "@/app/data/queryKeys";
 
 export default function BudgetsDisplay() {
     const [expandedBudgetCategory, setExpandedBudgetCategory] = useState<string[]>([])
@@ -29,7 +29,7 @@ export default function BudgetsDisplay() {
     const [cookies] = useCookies(['token']);
     const [transactions, setTransactions] = useState<BudgetGroup[]>([]);
     const { status, data, error, isFetching } = useQuery<Result<BudgetGroup[]>>({
-        queryKey: [queryKeyTransactions],
+        queryKey: [queryKeyBudget],
         queryFn: () => {
             return getAllBudgets(cookies.token)
         },
@@ -49,7 +49,7 @@ export default function BudgetsDisplay() {
                 <TableRow>
                     <TableHead className="">Budget Category</TableHead>
                     <TableHead className="text-right">Actual</TableHead>
-                    <TableHead className="text-right">Budgeted</TableHead>
+                    <TableHead className="text-right">Planned</TableHead>
                     <TableHead className="text-right">Difference</TableHead>
                 </TableRow>
             </TableHeader>
