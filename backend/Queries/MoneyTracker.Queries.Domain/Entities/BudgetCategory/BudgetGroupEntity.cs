@@ -5,12 +5,13 @@ public class BudgetGroupEntity
 {
     private IList<BudgetCategoryEntity> _categories;
 
-    public BudgetGroupEntity(string name) : this(name, 0, 0, 0, [])
+    public BudgetGroupEntity(int id, string name) : this(id, name, 0, 0, 0, [])
     {
     }
 
-    public BudgetGroupEntity(string name, decimal planned, decimal actual, decimal difference, IList<BudgetCategoryEntity> categories)
+    public BudgetGroupEntity(int id, string name, decimal planned, decimal actual, decimal difference, IList<BudgetCategoryEntity> categories)
     {
+        Id = id;
         Name = name;
         Planned = planned;
         Actual = actual;
@@ -18,14 +19,7 @@ public class BudgetGroupEntity
         _categories = categories;
     }
 
-    public void AddBudgetCategory(BudgetCategoryEntity newBudgetCategory)
-    {
-        _categories.Add(newBudgetCategory);
-        Planned += newBudgetCategory.Planned;
-        Actual += newBudgetCategory.Actual;
-        Difference += newBudgetCategory.Difference;
-    }
-
+    public int Id { get; private set; }
     public string Name { get; private set; }
     public IList<BudgetCategoryEntity> Categories
     {
@@ -36,6 +30,13 @@ public class BudgetGroupEntity
     public decimal Planned { get; private set; }
     public decimal Actual { get; private set; }
     public decimal Difference { get; private set; }
+    public void AddBudgetCategory(BudgetCategoryEntity newBudgetCategory)
+    {
+        _categories.Add(newBudgetCategory);
+        Planned += newBudgetCategory.Planned;
+        Actual += newBudgetCategory.Actual;
+        Difference += newBudgetCategory.Difference;
+    }
 
     public override bool Equals(object? obj)
     {

@@ -63,7 +63,7 @@ public class BudgetRepository : IBudgetRepository
             var budgetId = row.Field<int>("id");
             if (!res.TryGetValue(budgetId, out BudgetGroupEntity? group))
             {
-                group = new BudgetGroupEntity(row.Field<string>("name")!);
+                group = new BudgetGroupEntity(budgetId, row.Field<string>("name")!);
                 res.Add(budgetId, group);
             }
 

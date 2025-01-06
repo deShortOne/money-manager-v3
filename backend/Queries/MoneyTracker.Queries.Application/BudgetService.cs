@@ -42,6 +42,7 @@ public class BudgetService : IBudgetService
             }
 
             res.Add(new BudgetGroupResponse(
+                bill.Id,
                 bill.Name,
                 bill.Planned,
                 bill.Actual,
