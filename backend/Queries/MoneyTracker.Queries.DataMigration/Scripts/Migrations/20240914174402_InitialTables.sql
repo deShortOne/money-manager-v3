@@ -45,7 +45,7 @@ CREATE TABLE public.category (
 
 CREATE TABLE public.register (
     id serial PRIMARY KEY,
-    payee character varying(50) NOT NULL,
+    payee integer NOT NULL,
     amount numeric NOT NULL,
     datepaid date NOT NULL,
     category_id integer NOT NULL,
@@ -103,6 +103,9 @@ ALTER TABLE ONLY public.register
 				REFERENCES public.category(id),
 	ADD	CONSTRAINT fk_account
 			FOREIGN KEY (account_id)
+				REFERENCES public.account(id),
+	ADD	CONSTRAINT fk_payee
+			FOREIGN KEY (payee)
 				REFERENCES public.account(id);
 
 ALTER TABLE ONLY public.user_id_to_token

@@ -1,4 +1,4 @@
-
+﻿
 using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Authentication.Entities;
 using MoneyTracker.Commands.Domain.Entities.Transaction;
@@ -12,10 +12,10 @@ public sealed class AddRegisterTest : RegisterTestHelper
     private readonly int _userId = 52;
     private readonly AuthenticatedUser _authedUser;
     private readonly string _tokenToDecode = "tokenToDecode";
-    
+
     private readonly int _lastTransactionId = 2;
     private readonly int _newTransactionId = 1;
-    private readonly string _payee = "Specsavers";
+    private readonly int _payee = 87;
     private readonly decimal _amount = 25;
     private readonly DateOnly _datePaid = new DateOnly(2024, 12, 8);
     private readonly int _categoryId = 2;
@@ -32,9 +32,9 @@ public sealed class AddRegisterTest : RegisterTestHelper
         var mockDateTime = new Mock<IDateTimeProvider>();
         mockDateTime.Setup(x => x.Now).Returns(new DateTime(2024, 6, 6, 10, 0, 0));
         _mockUserRepository.Setup(x => x.GetUserAuthFromToken(_tokenToDecode))
-            .Returns(Task.FromResult(new UserAuthentication(new UserEntity(_userId, "", ""), _tokenToDecode, 
+            .Returns(Task.FromResult(new UserAuthentication(new UserEntity(_userId, "", ""), _tokenToDecode,
             new DateTime(2024, 6, 6, 10, 0, 0), mockDateTime.Object)));
-            
+
         _mockRegisterDatabase.Setup(x => x.GetLastTransactionId()).Returns(Task.FromResult(_lastTransactionId));
         _mockIdGenerator.Setup(x => x.NewInt(_lastTransactionId)).Returns(_newTransactionId);
         _mockAccountDatabase.Setup(x => x.IsAccountOwnedByUser(_authedUser, _accountId)).Returns(Task.FromResult(true));

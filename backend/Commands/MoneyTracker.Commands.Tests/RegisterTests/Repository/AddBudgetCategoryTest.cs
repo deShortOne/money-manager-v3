@@ -12,7 +12,7 @@ public sealed class AddBudgetCategoryTest : RegisterRespositoryTestHelper
         Migration.CheckMigration(_postgres.GetConnectionString(), new MigrationOption(true));
 
         var id = 200;
-        var payee = "Steve";
+        var payee = 3;
         var amount = 269.24m;
         var datePaid = new DateOnly(2024, 12, 1);
         var categoryId = 2;

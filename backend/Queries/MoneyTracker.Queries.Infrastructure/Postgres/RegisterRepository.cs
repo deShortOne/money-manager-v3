@@ -20,17 +20,19 @@ public class RegisterRepository : IRegisterRepository
     {
         var query = """
             SELECT register.id,
-                   payee,
+                   accPayee.name payee,
                    amount,
                    datePaid,
                    c.name category_name,
-                   account.name account_name
+                   accAcc.name account_name
             FROM register
             INNER JOIN category c
                 ON register.category_id = c.id
-            INNER JOIN account
-            	ON account.id = register.account_id 
-            WHERE account.users_id = @user_id
+            INNER JOIN account accAcc
+            	ON accAcc.id = register.account_id
+            INNER JOIN account accPayee
+                ON accPayee.id = register.payee
+            WHERE accAcc.users_id = @user_id
             ORDER BY datePaid DESC,
                	c.id ASC;
             """;

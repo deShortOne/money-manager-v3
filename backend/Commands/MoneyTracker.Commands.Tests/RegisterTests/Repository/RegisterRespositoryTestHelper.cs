@@ -49,7 +49,7 @@ public class RegisterRespositoryTestHelper : IAsyncLifetime
         while (reader.Read())
         {
             results.Add(new TransactionEntity(id: reader.GetInt32("id"),
-                payee: reader.GetString("payee"),
+                payee: reader.GetInt32("payee"),
                 amount: reader.GetDecimal("amount"),
                 datePaid: DateOnly.FromDateTime(reader.GetDateTime("datepaid")),
                 categoryId: reader.GetInt32("category_id"),
