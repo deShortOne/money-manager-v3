@@ -1,12 +1,12 @@
-import { queryKeyAccounts, queryKeyCategories } from "@/app/data/queryKeys";
+import { queryKeyAccounts, queryKeyCategories, queryKeyTransactions } from "@/app/data/queryKeys";
 import { TableCell, TableRow } from "@/components/ui/table";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
-import { editTransaction, getAllAccounts, getAllCategories } from "./action";
+import { deleteTransaction, editTransaction, getAllAccounts, getAllCategories } from "./action";
 import { useCookies } from "react-cookie";
 import { useRegisterModalSetting } from "../hooks/useEditRegisterForm";
 import { Result } from "@/types/result";
-import { Pencil } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface prop {
@@ -17,6 +17,8 @@ export default function RegisterTableRow({ transaction }: prop) {
     const [cookies] = useCookies(['token']);
     const onOpen = useRegisterModalSetting(state => state.onOpen);
     const [msg, setMsg] = useState("");
+
+    const queryClient = useQueryClient();
 
     const [accounts, setAccounts] = useState<Account[]>([]);
     const { data: dataAccounts } = useQuery<Result<Account[]>>({
@@ -82,6 +84,16 @@ export default function RegisterTableRow({ transaction }: prop) {
             });
     }
 
+    async function deleteRegisterFunc() {
+        const deleteBillResult = await deleteTransaction(cookies.token, transaction.id);
+
+        if (deleteBillResult.hasError) {
+            setMsg(deleteBillResult.errorMessage);
+            return;
+        }
+        queryClient.invalidateQueries({ queryKey: [queryKeyTransactions] })
+    }
+
     return (
         <TableRow key={transaction.id}>
             <TableCell className="font-medium">{transaction.id}</TableCell>
@@ -92,6 +104,9 @@ export default function RegisterTableRow({ transaction }: prop) {
                 {msg}
                 <Button onClick={() => editTransactionForm()}>
                     <Pencil />
+                </Button>
+                <Button onClick={() => deleteRegisterFunc()}>
+                    <Trash2 />
                 </Button>
             </TableCell>
         </TableRow>

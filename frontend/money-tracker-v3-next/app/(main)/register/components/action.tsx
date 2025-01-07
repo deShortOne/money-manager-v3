@@ -100,3 +100,22 @@ export async function editTransaction(authToken: string, transaction: UpdateTran
     console.log("error returned editing transaction");
     return JSON.parse(JSON.stringify(new ErrorResult("Cannot edit transaction", false)));
 }
+
+export async function deleteTransaction(authToken: string, transactionId: number): Promise<Result<Transaction>> {
+    const response = await fetch(`http://localhost:1234/Register/delete`, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + authToken,
+        },
+        body: JSON.stringify({
+            id: transactionId,
+        }),
+    });
+    if (response.ok) {
+        return JSON.parse(JSON.stringify(new SuccessResult(await response.text())));
+    }
+
+    console.log("error returned delete transaction");
+    return JSON.parse(JSON.stringify(new ErrorResult("Error deleting transaction", false)));
+}
