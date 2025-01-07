@@ -7,7 +7,7 @@ namespace MoneyTracker.Commands.Tests.RegisterTests.Repository;
 public sealed class EditRegisterTest : RegisterRespositoryTestHelper
 {
     private readonly int _id = 1;
-    private readonly string _payee = "Sherlock";
+    private readonly int _payee = 7;
     private readonly decimal _amount = 90;
     private readonly DateOnly _datePaid = new DateOnly(2025, 5, 25);
     private readonly int _categoryId = 1;
@@ -35,8 +35,8 @@ public sealed class EditRegisterTest : RegisterRespositoryTestHelper
         await commandAddBaseBillData.ExecuteNonQueryAsync();
     }
 
-    public static TheoryData<string, int?, DateOnly?, int?, int?> OnlyOneItemNotNull = new() {
-        { "", null, null, null, null },
+    public static TheoryData<int?, int?, DateOnly?, int?, int?> OnlyOneItemNotNull = new() {
+        { 5, null, null, null, null },
         { null, 500, null, null, null },
         { null, null, new DateOnly(2023, 2, 1), null, null },
         { null, null, null, 3, null },
@@ -44,7 +44,7 @@ public sealed class EditRegisterTest : RegisterRespositoryTestHelper
     };
 
     [Theory, MemberData(nameof(OnlyOneItemNotNull))]
-    public async void EditBaseBillItemInDatabase(string payee, int? amount, DateOnly? datePaid, int? categoryId, int? accountId)
+    public async void EditBaseBillItemInDatabase(int? payee, int? amount, DateOnly? datePaid, int? categoryId, int? accountId)
     {
         await SetupDb();
 

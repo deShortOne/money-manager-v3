@@ -4,6 +4,9 @@ using MoneyTracker.Common.Utilities.DateTimeUtil;
 namespace MoneyTracker.Common.Utilities.CalculationUtil.Frequencies;
 internal class Monthly : IFrequency
 {
+    private string _name = "Monthly";
+
+    public string GetName() => _name;
     public DateOnly CalculateNextDueDate(int monthDay, DateOnly currNextDueDate)
     {
         var tmpNextDueDate = currNextDueDate.AddMonths(1);
@@ -30,7 +33,7 @@ internal class Monthly : IFrequency
         return new OverDueBillInfo(numberOfDaysOverdue, GetOverDueDatesLis(nextDueDate, today, monthDay));
     }
 
-    public bool MatchCommand(string frequency) => frequency == "Monthly";
+    public bool MatchCommand(string frequency) => frequency == _name;
 
     public static DateOnly[] GetOverDueDatesLis(DateOnly date1, DateOnly date2, int monthDay)
     {

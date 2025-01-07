@@ -1,4 +1,5 @@
-﻿using MoneyTracker.Authentication.Interfaces;
+﻿using MoneyTracker.Authentication.DTOs;
+using MoneyTracker.Authentication.Interfaces;
 using MoneyTracker.Contracts.Responses.Transaction;
 using MoneyTracker.Queries.Domain.Handlers;
 using MoneyTracker.Queries.Domain.Repositories;
@@ -7,18 +8,23 @@ namespace MoneyTracker.Queries.Application;
 public class RegisterService : IRegisterService
 {
     private readonly IRegisterRepository _dbService;
-    private readonly IUserAuthenticationService _userAuthService;
+    private readonly IUserRepository _userRepository;
 
     public RegisterService(IRegisterRepository dbService,
-        IUserAuthenticationService userAuthService)
+        IUserRepository userRepository)
     {
         _dbService = dbService;
-        _userAuthService = userAuthService;
+        _userRepository = userRepository;
     }
 
     public async Task<List<TransactionResponse>> GetAllTransactions(string token)
     {
-        var user = await _userAuthService.DecodeToken(token);
+        var userAuth = await _userRepository.GetUserAuthFromToken(token);
+        if (userAuth == null)
+            throw new InvalidDataException("Token not found");
+        userAuth.ThrowIfInvalid();
+
+        var user = new AuthenticatedUser(userAuth.User.Id);
         var dtoFromDb = await _dbService.GetAllTransactions(user);
         List<TransactionResponse> res = [];
         foreach (var transaction in dtoFromDb)

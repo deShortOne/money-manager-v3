@@ -1,4 +1,4 @@
-﻿using MoneyTracker.Authentication.Interfaces;
+﻿using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Commands.Domain.Entities.Transaction;
 using MoneyTracker.Commands.Domain.Handlers;
 using MoneyTracker.Commands.Domain.Repositories;
@@ -9,24 +9,29 @@ namespace MoneyTracker.Commands.Application;
 public class RegisterService : IRegisterService
 {
     private readonly IRegisterCommandRepository _dbService;
-    private readonly IUserAuthenticationService _userAuthService;
     private readonly IAccountCommandRepository _accountDb;
     private readonly IIdGenerator _idGenerator;
+    private readonly IUserCommandRepository _userRepository;
 
     public RegisterService(IRegisterCommandRepository dbService,
-        IUserAuthenticationService userAuthService,
         IAccountCommandRepository accountDb,
-        IIdGenerator idGenerator)
+        IIdGenerator idGenerator,
+        IUserCommandRepository userRepository)
     {
         _dbService = dbService;
-        _userAuthService = userAuthService;
         _accountDb = accountDb;
         _idGenerator = idGenerator;
+        _userRepository = userRepository;
     }
 
     public async Task AddTransaction(string token, NewTransactionRequest newTransaction)
     {
-        var user = await _userAuthService.DecodeToken(token);
+        var userAuth = await _userRepository.GetUserAuthFromToken(token);
+        if (userAuth == null)
+            throw new InvalidDataException("Token not found");
+        userAuth.ThrowIfInvalid();
+        
+        var user = new AuthenticatedUser(userAuth.User.Id);
         if (!await _accountDb.IsAccountOwnedByUser(user, newTransaction.AccountId))
         {
             throw new InvalidDataException("Account not found");
@@ -45,7 +50,12 @@ public class RegisterService : IRegisterService
 
     public async Task EditTransaction(string token, EditTransactionRequest editTransaction)
     {
-        var user = await _userAuthService.DecodeToken(token);
+        var userAuth = await _userRepository.GetUserAuthFromToken(token);
+        if (userAuth == null)
+            throw new InvalidDataException("Token not found");
+        userAuth.ThrowIfInvalid();
+        
+        var user = new AuthenticatedUser(userAuth.User.Id);
         if (!await _dbService.IsTransactionOwnedByUser(user, editTransaction.Id))
         {
             throw new InvalidDataException("Transaction not found");
@@ -63,7 +73,12 @@ public class RegisterService : IRegisterService
 
     public async Task DeleteTransaction(string token, DeleteTransactionRequest deleteTransaction)
     {
-        var user = await _userAuthService.DecodeToken(token);
+        var userAuth = await _userRepository.GetUserAuthFromToken(token);
+        if (userAuth == null)
+            throw new InvalidDataException("Token not found");
+        userAuth.ThrowIfInvalid();
+        
+        var user = new AuthenticatedUser(userAuth.User.Id);
         if (!await _dbService.IsTransactionOwnedByUser(user, deleteTransaction.Id))
         {
             throw new InvalidDataException("Transaction not found");

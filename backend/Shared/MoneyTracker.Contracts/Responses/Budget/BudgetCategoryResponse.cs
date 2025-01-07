@@ -24,13 +24,14 @@ public class BudgetCategoryResponse
             return false;
         }
 
-        return Name == other.Name && Planned == other.Planned &&
-            Actual == other.Actual && Difference == other.Difference;
+        return Name == other.Name
+            && Planned == other.Planned
+            && Actual == other.Actual
+            && Difference == other.Difference;
     }
 
     public override int GetHashCode()
     {
-        return (from c in Name
-                select (int)c).Sum();
+        return HashCode.Combine(Name, Planned, Actual, Difference);
     }
 }

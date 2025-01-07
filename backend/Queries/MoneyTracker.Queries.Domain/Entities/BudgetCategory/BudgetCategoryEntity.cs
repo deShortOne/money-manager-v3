@@ -15,8 +15,10 @@ public class BudgetCategoryEntity(string name, decimal planned, decimal actual, 
             return false;
         }
 
-        return Name == other.Name && Planned == other.Planned &&
-            Actual == other.Actual && Difference == other.Difference;
+        return Name == other.Name
+            && Planned == other.Planned
+            && Actual == other.Actual
+            && Difference == other.Difference;
     }
 
     public override int GetHashCode()

@@ -1,6 +1,5 @@
-﻿using MoneyTracker.Authentication.Interfaces;
+﻿using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Common.Utilities.CalculationUtil;
-using MoneyTracker.Common.Utilities.DateTimeUtil;
 using MoneyTracker.Contracts.Responses.Bill;
 using MoneyTracker.Queries.Domain.Entities.Bill;
 using MoneyTracker.Queries.Domain.Handlers;
@@ -10,22 +9,32 @@ namespace MoneyTracker.Queries.Application;
 public class BillService : IBillService
 {
     private readonly IBillRepository _dbService;
-    private readonly IUserAuthenticationService _userAuthService;
     private readonly IFrequencyCalculation _frequencyCalculation;
+    private readonly IUserRepository _userRepository;
 
     public BillService(IBillRepository dbService,
-        IUserAuthenticationService userAuthService,
-        IFrequencyCalculation frequencyCalculation)
+        IFrequencyCalculation frequencyCalculation,
+        IUserRepository userRepository)
     {
         _dbService = dbService;
-        _userAuthService = userAuthService;
         _frequencyCalculation = frequencyCalculation;
+        _userRepository = userRepository;
     }
 
     public async Task<List<BillResponse>> GetAllBills(string token)
     {
-        var user = await _userAuthService.DecodeToken(token);
+        var userAuth = await _userRepository.GetUserAuthFromToken(token);
+        if (userAuth == null)
+            throw new InvalidDataException("Token not found");
+        userAuth.ThrowIfInvalid();
+
+        var user = new AuthenticatedUser(userAuth.User.Id);
         return ConvertFromRepoDTOToDTO(await _dbService.GetAllBills(user));
+    }
+
+    public Task<List<string>> GetAllFrequencyNames()
+    {
+        return Task.FromResult(_frequencyCalculation.GetFrequencyNames());
     }
 
     private List<BillResponse> ConvertFromRepoDTOToDTO(List<BillEntity> billRepoDTO)
@@ -42,7 +51,7 @@ public class BillService : IBillService
                bill.CategoryName,
                _frequencyCalculation.CalculateOverDueBillInfo(bill.MonthDay, bill.Frequency,
                    bill.NextDueDate),
-               bill.AccountName
+               bill.Payer
            ));
         }
 

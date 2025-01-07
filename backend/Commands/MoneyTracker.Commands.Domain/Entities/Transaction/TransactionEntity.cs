@@ -1,9 +1,9 @@
 ﻿
 namespace MoneyTracker.Commands.Domain.Entities.Transaction;
-public class TransactionEntity(int id, string payee, decimal amount, DateOnly datePaid, int categoryId, int accountId)
+public class TransactionEntity(int id, int payee, decimal amount, DateOnly datePaid, int categoryId, int accountId)
 {
     public int Id { get; } = id;
-    public string Payee { get; } = payee;
+    public int Payee { get; } = payee;
     public decimal Amount { get; } = amount;
     public DateOnly DatePaid { get; } = datePaid;
     public int CategoryId { get; } = categoryId;

@@ -19,13 +19,13 @@ public class BillRepository : IBillRepository
     {
         string query = """
             SELECT b.id,
-               	payee,
+               	all_accounts.name as payee,
                	amount,
                	nextduedate,
                	frequency,
                	c.name,
                 b.monthday,
-                account.name account_name
+                account_owned_by_user.name account_name
             FROM bill b
             INNER JOIN category c
                	ON b.category_id = c.id
@@ -35,8 +35,10 @@ public class BillRepository : IBillRepository
             	INNER JOIN users u
             		ON a.users_id = u.id 
             	WHERE u.id = @user_id
-            ) account
-            	ON b.account_id = account.id
+            ) account_owned_by_user
+            	ON b.account_id = account_owned_by_user.id
+            INNER JOIN account all_accounts
+                ON payee = all_accounts.id
             ORDER BY nextduedate ASC;
             """;
         var queryParams = new List<DbParameter>()
@@ -47,17 +49,17 @@ public class BillRepository : IBillRepository
         using var reader = await _database.GetTable(query, queryParams);
 
         List<BillEntity> res = [];
-        while (await reader.ReadAsync())
+        foreach (DataRow row in reader.Rows)
         {
             res.Add(new BillEntity(
-                reader.GetInt32("id"),
-                reader.GetString("payee"),
-                reader.GetDecimal("amount"),
-                DateOnly.FromDateTime(reader.GetDateTime("nextduedate")),
-                reader.GetInt32("monthday"),
-                reader.GetString("frequency"),
-                reader.GetString("name"),
-                reader.GetString("account_name")
+                row.Field<int>("id"),
+                row.Field<string>("payee")!,
+                row.Field<decimal>("amount"),
+                DateOnly.FromDateTime(row.Field<DateTime>("nextduedate")),
+                row.Field<int>("monthday"),
+                row.Field<string>("frequency")!,
+                row.Field<string>("name")!,
+                row.Field<string>("account_name")!
             ));
         }
 

@@ -58,21 +58,21 @@ public class BudgetRepository : IBudgetRepository
         using var reader = await _database.GetTable(query, queryParams);
 
         Dictionary<int, BudgetGroupEntity> res = [];
-        while (await reader.ReadAsync())
+        foreach (DataRow row in reader.Rows)
         {
-            var budgetId = reader.GetInt32("id");
+            var budgetId = row.Field<int>("id");
             if (!res.TryGetValue(budgetId, out BudgetGroupEntity? group))
             {
-                group = new BudgetGroupEntity(reader.GetString("name"));
+                group = new BudgetGroupEntity(budgetId, row.Field<string>("name")!);
                 res.Add(budgetId, group);
             }
 
-            if (!reader.IsDBNull("category_name"))
+            if (row.Field<string>("category_name") != null)
             {
-                decimal planned = reader.GetDecimal("planned");
-                decimal actual = reader.GetDecimal("actual");
+                decimal planned = row.Field<decimal>("planned");
+                decimal actual = row.Field<decimal>("actual");
                 res[budgetId].AddBudgetCategory(new BudgetCategoryEntity(
-                    reader.GetString("category_name"),
+                    row.Field<string>("category_name")!,
                     planned,
                     actual,
                     planned - actual)

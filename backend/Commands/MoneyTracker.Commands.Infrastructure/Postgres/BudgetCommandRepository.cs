@@ -37,6 +37,7 @@ public class BudgetCommandRepository : IBudgetCommandRepository
         var queryParams = new List<DbParameter>()
         {
             new NpgsqlParameter("id", editBudgetCateogry.BudgetCategoryId),
+            new NpgsqlParameter("user_id", editBudgetCateogry.UserId),
         };
         if (editBudgetCateogry.BudgetCategoryPlanned != null)
         {
@@ -52,7 +53,8 @@ public class BudgetCommandRepository : IBudgetCommandRepository
         var query = $"""
             UPDATE budgetcategory
             SET {string.Join(",", setParamsLis)}
-            WHERE category_id = @id;
+            WHERE category_id = @id
+                AND users_id = @user_id;
             """;
         var reader = await _database.UpdateTable(query, queryParams);
         if (reader != 1)
@@ -65,11 +67,13 @@ public class BudgetCommandRepository : IBudgetCommandRepository
     {
         var query = """
             DELETE FROM budgetcategory
-            WHERE category_id = @id;
+            WHERE category_id = @id
+                AND users_id = @user_id;
             """;
         var queryParams = new List<DbParameter>()
         {
             new NpgsqlParameter("id", deleteBudgetCategory.BudgetCategoryId),
+            new NpgsqlParameter("user_id", deleteBudgetCategory.UserId),
         };
         await _database.UpdateTable(query, queryParams);
     }

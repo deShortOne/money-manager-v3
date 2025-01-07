@@ -1,9 +1,9 @@
 ﻿
 namespace MoneyTracker.Commands.Domain.Entities.Bill;
-public class EditBillEntity(int id, string? payee = null, decimal? amount = null, DateOnly? nextDueDate = null, int? monthDay = null, string? frequency = null, int? category = null, int? accountId = null)
+public class EditBillEntity(int id, int? payee = null, decimal? amount = null, DateOnly? nextDueDate = null, int? monthDay = null, string? frequency = null, int? category = null, int? accountId = null)
 {
     public int Id { get; } = id;
-    public string? Payee { get; } = payee;
+    public int? Payee { get; } = payee;
     public decimal? Amount { get; } = amount;
     public DateOnly? NextDueDate { get; } = nextDueDate;
     public int? MonthDay { get; } = monthDay;

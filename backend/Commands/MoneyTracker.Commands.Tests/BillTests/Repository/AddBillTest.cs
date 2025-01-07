@@ -17,7 +17,7 @@ public sealed class AddBillTest : BillRespositoryTestHelper
         await commandDeleteAllBillData.ExecuteNonQueryAsync();
 
         var id = 456;
-        var payee = "DD";
+        var payee = 6;
         var amount = 7;
         var nextDueDate = new DateOnly(2024, 10, 23);
         var frequency = "frequency";

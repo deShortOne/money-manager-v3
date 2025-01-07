@@ -7,18 +7,18 @@ namespace MoneyTracker.Queries.Tests.RegisterTests.Service;
 public class RegisterTestHelper
 {
     public readonly Mock<IRegisterRepository> _mockRegisterDatabase = new();
-    public readonly Mock<IUserAuthenticationService> _mockUserAuthService = new();
+    public readonly Mock<IUserRepository> _mockUserRepository = new();
 
     public readonly RegisterService _budgetService;
 
     public RegisterTestHelper()
     {
-        _budgetService = new RegisterService(_mockRegisterDatabase.Object, _mockUserAuthService.Object);
+        _budgetService = new RegisterService(_mockRegisterDatabase.Object, _mockUserRepository.Object);
     }
 
     public void EnsureAllMocksHadNoOtherCalls()
     {
         _mockRegisterDatabase.VerifyNoOtherCalls();
-        _mockUserAuthService.VerifyNoOtherCalls();
+        _mockUserRepository.VerifyNoOtherCalls();
     }
 }

@@ -1,5 +1,8 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.OpenApi.Models;
 using MoneyTracker.Authentication;
+using MoneyTracker.Authentication.Authentication;
+using MoneyTracker.Authentication.Interfaces;
 using MoneyTracker.Common.Interfaces;
 using MoneyTracker.Common.Utilities.CalculationUtil;
 using MoneyTracker.Common.Utilities.DateTimeUtil;
@@ -20,7 +23,33 @@ internal class Program
         builder.Services.AddControllers();
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
+        builder.Services.AddSwaggerGen(config => {
+            config.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            {
+                Name = "Authorization",
+                In = ParameterLocation.Header,
+                Type = SecuritySchemeType.ApiKey,
+                Scheme = "Bearer"
+            });
+            config.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        }
+                    },
+                    Array.Empty<string>()
+                }
+            });
+            config.MapType<DateOnly>(() => new OpenApiSchema { 
+                Type = "string",
+                Format = "date"
+            });
+        });
 
         var database = new PostgresDatabase(builder.Configuration["Database:Paelagus_RO"]!);
 
@@ -28,7 +57,10 @@ internal class Program
 
         builder.Services
             .AddHttpContextAccessor()
-            .AddSingleton<IDatabase>(_ => database);
+            .AddSingleton<IDatabase>(_ => database)
+            .AddSingleton<IUserService, UserService>()
+            .AddSingleton<IUserRepository, UserRepository>()
+            .AddSingleton<IAuthenticationService, AuthenticationService>();
 
         builder.Services
             .AddSingleton<IAccountService, AccountService>()

@@ -1,16 +1,18 @@
 ﻿using System.Collections.ObjectModel;
+using System.Net.Sockets;
 
 namespace MoneyTracker.Contracts.Responses.Budget;
 public class BudgetGroupResponse
 {
     private IList<BudgetCategoryResponse> _categories;
 
-    public BudgetGroupResponse(string name) : this(name, 0, 0, 0, [])
+    public BudgetGroupResponse(int id, string name) : this(id, name, 0, 0, 0, [])
     {
     }
 
-    public BudgetGroupResponse(string name, decimal planned, decimal actual, decimal difference, IList<BudgetCategoryResponse> categories)
+    public BudgetGroupResponse(int id, string name, decimal planned, decimal actual, decimal difference, IList<BudgetCategoryResponse> categories)
     {
+        Id = id;
         Name = name;
         Planned = planned;
         Actual = actual;
@@ -18,14 +20,7 @@ public class BudgetGroupResponse
         _categories = categories;
     }
 
-    public void AddBudgetCategoryDTO(BudgetCategoryResponse newBudgetCategory)
-    {
-        _categories.Add(newBudgetCategory);
-        Planned += newBudgetCategory.Planned;
-        Actual += newBudgetCategory.Actual;
-        Difference += newBudgetCategory.Difference;
-    }
-
+    public int Id { get; private set; }
     public string Name { get; private set; }
     public IList<BudgetCategoryResponse> Categories
     {
@@ -37,6 +32,14 @@ public class BudgetGroupResponse
     public decimal Actual { get; private set; }
     public decimal Difference { get; private set; }
 
+    public void AddBudgetCategoryDTO(BudgetCategoryResponse newBudgetCategory)
+    {
+        _categories.Add(newBudgetCategory);
+        Planned += newBudgetCategory.Planned;
+        Actual += newBudgetCategory.Actual;
+        Difference += newBudgetCategory.Difference;
+    }
+
     public override bool Equals(object? obj)
     {
         var other = obj as BudgetGroupResponse;
@@ -46,14 +49,16 @@ public class BudgetGroupResponse
             return false;
         }
 
-        return Name == other.Name && Planned == other.Planned &&
-            Actual == other.Actual && Difference == other.Difference &&
-            _categories.SequenceEqual(other._categories);
+        return Id == other.Id
+            && Name == other.Name
+            && Planned == other.Planned
+            && Actual == other.Actual
+            && Difference == other.Difference
+            && Categories.SequenceEqual(other.Categories);
     }
 
     public override int GetHashCode()
     {
-        return (from c in Name
-                select (int)c).Sum();
+        return HashCode.Combine(Id, Name, Planned, Actual, Difference, Categories);
     }
 }

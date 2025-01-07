@@ -1,16 +1,16 @@
 ﻿
 namespace MoneyTracker.Commands.Domain.Entities.Bill;
-public class BillEntity(int id, string payee, decimal amount, DateOnly nextDueDate, int monthDay,
-    string frequency, int categoryId, int accountId)
+public class BillEntity(int id, int payee, decimal amount, DateOnly nextDueDate, int monthDay,
+    string frequency, int categoryId, int payer)
 {
     public int Id { get; } = id;
-    public string Payee { get; } = payee;
+    public int Payee { get; } = payee;
     public decimal Amount { get; } = amount;
     public DateOnly NextDueDate { get; } = nextDueDate;
     public int MonthDay { get; } = monthDay;
     public string Frequency { get; } = frequency;
     public int CategoryId { get; } = categoryId;
-    public int AccountId { get; } = accountId;
+    public int Payer { get; } = payer;
 
     public override bool Equals(object? obj)
     {
@@ -24,7 +24,7 @@ public class BillEntity(int id, string payee, decimal amount, DateOnly nextDueDa
         return Id == other.Id && Payee == other.Payee && Amount == other.Amount &&
             NextDueDate == other.NextDueDate && Frequency == other.Frequency &&
             CategoryId == other.CategoryId && MonthDay == other.MonthDay &&
-            AccountId == other.AccountId;
+            Payer == other.Payer;
     }
 
     public override int GetHashCode()

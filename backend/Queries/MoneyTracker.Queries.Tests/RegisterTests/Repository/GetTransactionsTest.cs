@@ -1,4 +1,4 @@
-using MoneyTracker.Authentication.DTOs;
+﻿using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Queries.DatabaseMigration;
 using MoneyTracker.Queries.DatabaseMigration.Models;
 using MoneyTracker.Queries.Domain.Entities.Transaction;
@@ -55,7 +55,7 @@ public sealed class GetTransactionsTest : IAsyncLifetime
     [Fact]
     public async void FirstLoadCheckTablesThatDataAreThereForUserId2()
     {
-       var db = new PostgresDatabase(_postgres.GetConnectionString());
+        var db = new PostgresDatabase(_postgres.GetConnectionString());
         var registerDb = new RegisterRepository(db);
 
         var actual = await registerDb.GetAllTransactions(new AuthenticatedUser(2));

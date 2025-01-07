@@ -27,9 +27,9 @@ public class CategoryRepository : ICategoryRepository
         using var reader = await _database.GetTable(queryGetAllCategories);
 
         var res = new List<CategoryEntity>();
-        while (await reader.ReadAsync())
+        foreach (DataRow row in reader.Rows)
         {
-            res.Add(new CategoryEntity(reader.GetInt32("id"), reader.GetString("name")));
+            res.Add(new CategoryEntity(row.Field<int>("id"), row.Field<string>("name")!));
         }
         return res;
     }
