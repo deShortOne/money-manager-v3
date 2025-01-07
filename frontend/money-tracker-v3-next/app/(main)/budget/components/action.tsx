@@ -47,6 +47,26 @@ export async function addNewBudgetCategory(authToken: string, budgetCategory: Up
     if (response.ok) {
         return JSON.parse(JSON.stringify(new SuccessResult(await response.text())));
     }
-    console.log("error returned login user");
-    return JSON.parse(JSON.stringify(new ErrorResult("Username and password not found", false)));
+    console.log("error returned adding new budget category");
+    return JSON.parse(JSON.stringify(new ErrorResult("error returned adding new budget category", false)));
+}
+
+export async function editBudgetCategory(authToken: string, budgetCategory: UpdateBudgetCategory): Promise<Result<BudgetGroup[]>> {
+    const response = await fetch(`http://localhost:1234/Budget/edit`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + authToken,
+        },
+        body: JSON.stringify({
+            "budgetGroupId": budgetCategory.budgetGroupId,
+            "budgetCategoryId": budgetCategory.categoryId,
+            "budgetCategoryPlanned": budgetCategory.planned,
+        }),
+    });
+    if (response.ok) {
+        return JSON.parse(JSON.stringify(new SuccessResult(await response.text())));
+    }
+    console.log("error returned editing budget category");
+    return JSON.parse(JSON.stringify(new ErrorResult("Error returned editing budget category", false)));
 }

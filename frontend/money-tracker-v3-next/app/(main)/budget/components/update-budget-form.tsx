@@ -199,6 +199,7 @@ export function UpdateBudgetForm() {
                                         <Select
                                             onValueChange={field.onChange}
                                             value={field.value?.toString()}
+                                            disabled={defaultValues.categoryId != undefined}
                                         >
                                             <FormControl>
                                                 <SelectTrigger>

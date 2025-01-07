@@ -15,6 +15,7 @@ import { Result } from "@/types/result";
 import { Button } from "@/components/ui/button";
 import React from "react";
 import { queryKeyBudget } from "@/app/data/queryKeys";
+import BudgetTableCategoryRow from "./budget-table-row";
 
 export default function BudgetsDisplay() {
     const [expandedBudgetCategory, setExpandedBudgetCategory] = useState<string[]>([])
@@ -27,7 +28,7 @@ export default function BudgetsDisplay() {
     }
 
     const [cookies] = useCookies(['token']);
-    const [transactions, setTransactions] = useState<BudgetGroup[]>([]);
+    const [budgetGroups, setBudgetGroups] = useState<BudgetGroup[]>([]);
     const { status, data, error, isFetching } = useQuery<Result<BudgetGroup[]>>({
         queryKey: [queryKeyBudget],
         queryFn: () => {
@@ -39,7 +40,7 @@ export default function BudgetsDisplay() {
 
         } else {
             setExpandedBudgetCategory(data.item.map(i => i.name))
-            setTransactions(data.item)
+            setBudgetGroups(data.item)
         }
     }, [data]);
 
@@ -48,36 +49,34 @@ export default function BudgetsDisplay() {
             <TableHeader>
                 <TableRow>
                     <TableHead className="">Budget Category</TableHead>
-                    <TableHead className="text-right">Actual</TableHead>
                     <TableHead className="text-right">Planned</TableHead>
+                    <TableHead className="text-right">Actual</TableHead>
                     <TableHead className="text-right">Difference</TableHead>
+                    <TableHead></TableHead>{/* row actions */}
                 </TableRow>
             </TableHeader>
             <TableBody>
-                {transactions.map((transaction) => (
-                    <React.Fragment key={transaction.name}>
+                {budgetGroups.map((budgetGroup) => (
+                    <React.Fragment key={budgetGroup.name}>
                         <TableRow>
                             <TableCell>
-                                <Button variant="ghost" onClick={() => toggleRow(transaction.name)}>
-                                    {transaction.name}
+                                <Button variant="ghost" onClick={() => toggleRow(budgetGroup.name)}>
+                                    {budgetGroup.name}
                                 </Button>
                             </TableCell>
-                            <TableCell className="text-right">{transaction.actual}</TableCell>
-                            <TableCell className="text-right">{transaction.planned}</TableCell>
-                            <TableCell className="text-right">{transaction.difference}</TableCell>
+                            <TableCell className="text-right">{budgetGroup.planned}</TableCell>
+                            <TableCell className="text-right">{budgetGroup.actual}</TableCell>
+                            <TableCell className="text-right">{budgetGroup.difference}</TableCell>
                         </TableRow>
 
-                        {expandedBudgetCategory.includes(transaction.name) && (
+                        {expandedBudgetCategory.includes(budgetGroup.name) && (
                             <>
-                                {transaction.categories.map((category) => (
-                                    <TableRow key={category.name}>
-                                        <TableCell className="">
-                                            <span className="ml-8">{category.name}</span>
-                                        </TableCell>
-                                        <TableCell className="text-right">{category.actual}</TableCell>
-                                        <TableCell className="text-right">{category.planned}</TableCell>
-                                        <TableCell className="text-right">{category.difference}</TableCell>
-                                    </TableRow>
+                                {budgetGroup.categories.map((category) => (
+                                    <BudgetTableCategoryRow
+                                        budgetGroupId={budgetGroup.id}
+                                        budgetCategory={category}
+                                        key={category.name}
+                                    />
                                 ))}
                             </>
                         )}
