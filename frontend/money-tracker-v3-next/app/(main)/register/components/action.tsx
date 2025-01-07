@@ -72,3 +72,31 @@ export async function addNewTransactions(authToken: string, transaction: Newtran
     console.log("error returned adding new transaction");
     return JSON.parse(JSON.stringify(new ErrorResult("Cannot add new transaction", false)));
 }
+
+export async function editTransaction(authToken: string, transaction: UpdateTransaction): Promise<Result<Transaction[]>> {
+    const offset = transaction.datePaid.getTimezoneOffset()
+    transaction.datePaid = new Date(transaction.datePaid.getTime() - (offset * 60 * 1000))
+
+    const dateToPass: string = transaction.datePaid.toISOString().split('T')[0]
+
+    const response = await fetch(`http://localhost:1234/Register/edit`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + authToken,
+        },
+        body: JSON.stringify({
+            id: transaction.id,
+            payee: transaction.payee,
+            amount: transaction.amount,
+            datePaid: dateToPass,
+            category: transaction.category,
+            accountId: transaction.account,
+        }),
+    });
+    if (response.ok) {
+        return JSON.parse(JSON.stringify(new SuccessResult(await response.text())));
+    }
+    console.log("error returned editing transaction");
+    return JSON.parse(JSON.stringify(new ErrorResult("Cannot edit transaction", false)));
+}

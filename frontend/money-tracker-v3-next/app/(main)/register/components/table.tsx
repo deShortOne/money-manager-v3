@@ -13,6 +13,7 @@ import { useCookies } from "react-cookie";
 import { useQuery } from "@tanstack/react-query";
 import { Result } from "@/types/result";
 import { queryKeyTransactions } from "@/app/data/queryKeys";
+import RegisterTableRow from "./register-table-row";
 
 export default function TransactionsDisplay() {
     const [cookies] = useCookies(['token']);
@@ -42,16 +43,12 @@ export default function TransactionsDisplay() {
                     <TableHead>Date</TableHead>
                     <TableHead>Payee</TableHead>
                     <TableHead className="text-right">Payment</TableHead>
+                    <TableHead></TableHead>{/* row actions */}
                 </TableRow>
             </TableHeader>
             <TableBody>
                 {transactions.map((transaction) => (
-                    <TableRow key={transaction.id}>
-                        <TableCell className="font-medium">{transaction.id}</TableCell>
-                        <TableCell>{transaction.datePaid}</TableCell>
-                        <TableCell>{transaction.payee}</TableCell>
-                        <TableCell className="text-right">{transaction.amount}</TableCell>
-                    </TableRow>
+                    <RegisterTableRow key={transaction.id} transaction={transaction} />
                 ))}
             </TableBody>
         </Table>
