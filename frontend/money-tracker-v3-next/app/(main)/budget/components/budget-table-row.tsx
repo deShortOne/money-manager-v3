@@ -3,13 +3,14 @@ import {
     TableCell,
     TableRow
 } from "@/components/ui/table";
-import { Pencil } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useBudgetModalSetting } from "../hooks/useEditBudgetForm";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Result } from "@/types/result";
-import { queryKeyCategories } from "@/app/data/queryKeys";
-import { editBudgetCategory, getAllCategories } from "./action";
+import { queryKeyBudget, queryKeyCategories } from "@/app/data/queryKeys";
+import { deleteBudgetCategory, editBudgetCategory, getAllCategories } from "./action";
+import { useCookies } from "react-cookie";
 
 interface prop {
     budgetGroupId: number,
@@ -20,8 +21,11 @@ export default function BudgetTableCategoryRow({
     budgetGroupId,
     budgetCategory
 }: prop) {
+    const [cookies] = useCookies(['token']);
     const [msg, setMsg] = useState("");
     const onOpen = useBudgetModalSetting(state => state.onOpen);
+
+    const queryClient = useQueryClient();
 
     const [categories, setCategories] = useState<Category[]>([]);
     const { data: dataCategories } = useQuery<Result<Category[]>>({
@@ -36,7 +40,7 @@ export default function BudgetTableCategoryRow({
         }
     }, [dataCategories]);
 
-    function editBillForm() {
+    function editBudgetForm() {
         const categoryId = categories.find(x => x.name == budgetCategory.name);
         if (categoryId == null) {
             setMsg("Category not found");
@@ -58,6 +62,22 @@ export default function BudgetTableCategoryRow({
             });
     }
 
+    async function deleteBudgetFunc() {
+        const categoryId = categories.find(x => x.name == budgetCategory.name);
+        if (categoryId == null) {
+            setMsg("Category not found");
+            return;
+        }
+
+        const deleteBillResult = await deleteBudgetCategory(cookies.token, budgetGroupId, categoryId.id);
+
+        if (deleteBillResult.hasError) {
+            setMsg(deleteBillResult.errorMessage);
+            return;
+        }
+        queryClient.invalidateQueries({ queryKey: [queryKeyBudget] })
+    }
+
     return (
         <TableRow>
             <TableCell className="">
@@ -68,8 +88,11 @@ export default function BudgetTableCategoryRow({
             <TableCell className="text-right">{budgetCategory.difference}</TableCell>
             <TableCell>
                 {msg}
-                <Button onClick={() => editBillForm()}>
+                <Button onClick={() => editBudgetForm()}>
                     <Pencil />
+                </Button>
+                <Button onClick={() => deleteBudgetFunc()}>
+                    <Trash2 />
                 </Button>
             </TableCell>
         </TableRow>

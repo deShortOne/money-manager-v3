@@ -70,3 +70,22 @@ export async function editBudgetCategory(authToken: string, budgetCategory: Upda
     console.log("error returned editing budget category");
     return JSON.parse(JSON.stringify(new ErrorResult("Error returned editing budget category", false)));
 }
+
+export async function deleteBudgetCategory(authToken: string, budgetGroupId: number, budgetCategoryId: number): Promise<Result<BudgetGroup[]>> {
+    const response = await fetch(`http://localhost:1234/Budget/delete`, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + authToken,
+        },
+        body: JSON.stringify({
+            "budgetGroupId": budgetGroupId,
+            "budgetCategoryId": budgetCategoryId,
+        }),
+    });
+    if (response.ok) {
+        return JSON.parse(JSON.stringify(new SuccessResult(await response.text())));
+    }
+    console.log("error returned deleting budget category");
+    return JSON.parse(JSON.stringify(new ErrorResult("Error returned deleting budget category", false)));
+}
