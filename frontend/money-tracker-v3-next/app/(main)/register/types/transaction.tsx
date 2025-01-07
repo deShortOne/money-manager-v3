@@ -5,5 +5,13 @@ interface Transaction {
     amount: number,
     datePaid: string,
     category: string,
-    accountName: string
+    account: string
+}
+
+interface Newtransaction {
+    payee: number,
+    amount: number,
+    datePaid: Date,
+    category: number,
+    account: number,
 }
