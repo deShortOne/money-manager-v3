@@ -2,6 +2,7 @@
 
 import { Newtransaction, Transaction, UpdateTransaction } from "@/interface/transaction";
 import { ErrorResult, SuccessResult, Result } from "@/types/result";
+import { convertDateToString } from "@/utils/date-converter";
 
 export async function getAllTransactions(authToken: string): Promise<Result<Transaction[]>> {
     const response = await fetch(`http://localhost:1235/Register/get`, {
@@ -19,11 +20,6 @@ export async function getAllTransactions(authToken: string): Promise<Result<Tran
 }
 
 export async function addNewTransactions(authToken: string, transaction: Newtransaction): Promise<Result<Transaction[]>> {
-    const offset = transaction.datePaid.getTimezoneOffset()
-    transaction.datePaid = new Date(transaction.datePaid.getTime() - (offset * 60 * 1000))
-
-    const dateToPass: string = transaction.datePaid.toISOString().split('T')[0]
-
     const response = await fetch(`http://localhost:1234/Register/add`, {
         method: "POST",
         headers: {
@@ -33,7 +29,7 @@ export async function addNewTransactions(authToken: string, transaction: Newtran
         body: JSON.stringify({
             payee: transaction.payee,
             amount: transaction.amount,
-            datePaid: dateToPass,
+            datePaid: convertDateToString(transaction.datePaid),
             category: transaction.category,
             accountId: transaction.account,
         }),
@@ -46,11 +42,6 @@ export async function addNewTransactions(authToken: string, transaction: Newtran
 }
 
 export async function editTransaction(authToken: string, transaction: UpdateTransaction): Promise<Result<Transaction[]>> {
-    const offset = transaction.datePaid.getTimezoneOffset()
-    transaction.datePaid = new Date(transaction.datePaid.getTime() - (offset * 60 * 1000))
-
-    const dateToPass: string = transaction.datePaid.toISOString().split('T')[0]
-
     const response = await fetch(`http://localhost:1234/Register/edit`, {
         method: "PATCH",
         headers: {
@@ -61,7 +52,7 @@ export async function editTransaction(authToken: string, transaction: UpdateTran
             id: transaction.id,
             payee: transaction.payee,
             amount: transaction.amount,
-            datePaid: dateToPass,
+            datePaid: convertDateToString(transaction.datePaid),
             category: transaction.category,
             accountId: transaction.account,
         }),
