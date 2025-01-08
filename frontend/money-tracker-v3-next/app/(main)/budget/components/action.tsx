@@ -1,5 +1,7 @@
 'use server'
 
+import { BudgetGroup, UpdateBudgetCategory } from "@/interface/budgetGroup";
+import { Category } from "@/interface/category";
 import { ErrorResult, SuccessResult, Result } from "@/types/result";
 
 export async function getAllBudgets(authToken: string): Promise<Result<BudgetGroup[]>> {

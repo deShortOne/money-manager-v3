@@ -36,6 +36,8 @@ import {
 import { useBudgetModalSetting } from "../hooks/useEditBudgetForm";
 import { queryKeyBudget, queryKeyCategories } from "@/app/data/queryKeys";
 import { getAllBudgets, getAllCategories } from "./action";
+import { Category } from "@/interface/category";
+import { BudgetGroup } from "@/interface/budgetGroup";
 
 export function UpdateBudgetForm() {
     const [cookies] = useCookies(['token']);

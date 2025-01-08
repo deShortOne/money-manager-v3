@@ -1,5 +1,5 @@
 
-interface Bill {
+export interface Bill {
     id: number,
     payee: string,
     amount: number,
@@ -10,12 +10,12 @@ interface Bill {
     accountName: string
 }
 
-interface OverdueBillInfo {
+export interface OverdueBillInfo {
     daysOverDue: number,
     pastOccurences: string[],
 }
 
-interface NewBillDto {
+export interface NewBillDto {
     payee: number,
     amount: number,
     nextDueDate: Date,
@@ -24,7 +24,7 @@ interface NewBillDto {
     accountId: number
 }
 
-interface EditBillDto {
+export interface EditBillDto {
     id: number,
     payee: number,
     amount: number,

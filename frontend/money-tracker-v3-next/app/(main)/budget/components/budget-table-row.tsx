@@ -11,6 +11,8 @@ import { Result } from "@/types/result";
 import { queryKeyBudget, queryKeyCategories } from "@/app/data/queryKeys";
 import { deleteBudgetCategory, editBudgetCategory, getAllCategories } from "./action";
 import { useCookies } from "react-cookie";
+import { BudgetCategory, UpdateBudgetCategory } from "@/interface/budgetGroup";
+import { Category } from "@/interface/category";
 
 interface prop {
     budgetGroupId: number,

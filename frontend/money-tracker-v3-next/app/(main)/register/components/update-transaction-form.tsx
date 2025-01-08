@@ -41,6 +41,8 @@ import { cn } from "@/lib/utils";
 import { useRegisterModalSetting } from "../hooks/useEditRegisterForm";
 import { queryKeyAccounts, queryKeyCategories, queryKeyTransactions } from "@/app/data/queryKeys";
 import { getAllAccounts, getAllCategories } from "./action";
+import { Category } from "@/interface/category";
+import { Account } from "@/interface/account";
 
 export function UpdateTransactionForm() {
     const [cookies] = useCookies(['token']);

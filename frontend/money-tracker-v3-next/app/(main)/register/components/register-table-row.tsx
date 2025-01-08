@@ -8,6 +8,9 @@ import { useRegisterModalSetting } from "../hooks/useEditRegisterForm";
 import { Result } from "@/types/result";
 import { Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Newtransaction, Transaction } from "@/interface/transaction";
+import { Account } from "@/interface/account";
+import { Category } from "@/interface/category";
 
 interface prop {
     transaction: Transaction

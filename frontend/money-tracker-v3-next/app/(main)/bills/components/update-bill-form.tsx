@@ -46,6 +46,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils";
 import { useBillModalSetting } from "../hooks/useEditBillForm";
 import { queryKeyAccounts, queryKeyBills, queryKeyCategories, queryKeyFrequencies } from "@/app/data/queryKeys";
+import { Account } from "@/interface/account";
+import { Category } from "@/interface/category";
 
 export function UpdateBillForm() {
     const [cookies] = useCookies(['token']);

@@ -1,5 +1,5 @@
 
-interface Transaction {
+export interface Transaction {
     id: number,
     payee: string,
     amount: number,
@@ -8,7 +8,7 @@ interface Transaction {
     accountName: string
 }
 
-interface Newtransaction {
+export interface Newtransaction {
     payee: number,
     amount: number,
     datePaid: Date,
@@ -16,7 +16,7 @@ interface Newtransaction {
     account: number,
 }
 
-interface UpdateTransaction {
+export interface UpdateTransaction {
     id: number,
     payee: number,
     amount: number,

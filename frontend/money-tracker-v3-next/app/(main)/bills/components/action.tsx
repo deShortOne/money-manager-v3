@@ -1,5 +1,8 @@
 'use server'
 
+import { Account } from "@/interface/account";
+import { Bill, EditBillDto, NewBillDto } from "@/interface/bill";
+import { Category } from "@/interface/category";
 import { ErrorResult, SuccessResult, Result } from "@/types/result";
 
 export async function getAllTransactions(authToken: string): Promise<Result<Bill[]>> {

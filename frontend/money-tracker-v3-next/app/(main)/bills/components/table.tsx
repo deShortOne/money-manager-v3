@@ -13,6 +13,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Result } from "@/types/result";
 import BillTableRow from "./bill-table-row";
 import { queryKeyBills } from "@/app/data/queryKeys";
+import { Bill } from "@/interface/bill";
 
 export default function BillsDisplay() {
     const [cookies] = useCookies(['token']);

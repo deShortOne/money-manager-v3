@@ -14,6 +14,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Result } from "@/types/result";
 import { queryKeyTransactions } from "@/app/data/queryKeys";
 import RegisterTableRow from "./register-table-row";
+import { Transaction } from "@/interface/transaction";
 
 export default function TransactionsDisplay() {
     const [cookies] = useCookies(['token']);
