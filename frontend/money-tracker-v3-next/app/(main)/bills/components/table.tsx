@@ -7,7 +7,7 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { useEffect, useState } from "react";
-import { getAllTransactions } from "./action";
+import { getAllBills } from "./action";
 import { useCookies } from "react-cookie";
 import { useQuery } from "@tanstack/react-query";
 import { Result } from "@/types/result";
@@ -22,7 +22,7 @@ export default function BillsDisplay() {
 
     const { status, data, error, isFetching } = useQuery<Result<Bill[]>>({
         queryKey: [queryKeyBills],
-        queryFn: () => getAllTransactions(cookies.token),
+        queryFn: () => getAllBills(cookies.token),
     });
 
     useEffect(() => {

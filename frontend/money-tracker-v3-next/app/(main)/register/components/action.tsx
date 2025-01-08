@@ -1,38 +1,7 @@
 'use server'
 
-import { Account } from "@/interface/account";
-import { Category } from "@/interface/category";
 import { Newtransaction, Transaction, UpdateTransaction } from "@/interface/transaction";
 import { ErrorResult, SuccessResult, Result } from "@/types/result";
-
-export async function getAllAccounts(authToken: string): Promise<Result<Account[]>> {
-    const response = await fetch(`http://localhost:1235/Account/get`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + authToken,
-        },
-    });
-    if (response.ok) {
-        return JSON.parse(JSON.stringify(new SuccessResult(await response.json())));
-    }
-    console.log("error returned get all accounts");
-    return JSON.parse(JSON.stringify(new ErrorResult("Unknown error with getting your accounts. Do TODO", false)));
-}
-
-export async function getAllCategories(): Promise<Result<Category[]>> {
-    const response = await fetch(`http://localhost:1235/Category/get`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-    });
-    if (response.ok) {
-        return JSON.parse(JSON.stringify(new SuccessResult(await response.json())));
-    }
-    console.log("error returned get all categories");
-    return JSON.parse(JSON.stringify(new ErrorResult("Error getting categories", false)));
-}
 
 export async function getAllTransactions(authToken: string): Promise<Result<Transaction[]>> {
     const response = await fetch(`http://localhost:1235/Register/get`, {

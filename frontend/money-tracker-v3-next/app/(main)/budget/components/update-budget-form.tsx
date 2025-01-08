@@ -35,7 +35,7 @@ import {
 } from "@/components/ui/select";
 import { useBudgetModalSetting } from "../hooks/useEditBudgetForm";
 import { queryKeyBudget, queryKeyCategories } from "@/app/data/queryKeys";
-import { getAllBudgets, getAllCategories } from "./action";
+import { getAllBudgets } from "./action";
 import { Category } from "@/interface/category";
 import { BudgetGroup } from "@/interface/budgetGroup";
 
@@ -63,18 +63,16 @@ export function UpdateBudgetForm() {
         }
     }, [data]);
 
-    const [categories, setCategories] = useState<Category[]>([]);
-    const { data: dataCategories } = useQuery<Result<Category[]>>({
+    const { data: dataCategories } = useQuery<Category[]>({
         queryKey: [queryKeyCategories],
-        queryFn: () => getAllCategories(),
+        queryFn: () => fetch("api/categories", {
+            method: "GET",
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        }).then(async (x) => await x.json()),
+        initialData: [],
     });
-    useEffect(() => {
-        if (dataCategories == null || dataCategories.hasError || dataCategories.item == undefined) {
-
-        } else {
-            setCategories(dataCategories.item);
-        }
-    }, [dataCategories]);
 
     const formSchema = z.object({
         budgetGroupId: z.union([
@@ -209,7 +207,7 @@ export function UpdateBudgetForm() {
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
-                                                {categories.map((category) => (
+                                                {dataCategories.map((category) => (
                                                     <SelectItem key={category.id} value={category.id.toString()}>
                                                         {category.name}
                                                     </SelectItem>

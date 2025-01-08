@@ -21,7 +21,6 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Result } from "@/types/result";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { CalendarIcon } from "lucide-react";
@@ -40,7 +39,6 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils";
 import { useRegisterModalSetting } from "../hooks/useEditRegisterForm";
 import { queryKeyAccounts, queryKeyCategories, queryKeyTransactions } from "@/app/data/queryKeys";
-import { getAllAccounts, getAllCategories } from "./action";
 import { Category } from "@/interface/category";
 import { Account } from "@/interface/account";
 
@@ -54,31 +52,27 @@ export function UpdateTransactionForm() {
     const [addNewBillButtonErrorMessage, setAddNewBillButtonErrorMessage] = useState("");
     const queryClient = useQueryClient();
 
-    const [accounts, setAccounts] = useState<Account[]>([]);
-    const { data: dataAccounts } = useQuery<Result<Account[]>>({
+    const { data: dataAccounts } = useQuery<Account[]>({
         queryKey: [queryKeyAccounts],
-        queryFn: () => getAllAccounts(cookies.token),
+        queryFn: () => fetch("api/accounts", {
+            method: "GET",
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        }).then(async (x) => await x.json()),
+        initialData: [],
     });
-    useEffect(() => {
-        if (dataAccounts == null || dataAccounts.hasError || dataAccounts.item == undefined) {
 
-        } else {
-            setAccounts(dataAccounts.item)
-        }
-    }, [dataAccounts]);
-
-    const [categories, setCategories] = useState<Category[]>([]);
-    const { data: dataCategories } = useQuery<Result<Category[]>>({
+    const { data: dataCategories } = useQuery<Category[]>({
         queryKey: [queryKeyCategories],
-        queryFn: () => getAllCategories(),
+        queryFn: () => fetch("api/categories", {
+            method: "GET",
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        }).then(async (x) => await x.json()),
+        initialData: [],
     });
-    useEffect(() => {
-        if (dataCategories == null || dataCategories.hasError || dataCategories.item == undefined) {
-
-        } else {
-            setCategories(dataCategories.item);
-        }
-    }, [dataCategories]);
 
     const formSchema = z.object({
         payee: z.union([
@@ -207,7 +201,7 @@ export function UpdateTransactionForm() {
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent>
-                                            {accounts.map((account) => (
+                                            {dataAccounts.map((account) => (
                                                 <SelectItem key={account.id} value={account.id.toString()}>
                                                     {account.name}
                                                 </SelectItem>
@@ -238,7 +232,7 @@ export function UpdateTransactionForm() {
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
-                                                {accounts.map((account) => (
+                                                {dataAccounts.map((account) => (
                                                     <SelectItem key={account.id} value={account.id.toString()}>
                                                         {account.name}
                                                     </SelectItem>
@@ -325,9 +319,9 @@ export function UpdateTransactionForm() {
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
-                                                {categories.map((categoryA) => (
-                                                    <SelectItem key={categoryA.id} value={categoryA.id.toString()}>
-                                                        {categoryA.name}
+                                                {dataCategories.map((category) => (
+                                                    <SelectItem key={category.id} value={category.id.toString()}>
+                                                        {category.name}
                                                     </SelectItem>
                                                 ))}
                                             </SelectContent>

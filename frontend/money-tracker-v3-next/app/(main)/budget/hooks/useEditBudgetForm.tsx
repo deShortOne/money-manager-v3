@@ -1,3 +1,4 @@
+import { BudgetGroup, UpdateBudgetCategory } from "@/interface/budgetGroup";
 import { ErrorResult, Result } from "@/types/result";
 import { create } from "zustand";
 
