@@ -1,3 +1,4 @@
+import { Newtransaction, Transaction } from "@/interface/transaction";
 import { ErrorResult, Result } from "@/types/result";
 import { create } from "zustand";
 

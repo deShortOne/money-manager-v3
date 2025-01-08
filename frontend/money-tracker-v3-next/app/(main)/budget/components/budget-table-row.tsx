@@ -4,13 +4,14 @@ import {
     TableRow
 } from "@/components/ui/table";
 import { Pencil, Trash2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useBudgetModalSetting } from "../hooks/useEditBudgetForm";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Result } from "@/types/result";
 import { queryKeyBudget, queryKeyCategories } from "@/app/data/queryKeys";
-import { deleteBudgetCategory, editBudgetCategory, getAllCategories } from "./action";
+import { deleteBudgetCategory, editBudgetCategory } from "./action";
 import { useCookies } from "react-cookie";
+import { BudgetCategory, UpdateBudgetCategory } from "@/interface/budgetGroup";
+import { Category } from "@/interface/category";
 
 interface prop {
     budgetGroupId: number,
@@ -27,21 +28,19 @@ export default function BudgetTableCategoryRow({
 
     const queryClient = useQueryClient();
 
-    const [categories, setCategories] = useState<Category[]>([]);
-    const { data: dataCategories } = useQuery<Result<Category[]>>({
+    const { data: dataCategories } = useQuery<Category[]>({
         queryKey: [queryKeyCategories],
-        queryFn: () => getAllCategories(),
+        queryFn: () => fetch("api/categories", {
+            method: "GET",
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        }).then(async (x) => await x.json()),
+        initialData: [],
     });
-    useEffect(() => {
-        if (dataCategories == null || dataCategories.hasError || dataCategories.item == undefined) {
-
-        } else {
-            setCategories(dataCategories.item);
-        }
-    }, [dataCategories]);
 
     function editBudgetForm() {
-        const categoryId = categories.find(x => x.name == budgetCategory.name);
+        const categoryId = dataCategories.find(x => x.name == budgetCategory.name);
         if (categoryId == null) {
             setMsg("Category not found");
             return;
@@ -63,7 +62,7 @@ export default function BudgetTableCategoryRow({
     }
 
     async function deleteBudgetFunc() {
-        const categoryId = categories.find(x => x.name == budgetCategory.name);
+        const categoryId = dataCategories.find(x => x.name == budgetCategory.name);
         if (categoryId == null) {
             setMsg("Category not found");
             return;

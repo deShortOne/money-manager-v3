@@ -3,6 +3,7 @@ import {
     HoverCardContent,
     HoverCardTrigger
 } from "@/components/ui/hover-card";
+import { OverdueBillInfo } from "@/interface/bill";
 import { CircleAlert } from "lucide-react";
 
 export default function OverflowBill({ overdueBillInfo }: { overdueBillInfo: OverdueBillInfo }) {

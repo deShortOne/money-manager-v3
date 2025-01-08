@@ -1,13 +1,15 @@
 import { queryKeyAccounts, queryKeyCategories, queryKeyTransactions } from "@/app/data/queryKeys";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState, useEffect } from "react";
-import { deleteTransaction, editTransaction, getAllAccounts, getAllCategories } from "./action";
+import { useState } from "react";
+import { deleteTransaction, editTransaction } from "./action";
 import { useCookies } from "react-cookie";
 import { useRegisterModalSetting } from "../hooks/useEditRegisterForm";
-import { Result } from "@/types/result";
 import { Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Newtransaction, Transaction } from "@/interface/transaction";
+import { Account } from "@/interface/account";
+import { Category } from "@/interface/category";
 
 interface prop {
     transaction: Transaction
@@ -20,45 +22,41 @@ export default function RegisterTableRow({ transaction }: prop) {
 
     const queryClient = useQueryClient();
 
-    const [accounts, setAccounts] = useState<Account[]>([]);
-    const { data: dataAccounts } = useQuery<Result<Account[]>>({
+    const { data: dataAccounts } = useQuery<Account[]>({
         queryKey: [queryKeyAccounts],
-        queryFn: () => getAllAccounts(cookies.token),
+        queryFn: () => fetch("api/accounts", {
+            method: "GET",
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        }).then(async (x) => await x.json()),
+        initialData: [],
     });
-    useEffect(() => {
-        if (dataAccounts == null || dataAccounts.hasError || dataAccounts.item == undefined) {
 
-        } else {
-            setAccounts(dataAccounts.item)
-        }
-    }, [dataAccounts]);
-
-    const [categories, setCategories] = useState<Category[]>([]);
-    const { data: dataCategories } = useQuery<Result<Category[]>>({
+    const { data: dataCategories } = useQuery<Category[]>({
         queryKey: [queryKeyCategories],
-        queryFn: () => getAllCategories(),
+        queryFn: () => fetch("api/categories", {
+            method: "GET",
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        }).then(async (x) => await x.json()),
+        initialData: [],
     });
-    useEffect(() => {
-        if (dataCategories == null || dataCategories.hasError || dataCategories.item == undefined) {
-
-        } else {
-            setCategories(dataCategories.item);
-        }
-    }, [dataCategories]);
 
     function editTransactionForm() {
-        const categoryId = categories.find(x => x.name == transaction.category);
+        const categoryId = dataCategories.find(x => x.name == transaction.category);
         if (categoryId == null) {
             setMsg("Category not found");
             return;
         }
 
-        const payee = accounts.find(x => x.name == transaction.payee);
+        const payee = dataAccounts.find(x => x.name == transaction.payee);
         if (payee == null) {
             setMsg("Payee not found");
             return;
         }
-        const payer = accounts.find(x => x.name == transaction.accountName);
+        const payer = dataAccounts.find(x => x.name == transaction.accountName);
         if (payer == null) {
             setMsg("Payer not found");
             return;

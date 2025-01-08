@@ -1,5 +1,5 @@
 
-interface BudgetGroup {
+export interface BudgetGroup {
     id: number,
     name: string,
     categories: BudgetCategory[],
@@ -8,14 +8,14 @@ interface BudgetGroup {
     difference: number
 }
 
-interface BudgetCategory {
+export interface BudgetCategory {
     name: string,
     planned: number,
     actual: number,
     difference: number
 }
 
-interface UpdateBudgetCategory {
+export interface UpdateBudgetCategory {
     budgetGroupId: number,
     categoryId: number,
     planned: number,

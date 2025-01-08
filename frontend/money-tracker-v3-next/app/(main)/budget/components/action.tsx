@@ -1,5 +1,6 @@
 'use server'
 
+import { BudgetGroup, UpdateBudgetCategory } from "@/interface/budgetGroup";
 import { ErrorResult, SuccessResult, Result } from "@/types/result";
 
 export async function getAllBudgets(authToken: string): Promise<Result<BudgetGroup[]>> {
@@ -15,20 +16,6 @@ export async function getAllBudgets(authToken: string): Promise<Result<BudgetGro
     }
     console.log("error returned login user");
     return JSON.parse(JSON.stringify(new ErrorResult("Username and password not found", false)));
-}
-
-export async function getAllCategories(): Promise<Result<Category[]>> {
-    const response = await fetch(`http://localhost:1235/Category/get`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-    });
-    if (response.ok) {
-        return JSON.parse(JSON.stringify(new SuccessResult(await response.json())));
-    }
-    console.log("error returned get all categories");
-    return JSON.parse(JSON.stringify(new ErrorResult("Error getting categories", false)));
 }
 
 export async function addNewBudgetCategory(authToken: string, budgetCategory: UpdateBudgetCategory): Promise<Result<BudgetGroup[]>> {

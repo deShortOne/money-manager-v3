@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import React from "react";
 import { queryKeyBudget } from "@/app/data/queryKeys";
 import BudgetTableCategoryRow from "./budget-table-row";
+import { BudgetGroup } from "@/interface/budgetGroup";
 
 export default function BudgetsDisplay() {
     const [expandedBudgetCategory, setExpandedBudgetCategory] = useState<string[]>([])

@@ -21,19 +21,12 @@ import {
     FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Result } from "@/types/result";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { CalendarIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import {
-    addNewBill,
-    getAllAccounts,
-    getAllCategories,
-    getAllFrequencyNames,
-} from "./action";
 import { useCookies } from "react-cookie";
 import {
     Select,
@@ -46,6 +39,8 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { cn } from "@/lib/utils";
 import { useBillModalSetting } from "../hooks/useEditBillForm";
 import { queryKeyAccounts, queryKeyBills, queryKeyCategories, queryKeyFrequencies } from "@/app/data/queryKeys";
+import { Account } from "@/interface/account";
+import { Category } from "@/interface/category";
 
 export function UpdateBillForm() {
     const [cookies] = useCookies(['token']);
@@ -57,44 +52,38 @@ export function UpdateBillForm() {
     const [addNewBillButtonErrorMessage, setAddNewBillButtonErrorMessage] = useState("");
     const queryClient = useQueryClient();
 
-    const [accounts, setAccounts] = useState<Account[]>([]);
-    const { data: dataAccounts } = useQuery<Result<Account[]>>({
+    const { data: dataAccounts } = useQuery<Account[]>({
         queryKey: [queryKeyAccounts],
-        queryFn: () => getAllAccounts(cookies.token),
+        queryFn: () => fetch("api/accounts", {
+            method: "GET",
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        }).then(async (x) => await x.json()),
+        initialData: [],
     });
-    useEffect(() => {
-        if (dataAccounts == null || dataAccounts.hasError || dataAccounts.item == undefined) {
 
-        } else {
-            setAccounts(dataAccounts.item)
-        }
-    }, [dataAccounts]);
-
-    const [frequencies, setFrequencies] = useState<string[]>([]);
-    const { data: dataFrequencies } = useQuery<Result<string[]>>({
+    const { data: dataFrequencies } = useQuery<string[]>({
         queryKey: [queryKeyFrequencies],
-        queryFn: () => getAllFrequencyNames(),
+        queryFn: () => fetch("api/frequencies", {
+            method: "GET",
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        }).then(async (x) => await x.json()),
+        initialData: [],
     });
-    useEffect(() => {
-        if (dataFrequencies == null || dataFrequencies.hasError || dataFrequencies.item == undefined) {
 
-        } else {
-            setFrequencies(dataFrequencies.item)
-        }
-    }, [dataFrequencies]);
-
-    const [categories, setCategories] = useState<Category[]>([]);
-    const { data: dataCategories } = useQuery<Result<Category[]>>({
+    const { data: dataCategories } = useQuery<Category[]>({
         queryKey: [queryKeyCategories],
-        queryFn: () => getAllCategories(),
+        queryFn: () => fetch("api/categories", {
+            method: "GET",
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        }).then(async (x) => await x.json()),
+        initialData: [],
     });
-    useEffect(() => {
-        if (dataCategories == null || dataCategories.hasError || dataCategories.item == undefined) {
-
-        } else {
-            setCategories(dataCategories.item);
-        }
-    }, [dataCategories]);
 
     const formSchema = z.object({
         payee: z.union([
@@ -228,7 +217,7 @@ export function UpdateBillForm() {
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent>
-                                            {accounts.map((account) => (
+                                            {dataAccounts.map((account) => (
                                                 <SelectItem key={account.id} value={account.id.toString()}>
                                                     {account.name}
                                                 </SelectItem>
@@ -259,7 +248,7 @@ export function UpdateBillForm() {
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
-                                                {accounts.map((account) => (
+                                                {dataAccounts.map((account) => (
                                                     <SelectItem key={account.id} value={account.id.toString()}>
                                                         {account.name}
                                                     </SelectItem>
@@ -346,7 +335,7 @@ export function UpdateBillForm() {
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
-                                                {frequencies.map((frequency) => (
+                                                {dataFrequencies.map((frequency) => (
                                                     <SelectItem key={frequency} value={frequency}>
                                                         {frequency}
                                                     </SelectItem>
@@ -376,7 +365,7 @@ export function UpdateBillForm() {
                                                 </SelectTrigger>
                                             </FormControl>
                                             <SelectContent>
-                                                {categories.map((categoryA) => (
+                                                {dataCategories.map((categoryA) => (
                                                     <SelectItem key={categoryA.id} value={categoryA.id.toString()}>
                                                         {categoryA.name}
                                                     </SelectItem>
