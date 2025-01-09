@@ -38,7 +38,7 @@ public class BudgetService : IBudgetService
             List<BudgetCategoryResponse> tmpCategoryLis = [];
             foreach (var category in bill.Categories)
             {
-                tmpCategoryLis.Add(new(category.Name, category.Planned, category.Actual, category.Difference));
+                tmpCategoryLis.Add(new(category.Id, category.Name, category.Planned, category.Actual, category.Difference));
             }
 
             res.Add(new BudgetGroupResponse(

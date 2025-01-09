@@ -1,7 +1,8 @@
 ﻿
 namespace MoneyTracker.Queries.Domain.Entities.BudgetCategory;
-public class BudgetCategoryEntity(string name, decimal planned, decimal actual, decimal difference)
+public class BudgetCategoryEntity(int id, string name, decimal planned, decimal actual, decimal difference)
 {
+    public int Id { get; } = id;
     public string Name { get; } = name;
     public decimal Planned { get; } = planned;
     public decimal Actual { get; } = actual;
@@ -15,7 +16,8 @@ public class BudgetCategoryEntity(string name, decimal planned, decimal actual, 
             return false;
         }
 
-        return Name == other.Name
+        return Id == other.Id
+            && Name == other.Name
             && Planned == other.Planned
             && Actual == other.Actual
             && Difference == other.Difference;
@@ -23,6 +25,6 @@ public class BudgetCategoryEntity(string name, decimal planned, decimal actual, 
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(Name, Planned, Actual, Difference);
+        return HashCode.Combine(Id, Name, Planned, Actual, Difference);
     }
 }

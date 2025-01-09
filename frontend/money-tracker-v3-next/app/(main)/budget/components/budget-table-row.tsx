@@ -6,12 +6,11 @@ import {
 import { Pencil, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { useBudgetModalSetting } from "../hooks/useEditBudgetForm";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { queryKeyBudget, queryKeyCategories } from "@/app/data/queryKeys";
+import { useQueryClient } from "@tanstack/react-query";
+import { queryKeyBudget } from "@/app/data/queryKeys";
 import { deleteBudgetCategory, editBudgetCategory } from "./action";
 import { useCookies } from "react-cookie";
 import { BudgetCategory, UpdateBudgetCategory } from "@/interface/budgetGroup";
-import { Category } from "@/interface/category";
 
 interface prop {
     budgetGroupId: number,
@@ -28,24 +27,7 @@ export default function BudgetTableCategoryRow({
 
     const queryClient = useQueryClient();
 
-    const { data: dataCategories } = useQuery<Category[]>({
-        queryKey: [queryKeyCategories],
-        queryFn: () => fetch("api/categories", {
-            method: "GET",
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        }).then(async (x) => await x.json()),
-        initialData: [],
-    });
-
     function editBudgetForm() {
-        const categoryId = dataCategories.find(x => x.name == budgetCategory.name);
-        if (categoryId == null) {
-            setMsg("Category not found");
-            return;
-        }
-
         onOpen(
             (authToken: string, updateBudgetCategory: UpdateBudgetCategory) => {
                 return editBudgetCategory(authToken, {
@@ -56,19 +38,13 @@ export default function BudgetTableCategoryRow({
             },
             {
                 budgetGroupId: budgetGroupId,
-                categoryId: categoryId.id,
+                categoryId: budgetCategory.id,
                 planned: budgetCategory.planned,
             });
     }
 
     async function deleteBudgetFunc() {
-        const categoryId = dataCategories.find(x => x.name == budgetCategory.name);
-        if (categoryId == null) {
-            setMsg("Category not found");
-            return;
-        }
-
-        const deleteBillResult = await deleteBudgetCategory(cookies.token, budgetGroupId, categoryId.id);
+        const deleteBillResult = await deleteBudgetCategory(cookies.token, budgetGroupId, budgetCategory.id);
 
         if (deleteBillResult.hasError) {
             setMsg(deleteBillResult.errorMessage);

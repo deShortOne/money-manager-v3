@@ -9,18 +9,18 @@ namespace MoneyTracker.Queries.Tests.BudgetTests.Service;
 public sealed class GetAllBillsTest : BudgetTestHelper
 {
     [Fact]
-    public void SuccessfullyGetBBudget()
+    public void SuccessfullyGetBudget()
     {
         var userId = 52;
         var authedUser = new AuthenticatedUser(userId);
         var tokenToDecode = "tokenToDecode";
         List<BudgetGroupEntity> budgetDatabaseReturn = [
-            new(99, "name 1", 59, 77, 99, [new("Purposefully not equal", -21, 42, 56)]),
-            new(23, "group name 2", 189, 154, 59, [new("something fun", 121, 46, 32), new("", 68, 108, 27)]),
+            new(99, "name 1", 59, 77, 99, [new(24, "Purposefully not equal", -21, 42, 56)]),
+            new(23, "group name 2", 189, 154, 59, [new(65, "something fun", 121, 46, 32), new(10, "", 68, 108, 27)]),
         ];
         List<BudgetGroupResponse> expected = [
-            new(99, "name 1", 59, 77, 99, [new("Purposefully not equal", -21, 42, 56)]),
-            new(23, "group name 2", 189, 154, 59, [new("something fun", 121, 46, 32), new("", 68, 108, 27)]),
+            new(99, "name 1", 59, 77, 99, [new(24, "Purposefully not equal", -21, 42, 56)]),
+            new(23, "group name 2", 189, 154, 59, [new(65, "something fun", 121, 46, 32), new(10, "", 68, 108, 27)]),
         ];
 
         var mockDateTime = new Mock<IDateTimeProvider>();

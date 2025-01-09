@@ -20,6 +20,7 @@ public class BudgetRepository : IBudgetRepository
         string query = """
             SELECT bg.id,
             	bg."name",
+            	c.id AS category_id,
             	c.name AS category_name,
             	COALESCE(category_sum.amount, 0) AS actual,
             	bc.planned
@@ -72,6 +73,7 @@ public class BudgetRepository : IBudgetRepository
                 decimal planned = row.Field<decimal>("planned");
                 decimal actual = row.Field<decimal>("actual");
                 res[budgetId].AddBudgetCategory(new BudgetCategoryEntity(
+                    row.Field<int>("category_id"),
                     row.Field<string>("category_name")!,
                     planned,
                     actual,

@@ -9,6 +9,7 @@ export interface BudgetGroup {
 }
 
 export interface BudgetCategory {
+    id: number,
     name: string,
     planned: number,
     actual: number,
