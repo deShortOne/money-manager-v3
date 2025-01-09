@@ -19,13 +19,16 @@ public class BillRepository : IBillRepository
     {
         string query = """
             SELECT b.id,
-               	all_accounts.name as payee,
+                payee_accounts.id as payee_id,
+               	payee_accounts.name as payee_name,
                	amount,
                	nextduedate,
                	frequency,
-               	c.name,
+               	c.id category_id,
+                c.name category_name,
                 b.monthday,
-                account_owned_by_user.name account_name
+                accounts_owned_by_user.id payer_id,
+                accounts_owned_by_user.name payer_name
             FROM bill b
             INNER JOIN category c
                	ON b.category_id = c.id
@@ -35,10 +38,10 @@ public class BillRepository : IBillRepository
             	INNER JOIN users u
             		ON a.users_id = u.id 
             	WHERE u.id = @user_id
-            ) account_owned_by_user
-            	ON b.account_id = account_owned_by_user.id
-            INNER JOIN account all_accounts
-                ON payee = all_accounts.id
+            ) accounts_owned_by_user
+            	ON b.account_id = accounts_owned_by_user.id
+            INNER JOIN account payee_accounts
+                ON payee = payee_accounts.id
             ORDER BY nextduedate ASC;
             """;
         var queryParams = new List<DbParameter>()
@@ -53,13 +56,16 @@ public class BillRepository : IBillRepository
         {
             res.Add(new BillEntity(
                 row.Field<int>("id"),
-                row.Field<string>("payee")!,
+                row.Field<int>("payee_id")!,
+                row.Field<string>("payee_name")!,
                 row.Field<decimal>("amount"),
                 DateOnly.FromDateTime(row.Field<DateTime>("nextduedate")),
                 row.Field<int>("monthday"),
                 row.Field<string>("frequency")!,
-                row.Field<string>("name")!,
-                row.Field<string>("account_name")!
+                row.Field<int>("category_id"),
+                row.Field<string>("category_name")!,
+                row.Field<int>("payer_id"),
+                row.Field<string>("payer_name")!
             ));
         }
 

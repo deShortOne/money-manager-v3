@@ -1,13 +1,15 @@
+import { Account } from "./account"
+import { Category } from "./category"
 
 export interface Bill {
     id: number,
-    payee: string,
+    payee: Account,
     amount: number,
     nextDueDate: string,
     frequency: string,
-    category: string,
+    category: Category,
     overDueBill: OverdueBillInfo,
-    accountName: string
+    payer: Account
 }
 
 export interface OverdueBillInfo {

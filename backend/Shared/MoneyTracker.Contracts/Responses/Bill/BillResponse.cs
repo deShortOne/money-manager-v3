@@ -1,17 +1,26 @@
 ﻿using MoneyTracker.Common.DTOs;
+using MoneyTracker.Contracts.Responses.Account;
+using MoneyTracker.Contracts.Responses.Category;
 
 namespace MoneyTracker.Contracts.Responses.Bill;
-public class BillResponse(int id, string payee, decimal amount, DateOnly nextDueDate,
-    string frequency, string category, OverDueBillInfo? overDueBill, string accountName)
+public class BillResponse(int id,
+    AccountResponse payee,
+    decimal amount,
+    DateOnly nextDueDate,
+    string frequency,
+    CategoryResponse category,
+    OverDueBillInfo? overDueBill,
+    AccountResponse payer
+    )
 {
     public int Id { get; } = id;
-    public string Payee { get; } = payee;
+    public AccountResponse Payee { get; } = payee;
     public decimal Amount { get; } = amount;
     public DateOnly NextDueDate { get; } = nextDueDate;
     public string Frequency { get; } = frequency;
-    public string Category { get; } = category;
+    public CategoryResponse Category { get; } = category;
     public OverDueBillInfo? OverDueBill { get; } = overDueBill;
-    public string AccountName { get; } = accountName;
+    public AccountResponse Payer { get; } = payer;
 
     public override bool Equals(object? obj)
     {
@@ -33,13 +42,27 @@ public class BillResponse(int id, string payee, decimal amount, DateOnly nextDue
             isOverDueBillSame = OverDueBill.Equals(other.OverDueBill);
         }
 
-        return Id == other.Id && Payee == other.Payee && Amount == other.Amount &&
-            NextDueDate == other.NextDueDate && Frequency == other.Frequency &&
-            Category == other.Category && isOverDueBillSame && AccountName == other.AccountName;
+        return Id == other.Id
+            && Payee.Equals(other.Payee)
+            && Amount == other.Amount
+            && NextDueDate == other.NextDueDate
+            && Frequency == other.Frequency
+            && Category.Equals(other.Category)
+            && isOverDueBillSame
+            && Payer.Equals(other.Payer);
     }
 
     public override int GetHashCode()
     {
-        return Id;
+        HashCode hash = new();
+        hash.Add(Id);
+        hash.Add(Payee);
+        hash.Add(Amount);
+        hash.Add(NextDueDate);
+        hash.Add(Frequency);
+        hash.Add(Category);
+        hash.Add(OverDueBill);
+        hash.Add(Payer);
+        return hash.ToHashCode();
     }
 }
