@@ -1,11 +1,13 @@
+import { Account } from "./account";
+import { Category } from "./category";
 
 export interface Transaction {
     id: number,
-    payee: string,
+    payee: Account,
     amount: number,
     datePaid: string,
-    category: string,
-    accountName: string
+    category: Category,
+    payer: Account
 }
 
 export interface Newtransaction {

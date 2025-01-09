@@ -1,6 +1,6 @@
-import { queryKeyAccounts, queryKeyCategories, queryKeyTransactions } from "@/app/data/queryKeys";
+import { queryKeyTransactions } from "@/app/data/queryKeys";
 import { TableCell, TableRow } from "@/components/ui/table";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { deleteTransaction, editTransaction } from "./action";
 import { useCookies } from "react-cookie";
@@ -8,8 +8,6 @@ import { useRegisterModalSetting } from "../hooks/useEditRegisterForm";
 import { Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Newtransaction, Transaction } from "@/interface/transaction";
-import { Account } from "@/interface/account";
-import { Category } from "@/interface/category";
 
 interface prop {
     transaction: Transaction
@@ -22,46 +20,7 @@ export default function RegisterTableRow({ transaction }: prop) {
 
     const queryClient = useQueryClient();
 
-    const { data: dataAccounts } = useQuery<Account[]>({
-        queryKey: [queryKeyAccounts],
-        queryFn: () => fetch("api/accounts", {
-            method: "GET",
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        }).then(async (x) => await x.json()),
-        initialData: [],
-    });
-
-    const { data: dataCategories } = useQuery<Category[]>({
-        queryKey: [queryKeyCategories],
-        queryFn: () => fetch("api/categories", {
-            method: "GET",
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        }).then(async (x) => await x.json()),
-        initialData: [],
-    });
-
     function editTransactionForm() {
-        const categoryId = dataCategories.find(x => x.name == transaction.category);
-        if (categoryId == null) {
-            setMsg("Category not found");
-            return;
-        }
-
-        const payee = dataAccounts.find(x => x.name == transaction.payee);
-        if (payee == null) {
-            setMsg("Payee not found");
-            return;
-        }
-        const payer = dataAccounts.find(x => x.name == transaction.accountName);
-        if (payer == null) {
-            setMsg("Payer not found");
-            return;
-        }
-
         onOpen(
             (authToken: string, newTransaction: Newtransaction) => {
                 return editTransaction(authToken, {
@@ -75,10 +34,10 @@ export default function RegisterTableRow({ transaction }: prop) {
             },
             {
                 amount: transaction.amount,
-                category: categoryId.id,
+                category: transaction.category.id,
                 datePaid: new Date(transaction.datePaid),
-                payee: payee.id,
-                accountId: payer.id,
+                payee: transaction.payee.id,
+                accountId: transaction.payer.id,
             });
     }
 
@@ -96,7 +55,7 @@ export default function RegisterTableRow({ transaction }: prop) {
         <TableRow key={transaction.id}>
             <TableCell className="font-medium">{transaction.id}</TableCell>
             <TableCell>{transaction.datePaid}</TableCell>
-            <TableCell>{transaction.payee}</TableCell>
+            <TableCell>{transaction.payee.name}</TableCell>
             <TableCell className="text-right">{transaction.amount}</TableCell>
             <TableCell>
                 {msg}

@@ -19,23 +19,26 @@ public class RegisterRepository : IRegisterRepository
     public async Task<List<TransactionEntity>> GetAllTransactions(AuthenticatedUser user)
     {
         var query = """
-            SELECT register.id,
-                   accPayee.name payee,
-                   amount,
-                   datePaid,
-                   c.name category_name,
-                   accAcc.name account_name
-            FROM register
-            INNER JOIN category c
-                ON register.category_id = c.id
-            INNER JOIN account accAcc
-            	ON accAcc.id = register.account_id
-            INNER JOIN account accPayee
-                ON accPayee.id = register.payee
-            WHERE accAcc.users_id = @user_id
-            ORDER BY datePaid DESC,
-               	c.id ASC;
-            """;
+			SELECT register.id,
+			    accPayee.id payee_id,
+				accPayee.name payee_name,
+				amount,
+				datePaid,
+				c.id category_id,
+				c.name category_name,
+				accAcc.id payer_id,
+				accAcc.name payer_name
+			FROM register
+			INNER JOIN category c
+				ON register.category_id = c.id
+			INNER JOIN account accAcc
+				ON accAcc.id = register.account_id
+			INNER JOIN account accPayee
+				ON accPayee.id = register.payee
+			WHERE accAcc.users_id = @user_id
+			ORDER BY datePaid DESC,
+				c.id ASC;
+			""";
         var queryParams = new List<DbParameter>()
         {
             new NpgsqlParameter("user_id", user.Id),
@@ -48,11 +51,14 @@ public class RegisterRepository : IRegisterRepository
         {
             res.Add(new TransactionEntity(
                 row.Field<int>("id"),
-                row.Field<string>("payee")!,
+                row.Field<int>("payee_id"),
+                row.Field<string>("payee_name")!,
                 row.Field<decimal>("amount"),
                 DateOnly.FromDateTime(row.Field<DateTime>("datePaid")),
+                row.Field<int>("category_id")!,
                 row.Field<string>("category_name")!,
-                row.Field<string>("account_name")!
+                row.Field<int>("payer_id")!,
+                row.Field<string>("payer_name")!
             ));
         }
         return res;

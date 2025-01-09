@@ -40,13 +40,13 @@ public sealed class GetTransactionsTest : IAsyncLifetime
 
         var expected = new List<TransactionEntity>()
         {
-            new(1, "Company A", 1800, new DateOnly(2024, 8, 28), "Wages & Salary : Net Pay", "bank a"),
-            new(6, "Supermarket", 27, new DateOnly(2024, 8, 15), "Groceries", "bank b"),
-            new(7, "Hobby item", 150, new DateOnly(2024, 8, 9), "Hobby", "bank a"),
-            new(5, "Supermarket", 23, new DateOnly(2024, 8, 8), "Groceries", "bank b"),
-            new(2, "Phone company", 10, new DateOnly(2024, 8, 1), "Bills : Cell Phone", "bank a"),
-            new(3, "Landlord A", 500, new DateOnly(2024, 8, 1), "Bills : Rent", "bank a"),
-            new(4, "Supermarket", 25, new DateOnly(2024, 8, 1), "Groceries", "bank b"),
+            new(1, 4, "Company A", 1800, new DateOnly(2024, 8, 28), 1, "Wages & Salary : Net Pay", 1, "bank a"),
+            new(6, 7, "Supermarket", 27, new DateOnly(2024, 8, 15), 4, "Groceries", 2, "bank b"),
+            new(7, 8, "Hobby item", 150, new DateOnly(2024, 8, 9), 5, "Hobby", 1, "bank a"),
+            new(5, 7, "Supermarket", 23, new DateOnly(2024, 8, 8), 4, "Groceries", 2, "bank b"),
+            new(2, 5, "Phone company", 10, new DateOnly(2024, 8, 1), 2, "Bills : Cell Phone", 1, "bank a"),
+            new(3, 6, "Landlord A", 500, new DateOnly(2024, 8, 1), 3, "Bills : Rent", 1, "bank a"),
+            new(4, 7, "Supermarket", 25, new DateOnly(2024, 8, 1), 4, "Groceries", 2, "bank b"),
         };
 
         Assert.Equal(expected, actual);
@@ -62,9 +62,9 @@ public sealed class GetTransactionsTest : IAsyncLifetime
 
         var expected = new List<TransactionEntity>()
         {
-            new(10, "Football kit", 100, new DateOnly(2024, 8, 30), "Hobby", "bank a"),
-            new(9, "Vet", 75, new DateOnly(2024, 8, 29), "Pet Care", "bank a"),
-            new(8, "Company A", 1500, new DateOnly(2024, 8, 28), "Wages & Salary : Net Pay", "bank a"),
+            new(10, 10, "Football kit", 100, new DateOnly(2024, 8, 30), 5, "Hobby", 3, "bank a"),
+            new(9, 9, "Vet", 75, new DateOnly(2024, 8, 29), 6, "Pet Care", 3, "bank a"),
+            new(8, 4, "Company A", 1500, new DateOnly(2024, 8, 28), 1, "Wages & Salary : Net Pay", 3, "bank a"),
         };
 
         Assert.Equal(expected, actual);
