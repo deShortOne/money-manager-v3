@@ -15,11 +15,11 @@ public sealed class AddRegisterTest : RegisterTestHelper
 
     private readonly int _lastTransactionId = 2;
     private readonly int _newTransactionId = 1;
-    private readonly int _payee = 87;
+    private readonly int _payeeId = 87;
     private readonly decimal _amount = 25;
     private readonly DateOnly _datePaid = new DateOnly(2024, 12, 8);
     private readonly int _categoryId = 2;
-    private readonly int _accountId = 15;
+    private readonly int _payerId = 15;
 
     public AddRegisterTest()
     {
@@ -37,10 +37,10 @@ public sealed class AddRegisterTest : RegisterTestHelper
 
         _mockRegisterDatabase.Setup(x => x.GetLastTransactionId()).Returns(Task.FromResult(_lastTransactionId));
         _mockIdGenerator.Setup(x => x.NewInt(_lastTransactionId)).Returns(_newTransactionId);
-        _mockAccountDatabase.Setup(x => x.IsAccountOwnedByUser(_authedUser, _accountId)).Returns(Task.FromResult(true));
+        _mockAccountDatabase.Setup(x => x.IsAccountOwnedByUser(_authedUser, _payerId)).Returns(Task.FromResult(true));
 
-        var newTransactionRequest = new NewTransactionRequest(_payee, _amount, _datePaid, _categoryId, _accountId);
-        var newTransaction = new TransactionEntity(_newTransactionId, _payee, _amount, _datePaid, _categoryId, _accountId);
+        var newTransactionRequest = new NewTransactionRequest(_payeeId, _amount, _datePaid, _categoryId, _payerId);
+        var newTransaction = new TransactionEntity(_newTransactionId, _payeeId, _amount, _datePaid, _categoryId, _payerId);
 
         await _registerService.AddTransaction(_tokenToDecode, newTransactionRequest);
 
@@ -50,7 +50,7 @@ public sealed class AddRegisterTest : RegisterTestHelper
             _mockRegisterDatabase.Verify(x => x.GetLastTransactionId(), Times.Once);
             _mockRegisterDatabase.Verify(x => x.AddTransaction(newTransaction), Times.Once);
             _mockIdGenerator.Verify(x => x.NewInt(_lastTransactionId), Times.Once);
-            _mockAccountDatabase.Verify(x => x.IsAccountOwnedByUser(_authedUser, _accountId), Times.Once);
+            _mockAccountDatabase.Verify(x => x.IsAccountOwnedByUser(_authedUser, _payerId), Times.Once);
 
             EnsureAllMocksHadNoOtherCalls();
         });

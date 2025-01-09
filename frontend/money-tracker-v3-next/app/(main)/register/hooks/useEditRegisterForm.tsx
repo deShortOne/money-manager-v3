@@ -3,11 +3,11 @@ import { ErrorResult, Result } from "@/types/result";
 import { create } from "zustand";
 
 interface defaultValuesProp {
-    payee: number | undefined,
+    payeeId: number | undefined,
     amount: number,
     datePaid: Date | undefined,
-    category: number | undefined,
-    accountId: number | undefined,
+    categoryId: number | undefined,
+    payerId: number | undefined,
 }
 
 const defaultDefaultValues = {

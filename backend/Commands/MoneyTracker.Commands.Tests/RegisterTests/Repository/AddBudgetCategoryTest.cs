@@ -12,12 +12,12 @@ public sealed class AddBudgetCategoryTest : RegisterRespositoryTestHelper
         Migration.CheckMigration(_postgres.GetConnectionString(), new MigrationOption(true));
 
         var id = 200;
-        var payee = 3;
+        var payeeId = 3;
         var amount = 269.24m;
         var datePaid = new DateOnly(2024, 12, 1);
         var categoryId = 2;
-        var accountId = 1;
-        var newTransactionEntity = new TransactionEntity(id, payee, amount, datePaid, categoryId, accountId);
+        var payerId = 1;
+        var newTransactionEntity = new TransactionEntity(id, payeeId, amount, datePaid, categoryId, payerId);
 
         await _registerRepo.AddTransaction(newTransactionEntity);
 

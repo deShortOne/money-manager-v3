@@ -48,13 +48,13 @@ public class BillRespositoryTestHelper : IAsyncLifetime
         while (reader.Read())
         {
             results.Add(new BillEntity(id: reader.GetInt32("id"),
-                payee: reader.GetInt32("payee"),
+                payeeId: reader.GetInt32("payee"),
                 amount: reader.GetDecimal("amount"),
                 nextDueDate: DateOnly.FromDateTime(reader.GetDateTime("nextduedate")),
                 monthDay: reader.GetInt32("monthday"),
                 frequency: reader.GetString("frequency"),
                 categoryId: reader.GetInt32("category_id"),
-                payer: reader.GetInt32("account_id"))
+                payerId: reader.GetInt32("account_id"))
             );
         }
         return results;

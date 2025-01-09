@@ -11,18 +11,18 @@ export interface Transaction {
 }
 
 export interface Newtransaction {
-    payee: number,
+    payeeId: number,
     amount: number,
     datePaid: Date,
-    category: number,
-    account: number,
+    categoryId: number,
+    payerId: number,
 }
 
 export interface UpdateTransaction {
     id: number,
-    payee: number,
+    payeeId: number,
     amount: number,
     datePaid: Date,
-    category: number,
-    account: number,
+    categoryId: number,
+    payerId: number,
 }

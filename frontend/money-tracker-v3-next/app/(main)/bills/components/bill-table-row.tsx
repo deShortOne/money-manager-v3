@@ -26,12 +26,12 @@ export default function BillTableRow({ bill }: prop) {
             (authToken: string, newBill: NewBillDto) => {
                 return editBill(authToken, {
                     id: bill.id,
-                    payee: newBill.payee,
+                    payeeId: newBill.payeeId,
                     amount: newBill.amount,
                     nextDueDate: newBill.nextDueDate,
                     frequency: newBill.frequency,
                     categoryId: newBill.categoryId,
-                    accountId: newBill.accountId,
+                    payerId: newBill.payerId,
                 });
             },
             {

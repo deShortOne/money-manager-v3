@@ -27,12 +27,12 @@ export async function addNewBill(authToken: string, newBill: NewBillDto): Promis
             "Authorization": "Bearer " + authToken,
         },
         body: JSON.stringify({
-            "payee": newBill.payee,
-            "amount": newBill.amount,
-            "nextDueDate": convertDateToString(newBill.nextDueDate),
-            "frequency": newBill.frequency,
-            "categoryId": newBill.categoryId,
-            "payer": newBill.accountId
+            payeeId: newBill.payeeId,
+            amount: newBill.amount,
+            nextDueDate: convertDateToString(newBill.nextDueDate),
+            frequency: newBill.frequency,
+            categoryId: newBill.categoryId,
+            payerId: newBill.payerId
         }),
     });
     if (response.ok) {
@@ -52,12 +52,12 @@ export async function editBill(authToken: string, editBill: EditBillDto): Promis
         },
         body: JSON.stringify({
             id: editBill.id,
-            payee: editBill.payee,
+            payeeId: editBill.payeeId,
             amount: editBill.amount,
             nextDueDate: convertDateToString(editBill.nextDueDate),
             frequency: editBill.frequency,
             categoryId: editBill.categoryId,
-            payer: editBill.accountId
+            payerId: editBill.payerId
         }),
     });
     if (response.ok) {

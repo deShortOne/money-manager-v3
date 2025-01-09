@@ -25,19 +25,19 @@ export default function RegisterTableRow({ transaction }: prop) {
             (authToken: string, newTransaction: Newtransaction) => {
                 return editTransaction(authToken, {
                     id: transaction.id,
-                    payee: newTransaction.payee,
+                    payeeId: newTransaction.payeeId,
                     amount: newTransaction.amount,
                     datePaid: newTransaction.datePaid,
-                    category: newTransaction.category,
-                    account: newTransaction.account,
+                    categoryId: newTransaction.categoryId,
+                    payerId: newTransaction.payerId,
                 });
             },
             {
                 amount: transaction.amount,
-                category: transaction.category.id,
+                categoryId: transaction.category.id,
                 datePaid: new Date(transaction.datePaid),
-                payee: transaction.payee.id,
-                accountId: transaction.payer.id,
+                payeeId: transaction.payee.id,
+                payerId: transaction.payer.id,
             });
     }
 

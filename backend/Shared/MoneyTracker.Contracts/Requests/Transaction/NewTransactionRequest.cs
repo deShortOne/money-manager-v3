@@ -1,19 +1,10 @@
 ﻿
 namespace MoneyTracker.Contracts.Requests.Transaction;
-public class NewTransactionRequest
+public class NewTransactionRequest(int payeeId, decimal amount, DateOnly datePaid, int categoryId, int payerId)
 {
-    public NewTransactionRequest(int payee, decimal amount, DateOnly datePaid, int category, int accountId)
-    {
-        Payee = payee;
-        Amount = amount;
-        DatePaid = datePaid;
-        Category = category;
-        AccountId = accountId;
-    }
-
-    public int Payee { get; private set; }
-    public decimal Amount { get; private set; }
-    public DateOnly DatePaid { get; private set; }
-    public int Category { get; private set; }
-    public int AccountId { get; }
+    public int PayeeId { get; } = payeeId;
+    public decimal Amount { get; } = amount;
+    public DateOnly DatePaid { get; } = datePaid;
+    public int CategoryId { get; } = categoryId;
+    public int PayerId { get; } = payerId;
 }

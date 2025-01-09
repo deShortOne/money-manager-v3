@@ -29,7 +29,7 @@ public sealed class EditRegisterTest : RegisterTestHelper
     };
 
     [Theory, MemberData(nameof(OnlyOneItemNotNull))]
-    public async void EditTransactionOneItemOnly(int? payee, int? amount, DateOnly? datePaid, int? categoryId, int? accountId)
+    public async void EditTransactionOneItemOnly(int? payee, int? amount, DateOnly? datePaid, int? categoryId, int? payerId)
     {
         var mockDateTime = new Mock<IDateTimeProvider>();
         mockDateTime.Setup(x => x.Now).Returns(new DateTime(2024, 6, 6, 10, 0, 0));
@@ -38,11 +38,11 @@ public sealed class EditRegisterTest : RegisterTestHelper
             new DateTime(2024, 6, 6, 10, 0, 0), mockDateTime.Object)));
 
         _mockRegisterDatabase.Setup(x => x.IsTransactionOwnedByUser(_authedUser, _transactionId)).Returns(Task.FromResult(true));
-        if (accountId != null)
-            _mockAccountDatabase.Setup(x => x.IsAccountOwnedByUser(_authedUser, (int)accountId)).Returns(Task.FromResult(true));
+        if (payerId != null)
+            _mockAccountDatabase.Setup(x => x.IsAccountOwnedByUser(_authedUser, (int)payerId)).Returns(Task.FromResult(true));
 
-        var editTransactionRequest = new EditTransactionRequest(_transactionId, payee, amount, datePaid, categoryId, accountId);
-        var editTransaction = new EditTransactionEntity(_transactionId, payee, amount, datePaid, categoryId, accountId);
+        var editTransactionRequest = new EditTransactionRequest(_transactionId, payee, amount, datePaid, categoryId, payerId);
+        var editTransaction = new EditTransactionEntity(_transactionId, payee, amount, datePaid, categoryId, payerId);
 
         await _registerService.EditTransaction(_tokenToDecode, editTransactionRequest);
 
@@ -52,8 +52,8 @@ public sealed class EditRegisterTest : RegisterTestHelper
             _mockRegisterDatabase.Verify(x => x.IsTransactionOwnedByUser(_authedUser, _transactionId), Times.Once);
             _mockRegisterDatabase.Verify(x => x.EditTransaction(editTransaction), Times.Once);
 
-            if (accountId != null)
-                _mockAccountDatabase.Verify(x => x.IsAccountOwnedByUser(_authedUser, (int)accountId), Times.Once);
+            if (payerId != null)
+                _mockAccountDatabase.Verify(x => x.IsAccountOwnedByUser(_authedUser, (int)payerId), Times.Once);
 
             EnsureAllMocksHadNoOtherCalls();
         });

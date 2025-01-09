@@ -24,13 +24,13 @@ public class BillCommandRepository : IBillCommandRepository
         var queryParams = new List<DbParameter>()
             {
                 new NpgsqlParameter("id", newBillDTO.Id),
-                new NpgsqlParameter("payee", newBillDTO.Payee),
+                new NpgsqlParameter("payee", newBillDTO.PayeeId),
                 new NpgsqlParameter("amount", newBillDTO.Amount),
                 new NpgsqlParameter("nextduedate", newBillDTO.NextDueDate),
                 new NpgsqlParameter("frequency", newBillDTO.Frequency),
                 new NpgsqlParameter("category_id", newBillDTO.CategoryId),
                 new NpgsqlParameter("monthday", newBillDTO.MonthDay),
-                new NpgsqlParameter("account_id", newBillDTO.Payer),
+                new NpgsqlParameter("account_id", newBillDTO.PayerId),
             };
 
         await _database.UpdateTable(query, queryParams);
@@ -44,10 +44,10 @@ public class BillCommandRepository : IBillCommandRepository
                 new NpgsqlParameter("id", editBillDTO.Id),
         };
 
-        if (editBillDTO.Payee != null)
+        if (editBillDTO.PayeeId != null)
         {
             setParamsLis.Add("payee = @payee");
-            queryParams.Add(new NpgsqlParameter("payee", editBillDTO.Payee));
+            queryParams.Add(new NpgsqlParameter("payee", editBillDTO.PayeeId));
         }
         if (editBillDTO.Amount != null)
         {
@@ -74,10 +74,10 @@ public class BillCommandRepository : IBillCommandRepository
             setParamsLis.Add("category_id = @category");
             queryParams.Add(new NpgsqlParameter("category", editBillDTO.CategoryId));
         }
-        if (editBillDTO.AccountId != null)
+        if (editBillDTO.PayerId != null)
         {
             setParamsLis.Add("account_id = @account_id");
-            queryParams.Add(new NpgsqlParameter("account_id", editBillDTO.AccountId));
+            queryParams.Add(new NpgsqlParameter("account_id", editBillDTO.PayerId));
         }
 
         string query = $"""

@@ -143,11 +143,11 @@ export function UpdateTransactionForm() {
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         const addNewBillResult = await registerAction(cookies.token, {
-            payee: values.payee,
+            payeeId: values.payee,
             amount: values.amount,
             datePaid: values.datePaid,
-            category: values.category,
-            account: values.payer,
+            categoryId: values.category,
+            payerId: values.payer,
         });
 
         if (addNewBillResult.hasError) {
@@ -165,11 +165,11 @@ export function UpdateTransactionForm() {
 
     useEffect(() => {
         form.reset({
-            payee: defaultValues.payee,
-            payer: defaultValues.accountId,
+            payee: defaultValues.payeeId,
+            payer: defaultValues.payerId,
             amount: defaultValues.amount,
             datePaid: defaultValues.datePaid,
-            category: defaultValues.category,
+            category: defaultValues.categoryId,
         });
     }, [open]);
 

@@ -30,20 +30,20 @@ public class RegisterService : IRegisterService
         if (userAuth == null)
             throw new InvalidDataException("Token not found");
         userAuth.ThrowIfInvalid();
-        
+
         var user = new AuthenticatedUser(userAuth.User.Id);
-        if (!await _accountDb.IsAccountOwnedByUser(user, newTransaction.AccountId))
+        if (!await _accountDb.IsAccountOwnedByUser(user, newTransaction.PayerId))
         {
-            throw new InvalidDataException("Account not found");
+            throw new InvalidDataException("Payer account not found");
         }
         var newTransactionId = _idGenerator.NewInt(await _dbService.GetLastTransactionId());
 
         var dtoToDb = new TransactionEntity(newTransactionId,
-            newTransaction.Payee,
+            newTransaction.PayeeId,
             newTransaction.Amount,
             newTransaction.DatePaid,
-            newTransaction.Category,
-            newTransaction.AccountId);
+            newTransaction.CategoryId,
+            newTransaction.PayerId);
 
         await _dbService.AddTransaction(dtoToDb);
     }
@@ -54,19 +54,19 @@ public class RegisterService : IRegisterService
         if (userAuth == null)
             throw new InvalidDataException("Token not found");
         userAuth.ThrowIfInvalid();
-        
+
         var user = new AuthenticatedUser(userAuth.User.Id);
         if (!await _dbService.IsTransactionOwnedByUser(user, editTransaction.Id))
         {
             throw new InvalidDataException("Transaction not found");
         }
-        if (editTransaction.AccountId != null && !await _accountDb.IsAccountOwnedByUser(user, (int)editTransaction.AccountId))
+        if (editTransaction.PayerId != null && !await _accountDb.IsAccountOwnedByUser(user, (int)editTransaction.PayerId))
         {
-            throw new InvalidDataException("Account not found");
+            throw new InvalidDataException("Payer account not found");
         }
 
-        var dtoToDb = new EditTransactionEntity(editTransaction.Id, editTransaction.Payee, editTransaction.Amount,
-            editTransaction.DatePaid, editTransaction.Category, editTransaction.AccountId);
+        var dtoToDb = new EditTransactionEntity(editTransaction.Id, editTransaction.PayeeId, editTransaction.Amount,
+            editTransaction.DatePaid, editTransaction.CategoryId, editTransaction.PayerId);
 
         await _dbService.EditTransaction(dtoToDb);
     }
@@ -77,7 +77,7 @@ public class RegisterService : IRegisterService
         if (userAuth == null)
             throw new InvalidDataException("Token not found");
         userAuth.ThrowIfInvalid();
-        
+
         var user = new AuthenticatedUser(userAuth.User.Id);
         if (!await _dbService.IsTransactionOwnedByUser(user, deleteTransaction.Id))
         {

@@ -157,12 +157,12 @@ export function UpdateBillForm() {
     });
     async function onSubmit(values: z.infer<typeof formSchema>) {
         const addNewBillResult = await billAction(cookies.token, {
-            payee: values.payee,
+            payeeId: values.payee,
             amount: values.amount,
             nextDueDate: values.nextDueDate,
             frequency: values.frequency,
             categoryId: values.category,
-            accountId: values.payer,
+            payerId: values.payer,
         });
 
         if (addNewBillResult.hasError) {

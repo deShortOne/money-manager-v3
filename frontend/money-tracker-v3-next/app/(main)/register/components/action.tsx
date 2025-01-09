@@ -27,11 +27,11 @@ export async function addNewTransactions(authToken: string, transaction: Newtran
             "Authorization": "Bearer " + authToken,
         },
         body: JSON.stringify({
-            payee: transaction.payee,
+            payeeId: transaction.payeeId,
             amount: transaction.amount,
             datePaid: convertDateToString(transaction.datePaid),
-            category: transaction.category,
-            accountId: transaction.account,
+            categoryId: transaction.categoryId,
+            payerId: transaction.payerId,
         }),
     });
     if (response.ok) {
@@ -50,11 +50,11 @@ export async function editTransaction(authToken: string, transaction: UpdateTran
         },
         body: JSON.stringify({
             id: transaction.id,
-            payee: transaction.payee,
+            payeeId: transaction.payeeId,
             amount: transaction.amount,
             datePaid: convertDateToString(transaction.datePaid),
-            category: transaction.category,
-            accountId: transaction.account,
+            categoryId: transaction.categoryId,
+            payerId: transaction.payerId,
         }),
     });
     if (response.ok) {

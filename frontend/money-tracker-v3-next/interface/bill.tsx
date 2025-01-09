@@ -18,20 +18,20 @@ export interface OverdueBillInfo {
 }
 
 export interface NewBillDto {
-    payee: number,
+    payeeId: number,
     amount: number,
     nextDueDate: Date,
     frequency: string,
     categoryId: number,
-    accountId: number
+    payerId: number
 }
 
 export interface EditBillDto {
     id: number,
-    payee: number,
+    payeeId: number,
     amount: number,
     nextDueDate: Date,
     frequency: string,
     categoryId: number,
-    accountId: number
+    payerId: number
 }

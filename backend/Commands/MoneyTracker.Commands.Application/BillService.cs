@@ -44,11 +44,11 @@ public class BillService : IBillService
         userAuth.ThrowIfInvalid();
 
         var user = new AuthenticatedUser(userAuth.User.Id);
-        if (!await _accountDatabase.IsAccountOwnedByUser(user, newBill.Payer))
+        if (!await _accountDatabase.IsAccountOwnedByUser(user, newBill.PayerId))
         {
-            throw new InvalidDataException("Account not found");
+            throw new InvalidDataException("Payer account not found");
         }
-        if (!await _accountDatabase.IsValidAccount(newBill.Payee))
+        if (!await _accountDatabase.IsValidAccount(newBill.PayeeId))
         {
             throw new InvalidDataException("Payee account not found");
         }
@@ -63,13 +63,13 @@ public class BillService : IBillService
 
         var dtoToDb = new BillEntity(
             _idGenerator.NewInt(await _dbService.GetLastId()),
-            newBill.Payee,
+            newBill.PayeeId,
             newBill.Amount,
             newBill.NextDueDate,
             _monthDayCalculator.Calculate(newBill.NextDueDate),
             newBill.Frequency,
             newBill.CategoryId,
-            newBill.Payer
+            newBill.PayerId
         );
         await _dbService.AddBill(dtoToDb);
     }
@@ -82,10 +82,10 @@ public class BillService : IBillService
         userAuth.ThrowIfInvalid();
 
         var user = new AuthenticatedUser(userAuth.User.Id);
-        if (editBill.Payee == null && editBill.Amount == null &&
+        if (editBill.PayeeId == null && editBill.Amount == null &&
             editBill.Amount == null && editBill.NextDueDate == null &&
-            editBill.Frequency == null && editBill.Category == null &&
-            editBill.AccountId == null)
+            editBill.Frequency == null && editBill.CategoryId == null &&
+            editBill.PayerId == null)
         {
             throw new InvalidDataException("Must have at least one non-null value");
         }
@@ -94,13 +94,13 @@ public class BillService : IBillService
         {
             throw new InvalidDataException("Bill not found");
         }
-        if (editBill.AccountId != null &&
-            !await _accountDatabase.IsAccountOwnedByUser(user, (int)editBill.AccountId))
+        if (editBill.PayerId != null &&
+            !await _accountDatabase.IsAccountOwnedByUser(user, (int)editBill.PayerId))
         {
-            throw new InvalidDataException("Account not found");
+            throw new InvalidDataException("Payer account not found");
         }
-        if (editBill.Payee != null &&
-            !await _accountDatabase.IsValidAccount((int)editBill.Payee))
+        if (editBill.PayeeId != null &&
+            !await _accountDatabase.IsValidAccount((int)editBill.PayeeId))
         {
             throw new InvalidDataException("Payee account not found");
         }
@@ -109,7 +109,7 @@ public class BillService : IBillService
         {
             throw new InvalidDataException("Invalid frequency");
         }
-        if (editBill.Category != null && !await _categoryDatabase.DoesCategoryExist((int)editBill.Category))
+        if (editBill.CategoryId != null && !await _categoryDatabase.DoesCategoryExist((int)editBill.CategoryId))
         {
             throw new InvalidDataException("Invalid category");
         }
@@ -122,13 +122,13 @@ public class BillService : IBillService
 
         var dtoToDb = new EditBillEntity(
             editBill.Id,
-            editBill.Payee,
+            editBill.PayeeId,
             editBill.Amount,
             editBill.NextDueDate,
             monthDay,
             editBill.Frequency,
-            editBill.Category,
-            editBill.AccountId
+            editBill.CategoryId,
+            editBill.PayerId
         );
         await _dbService.EditBill(dtoToDb);
     }

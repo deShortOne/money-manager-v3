@@ -39,6 +39,11 @@ export async function addNewBudgetCategory(authToken: string, budgetCategory: Up
 }
 
 export async function editBudgetCategory(authToken: string, budgetCategory: UpdateBudgetCategory): Promise<Result<BudgetGroup[]>> {
+    console.log({
+        "budgetGroupId": budgetCategory.budgetGroupId,
+        "budgetCategoryId": budgetCategory.categoryId,
+        "budgetCategoryPlanned": budgetCategory.planned,
+    })
     const response = await fetch(`http://localhost:1234/Budget/edit`, {
         method: "PATCH",
         headers: {
@@ -54,6 +59,8 @@ export async function editBudgetCategory(authToken: string, budgetCategory: Upda
     if (response.ok) {
         return JSON.parse(JSON.stringify(new SuccessResult(await response.text())));
     }
+
+    console.log(response)
     console.log("error returned editing budget category");
     return JSON.parse(JSON.stringify(new ErrorResult("Error returned editing budget category", false)));
 }

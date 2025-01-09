@@ -23,8 +23,8 @@ public sealed class AddBillTest : BillRespositoryTestHelper
         var frequency = "frequency";
         var categoryId = 4;
         var monthDay = 16;
-        var accountId = 2;
-        var newBillEntity = new BillEntity(id, payee, amount, nextDueDate, monthDay, frequency, categoryId, accountId);
+        var payerId = 2;
+        var newBillEntity = new BillEntity(id, payee, amount, nextDueDate, monthDay, frequency, categoryId, payerId);
 
         await _billRepo.AddBill(newBillEntity);
 

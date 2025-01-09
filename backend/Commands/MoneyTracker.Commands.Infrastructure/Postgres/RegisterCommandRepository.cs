@@ -25,11 +25,11 @@ public class RegisterCommandRepository : IRegisterCommandRepository
         var queryParams = new List<DbParameter>()
         {
             new NpgsqlParameter("id", transaction.Id),
-            new NpgsqlParameter("payee", transaction.Payee),
+            new NpgsqlParameter("payee", transaction.PayeeId),
             new NpgsqlParameter("amount", transaction.Amount),
             new NpgsqlParameter("datePaid", transaction.DatePaid),
             new NpgsqlParameter("category_id", transaction.CategoryId),
-            new NpgsqlParameter("account_id", transaction.AccountId),
+            new NpgsqlParameter("account_id", transaction.PayerId),
         };
 
         await _database.GetTable(query, queryParams);
@@ -42,10 +42,10 @@ public class RegisterCommandRepository : IRegisterCommandRepository
         {
             new NpgsqlParameter("id", tramsaction.Id),
         };
-        if (tramsaction.Payee != null)
+        if (tramsaction.PayeeId != null)
         {
             setParamsLis.Add("payee = @payee");
-            queryParams.Add(new NpgsqlParameter("payee", tramsaction.Payee));
+            queryParams.Add(new NpgsqlParameter("payee", tramsaction.PayeeId));
         }
         if (tramsaction.Amount != null)
         {
@@ -62,10 +62,10 @@ public class RegisterCommandRepository : IRegisterCommandRepository
             setParamsLis.Add("category_id = @category_id");
             queryParams.Add(new NpgsqlParameter("category_id", tramsaction.CategoryId));
         }
-        if (tramsaction.AccountId != null)
+        if (tramsaction.PayerId != null)
         {
             setParamsLis.Add("account_id = @account_id");
-            queryParams.Add(new NpgsqlParameter("account_id", tramsaction.AccountId));
+            queryParams.Add(new NpgsqlParameter("account_id", tramsaction.PayerId));
         }
 
         if (setParamsLis.Count == 0)
