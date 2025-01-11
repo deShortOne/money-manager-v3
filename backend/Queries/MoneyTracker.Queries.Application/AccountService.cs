@@ -22,7 +22,7 @@ public class AccountService : IAccountService
         var userAuth = await _userRepository.GetUserAuthFromToken(token);
         if (userAuth == null)
             throw new InvalidDataException("Token not found");
-        userAuth.ThrowIfInvalid();
+        userAuth.CheckValidation();
 
         var user = new AuthenticatedUser(userAuth.User.Id);
         var dtoFromDb = await _dbService.GetAccounts(user);

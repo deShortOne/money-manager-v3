@@ -24,7 +24,7 @@ public class BudgetService : IBudgetService
         var userAuth = await _userRepository.GetUserAuthFromToken(token);
         if (userAuth == null)
             throw new InvalidDataException("Token not found");
-        userAuth.ThrowIfInvalid();
+        userAuth.CheckValidation();
 
         var user = new AuthenticatedUser(userAuth.User.Id);
         return ConvertFromRepoDTOToDTO(await _dbService.GetBudget(user));

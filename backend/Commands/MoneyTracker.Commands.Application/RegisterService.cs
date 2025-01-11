@@ -29,7 +29,7 @@ public class RegisterService : IRegisterService
         var userAuth = await _userRepository.GetUserAuthFromToken(token);
         if (userAuth == null)
             throw new InvalidDataException("Token not found");
-        userAuth.ThrowIfInvalid();
+        userAuth.CheckValidation();
 
         var user = new AuthenticatedUser(userAuth.User.Id);
         if (!await _accountDb.IsAccountOwnedByUser(user, newTransaction.PayerId))
@@ -53,7 +53,7 @@ public class RegisterService : IRegisterService
         var userAuth = await _userRepository.GetUserAuthFromToken(token);
         if (userAuth == null)
             throw new InvalidDataException("Token not found");
-        userAuth.ThrowIfInvalid();
+        userAuth.CheckValidation();
 
         var user = new AuthenticatedUser(userAuth.User.Id);
         if (!await _dbService.IsTransactionOwnedByUser(user, editTransaction.Id))
@@ -76,7 +76,7 @@ public class RegisterService : IRegisterService
         var userAuth = await _userRepository.GetUserAuthFromToken(token);
         if (userAuth == null)
             throw new InvalidDataException("Token not found");
-        userAuth.ThrowIfInvalid();
+        userAuth.CheckValidation();
 
         var user = new AuthenticatedUser(userAuth.User.Id);
         if (!await _dbService.IsTransactionOwnedByUser(user, deleteTransaction.Id))

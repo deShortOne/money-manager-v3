@@ -1,4 +1,5 @@
-
+﻿
+using MoneyTracker.Common.Result;
 using MoneyTracker.Common.Utilities.DateTimeUtil;
 
 namespace MoneyTracker.Authentication.Entities;
@@ -13,14 +14,15 @@ public class UserAuthentication(UserEntity user,
     public string Token { get; } = token;
     public DateTime Expiration { get; } = expiration;
 
-    public void ThrowIfInvalid()
+    public Result CheckValidation()
     {
         if (User == null)
-            throw new InvalidDataException("User not found");
+            return Result.Failure(Error.Validation("UserAuthentication.Validation", "No user found"));
         if (Token == null || Token == "")
-            throw new InvalidDataException("No token found");
+            return Result.Failure(Error.Validation("UserAuthentication.Validation", "No token found"));
         if (Expiration < _dateTime.Now)
-            throw new InvalidDataException("Token has expired");
+            return Result.Failure(Error.Validation("UserAuthentication.Validation", "Token has expired"));
+        return Result.Success();
     }
 
     public override bool Equals(object? obj)
