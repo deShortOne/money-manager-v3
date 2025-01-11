@@ -78,44 +78,43 @@ public class BillService : IBillService
         return Result.Success();
     }
 
-    public async Task EditBill(string token, EditBillRequest editBill)
+    public async Task<Result> EditBill(string token, EditBillRequest editBill)
     {
-        var userAuth = await _userRepository.GetUserAuthFromToken(token);
-        if (userAuth == null)
-            throw new InvalidDataException("Token not found");
-        userAuth.CheckValidation();
+        var userResult = await _userService.GetUserFromToken(token);
+        if (!userResult.IsSuccess)
+            return userResult;
 
-        var user = new AuthenticatedUser(userAuth.User.Id);
+        var user = userResult.Value;
         if (editBill.PayeeId == null && editBill.Amount == null &&
             editBill.Amount == null && editBill.NextDueDate == null &&
             editBill.Frequency == null && editBill.CategoryId == null &&
             editBill.PayerId == null)
         {
-            throw new InvalidDataException("Must have at least one non-null value");
+            return Result.Failure(Error.Validation("BillService.EditBill", "Must have at least one non-null value"));
         }
 
         if (!await _dbService.IsBillAssociatedWithUser(user, editBill.Id))
         {
-            throw new InvalidDataException("Bill not found");
+            return Result.Failure(Error.Validation("BillService.EditBill", "Bill not found"));
         }
         if (editBill.PayerId != null &&
             !await _accountDatabase.IsAccountOwnedByUser(user, (int)editBill.PayerId))
         {
-            throw new InvalidDataException("Payer account not found");
+            return Result.Failure(Error.Validation("BillService.EditBill", "Payer account not found"));
         }
         if (editBill.PayeeId != null &&
             !await _accountDatabase.IsValidAccount((int)editBill.PayeeId))
         {
-            throw new InvalidDataException("Payee account not found");
+            return Result.Failure(Error.Validation("BillService.EditBill", "Payee account not found"));
         }
         if (editBill.Frequency != null &&
             !_frequencyCalculation.DoesFrequencyExist(editBill.Frequency))
         {
-            throw new InvalidDataException("Invalid frequency");
+            return Result.Failure(Error.Validation("BillService.EditBill", "Frequency type not found"));
         }
         if (editBill.CategoryId != null && !await _categoryDatabase.DoesCategoryExist((int)editBill.CategoryId))
         {
-            throw new InvalidDataException("Invalid category");
+            return Result.Failure(Error.Validation("BillService.EditBill", "Category not found"));
         }
 
         int? monthDay = null;
@@ -135,6 +134,8 @@ public class BillService : IBillService
             editBill.PayerId
         );
         await _dbService.EditBill(dtoToDb);
+
+        return Result.Success();
     }
 
     public async Task DeleteBill(string token, DeleteBillRequest deleteBill)

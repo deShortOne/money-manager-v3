@@ -31,9 +31,8 @@ public sealed class EditBillTest : BillTestHelper
 
         var mockDateTime = new Mock<IDateTimeProvider>();
         mockDateTime.Setup(x => x.Now).Returns(new DateTime(2024, 6, 6, 10, 0, 0));
-        _mockUserRepository.Setup(x => x.GetUserAuthFromToken(tokenToDecode))
-            .Returns(Task.FromResult(new UserAuthentication(new UserEntity(userId, "", ""), tokenToDecode,
-            new DateTime(2024, 6, 6, 10, 0, 0), mockDateTime.Object)));
+        _mockUserService.Setup(x => x.GetUserFromToken(tokenToDecode))
+            .ReturnsAsync(authedUser);
 
         if (payerId != null)
         {
@@ -67,7 +66,7 @@ public sealed class EditBillTest : BillTestHelper
         Assert.Multiple(() =>
         {
             _mockBillDatabase.Verify(x => x.IsBillAssociatedWithUser(authedUser, id), Times.Once);
-            _mockUserRepository.Verify(x => x.GetUserAuthFromToken(tokenToDecode), Times.Once);
+            _mockUserService.Verify(x => x.GetUserFromToken(tokenToDecode), Times.Once);
 
             if (payerId != null)
             {
@@ -119,7 +118,7 @@ public sealed class EditBillTest : BillTestHelper
     }
 
     [Fact]
-    public void FailToEditBill_BillDoesNotBelongToUser()
+    public async Task FailToEditBill_BillDoesNotBelongToUser()
     {
         var userId = 52;
         var authedUser = new AuthenticatedUser(userId);
@@ -133,32 +132,25 @@ public sealed class EditBillTest : BillTestHelper
         var payerId = 2;
         var editBillRequest = new EditBillRequest(billId, payeeId, amount, nextDueDate, frequency, category, payerId);
 
-        var mockDateTime = new Mock<IDateTimeProvider>();
-        mockDateTime.Setup(x => x.Now).Returns(new DateTime(2024, 6, 6, 10, 0, 0));
-        _mockUserRepository.Setup(x => x.GetUserAuthFromToken(tokenToDecode))
-            .Returns(Task.FromResult(new UserAuthentication(new UserEntity(userId, "", ""), tokenToDecode,
-            new DateTime(2024, 6, 6, 10, 0, 0), mockDateTime.Object)));
+        _mockUserService.Setup(x => x.GetUserFromToken(tokenToDecode))
+            .ReturnsAsync(authedUser);
 
         _mockBillDatabase.Setup(x => x.IsBillAssociatedWithUser(authedUser, billId)).Returns(Task.FromResult(false));
 
-
-        Assert.Multiple(async () =>
+        var result = await _billService.EditBill(tokenToDecode, editBillRequest);
+        Assert.Multiple(() =>
         {
-            var error = await Assert.ThrowsAsync<InvalidDataException>(async () =>
-            {
-                await _billService.EditBill(tokenToDecode, editBillRequest);
-            });
-            Assert.Equal("Bill not found", error.Message);
+            Assert.Equal("Bill not found", result.Error.Description);
 
             _mockBillDatabase.Verify(x => x.IsBillAssociatedWithUser(authedUser, billId), Times.Once);
-            _mockUserRepository.Verify(x => x.GetUserAuthFromToken(tokenToDecode), Times.Once);
+            _mockUserService.Verify(x => x.GetUserFromToken(tokenToDecode), Times.Once);
 
             EnsureAllMocksHadNoOtherCalls();
         });
     }
 
     [Fact]
-    public void FailToEditBill_AccountDoesNotBelongToUser()
+    public async Task FailToEditBill_AccountDoesNotBelongToUser()
     {
         var userId = 52;
         var authedUser = new AuthenticatedUser(userId);
@@ -174,32 +166,28 @@ public sealed class EditBillTest : BillTestHelper
 
         var mockDateTime = new Mock<IDateTimeProvider>();
         mockDateTime.Setup(x => x.Now).Returns(new DateTime(2024, 6, 6, 10, 0, 0));
-        _mockUserRepository.Setup(x => x.GetUserAuthFromToken(tokenToDecode))
-            .Returns(Task.FromResult(new UserAuthentication(new UserEntity(userId, "", ""), tokenToDecode,
-            new DateTime(2024, 6, 6, 10, 0, 0), mockDateTime.Object)));
+        _mockUserService.Setup(x => x.GetUserFromToken(tokenToDecode))
+            .ReturnsAsync(authedUser);
 
         _mockAccountDatabase.Setup(x => x.IsAccountOwnedByUser(authedUser, payerId)).Returns(Task.FromResult(false));
 
         _mockBillDatabase.Setup(x => x.IsBillAssociatedWithUser(authedUser, billId)).Returns(Task.FromResult(true));
 
-        Assert.Multiple(async () =>
+        var result = await _billService.EditBill(tokenToDecode, editBillRequest);
+        Assert.Multiple(() =>
         {
-            var error = await Assert.ThrowsAsync<InvalidDataException>(async () =>
-            {
-                await _billService.EditBill(tokenToDecode, editBillRequest);
-            });
-            Assert.Equal("Payer account not found", error.Message);
+            Assert.Equal("Payer account not found", result.Error.Description);
 
             _mockBillDatabase.Verify(x => x.IsBillAssociatedWithUser(authedUser, billId), Times.Once);
             _mockAccountDatabase.Verify(x => x.IsAccountOwnedByUser(authedUser, payerId), Times.Once);
-            _mockUserRepository.Verify(x => x.GetUserAuthFromToken(tokenToDecode), Times.Once);
+            _mockUserService.Verify(x => x.GetUserFromToken(tokenToDecode), Times.Once);
 
             EnsureAllMocksHadNoOtherCalls();
         });
     }
 
     [Fact]
-    public void FailToEditBill_AllValuesInAreNull()
+    public async Task FailToEditBill_AllValuesInAreNull()
     {
         var userId = 52;
         var authedUser = new AuthenticatedUser(userId);
@@ -209,30 +197,26 @@ public sealed class EditBillTest : BillTestHelper
 
         var mockDateTime = new Mock<IDateTimeProvider>();
         mockDateTime.Setup(x => x.Now).Returns(new DateTime(2024, 6, 6, 10, 0, 0));
-        _mockUserRepository.Setup(x => x.GetUserAuthFromToken(tokenToDecode))
-            .Returns(Task.FromResult(new UserAuthentication(new UserEntity(userId, "", ""), tokenToDecode,
-            new DateTime(2024, 6, 6, 10, 0, 0), mockDateTime.Object)));
+        _mockUserService.Setup(x => x.GetUserFromToken(tokenToDecode))
+            .ReturnsAsync(authedUser);
 
         _mockBillDatabase.Setup(x => x.IsBillAssociatedWithUser(authedUser, billId)).Returns(Task.FromResult(true));
 
-        Assert.Multiple(async () =>
+        var result = await _billService.EditBill(tokenToDecode, editBillRequest);
+        Assert.Multiple(() =>
         {
-            var error = await Assert.ThrowsAsync<InvalidDataException>(async () =>
-            {
-                await _billService.EditBill(tokenToDecode, editBillRequest);
-            });
-            Assert.Equal("Must have at least one non-null value", error.Message);
+            Assert.Equal("Must have at least one non-null value", result.Error!.Description);
 
             _mockBillDatabase.Verify(x => x.IsBillAssociatedWithUser(It.IsAny<AuthenticatedUser>(), It.IsAny<int>()), Times.Never);
             _mockAccountDatabase.Verify(x => x.IsAccountOwnedByUser(It.IsAny<AuthenticatedUser>(), It.IsAny<int>()), Times.Never);
-            _mockUserRepository.Verify(x => x.GetUserAuthFromToken(tokenToDecode), Times.Once);
+            _mockUserService.Verify(x => x.GetUserFromToken(tokenToDecode), Times.Once);
 
             EnsureAllMocksHadNoOtherCalls();
         });
     }
 
     [Fact]
-    public void FailToEditBill_InvalidCategory()
+    public async Task FailToEditBill_InvalidCategory()
     {
         var userId = 52;
         var authedUser = new AuthenticatedUser(userId);
@@ -246,11 +230,8 @@ public sealed class EditBillTest : BillTestHelper
         var payerId = 2;
         var editBillRequest = new EditBillRequest(billId, payeeId, amount, nextDueDate, frequency, category, payerId);
 
-        var mockDateTime = new Mock<IDateTimeProvider>();
-        mockDateTime.Setup(x => x.Now).Returns(new DateTime(2024, 6, 6, 10, 0, 0));
-        _mockUserRepository.Setup(x => x.GetUserAuthFromToken(tokenToDecode))
-            .Returns(Task.FromResult(new UserAuthentication(new UserEntity(userId, "", ""), tokenToDecode,
-            new DateTime(2024, 6, 6, 10, 0, 0), mockDateTime.Object)));
+        _mockUserService.Setup(x => x.GetUserFromToken(tokenToDecode))
+            .ReturnsAsync(authedUser);
 
         _mockAccountDatabase.Setup(x => x.IsAccountOwnedByUser(authedUser, payerId)).Returns(Task.FromResult(true));
         _mockAccountDatabase.Setup(x => x.IsValidAccount(payeeId)).Returns(Task.FromResult(true));
@@ -261,15 +242,12 @@ public sealed class EditBillTest : BillTestHelper
 
         _mockFrequencyCalculation.Setup(x => x.DoesFrequencyExist(frequency)).Returns(true);
 
-        Assert.Multiple(async () =>
+        var result = await _billService.EditBill(tokenToDecode, editBillRequest);
+        Assert.Multiple(() =>
         {
-            var error = await Assert.ThrowsAsync<InvalidDataException>(async () =>
-            {
-                await _billService.EditBill(tokenToDecode, editBillRequest);
-            });
-            Assert.Equal("Invalid category", error.Message);
+            Assert.Equal("Category not found", result.Error!.Description);
 
-            _mockUserRepository.Verify(x => x.GetUserAuthFromToken(tokenToDecode), Times.AtMostOnce);
+            _mockUserService.Verify(x => x.GetUserFromToken(tokenToDecode), Times.AtMostOnce);
             _mockAccountDatabase.Verify(x => x.IsAccountOwnedByUser(authedUser, payerId), Times.AtMostOnce);
             _mockAccountDatabase.Verify(x => x.IsValidAccount(payeeId), Times.AtMostOnce);
             _mockBillDatabase.Verify(x => x.IsBillAssociatedWithUser(authedUser, billId), Times.AtMostOnce);
@@ -281,7 +259,7 @@ public sealed class EditBillTest : BillTestHelper
     }
 
     [Fact]
-    public void FailToEditBill_InvalidFrequency()
+    public async Task FailToEditBill_InvalidFrequency()
     {
         var userId = 52;
         var authedUser = new AuthenticatedUser(userId);
@@ -295,11 +273,8 @@ public sealed class EditBillTest : BillTestHelper
         var payerId = 2;
         var editBillRequest = new EditBillRequest(billId, payeeId, amount, nextDueDate, frequency, category, payerId);
 
-        var mockDateTime = new Mock<IDateTimeProvider>();
-        mockDateTime.Setup(x => x.Now).Returns(new DateTime(2024, 6, 6, 10, 0, 0));
-        _mockUserRepository.Setup(x => x.GetUserAuthFromToken(tokenToDecode))
-            .Returns(Task.FromResult(new UserAuthentication(new UserEntity(userId, "", ""), tokenToDecode,
-            new DateTime(2024, 6, 6, 10, 0, 0), mockDateTime.Object)));
+        _mockUserService.Setup(x => x.GetUserFromToken(tokenToDecode))
+            .ReturnsAsync(authedUser);
 
         _mockAccountDatabase.Setup(x => x.IsAccountOwnedByUser(authedUser, payerId)).Returns(Task.FromResult(true));
         _mockAccountDatabase.Setup(x => x.IsValidAccount(payeeId)).Returns(Task.FromResult(true));
@@ -308,15 +283,12 @@ public sealed class EditBillTest : BillTestHelper
 
         _mockFrequencyCalculation.Setup(x => x.DoesFrequencyExist(frequency)).Returns(false);
 
-        Assert.Multiple(async () =>
+        var result = await _billService.EditBill(tokenToDecode, editBillRequest);
+        Assert.Multiple(() =>
         {
-            var error = await Assert.ThrowsAsync<InvalidDataException>(async () =>
-            {
-                await _billService.EditBill(tokenToDecode, editBillRequest);
-            });
-            Assert.Equal("Invalid frequency", error.Message);
+            Assert.Equal("Frequency type not found", result.Error!.Description);
 
-            _mockUserRepository.Verify(x => x.GetUserAuthFromToken(tokenToDecode), Times.AtMostOnce);
+            _mockUserService.Verify(x => x.GetUserFromToken(tokenToDecode), Times.AtMostOnce);
             _mockAccountDatabase.Verify(x => x.IsAccountOwnedByUser(authedUser, payerId), Times.AtMostOnce);
             _mockAccountDatabase.Verify(x => x.IsValidAccount(payeeId), Times.AtMostOnce);
             _mockBillDatabase.Verify(x => x.IsBillAssociatedWithUser(authedUser, billId), Times.AtMostOnce);
