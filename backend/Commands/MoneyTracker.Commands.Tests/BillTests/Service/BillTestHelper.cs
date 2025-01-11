@@ -1,4 +1,5 @@
 ﻿using MoneyTracker.Commands.Application;
+using MoneyTracker.Commands.Domain.Handlers;
 using MoneyTracker.Commands.Domain.Repositories;
 using MoneyTracker.Common.Utilities.CalculationUtil;
 using MoneyTracker.Common.Utilities.IdGeneratorUtil;
@@ -14,6 +15,7 @@ public class BillTestHelper
     public readonly Mock<IMonthDayCalculator> _mockMonthDayCalculator = new();
     public readonly Mock<ICategoryCommandRepository> _mockCategoryDatabase = new();
     public readonly Mock<IUserCommandRepository> _mockUserRepository = new();
+    public readonly Mock<IUserService> _mockUserService = new();
 
     public readonly BillService _billService;
 
@@ -25,7 +27,9 @@ public class BillTestHelper
             _mockFrequencyCalculation.Object,
             _mockMonthDayCalculator.Object,
             _mockCategoryDatabase.Object,
-            _mockUserRepository.Object);
+            _mockUserRepository.Object,
+            _mockUserService.Object
+            );
     }
 
     public void EnsureAllMocksHadNoOtherCalls()
@@ -37,5 +41,6 @@ public class BillTestHelper
         _mockMonthDayCalculator.VerifyNoOtherCalls();
         _mockCategoryDatabase.VerifyNoOtherCalls();
         _mockUserRepository.VerifyNoOtherCalls();
+        _mockUserService.VerifyNoOtherCalls();
     }
 }

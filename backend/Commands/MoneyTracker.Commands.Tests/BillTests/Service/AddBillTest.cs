@@ -1,6 +1,7 @@
 ﻿using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Authentication.Entities;
 using MoneyTracker.Commands.Domain.Entities.Bill;
+using MoneyTracker.Common.Result;
 using MoneyTracker.Common.Utilities.DateTimeUtil;
 using MoneyTracker.Contracts.Requests.Bill;
 using Moq;
@@ -35,11 +36,8 @@ public sealed class AddBillTest : BillTestHelper
     [Fact]
     public async void SuccessfullyAddNewBill()
     {
-        var mockDateTime = new Mock<IDateTimeProvider>();
-        mockDateTime.Setup(x => x.Now).Returns(new DateTime(2024, 6, 6, 10, 0, 0));
-        _mockUserRepository.Setup(x => x.GetUserAuthFromToken(_tokenToDecode))
-            .Returns(Task.FromResult(new UserAuthentication(new UserEntity(_userId, "", ""), _tokenToDecode,
-            new DateTime(2024, 6, 6, 10, 0, 0), mockDateTime.Object)));
+        _mockUserService.Setup(x => x.GetUserFromToken(_tokenToDecode))
+            .ReturnsAsync(ResultT<AuthenticatedUser>.Success(_authedUser));
 
         _mockAccountDatabase.Setup(x => x.IsAccountOwnedByUser(_authedUser, _payerId))
             .Returns(Task.FromResult(true));
@@ -65,7 +63,7 @@ public sealed class AddBillTest : BillTestHelper
 
         Assert.Multiple(() =>
         {
-            _mockUserRepository.Verify(x => x.GetUserAuthFromToken(_tokenToDecode), Times.Once);
+            _mockUserService.Verify(x => x.GetUserFromToken(_tokenToDecode), Times.Once);
             _mockAccountDatabase.Verify(x => x.IsAccountOwnedByUser(_authedUser, _payerId), Times.Once);
             _mockAccountDatabase.Verify(x => x.IsValidAccount(_payeeId), Times.Once);
             _mockFrequencyCalculation.Verify(x => x.DoesFrequencyExist(_frequency), Times.Once);
@@ -83,11 +81,8 @@ public sealed class AddBillTest : BillTestHelper
     [Fact]
     public async Task FailToAddNewBillDueToAccountNotBelongingToUser()
     {
-        var mockDateTime = new Mock<IDateTimeProvider>();
-        mockDateTime.Setup(x => x.Now).Returns(new DateTime(2024, 6, 6, 10, 0, 0));
-        _mockUserRepository.Setup(x => x.GetUserAuthFromToken(_tokenToDecode))
-            .Returns(Task.FromResult(new UserAuthentication(new UserEntity(_userId, "", ""), _tokenToDecode,
-            new DateTime(2024, 6, 6, 10, 0, 0), mockDateTime.Object)));
+        _mockUserService.Setup(x => x.GetUserFromToken(_tokenToDecode))
+            .ReturnsAsync(ResultT<AuthenticatedUser>.Success(_authedUser));
 
         _mockAccountDatabase.Setup(x => x.IsAccountOwnedByUser(_authedUser, _payerId))
             .Returns(Task.FromResult(false));
@@ -112,7 +107,7 @@ public sealed class AddBillTest : BillTestHelper
         {
             Assert.Equal("Payer account not found", result.Error!.Description);
 
-            _mockUserRepository.Verify(x => x.GetUserAuthFromToken(_tokenToDecode), Times.Once);
+            _mockUserService.Verify(x => x.GetUserFromToken(_tokenToDecode), Times.Once);
             _mockAccountDatabase.Verify(x => x.IsAccountOwnedByUser(_authedUser, _payerId), Times.AtMostOnce);
             _mockAccountDatabase.Verify(x => x.IsValidAccount(_payeeId), Times.AtMostOnce);
             _mockFrequencyCalculation.Verify(x => x.DoesFrequencyExist(_frequency), Times.AtMostOnce);
@@ -127,11 +122,8 @@ public sealed class AddBillTest : BillTestHelper
     [Fact]
     public async Task FailToAddNewBillDueToInvalidFrequency()
     {
-        var mockDateTime = new Mock<IDateTimeProvider>();
-        mockDateTime.Setup(x => x.Now).Returns(new DateTime(2024, 6, 6, 10, 0, 0));
-        _mockUserRepository.Setup(x => x.GetUserAuthFromToken(_tokenToDecode))
-            .Returns(Task.FromResult(new UserAuthentication(new UserEntity(_userId, "", ""), _tokenToDecode,
-            new DateTime(2024, 6, 6, 10, 0, 0), mockDateTime.Object)));
+        _mockUserService.Setup(x => x.GetUserFromToken(_tokenToDecode))
+            .ReturnsAsync(ResultT<AuthenticatedUser>.Success(_authedUser));
 
         _mockAccountDatabase.Setup(x => x.IsAccountOwnedByUser(_authedUser, _payerId))
             .Returns(Task.FromResult(true));
@@ -156,7 +148,7 @@ public sealed class AddBillTest : BillTestHelper
         {
             Assert.Equal("Frequency type not found", result.Error!.Description);
 
-            _mockUserRepository.Verify(x => x.GetUserAuthFromToken(_tokenToDecode), Times.Once);
+            _mockUserService.Verify(x => x.GetUserFromToken(_tokenToDecode), Times.Once);
             _mockAccountDatabase.Verify(x => x.IsAccountOwnedByUser(_authedUser, _payerId), Times.AtMostOnce);
             _mockAccountDatabase.Verify(x => x.IsValidAccount(_payeeId), Times.AtMostOnce);
             _mockFrequencyCalculation.Verify(x => x.DoesFrequencyExist(_frequency), Times.AtMostOnce);
@@ -171,11 +163,8 @@ public sealed class AddBillTest : BillTestHelper
     [Fact]
     public async Task InvalidCategory_Fails()
     {
-        var mockDateTime = new Mock<IDateTimeProvider>();
-        mockDateTime.Setup(x => x.Now).Returns(new DateTime(2024, 6, 6, 10, 0, 0));
-        _mockUserRepository.Setup(x => x.GetUserAuthFromToken(_tokenToDecode))
-            .Returns(Task.FromResult(new UserAuthentication(new UserEntity(_userId, "", ""), _tokenToDecode,
-            new DateTime(2024, 6, 6, 10, 0, 0), mockDateTime.Object)));
+        _mockUserService.Setup(x => x.GetUserFromToken(_tokenToDecode))
+            .ReturnsAsync(ResultT<AuthenticatedUser>.Success(_authedUser));
 
         _mockAccountDatabase.Setup(x => x.IsAccountOwnedByUser(_authedUser, _payerId))
             .Returns(Task.FromResult(true));
@@ -200,7 +189,7 @@ public sealed class AddBillTest : BillTestHelper
         {
             Assert.Equal("Invalid category", result.Error!.Description);
 
-            _mockUserRepository.Verify(x => x.GetUserAuthFromToken(_tokenToDecode), Times.Once);
+            _mockUserService.Verify(x => x.GetUserFromToken(_tokenToDecode), Times.Once);
             _mockAccountDatabase.Verify(x => x.IsAccountOwnedByUser(_authedUser, _payerId), Times.AtMostOnce);
             _mockAccountDatabase.Verify(x => x.IsValidAccount(_payeeId), Times.AtMostOnce);
             _mockFrequencyCalculation.Verify(x => x.DoesFrequencyExist(_frequency), Times.AtMostOnce);
@@ -215,11 +204,8 @@ public sealed class AddBillTest : BillTestHelper
     [Fact]
     public async Task InvalidPayeeAccount_Fails()
     {
-        var mockDateTime = new Mock<IDateTimeProvider>();
-        mockDateTime.Setup(x => x.Now).Returns(new DateTime(2024, 6, 6, 10, 0, 0));
-        _mockUserRepository.Setup(x => x.GetUserAuthFromToken(_tokenToDecode))
-            .Returns(Task.FromResult(new UserAuthentication(new UserEntity(_userId, "", ""), _tokenToDecode,
-            new DateTime(2024, 6, 6, 10, 0, 0), mockDateTime.Object)));
+        _mockUserService.Setup(x => x.GetUserFromToken(_tokenToDecode))
+            .ReturnsAsync(ResultT<AuthenticatedUser>.Success(_authedUser));
 
         _mockAccountDatabase.Setup(x => x.IsAccountOwnedByUser(_authedUser, _payerId))
             .Returns(Task.FromResult(true));
@@ -244,7 +230,7 @@ public sealed class AddBillTest : BillTestHelper
         {
             Assert.Equal("Payee account not found", result.Error!.Description);
 
-            _mockUserRepository.Verify(x => x.GetUserAuthFromToken(_tokenToDecode), Times.Once);
+            _mockUserService.Verify(x => x.GetUserFromToken(_tokenToDecode), Times.Once);
             _mockAccountDatabase.Verify(x => x.IsAccountOwnedByUser(_authedUser, _payerId), Times.AtMostOnce);
             _mockAccountDatabase.Verify(x => x.IsValidAccount(_payeeId), Times.AtMostOnce);
             _mockFrequencyCalculation.Verify(x => x.DoesFrequencyExist(_frequency), Times.AtMostOnce);

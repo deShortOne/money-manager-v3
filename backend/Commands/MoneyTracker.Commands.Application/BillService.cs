@@ -17,6 +17,7 @@ public class BillService : IBillService
     private readonly IMonthDayCalculator _monthDayCalculator;
     private readonly ICategoryCommandRepository _categoryDatabase;
     private readonly IUserCommandRepository _userRepository;
+    private readonly IUserService _userService;
 
     public BillService(IBillCommandRepository dbService,
         IAccountCommandRepository accountDatabase,
@@ -24,7 +25,9 @@ public class BillService : IBillService
         IFrequencyCalculation frequencyCalculation,
         IMonthDayCalculator monthDayCalculator,
         ICategoryCommandRepository categoryDatabase,
-        IUserCommandRepository userRepository)
+        IUserCommandRepository userRepository,
+        IUserService userService
+        )
     {
         _dbService = dbService;
         _accountDatabase = accountDatabase;
@@ -33,19 +36,16 @@ public class BillService : IBillService
         _monthDayCalculator = monthDayCalculator;
         _categoryDatabase = categoryDatabase;
         _userRepository = userRepository;
+        _userService = userService;
     }
 
     public async Task<Result> AddBill(string token, NewBillRequest newBill)
     {
-        var userAuth = await _userRepository.GetUserAuthFromToken(token);
-        if (userAuth == null)
-            return Result.Failure(Error.AccessUnAuthorised("BillService.AddBill", "Token not found"));
+        var userResult = await _userService.GetUserFromToken(token);
+        if (!userResult.IsSuccess)
+            return userResult;
 
-        var userValidationResult = userAuth.CheckValidation();
-        if (!userValidationResult.IsSuccess)
-            return userValidationResult;
-
-        var user = new AuthenticatedUser(userAuth.User.Id);
+        var user = userResult.Value;
         if (!await _accountDatabase.IsAccountOwnedByUser(user, newBill.PayerId))
         {
             return Result.Failure(Error.Validation("BillService.AddBill", "Payer account not found"));
