@@ -18,9 +18,8 @@ public sealed class DeleteBillTest : BillTestHelper
 
         var mockDateTime = new Mock<IDateTimeProvider>();
         mockDateTime.Setup(x => x.Now).Returns(new DateTime(2024, 6, 6, 10, 0, 0));
-        _mockUserRepository.Setup(x => x.GetUserAuthFromToken(tokenToDecode))
-            .Returns(Task.FromResult(new UserAuthentication(new UserEntity(userId, "", ""), tokenToDecode, 
-            new DateTime(2024, 6, 6, 10, 0, 0), mockDateTime.Object)));
+        _mockUserService.Setup(x => x.GetUserFromToken(tokenToDecode))
+            .ReturnsAsync(authedUser);
 
         _mockBillDatabase.Setup(x => x.IsBillAssociatedWithUser(authedUser, billId)).Returns(Task.FromResult(true));
         _mockBillDatabase.Setup(x => x.DeleteBill(billId));
@@ -29,7 +28,7 @@ public sealed class DeleteBillTest : BillTestHelper
 
         Assert.Multiple(() =>
         {
-            _mockUserRepository.Verify(x => x.GetUserAuthFromToken(tokenToDecode), Times.Once);
+            _mockUserService.Verify(x => x.GetUserFromToken(tokenToDecode), Times.Once);
             _mockBillDatabase.Verify(x => x.IsBillAssociatedWithUser(authedUser, billId), Times.Once);
             _mockBillDatabase.Verify(x => x.DeleteBill(billId), Times.Once);
 
@@ -38,7 +37,7 @@ public sealed class DeleteBillTest : BillTestHelper
     }
 
     [Fact]
-    public void BillDoesNotBelongToUser_Fails()
+    public async Task BillDoesNotBelongToUser_Fails()
     {
         var userId = 52;
         var authedUser = new AuthenticatedUser(userId);
@@ -48,21 +47,17 @@ public sealed class DeleteBillTest : BillTestHelper
 
         var mockDateTime = new Mock<IDateTimeProvider>();
         mockDateTime.Setup(x => x.Now).Returns(new DateTime(2024, 6, 6, 10, 0, 0));
-        _mockUserRepository.Setup(x => x.GetUserAuthFromToken(tokenToDecode))
-            .Returns(Task.FromResult(new UserAuthentication(new UserEntity(userId, "", ""), tokenToDecode, 
-            new DateTime(2024, 6, 6, 10, 0, 0), mockDateTime.Object)));
+        _mockUserService.Setup(x => x.GetUserFromToken(tokenToDecode))
+            .ReturnsAsync(authedUser);
 
         _mockBillDatabase.Setup(x => x.IsBillAssociatedWithUser(authedUser, billId)).Returns(Task.FromResult(false));
 
-        Assert.Multiple(async () =>
+        var result = await _billService.DeleteBill(tokenToDecode, editBillRequest);
+        Assert.Multiple(() =>
         {
-            var error = await Assert.ThrowsAsync<InvalidDataException>(async () =>
-            {
-                await _billService.DeleteBill(tokenToDecode, editBillRequest);
-            });
-            Assert.Equal("Bill not found", error.Message);
+            Assert.Equal("Bill not found", result.Error.Description);
 
-            _mockUserRepository.Verify(x => x.GetUserAuthFromToken(tokenToDecode), Times.Once);
+            _mockUserService.Verify(x => x.GetUserFromToken(tokenToDecode), Times.Once);
             _mockBillDatabase.Verify(x => x.IsBillAssociatedWithUser(authedUser, billId), Times.Once);
 
             EnsureAllMocksHadNoOtherCalls();

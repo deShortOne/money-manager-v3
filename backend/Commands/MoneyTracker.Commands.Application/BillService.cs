@@ -138,20 +138,21 @@ public class BillService : IBillService
         return Result.Success();
     }
 
-    public async Task DeleteBill(string token, DeleteBillRequest deleteBill)
+    public async Task<Result> DeleteBill(string token, DeleteBillRequest deleteBill)
     {
-        var userAuth = await _userRepository.GetUserAuthFromToken(token);
-        if (userAuth == null)
-            throw new InvalidDataException("Token not found");
-        userAuth.CheckValidation();
+        var userResult = await _userService.GetUserFromToken(token);
+        if (!userResult.IsSuccess)
+            return userResult;
 
-        var user = new AuthenticatedUser(userAuth.User.Id);
+        var user = userResult.Value;
         if (!await _dbService.IsBillAssociatedWithUser(user, deleteBill.Id))
         {
-            throw new InvalidDataException("Bill not found");
+            return Result.Failure(Error.Validation("BillService.DeleteBill", "Bill not found"));
         }
 
         await _dbService.DeleteBill(deleteBill.Id);
+
+        return Result.Success();
     }
 
     public async Task SkipOccurence(string token, SkipBillOccurrenceRequest skipBillDTO)
