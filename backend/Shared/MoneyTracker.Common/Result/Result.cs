@@ -29,4 +29,20 @@ public class Result
 
     public static Result Failure(Error error) =>
         new(error);
+
+    public override bool Equals(object? obj)
+    {
+        var other = obj as Result;
+        if (other == null) return false;
+        if (Error != null)
+            if (!Error.Equals(other.Error))
+                return false;
+
+        return IsSuccess == other.IsSuccess;
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(IsSuccess, Error);
+    }
 }

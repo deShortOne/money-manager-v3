@@ -27,4 +27,16 @@ public sealed class ResultT<TValue> : Result
     public static ResultT<TValue> Success(TValue value) => new(value);
 
     public static new ResultT<TValue> Failure(Error error) => new(error);
+
+    public override bool Equals(object? obj)
+    {
+        var other = obj as ResultT<TValue>;
+        if (other == null) return false;
+
+        if (IsSuccess && Value != null)
+            if (!Value.Equals(other.Value))
+                return false;
+
+        return base.Equals(other);
+    }
 }

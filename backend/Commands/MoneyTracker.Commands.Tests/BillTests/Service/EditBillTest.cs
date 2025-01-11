@@ -188,7 +188,7 @@ public sealed class EditBillTest : BillTestHelper
             {
                 await _billService.EditBill(tokenToDecode, editBillRequest);
             });
-            Assert.Equal("Account not found", error.Message);
+            Assert.Equal("Payer account not found", error.Message);
 
             _mockBillDatabase.Verify(x => x.IsBillAssociatedWithUser(authedUser, billId), Times.Once);
             _mockAccountDatabase.Verify(x => x.IsAccountOwnedByUser(authedUser, payerId), Times.Once);

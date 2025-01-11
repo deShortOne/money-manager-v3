@@ -1,5 +1,4 @@
-﻿using MoneyTracker.Authentication.Authentication;
-using MoneyTracker.Authentication.DTOs;
+﻿using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Authentication.Entities;
 using Moq;
 

@@ -81,7 +81,7 @@ public sealed class AddBillTest : BillTestHelper
     }
 
     [Fact]
-    public void FailToAddNewBillDueToAccountNotBelongingToUser()
+    public async Task FailToAddNewBillDueToAccountNotBelongingToUser()
     {
         var mockDateTime = new Mock<IDateTimeProvider>();
         mockDateTime.Setup(x => x.Now).Returns(new DateTime(2024, 6, 6, 10, 0, 0));
@@ -107,13 +107,10 @@ public sealed class AddBillTest : BillTestHelper
 
         _mockMonthDayCalculator.Setup(x => x.Calculate(_nextDueDate)).Returns(_monthDay);
 
-        Assert.Multiple(async () =>
+        var result = await _billService.AddBill(_tokenToDecode, _newBillRequest);
+        Assert.Multiple(() =>
         {
-            var error = await Assert.ThrowsAsync<InvalidDataException>(async () =>
-            {
-                await _billService.AddBill(_tokenToDecode, _newBillRequest);
-            });
-            Assert.Equal("Account not found", error.Message);
+            Assert.Equal("Payer account not found", result.Error!.Description);
 
             _mockUserRepository.Verify(x => x.GetUserAuthFromToken(_tokenToDecode), Times.Once);
             _mockAccountDatabase.Verify(x => x.IsAccountOwnedByUser(_authedUser, _payerId), Times.AtMostOnce);
@@ -128,7 +125,7 @@ public sealed class AddBillTest : BillTestHelper
     }
 
     [Fact]
-    public void FailToAddNewBillDueToInvalidFrequency()
+    public async Task FailToAddNewBillDueToInvalidFrequency()
     {
         var mockDateTime = new Mock<IDateTimeProvider>();
         mockDateTime.Setup(x => x.Now).Returns(new DateTime(2024, 6, 6, 10, 0, 0));
@@ -154,13 +151,10 @@ public sealed class AddBillTest : BillTestHelper
 
         _mockMonthDayCalculator.Setup(x => x.Calculate(_nextDueDate)).Returns(_monthDay);
 
-        Assert.Multiple(async () =>
+        var result = await _billService.AddBill(_tokenToDecode, _newBillRequest);
+        Assert.Multiple(() =>
         {
-            var error = await Assert.ThrowsAsync<InvalidDataException>(async () =>
-            {
-                await _billService.AddBill(_tokenToDecode, _newBillRequest);
-            });
-            Assert.Equal("Invalid frequency", error.Message);
+            Assert.Equal("Frequency type not found", result.Error!.Description);
 
             _mockUserRepository.Verify(x => x.GetUserAuthFromToken(_tokenToDecode), Times.Once);
             _mockAccountDatabase.Verify(x => x.IsAccountOwnedByUser(_authedUser, _payerId), Times.AtMostOnce);
@@ -175,7 +169,7 @@ public sealed class AddBillTest : BillTestHelper
     }
 
     [Fact]
-    public void InvalidCategory_Fails()
+    public async Task InvalidCategory_Fails()
     {
         var mockDateTime = new Mock<IDateTimeProvider>();
         mockDateTime.Setup(x => x.Now).Returns(new DateTime(2024, 6, 6, 10, 0, 0));
@@ -201,13 +195,10 @@ public sealed class AddBillTest : BillTestHelper
 
         _mockMonthDayCalculator.Setup(x => x.Calculate(_nextDueDate)).Returns(_monthDay);
 
+        var result = await _billService.AddBill(_tokenToDecode, _newBillRequest);
         Assert.Multiple(async () =>
         {
-            var error = await Assert.ThrowsAsync<InvalidDataException>(async () =>
-            {
-                await _billService.AddBill(_tokenToDecode, _newBillRequest);
-            });
-            Assert.Equal("Invalid category", error.Message);
+            Assert.Equal("Invalid category", result.Error!.Description);
 
             _mockUserRepository.Verify(x => x.GetUserAuthFromToken(_tokenToDecode), Times.Once);
             _mockAccountDatabase.Verify(x => x.IsAccountOwnedByUser(_authedUser, _payerId), Times.AtMostOnce);
@@ -222,7 +213,7 @@ public sealed class AddBillTest : BillTestHelper
     }
 
     [Fact]
-    public void InvalidPayeeAccount_Fails()
+    public async Task InvalidPayeeAccount_Fails()
     {
         var mockDateTime = new Mock<IDateTimeProvider>();
         mockDateTime.Setup(x => x.Now).Returns(new DateTime(2024, 6, 6, 10, 0, 0));
@@ -248,13 +239,10 @@ public sealed class AddBillTest : BillTestHelper
 
         _mockMonthDayCalculator.Setup(x => x.Calculate(_nextDueDate)).Returns(_monthDay);
 
-        Assert.Multiple(async () =>
+        var result = await _billService.AddBill(_tokenToDecode, _newBillRequest);
+        Assert.Multiple(() =>
         {
-            var error = await Assert.ThrowsAsync<InvalidDataException>(async () =>
-            {
-                await _billService.AddBill(_tokenToDecode, _newBillRequest);
-            });
-            Assert.Equal("Payee account not found", error.Message);
+            Assert.Equal("Payee account not found", result.Error!.Description);
 
             _mockUserRepository.Verify(x => x.GetUserAuthFromToken(_tokenToDecode), Times.Once);
             _mockAccountDatabase.Verify(x => x.IsAccountOwnedByUser(_authedUser, _payerId), Times.AtMostOnce);

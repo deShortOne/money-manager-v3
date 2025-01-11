@@ -27,4 +27,18 @@ public class Error
 
     public static Error AccessUnAuthorised(string code, string description) =>
         new(code, description, ErrorType.AccessUnAuthorised);
+
+    public override bool Equals(object? obj)
+    {
+        var other = obj as Error;
+        if (other == null) return false;
+        return Code == other.Code
+            && Description == other.Description
+            && ErrorType == other.ErrorType;
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Code, Description, ErrorType);
+    }
 }
