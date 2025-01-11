@@ -16,7 +16,6 @@ public class BillService : IBillService
     private readonly IFrequencyCalculation _frequencyCalculation;
     private readonly IMonthDayCalculator _monthDayCalculator;
     private readonly ICategoryCommandRepository _categoryDatabase;
-    private readonly IUserCommandRepository _userRepository;
     private readonly IUserService _userService;
 
     public BillService(IBillCommandRepository dbService,
@@ -25,7 +24,6 @@ public class BillService : IBillService
         IFrequencyCalculation frequencyCalculation,
         IMonthDayCalculator monthDayCalculator,
         ICategoryCommandRepository categoryDatabase,
-        IUserCommandRepository userRepository,
         IUserService userService
         )
     {
@@ -35,7 +33,6 @@ public class BillService : IBillService
         _frequencyCalculation = frequencyCalculation;
         _monthDayCalculator = monthDayCalculator;
         _categoryDatabase = categoryDatabase;
-        _userRepository = userRepository;
         _userService = userService;
     }
 
@@ -155,27 +152,28 @@ public class BillService : IBillService
         return Result.Success();
     }
 
-    public async Task SkipOccurence(string token, SkipBillOccurrenceRequest skipBillDTO)
+    public async Task<Result> SkipOccurence(string token, SkipBillOccurrenceRequest skipBillDTO)
     {
-        var userAuth = await _userRepository.GetUserAuthFromToken(token);
-        if (userAuth == null)
-            throw new InvalidDataException("Token not found");
-        userAuth.CheckValidation();
+        var userResult = await _userService.GetUserFromToken(token);
+        if (!userResult.IsSuccess)
+            return userResult;
 
-        var user = new AuthenticatedUser(userAuth.User.Id);
+        var user = userResult.Value;
         if (!await _dbService.IsBillAssociatedWithUser(user, skipBillDTO.Id))
         {
-            throw new InvalidDataException("Bill not found");
+            return Result.Failure(Error.Validation("BillService.SkipOccurence", "Bill not found"));
         }
 
         var bill = await _dbService.GetBillById(skipBillDTO.Id);
         if (bill == null)
         {
-            throw new InvalidDataException("Unexpected database error - bill not found"); // log this
+            return Result.Failure(Error.Failure("BillService.SkipOccurence", "Bill not found"));
         }
         var newDueDate = _frequencyCalculation.CalculateNextDueDate(bill.Frequency, bill.MonthDay, skipBillDTO.SkipDatePastThisDate);
 
         var editBill = new EditBillEntity(skipBillDTO.Id, nextDueDate: newDueDate);
         await _dbService.EditBill(editBill);
+
+        return Result.Success();
     }
 }
