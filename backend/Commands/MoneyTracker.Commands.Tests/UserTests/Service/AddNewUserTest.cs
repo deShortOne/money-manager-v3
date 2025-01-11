@@ -1,4 +1,4 @@
-
+﻿
 using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Authentication.Entities;
 using Moq;
@@ -18,8 +18,9 @@ public sealed class AddNewUserTest : UserTestHelper
         _mockIdGenerator.Setup(x => x.NewInt(_lastUserId)).Returns(_newUserId);
         _mockUserDatabase.Setup(x => x.AddUser(new UserEntity(_newUserId, _username, _password)));
 
-        await _userService.AddNewUser(new LoginWithUsernameAndPassword(_username, _password));
+        var result = await _userService.AddNewUser(new LoginWithUsernameAndPassword(_username, _password));
 
+        Assert.True(result.IsSuccess);
         _mockUserDatabase.Verify(x => x.GetLastUserId(), Times.Once);
         _mockUserDatabase.Verify(x => x.AddUser(new UserEntity(_newUserId, _username, _password)), Times.Once);
         _mockIdGenerator.Verify(x => x.NewInt(_lastUserId), Times.Once);
