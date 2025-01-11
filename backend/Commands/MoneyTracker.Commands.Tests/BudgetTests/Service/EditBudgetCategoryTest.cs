@@ -1,4 +1,4 @@
-using MoneyTracker.Authentication.DTOs;
+﻿using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Authentication.Entities;
 using MoneyTracker.Commands.Domain.Entities.BudgetCategory;
 using MoneyTracker.Common.Utilities.DateTimeUtil;
@@ -21,11 +21,9 @@ public sealed class EditBudgetCategoryTest : BudgetTestHelper
     [Theory, MemberData(nameof(OnlyOneItemNotNull))]
     public async void EditBudget(int? budgetGroupId, decimal? planned)
     {
-        var mockDateTime = new Mock<IDateTimeProvider>();
-        mockDateTime.Setup(x => x.Now).Returns(new DateTime(2024, 6, 6, 10, 0, 0));
-        _mockUserRepository.Setup(x => x.GetUserAuthFromToken(_tokenToDecode))
-            .Returns(Task.FromResult(new UserAuthentication(new UserEntity(_userId, "", ""), _tokenToDecode, 
-            new DateTime(2024, 6, 6, 10, 0, 0), mockDateTime.Object)));
+        var authedUser = new AuthenticatedUser(_userId);
+        _mockUserService.Setup(x => x.GetUserFromToken(_tokenToDecode))
+            .ReturnsAsync(authedUser);
 
         var editBudgetCategoryRequest = new EditBudgetCategoryRequest(_categoryId, budgetGroupId, planned);
         var editBudgetCategory = new EditBudgetCategoryEntity(_userId, _categoryId, budgetGroupId, planned);
@@ -36,7 +34,7 @@ public sealed class EditBudgetCategoryTest : BudgetTestHelper
 
         Assert.Multiple(() =>
         {
-            _mockUserRepository.Verify(x => x.GetUserAuthFromToken(_tokenToDecode), Times.Once);
+            _mockUserService.Verify(x => x.GetUserFromToken(_tokenToDecode), Times.Once);
             _mockBudgetCategoryDatabase.Verify(x => x.EditBudgetCategory(editBudgetCategory), Times.Once);
 
             EnsureAllMocksHadNoOtherCalls();
