@@ -1,5 +1,6 @@
 'use client'
 
+import { useSearchParams, useRouter } from 'next/navigation'
 import { addUserAndLogin } from "./action"
 import { Button } from "@/components/ui/button"
 import {
@@ -25,9 +26,12 @@ import { Result } from "@/types/result"
 import { useState } from "react"
 import { useCookies } from "react-cookie"
 
-export default function A() {
+export default function SignUpPage() {
     const [, setCookies] = useCookies(['token']);
     const [signInButtonErrorMsg, setSignInButtonErrorMsg] = useState("");
+    const searchParams = useSearchParams();
+    const redirectUrl = "/" + (searchParams.get('redirect_url') ?? "budget");
+    const router = useRouter();
 
     const formSchema = z.object({
         // TODO: add validation
@@ -47,8 +51,9 @@ export default function A() {
         if (cookie.hasError) {
             setSignInButtonErrorMsg(cookie.errorMessage);
         } else {
-            setCookies("token", cookie.item, {sameSite: 'strict'});
+            setCookies("token", cookie.item, { sameSite: 'strict' });
             setSignInButtonErrorMsg("");
+            router.replace(redirectUrl);
         }
     }
 
