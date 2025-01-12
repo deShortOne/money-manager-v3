@@ -16,7 +16,7 @@ export async function getAllBills(authToken: string): Promise<Result<Bill[]>> {
         return JSON.parse(JSON.stringify(new SuccessResult(await response.json())));
     }
     console.log("error returned getting bills");
-    return JSON.parse(JSON.stringify(new ErrorResult("Bills not gotten", false)));
+    return JSON.parse(JSON.stringify(new ErrorResult(await response.text(), false)));
 }
 
 export async function addNewBill(authToken: string, newBill: NewBillDto): Promise<Result<Bill>> {
@@ -40,7 +40,7 @@ export async function addNewBill(authToken: string, newBill: NewBillDto): Promis
     }
 
     console.log("error returned add new bill");
-    return JSON.parse(JSON.stringify(new ErrorResult("Error adding new bill", false)));
+    return JSON.parse(JSON.stringify(new ErrorResult(await response.text(), false)));
 }
 
 export async function editBill(authToken: string, editBill: EditBillDto): Promise<Result<Bill>> {
@@ -65,7 +65,7 @@ export async function editBill(authToken: string, editBill: EditBillDto): Promis
     }
 
     console.log("error returned edit old bill");
-    return JSON.parse(JSON.stringify(new ErrorResult("Error editing bill", false)));
+    return JSON.parse(JSON.stringify(new ErrorResult(await response.text(), false)));
 }
 
 export async function deleteBill(authToken: string, billId: number): Promise<Result<Bill>> {
@@ -84,5 +84,5 @@ export async function deleteBill(authToken: string, billId: number): Promise<Res
     }
 
     console.log("error returned delete bill");
-    return JSON.parse(JSON.stringify(new ErrorResult("Error deleting bill", false)));
+    return JSON.parse(JSON.stringify(new ErrorResult(await response.text(), false)));
 }

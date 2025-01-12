@@ -43,6 +43,10 @@ public class BillService : IBillService
             return userResult;
 
         var user = userResult.Value;
+        if (newBill.Amount < 0)
+        {
+            return Result.Failure(Error.Validation("BillService.AddBill", "Amount must be a positive number"));
+        }
         if (!await _accountDatabase.IsAccountOwnedByUser(user, newBill.PayerId))
         {
             return Result.Failure(Error.Validation("BillService.AddBill", "Payer account not found"));

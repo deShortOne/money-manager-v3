@@ -241,4 +241,23 @@ public sealed class AddBillTest : BillTestHelper
             EnsureAllMocksHadNoOtherCalls();
         });
     }
+
+    [Fact]
+    public async Task AmountIsNegative_Fails()
+    {
+        _mockUserService.Setup(x => x.GetUserFromToken(_tokenToDecode))
+            .ReturnsAsync(ResultT<AuthenticatedUser>.Success(_authedUser));
+
+        var customBillRequest = new NewBillRequest(_payeeId, -_amount, _nextDueDate, _frequency, _category, _payerId);
+
+        var result = await _billService.AddBill(_tokenToDecode, customBillRequest);
+        Assert.Multiple(() =>
+        {
+            Assert.Equal("Amount must be a positive number", result.Error!.Description);
+
+            _mockUserService.Verify(x => x.GetUserFromToken(_tokenToDecode), Times.Once);
+
+            EnsureAllMocksHadNoOtherCalls();
+        });
+    }
 }

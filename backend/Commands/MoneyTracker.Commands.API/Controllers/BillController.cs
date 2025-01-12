@@ -21,22 +21,26 @@ public class BillController
 
     [HttpPost]
     [Route("add")]
-    public Task AddBill(NewBillRequest newBill)
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    public async Task<IActionResult> AddBill(NewBillRequest newBill)
     {
-        return _billService.AddBill(ControllerHelper.GetToken(_httpContextAccessor), newBill);
+        var result = await _billService.AddBill(ControllerHelper.GetToken(_httpContextAccessor), newBill);
+        return ControllerHelper.Convert(result);
     }
 
     [HttpPatch]
     [Route("edit")]
-    public Task EditBill(EditBillRequest editBill)
+    public async Task<IActionResult> EditBill(EditBillRequest editBill)
     {
-        return _billService.EditBill(ControllerHelper.GetToken(_httpContextAccessor), editBill);
+        var result = await _billService.EditBill(ControllerHelper.GetToken(_httpContextAccessor), editBill);
+        return ControllerHelper.Convert(result);
     }
 
     [HttpDelete]
     [Route("delete")]
-    public Task DeleteBill(DeleteBillRequest deleteBill)
+    public async Task<IActionResult> DeleteBill(DeleteBillRequest deleteBill)
     {
-        return _billService.DeleteBill(ControllerHelper.GetToken(_httpContextAccessor), deleteBill);
+        var result = await _billService.DeleteBill(ControllerHelper.GetToken(_httpContextAccessor), deleteBill);
+        return ControllerHelper.Convert(result);
     }
 }
