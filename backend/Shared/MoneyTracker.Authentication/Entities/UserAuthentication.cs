@@ -6,7 +6,7 @@ namespace MoneyTracker.Authentication.Entities;
 public class UserAuthentication(UserEntity user,
     string token,
     DateTime expiration,
-    IDateTimeProvider dateTime)
+    IDateTimeProvider dateTime) : IUserAuthentication
 {
     private readonly IDateTimeProvider _dateTime = dateTime;
 

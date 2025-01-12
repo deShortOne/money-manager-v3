@@ -1,6 +1,6 @@
 ﻿
 using MoneyTracker.Authentication.Entities;
-using MoneyTracker.Common.Utilities.DateTimeUtil;
+using MoneyTracker.Common.Result;
 using Moq;
 
 namespace MoneyTracker.Queries.Tests.UserTests.Service;
@@ -10,11 +10,12 @@ public sealed class IsTokenValidTest : UserTestHelper
     public async Task TokenIsValid()
     {
         var token = "Afds";
-        var user = new UserEntity(1, "", "");
-        var dateTimeProvider = new Mock<IDateTimeProvider>();
-        dateTimeProvider.Setup(x => x.Now).Returns(new DateTime(2024, 1, 12));
+        var mockUserAuth = new Mock<IUserAuthentication>();
+        mockUserAuth.Setup(x => x.CheckValidation())
+            .Returns(Result.Success());
+
         _mockUserDatabase.Setup(x => x.GetUserAuthFromToken(token))
-            .ReturnsAsync(new UserAuthentication(user, token, new DateTime(2024, 1, 13), dateTimeProvider.Object));
+            .ReturnsAsync(mockUserAuth.Object);
 
         Assert.True(await _userService.IsTokenValid(token));
     }
@@ -32,13 +33,13 @@ public sealed class IsTokenValidTest : UserTestHelper
     [Fact]
     public async Task TokenFailsValidation()
     {
-        var token = "Afds";
-        var user = new UserEntity(1, "", "");
-        var dateTimeProvider = new Mock<IDateTimeProvider>();
-        dateTimeProvider.Setup(x => x.Now).Returns(new DateTime(2024, 1, 14));
-        _mockUserDatabase.Setup(x => x.GetUserAuthFromToken(token))
-            .ReturnsAsync(new UserAuthentication(user, token, new DateTime(2024, 1, 13), dateTimeProvider.Object));
+        var mockUserAuth = new Mock<IUserAuthentication>();
+        mockUserAuth.Setup(x => x.CheckValidation())
+            .Returns(Result.Failure(Error.Validation("", "")));
 
-        Assert.False(await _userService.IsTokenValid(token));
+        _mockUserDatabase.Setup(x => x.GetUserAuthFromToken(It.IsAny<string>()))
+            .ReturnsAsync(mockUserAuth.Object);
+
+        Assert.False(await _userService.IsTokenValid(It.IsAny<string>()));
     }
 }
