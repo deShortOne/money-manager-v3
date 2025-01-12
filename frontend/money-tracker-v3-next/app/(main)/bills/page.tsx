@@ -3,6 +3,7 @@
 import { UpdateBillForm } from "./components/update-bill-form";
 import SideBar from "./components/side-bar";
 import BillsDisplay from "./components/table";
+import { useCookies } from 'react-cookie';
 
 import {
     QueryClient,
@@ -12,6 +13,10 @@ import {
 const queryClient = new QueryClient();
 
 export default function Register() {
+    const [cookies] = useCookies(['token']);
+    if (cookies == null) {
+
+    }
     return (
         <QueryClientProvider client={queryClient}>
             <UpdateBillForm />
