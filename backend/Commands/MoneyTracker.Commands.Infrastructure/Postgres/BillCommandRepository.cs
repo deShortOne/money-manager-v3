@@ -142,28 +142,6 @@ public class BillCommandRepository : IBillCommandRepository
         return null;
     }
 
-    public async Task<bool> IsBillAssociatedWithUser(AuthenticatedUser user, int billId)
-    {
-        string query = """
-            SELECT 1
-            FROM bill b
-            WHERE b.id = @id
-            AND b.account_id IN (
-                SELECT a.id
-                FROM account a
-                WHERE a.users_id = @user_id
-            );
-            """;
-        var queryParams = new List<DbParameter>()
-        {
-            new NpgsqlParameter("id", billId),
-            new NpgsqlParameter("user_id", user.Id),
-        };
-        using var reader = await _database.GetTable(query, queryParams);
-
-        return reader.Rows.Count != 0 && reader.Rows[0].Field<int>(0) == 1;
-    }
-
     public async Task<int> GetLastId()
     {
         string query = """

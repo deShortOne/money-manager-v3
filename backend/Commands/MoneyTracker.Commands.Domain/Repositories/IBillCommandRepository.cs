@@ -8,6 +8,5 @@ public interface IBillCommandRepository
     public Task EditBill(EditBillEntity editBillDTO);
     public Task DeleteBill(int billIdToDelete);
     public Task<BillEntity?> GetBillById(int id);
-    Task<bool> IsBillAssociatedWithUser(AuthenticatedUser user, int billId);
     public Task<int> GetLastId();
 }

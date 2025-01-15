@@ -102,7 +102,8 @@ public class BillService : IBillService
             return Result.Failure(Error.Validation("BillService.EditBill", "Must have at least one non-null value"));
         }
 
-        if (!await _dbService.IsBillAssociatedWithUser(user, editBill.Id))
+        var doesUserOwnBill = await DoesUserOwnBill(editBill.Id, user);
+        if (!doesUserOwnBill)
         {
             return Result.Failure(Error.Validation("BillService.EditBill", "Bill not found"));
         }
@@ -165,7 +166,8 @@ public class BillService : IBillService
             return userResult;
 
         var user = userResult.Value;
-        if (!await _dbService.IsBillAssociatedWithUser(user, deleteBill.Id))
+        var doesUserOwnBill = await DoesUserOwnBill(deleteBill.Id, user);
+        if (!doesUserOwnBill)
         {
             return Result.Failure(Error.Validation("BillService.DeleteBill", "Bill not found"));
         }
@@ -182,7 +184,8 @@ public class BillService : IBillService
             return userResult;
 
         var user = userResult.Value;
-        if (!await _dbService.IsBillAssociatedWithUser(user, skipBillDTO.Id))
+        var doesUserOwnBill = await DoesUserOwnBill(skipBillDTO.Id, user);
+        if (!doesUserOwnBill)
         {
             return Result.Failure(Error.Validation("BillService.SkipOccurence", "Bill not found"));
         }
@@ -198,5 +201,24 @@ public class BillService : IBillService
         await _dbService.EditBill(editBill);
 
         return Result.Success();
+    }
+
+    private async Task<bool> DoesUserOwnBill(int billId, AuthenticatedUser user)
+    {
+        var bill = await _dbService.GetBillById(billId);
+        if (bill == null)
+        {
+            return false;
+        }
+        var billsPayerAccount = await _accountDatabase.GetAccountById(bill.PayerId);
+        if (billsPayerAccount == null)
+        {
+            return false;
+        }
+        if (billsPayerAccount.UserId != user.Id)
+        {
+            return false;
+        }
+        return true;
     }
 }
