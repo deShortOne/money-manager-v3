@@ -33,7 +33,13 @@ public class RegisterService : IRegisterService
             return userResult;
 
         var user = userResult.Value;
-        if (!await _accountDb.IsAccountOwnedByUser(user, newTransaction.PayerId))
+
+        var payerAccount = await _accountDb.GetAccountById(newTransaction.PayerId);
+        if (payerAccount == null) // to be logged differently
+        {
+            return Result.Failure(Error.Validation("RegisterService.AddTransaction", "Payer account not found"));
+        }
+        if (payerAccount.UserId != user.Id)
         {
             return Result.Failure(Error.Validation("RegisterService.AddTransaction", "Payer account not found"));
         }
@@ -62,9 +68,15 @@ public class RegisterService : IRegisterService
         {
             return Result.Failure(Error.Validation("RegisterService.EditTransaction", "Transaction not found"));
         }
-        if (editTransaction.PayerId != null && !await _accountDb.IsAccountOwnedByUser(user, (int)editTransaction.PayerId))
+        if (editTransaction.PayerId != null)
         {
-            return Result.Failure(Error.Validation("RegisterService.EditTransaction", "Payer account not found"));
+            var payerAccount = await _accountDb.GetAccountById((int)editTransaction.PayerId);
+            if (payerAccount == null)
+            {
+                return Result.Failure(Error.Validation("RegisterService.EditTransaction", "Payer account not found"));
+            }
+            if (payerAccount.UserId != user.Id)
+                return Result.Failure(Error.Validation("RegisterService.EditTransaction", "Payer account not found"));
         }
 
         var dtoToDb = new EditTransactionEntity(editTransaction.Id, editTransaction.PayeeId, editTransaction.Amount,

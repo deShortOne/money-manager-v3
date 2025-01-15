@@ -47,11 +47,19 @@ public class BillService : IBillService
         {
             return Result.Failure(Error.Validation("BillService.AddBill", "Amount must be a positive number"));
         }
-        if (!await _accountDatabase.IsAccountOwnedByUser(user, newBill.PayerId))
+
+        var payerAccount = await _accountDatabase.GetAccountById(newBill.PayerId);
+        if (payerAccount == null) // to be logged differently
         {
             return Result.Failure(Error.Validation("BillService.AddBill", "Payer account not found"));
         }
-        if (!await _accountDatabase.IsValidAccount(newBill.PayeeId))
+        if (payerAccount.UserId != user.Id)
+        {
+            return Result.Failure(Error.Validation("BillService.AddBill", "Payer account not found"));
+        }
+
+        var payeeAccount = await _accountDatabase.GetAccountById(newBill.PayeeId);
+        if (payeeAccount == null)
         {
             return Result.Failure(Error.Validation("BillService.AddBill", "Payee account not found"));
         }
@@ -98,15 +106,26 @@ public class BillService : IBillService
         {
             return Result.Failure(Error.Validation("BillService.EditBill", "Bill not found"));
         }
-        if (editBill.PayerId != null &&
-            !await _accountDatabase.IsAccountOwnedByUser(user, (int)editBill.PayerId))
+
+        if (editBill.PayerId != null)
         {
-            return Result.Failure(Error.Validation("BillService.EditBill", "Payer account not found"));
+            var payerAccount = await _accountDatabase.GetAccountById((int)editBill.PayerId);
+            if (payerAccount == null) // to be logged differently
+            {
+                return Result.Failure(Error.Validation("BillService.EditBill", "Payer account not found"));
+            }
+            if (payerAccount.UserId != user.Id)
+            {
+                return Result.Failure(Error.Validation("BillService.EditBill", "Payer account not found"));
+            }
         }
-        if (editBill.PayeeId != null &&
-            !await _accountDatabase.IsValidAccount((int)editBill.PayeeId))
+        if (editBill.PayeeId != null)
         {
-            return Result.Failure(Error.Validation("BillService.EditBill", "Payee account not found"));
+            var payeeAccount = await _accountDatabase.GetAccountById((int)editBill.PayeeId);
+            if (payeeAccount == null)
+            {
+                return Result.Failure(Error.Validation("BillService.EditBill", "Payee account not found"));
+            }
         }
         if (editBill.Frequency != null &&
             !_frequencyCalculation.DoesFrequencyExist(editBill.Frequency))

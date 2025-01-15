@@ -1,6 +1,6 @@
 ﻿using System.Data;
 using System.Data.Common;
-using MoneyTracker.Authentication.DTOs;
+using MoneyTracker.Commands.Domain.Entities.Account;
 using MoneyTracker.Commands.Domain.Repositories;
 using MoneyTracker.Common.Interfaces;
 using Npgsql;
@@ -14,29 +14,12 @@ public class AccountCommandRepository : IAccountCommandRepository
         _database = db;
     }
 
-    public async Task<bool> IsAccountOwnedByUser(AuthenticatedUser user, int accountId)
+    public async Task<AccountEntity?> GetAccountById(int accountId)
     {
         var query = """
-            SELECT 1
-            FROM account
-            WHERE users_id = @userid
-            AND id = @account_id;
-         """;
-        var queryParams = new List<DbParameter>()
-        {
-            new NpgsqlParameter("userid", user.Id),
-            new NpgsqlParameter("account_id", accountId),
-        };
-
-        var reader = await _database.GetTable(query, queryParams);
-
-        return reader.Rows.Count != 0 && reader.Rows[0].Field<int>(0) == 1;
-    }
-
-    public async Task<bool> IsValidAccount(int accountId)
-    {
-        var query = """
-            SELECT 1
+            SELECT id,
+                name,
+                users_id
             FROM account
             WHERE id = @account_id;
          """;
@@ -45,8 +28,13 @@ public class AccountCommandRepository : IAccountCommandRepository
             new NpgsqlParameter("account_id", accountId),
         };
 
-        var reader = await _database.GetTable(query, queryParams);
+        using var reader = await _database.GetTable(query, queryParams);
 
-        return reader.Rows.Count != 0 && reader.Rows[0].Field<int>(0) == 1;
+        if (reader.Rows.Count != 0)
+            return new AccountEntity(
+                reader.Rows[0].Field<int>("id"),
+                reader.Rows[0].Field<string>("name")!,
+                reader.Rows[0].Field<int>("users_id"));
+        return null;
     }
 }

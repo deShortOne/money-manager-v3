@@ -29,6 +29,7 @@ public sealed class GetAllBillsTest : BillTestHelper
 
         var mockUserAuth = new Mock<IUserAuthentication>();
         mockUserAuth.Setup(x => x.CheckValidation()).Returns(Result.Success());
+        mockUserAuth.Setup(x => x.User).Returns(new UserEntity(userId, "", ""));
         _mockUserRepository.Setup(x => x.GetUserAuthFromToken(tokenToDecode))
             .ReturnsAsync(mockUserAuth.Object);
 

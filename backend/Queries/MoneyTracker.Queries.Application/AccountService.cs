@@ -1,5 +1,4 @@
 ﻿using MoneyTracker.Authentication.DTOs;
-using MoneyTracker.Authentication.Interfaces;
 using MoneyTracker.Contracts.Responses.Account;
 using MoneyTracker.Queries.Domain.Handlers;
 using MoneyTracker.Queries.Domain.Repositories;

@@ -1,8 +1,7 @@
 ﻿
 using MoneyTracker.Authentication.DTOs;
-using MoneyTracker.Authentication.Entities;
+using MoneyTracker.Commands.Domain.Entities.Account;
 using MoneyTracker.Commands.Domain.Entities.Transaction;
-using MoneyTracker.Common.Utilities.DateTimeUtil;
 using MoneyTracker.Contracts.Requests.Transaction;
 using Moq;
 
@@ -34,7 +33,7 @@ public sealed class AddRegisterTest : RegisterTestHelper
 
         _mockRegisterDatabase.Setup(x => x.GetLastTransactionId()).Returns(Task.FromResult(_lastTransactionId));
         _mockIdGenerator.Setup(x => x.NewInt(_lastTransactionId)).Returns(_newTransactionId);
-        _mockAccountDatabase.Setup(x => x.IsAccountOwnedByUser(_authedUser, _payerId)).Returns(Task.FromResult(true));
+        _mockAccountDatabase.Setup(x => x.GetAccountById(_payerId)).ReturnsAsync(new AccountEntity(1, "", _userId));
 
         var newTransactionRequest = new NewTransactionRequest(_payeeId, _amount, _datePaid, _categoryId, _payerId);
         var newTransaction = new TransactionEntity(_newTransactionId, _payeeId, _amount, _datePaid, _categoryId, _payerId);
@@ -47,7 +46,7 @@ public sealed class AddRegisterTest : RegisterTestHelper
             _mockRegisterDatabase.Verify(x => x.GetLastTransactionId(), Times.Once);
             _mockRegisterDatabase.Verify(x => x.AddTransaction(newTransaction), Times.Once);
             _mockIdGenerator.Verify(x => x.NewInt(_lastTransactionId), Times.Once);
-            _mockAccountDatabase.Verify(x => x.IsAccountOwnedByUser(_authedUser, _payerId), Times.Once);
+            _mockAccountDatabase.Verify(x => x.GetAccountById(_payerId), Times.Once);
 
             EnsureAllMocksHadNoOtherCalls();
         });

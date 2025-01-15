@@ -1,8 +1,7 @@
-﻿using MoneyTracker.Authentication.DTOs;
+﻿using MoneyTracker.Commands.Domain.Entities.Account;
 
 namespace MoneyTracker.Commands.Domain.Repositories;
 public interface IAccountCommandRepository
 {
-    Task<bool> IsAccountOwnedByUser(AuthenticatedUser user, int accountId);
-    Task<bool> IsValidAccount(int accountId);
+    Task<AccountEntity?> GetAccountById(int accountId);
 }
