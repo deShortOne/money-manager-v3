@@ -1,5 +1,4 @@
-﻿using System.Data.Common;
-using MoneyTracker.Commands.Domain.Entities.Category;
+﻿using MoneyTracker.Commands.Domain.Entities.Category;
 using MoneyTracker.Commands.Domain.Handlers;
 using MoneyTracker.Commands.Domain.Repositories;
 using MoneyTracker.Common.Utilities.IdGeneratorUtil;
@@ -35,5 +34,12 @@ public class CategoryService : ICategoryService
     public async Task DeleteCategory(DeleteCategoryRequest deleteCategory)
     {
         await _dbService.DeleteCategory(deleteCategory.Id);
+    }
+
+    public async Task<bool> DoesCategoryExist(int categoryId)
+    {
+        var category = await _dbService.GetCategory(categoryId);
+
+        return category != null;
     }
 }

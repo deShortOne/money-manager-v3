@@ -8,7 +8,7 @@ using MoneyTracker.Commands.Infrastructure.Postgres;
 using Testcontainers.PostgreSql;
 
 namespace MoneyTracker.Commands.Tests.AccountTests;
-class GetAccountByIdTest : IAsyncLifetime
+public class GetAccountByIdTest : IAsyncLifetime
 {
     public readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder()
 #if RUN_LOCAL

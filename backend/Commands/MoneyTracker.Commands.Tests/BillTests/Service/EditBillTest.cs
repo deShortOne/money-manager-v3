@@ -52,7 +52,7 @@ public sealed class EditBillTest : BillTestHelper
 
         if (category != null)
         {
-            _mockCategoryDatabase.Setup(x => x.DoesCategoryExist((int)category)).Returns(Task.FromResult(true));
+            _mockCategoryService.Setup(x => x.DoesCategoryExist((int)category)).Returns(Task.FromResult(true));
         }
 
         if (frequency != null)
@@ -83,7 +83,7 @@ public sealed class EditBillTest : BillTestHelper
             }
             if (category != null)
             {
-                _mockCategoryDatabase.Verify(x => x.DoesCategoryExist((int)category), Times.Once);
+                _mockCategoryService.Verify(x => x.DoesCategoryExist((int)category), Times.Once);
             }
 
             if (frequency != null)
@@ -227,7 +227,7 @@ public sealed class EditBillTest : BillTestHelper
         _mockBillDatabase.Setup(x => x.GetBillById(billId)).ReturnsAsync(new BillEntity(-1, -1, -1, new DateOnly(), -1, "", -1, previousBillPayerId));
         _mockAccountDatabase.Setup(x => x.GetAccountById(previousBillPayerId)).ReturnsAsync(new AccountEntity(-1, "", userId));
 
-        _mockCategoryDatabase.Setup(x => x.DoesCategoryExist(category)).Returns(Task.FromResult(false));
+        _mockCategoryService.Setup(x => x.DoesCategoryExist(category)).Returns(Task.FromResult(false));
 
         _mockFrequencyCalculation.Setup(x => x.DoesFrequencyExist(frequency)).Returns(true);
 
@@ -241,7 +241,7 @@ public sealed class EditBillTest : BillTestHelper
             _mockAccountDatabase.Verify(x => x.GetAccountById(payeeId), Times.AtMostOnce);
             _mockAccountDatabase.Verify(x => x.GetAccountById(previousBillPayerId), Times.AtMostOnce);
             _mockBillDatabase.Verify(x => x.GetBillById(billId), Times.AtMostOnce);
-            _mockCategoryDatabase.Verify(x => x.DoesCategoryExist(category), Times.AtMostOnce);
+            _mockCategoryService.Verify(x => x.DoesCategoryExist(category), Times.AtMostOnce);
             _mockFrequencyCalculation.Verify(x => x.DoesFrequencyExist(frequency), Times.AtMostOnce);
 
             EnsureAllMocksHadNoOtherCalls();

@@ -45,7 +45,7 @@ public sealed class AddBillTest : BillTestHelper
 
         _mockFrequencyCalculation.Setup(x => x.DoesFrequencyExist(_frequency)).Returns(true);
 
-        _mockCategoryDatabase.Setup(x => x.DoesCategoryExist(_category))
+        _mockCategoryService.Setup(x => x.DoesCategoryExist(_category))
             .Returns(Task.FromResult(true));
 
         _mockBillDatabase.Setup(x => x.GetLastId())
@@ -66,7 +66,7 @@ public sealed class AddBillTest : BillTestHelper
             _mockAccountDatabase.Verify(x => x.GetAccountById(_payerId), Times.Once);
             _mockAccountDatabase.Verify(x => x.GetAccountById(_payeeId), Times.Once);
             _mockFrequencyCalculation.Verify(x => x.DoesFrequencyExist(_frequency), Times.Once);
-            _mockCategoryDatabase.Verify(x => x.DoesCategoryExist(_category), Times.Once);
+            _mockCategoryService.Verify(x => x.DoesCategoryExist(_category), Times.Once);
             _mockBillDatabase.Verify(x => x.GetLastId(), Times.Once);
             _mockIdGenerator.Verify(x => x.NewInt(_prevBillId), Times.Once);
             _mockFrequencyCalculation.Verify(x => x.DoesFrequencyExist(_frequency), Times.Once);
@@ -90,7 +90,7 @@ public sealed class AddBillTest : BillTestHelper
 
         _mockFrequencyCalculation.Setup(x => x.DoesFrequencyExist(_frequency)).Returns(true);
 
-        _mockCategoryDatabase.Setup(x => x.DoesCategoryExist(_category))
+        _mockCategoryService.Setup(x => x.DoesCategoryExist(_category))
             .Returns(Task.FromResult(true));
 
         _mockBillDatabase.Setup(x => x.GetLastId())
@@ -110,7 +110,7 @@ public sealed class AddBillTest : BillTestHelper
             _mockAccountDatabase.Verify(x => x.GetAccountById(_payerId), Times.AtMostOnce);
             _mockAccountDatabase.Verify(x => x.GetAccountById(_payeeId), Times.AtMostOnce);
             _mockFrequencyCalculation.Verify(x => x.DoesFrequencyExist(_frequency), Times.AtMostOnce);
-            _mockCategoryDatabase.Verify(x => x.DoesCategoryExist(_category), Times.AtMostOnce);
+            _mockCategoryService.Verify(x => x.DoesCategoryExist(_category), Times.AtMostOnce);
             _mockBillDatabase.Verify(x => x.GetLastId(), Times.AtMostOnce);
             _mockIdGenerator.Verify(x => x.NewInt(_prevBillId), Times.AtMostOnce);
 
@@ -131,7 +131,7 @@ public sealed class AddBillTest : BillTestHelper
 
         _mockFrequencyCalculation.Setup(x => x.DoesFrequencyExist(_frequency)).Returns(false);
 
-        _mockCategoryDatabase.Setup(x => x.DoesCategoryExist(_category))
+        _mockCategoryService.Setup(x => x.DoesCategoryExist(_category))
             .Returns(Task.FromResult(true));
 
         _mockBillDatabase.Setup(x => x.GetLastId())
@@ -151,7 +151,7 @@ public sealed class AddBillTest : BillTestHelper
             _mockAccountDatabase.Verify(x => x.GetAccountById(_payerId), Times.AtMostOnce);
             _mockAccountDatabase.Verify(x => x.GetAccountById(_payeeId), Times.AtMostOnce);
             _mockFrequencyCalculation.Verify(x => x.DoesFrequencyExist(_frequency), Times.AtMostOnce);
-            _mockCategoryDatabase.Verify(x => x.DoesCategoryExist(_category), Times.AtMostOnce);
+            _mockCategoryService.Verify(x => x.DoesCategoryExist(_category), Times.AtMostOnce);
             _mockBillDatabase.Verify(x => x.GetLastId(), Times.AtMostOnce);
             _mockIdGenerator.Verify(x => x.NewInt(_prevBillId), Times.AtMostOnce);
 
@@ -172,7 +172,7 @@ public sealed class AddBillTest : BillTestHelper
 
         _mockFrequencyCalculation.Setup(x => x.DoesFrequencyExist(_frequency)).Returns(true);
 
-        _mockCategoryDatabase.Setup(x => x.DoesCategoryExist(_category))
+        _mockCategoryService.Setup(x => x.DoesCategoryExist(_category))
             .Returns(Task.FromResult(false));
 
         _mockBillDatabase.Setup(x => x.GetLastId())
@@ -192,7 +192,7 @@ public sealed class AddBillTest : BillTestHelper
             _mockAccountDatabase.Verify(x => x.GetAccountById(_payerId), Times.AtMostOnce);
             _mockAccountDatabase.Verify(x => x.GetAccountById(_payeeId), Times.AtMostOnce);
             _mockFrequencyCalculation.Verify(x => x.DoesFrequencyExist(_frequency), Times.AtMostOnce);
-            _mockCategoryDatabase.Verify(x => x.DoesCategoryExist(_category), Times.AtMostOnce);
+            _mockCategoryService.Verify(x => x.DoesCategoryExist(_category), Times.AtMostOnce);
             _mockBillDatabase.Verify(x => x.GetLastId(), Times.AtMostOnce);
             _mockIdGenerator.Verify(x => x.NewInt(_prevBillId), Times.AtMostOnce);
 
@@ -213,7 +213,7 @@ public sealed class AddBillTest : BillTestHelper
 
         _mockFrequencyCalculation.Setup(x => x.DoesFrequencyExist(_frequency)).Returns(true);
 
-        _mockCategoryDatabase.Setup(x => x.DoesCategoryExist(_category))
+        _mockCategoryService.Setup(x => x.DoesCategoryExist(_category))
             .Returns(Task.FromResult(true));
 
         _mockBillDatabase.Setup(x => x.GetLastId())
@@ -233,7 +233,7 @@ public sealed class AddBillTest : BillTestHelper
             _mockAccountDatabase.Verify(x => x.GetAccountById(_payerId), Times.AtMostOnce);
             _mockAccountDatabase.Verify(x => x.GetAccountById(_payeeId), Times.Once);
             _mockFrequencyCalculation.Verify(x => x.DoesFrequencyExist(_frequency), Times.AtMostOnce);
-            _mockCategoryDatabase.Verify(x => x.DoesCategoryExist(_category), Times.AtMostOnce);
+            _mockCategoryService.Verify(x => x.DoesCategoryExist(_category), Times.AtMostOnce);
             _mockBillDatabase.Verify(x => x.GetLastId(), Times.AtMostOnce);
             _mockIdGenerator.Verify(x => x.NewInt(_prevBillId), Times.AtMostOnce);
 

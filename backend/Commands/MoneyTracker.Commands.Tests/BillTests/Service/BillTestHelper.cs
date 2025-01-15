@@ -13,7 +13,7 @@ public class BillTestHelper
     public readonly Mock<IIdGenerator> _mockIdGenerator = new();
     public readonly Mock<IFrequencyCalculation> _mockFrequencyCalculation = new();
     public readonly Mock<IMonthDayCalculator> _mockMonthDayCalculator = new();
-    public readonly Mock<ICategoryCommandRepository> _mockCategoryDatabase = new();
+    public readonly Mock<ICategoryService> _mockCategoryService = new();
     public readonly Mock<IUserService> _mockUserService = new();
 
     public readonly BillService _billService;
@@ -25,7 +25,7 @@ public class BillTestHelper
             _mockIdGenerator.Object,
             _mockFrequencyCalculation.Object,
             _mockMonthDayCalculator.Object,
-            _mockCategoryDatabase.Object,
+            _mockCategoryService.Object,
             _mockUserService.Object
             );
     }
@@ -37,7 +37,7 @@ public class BillTestHelper
         _mockIdGenerator.VerifyNoOtherCalls();
         _mockFrequencyCalculation.VerifyNoOtherCalls();
         _mockMonthDayCalculator.VerifyNoOtherCalls();
-        _mockCategoryDatabase.VerifyNoOtherCalls();
+        _mockCategoryService.VerifyNoOtherCalls();
         _mockUserService.VerifyNoOtherCalls();
     }
 }

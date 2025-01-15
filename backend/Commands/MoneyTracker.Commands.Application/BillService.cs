@@ -15,7 +15,7 @@ public class BillService : IBillService
     private readonly IIdGenerator _idGenerator;
     private readonly IFrequencyCalculation _frequencyCalculation;
     private readonly IMonthDayCalculator _monthDayCalculator;
-    private readonly ICategoryCommandRepository _categoryDatabase;
+    private readonly ICategoryService _categoryService;
     private readonly IUserService _userService;
 
     public BillService(IBillCommandRepository dbService,
@@ -23,7 +23,7 @@ public class BillService : IBillService
         IIdGenerator idGenerator,
         IFrequencyCalculation frequencyCalculation,
         IMonthDayCalculator monthDayCalculator,
-        ICategoryCommandRepository categoryDatabase,
+        ICategoryService categoryService,
         IUserService userService
         )
     {
@@ -32,7 +32,7 @@ public class BillService : IBillService
         _idGenerator = idGenerator;
         _frequencyCalculation = frequencyCalculation;
         _monthDayCalculator = monthDayCalculator;
-        _categoryDatabase = categoryDatabase;
+        _categoryService = categoryService;
         _userService = userService;
     }
 
@@ -67,7 +67,7 @@ public class BillService : IBillService
         {
             return Result.Failure(Error.Validation("BillService.AddBill", "Frequency type not found"));
         }
-        if (!await _categoryDatabase.DoesCategoryExist(newBill.CategoryId))
+        if (!await _categoryService.DoesCategoryExist(newBill.CategoryId))
         {
             return Result.Failure(Error.Validation("BillService.AddBill", "Category not found"));
         }
@@ -133,7 +133,7 @@ public class BillService : IBillService
         {
             return Result.Failure(Error.Validation("BillService.EditBill", "Frequency type not found"));
         }
-        if (editBill.CategoryId != null && !await _categoryDatabase.DoesCategoryExist((int)editBill.CategoryId))
+        if (editBill.CategoryId != null && !await _categoryService.DoesCategoryExist((int)editBill.CategoryId))
         {
             return Result.Failure(Error.Validation("BillService.EditBill", "Category not found"));
         }
