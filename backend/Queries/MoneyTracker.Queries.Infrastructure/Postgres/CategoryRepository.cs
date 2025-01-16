@@ -1,4 +1,4 @@
-﻿using System.Data;
+using System.Data;
 using MoneyTracker.Common.Interfaces;
 using MoneyTracker.Queries.Domain.Entities.Category;
 using MoneyTracker.Queries.Domain.Repositories;

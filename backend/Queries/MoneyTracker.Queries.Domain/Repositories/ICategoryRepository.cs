@@ -1,4 +1,4 @@
-﻿using MoneyTracker.Queries.Domain.Entities.Category;
+using MoneyTracker.Queries.Domain.Entities.Category;
 
 namespace MoneyTracker.Queries.Domain.Repositories;
 public interface ICategoryRepository

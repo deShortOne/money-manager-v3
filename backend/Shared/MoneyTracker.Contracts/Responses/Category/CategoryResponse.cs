@@ -1,4 +1,4 @@
-﻿
+
 namespace MoneyTracker.Contracts.Responses.Category;
 public class CategoryResponse
 {

@@ -1,4 +1,4 @@
-﻿using MoneyTracker.Authentication.Interfaces;
+using MoneyTracker.Authentication.Interfaces;
 
 namespace MoneyTracker.Authentication.Authentication;
 public class JwtConfig(string issuer, string audience, string key, int expires) : IJwtConfig

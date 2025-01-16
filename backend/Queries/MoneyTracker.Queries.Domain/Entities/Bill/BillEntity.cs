@@ -1,4 +1,4 @@
-﻿
+
 namespace MoneyTracker.Queries.Domain.Entities.Bill;
 public class BillEntity(int id,
     int payeeId,

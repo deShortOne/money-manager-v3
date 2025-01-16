@@ -1,4 +1,4 @@
-﻿
+
 namespace MoneyTracker.Contracts.Requests.Transaction;
 public class DeleteTransactionRequest(int id)
 {

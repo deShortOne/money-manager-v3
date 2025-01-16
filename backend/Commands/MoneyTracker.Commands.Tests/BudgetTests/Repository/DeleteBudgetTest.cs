@@ -1,4 +1,4 @@
-﻿
+
 using MoneyTracker.Commands.Domain.Entities.BudgetCategory;
 
 namespace MoneyTracker.Commands.Tests.BudgetTests.Repository;

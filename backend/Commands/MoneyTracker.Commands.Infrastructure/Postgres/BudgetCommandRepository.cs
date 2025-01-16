@@ -1,4 +1,4 @@
-﻿using System.Data.Common;
+using System.Data.Common;
 using MoneyTracker.Commands.Domain.Entities.BudgetCategory;
 using MoneyTracker.Commands.Domain.Repositories;
 using MoneyTracker.Common.Interfaces;

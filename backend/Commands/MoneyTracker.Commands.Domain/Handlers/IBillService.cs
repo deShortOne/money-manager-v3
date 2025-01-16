@@ -1,4 +1,4 @@
-﻿using MoneyTracker.Common.Result;
+using MoneyTracker.Common.Result;
 using MoneyTracker.Contracts.Requests.Bill;
 
 namespace MoneyTracker.Commands.Domain.Handlers;

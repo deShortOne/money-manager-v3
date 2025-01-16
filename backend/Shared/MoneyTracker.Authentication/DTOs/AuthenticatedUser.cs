@@ -1,4 +1,4 @@
-﻿
+
 namespace MoneyTracker.Authentication.DTOs;
 public class AuthenticatedUser(int id)
 {

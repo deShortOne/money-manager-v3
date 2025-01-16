@@ -14,7 +14,7 @@ insert_final_newline = true
 ; https://github.com/dotnet/corefx/blob/master/.editorconfig
 [*.cs]
 indent_size = 4
-charset = utf-8-bom
+charset = utf-8
 end_of_line = crlf
 
 ; New line preferences

@@ -1,4 +1,4 @@
-﻿
+
 namespace MoneyTracker.Contracts.Responses.Budget;
 public class BudgetCategoryResponse(int id, string name, decimal planned, decimal actual, decimal difference)
 {

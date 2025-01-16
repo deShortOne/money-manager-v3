@@ -1,4 +1,4 @@
-﻿
+
 using MoneyTracker.Commands.DatabaseMigration;
 using MoneyTracker.Commands.DatabaseMigration.Models;
 using MoneyTracker.Commands.Domain.Entities.Category;

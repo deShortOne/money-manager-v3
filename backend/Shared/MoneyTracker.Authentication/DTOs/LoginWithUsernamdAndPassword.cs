@@ -1,4 +1,4 @@
-﻿
+
 namespace MoneyTracker.Authentication.DTOs;
 public class LoginWithUsernameAndPassword(string username, string password)
 {

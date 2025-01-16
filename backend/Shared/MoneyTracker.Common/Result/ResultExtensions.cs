@@ -1,4 +1,4 @@
-﻿
+
 namespace MoneyTracker.Common.Result;
 public static class ResultExtensions
 {

@@ -1,4 +1,4 @@
-﻿
+
 namespace MoneyTracker.Contracts.Requests.Bill;
 public class SkipBillOccurrenceRequest(int id, DateOnly skipDatePastThisDate)
 {

@@ -1,4 +1,4 @@
-﻿using System.Data;
+using System.Data;
 using System.Data.Common;
 using MoneyTracker.Common.Interfaces;
 using Npgsql;
@@ -28,7 +28,7 @@ public class PostgresDatabase : IDatabase
                     cmd.Parameters.Add(parameter);
                 }
             }
-            
+
             var dataTable = new DataTable();
             dataTable.Load(await cmd.ExecuteReaderAsync());
             return dataTable;

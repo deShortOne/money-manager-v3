@@ -60,7 +60,7 @@ public class AuthenticationService : IAuthenticationService
         }
 
         var userGuid = ((JwtSecurityToken)data).Claims.First(claim => claim.Type == "UserGuid");
-        
+
         return new UserIdentity(userGuid.Value);
     }
 }

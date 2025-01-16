@@ -1,4 +1,4 @@
-﻿using MoneyTracker.Common.Utilities.CalculationUtil;
+using MoneyTracker.Common.Utilities.CalculationUtil;
 using MoneyTracker.Common.Utilities.DateTimeUtil;
 
 namespace MoneyTracker.Tests.FrequencyCalculationTests.DoesFrequencyExist;

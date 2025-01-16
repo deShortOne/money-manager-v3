@@ -1,4 +1,4 @@
-﻿
+
 namespace MoneyTracker.Contracts.Requests.Bill;
 public class EditBillRequest(int id, int? payeeId = null, decimal? amount = null, DateOnly? nextDueDate = null, string? frequency = null, int? categoryId = null, int? payerId = null)
 {

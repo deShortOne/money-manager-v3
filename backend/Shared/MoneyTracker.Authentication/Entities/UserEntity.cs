@@ -1,4 +1,4 @@
-﻿
+
 namespace MoneyTracker.Authentication.Entities;
 public class UserEntity(int id, string username, string password)
 {

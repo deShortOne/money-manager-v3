@@ -1,4 +1,4 @@
-﻿
+
 namespace MoneyTracker.Commands.Domain.Entities.Category;
 public class EditCategoryEntity(int id, string name)
 {

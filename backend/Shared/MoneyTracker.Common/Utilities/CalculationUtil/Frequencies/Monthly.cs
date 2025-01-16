@@ -1,4 +1,4 @@
-﻿using MoneyTracker.Common.DTOs;
+using MoneyTracker.Common.DTOs;
 using MoneyTracker.Common.Utilities.DateTimeUtil;
 
 namespace MoneyTracker.Common.Utilities.CalculationUtil.Frequencies;

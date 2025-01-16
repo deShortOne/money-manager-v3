@@ -1,4 +1,4 @@
-﻿
+
 namespace MoneyTracker.Common.Utilities.CalculationUtil;
 public interface IMonthDayCalculator
 {

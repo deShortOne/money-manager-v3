@@ -1,4 +1,4 @@
-﻿
+
 namespace MoneyTracker.Contracts.Requests.Bill;
 public class NewBillRequest(int payeeId, decimal amount, DateOnly nextDueDate, string frequency,
     int categoryId, int payerId)

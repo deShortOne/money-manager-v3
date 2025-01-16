@@ -1,4 +1,4 @@
-﻿using MoneyTracker.Common.Utilities.CalculationUtil.Frequencies;
+using MoneyTracker.Common.Utilities.CalculationUtil.Frequencies;
 
 namespace MoneyTracker.Tests.FrequencyCalculationTests.NextDueDate;
 public sealed class BiWeeklyTests

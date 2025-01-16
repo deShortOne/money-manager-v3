@@ -1,4 +1,4 @@
-﻿using MoneyTracker.Common.DTOs;
+using MoneyTracker.Common.DTOs;
 using MoneyTracker.Common.Utilities.CalculationUtil.Frequencies;
 using MoneyTracker.Common.Utilities.DateTimeUtil;
 using MoneyTracker.Tests.FrequencyCalculationTests.Local;

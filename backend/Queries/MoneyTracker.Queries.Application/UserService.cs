@@ -1,4 +1,4 @@
-﻿
+
 using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Common.Interfaces;
 using MoneyTracker.Queries.Domain.Handlers;

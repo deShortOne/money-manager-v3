@@ -1,4 +1,4 @@
-﻿
+
 namespace MoneyTracker.Commands.Domain.Entities.Transaction;
 public class TransactionEntity(int id, int payeeId, decimal amount, DateOnly datePaid, int categoryId, int payerId)
 {

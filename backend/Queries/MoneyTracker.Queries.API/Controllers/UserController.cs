@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Mvc;
 using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Queries.Domain.Handlers;

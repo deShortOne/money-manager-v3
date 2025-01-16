@@ -1,4 +1,4 @@
-﻿using MoneyTracker.Contracts.Responses.Transaction;
+using MoneyTracker.Contracts.Responses.Transaction;
 
 namespace MoneyTracker.Queries.Domain.Handlers;
 public interface IRegisterService

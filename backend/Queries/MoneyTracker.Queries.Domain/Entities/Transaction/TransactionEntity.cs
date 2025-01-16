@@ -1,4 +1,4 @@
-﻿
+
 using MoneyTracker.Common.Utilities.CalculationUtil.Frequencies;
 
 namespace MoneyTracker.Queries.Domain.Entities.Transaction;

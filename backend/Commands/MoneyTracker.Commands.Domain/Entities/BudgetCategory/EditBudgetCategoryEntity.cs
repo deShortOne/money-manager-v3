@@ -1,8 +1,8 @@
-﻿
+
 namespace MoneyTracker.Commands.Domain.Entities.BudgetCategory;
 public class EditBudgetCategoryEntity(int userId, int budgetCategoryId, int? budgetGroupId = null, decimal? budgetCategoryPlanned = null)
 {
-    public int UserId {get;}  = userId;
+    public int UserId { get; } = userId;
     public int BudgetCategoryId { get; } = budgetCategoryId;
     public int? BudgetGroupId { get; } = budgetGroupId;
     public decimal? BudgetCategoryPlanned { get; } = budgetCategoryPlanned;

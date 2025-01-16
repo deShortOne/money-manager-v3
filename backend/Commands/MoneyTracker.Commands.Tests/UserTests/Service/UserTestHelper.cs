@@ -20,7 +20,7 @@ public class UserTestHelper
     public UserTestHelper()
     {
         _userService = new UserService(
-            _mockUserDatabase.Object, 
+            _mockUserDatabase.Object,
             _mockIdGenerator.Object,
             _mockPasswordHasher.Object,
             _mockAuthService.Object,

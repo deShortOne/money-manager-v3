@@ -1,4 +1,4 @@
-﻿
+
 namespace MoneyTracker.Commands.Tests.BillTests.Repository;
 public sealed class DeleteBillTest : BillRespositoryTestHelper
 {
