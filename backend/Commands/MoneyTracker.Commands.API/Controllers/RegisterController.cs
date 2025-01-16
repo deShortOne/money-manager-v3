@@ -21,22 +21,25 @@ public class RegisterController
 
     [HttpPost]
     [Route("add")]
-    public Task AddTransactions(NewTransactionRequest newTransaction)
+    public async Task<IActionResult> AddTransactions(NewTransactionRequest newTransaction)
     {
-        return _registerService.AddTransaction(ControllerHelper.GetToken(_httpContextAccessor), newTransaction);
+        var result = await _registerService.AddTransaction(ControllerHelper.GetToken(_httpContextAccessor), newTransaction);
+        return ControllerHelper.Convert(result);
     }
 
     [HttpPatch]
     [Route("edit")]
-    public Task EditTransaction(EditTransactionRequest editTransaction)
+    public async Task<IActionResult> EditTransaction(EditTransactionRequest editTransaction)
     {
-        return _registerService.EditTransaction(ControllerHelper.GetToken(_httpContextAccessor), editTransaction);
+        var result = await _registerService.EditTransaction(ControllerHelper.GetToken(_httpContextAccessor), editTransaction);
+        return ControllerHelper.Convert(result);
     }
 
     [HttpDelete]
     [Route("delete")]
-    public Task DeleteTransaction(DeleteTransactionRequest deleteTransaction)
+    public async Task<IActionResult> DeleteTransaction(DeleteTransactionRequest deleteTransaction)
     {
-        return _registerService.DeleteTransaction(ControllerHelper.GetToken(_httpContextAccessor), deleteTransaction);
+        var result = await _registerService.DeleteTransaction(ControllerHelper.GetToken(_httpContextAccessor), deleteTransaction);
+        return ControllerHelper.Convert(result);
     }
 }

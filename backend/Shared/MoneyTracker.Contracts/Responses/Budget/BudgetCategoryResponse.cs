@@ -1,19 +1,12 @@
 ﻿
 namespace MoneyTracker.Contracts.Responses.Budget;
-public class BudgetCategoryResponse
+public class BudgetCategoryResponse(int id, string name, decimal planned, decimal actual, decimal difference)
 {
-    public BudgetCategoryResponse(string name, decimal planned, decimal actual, decimal difference)
-    {
-        Name = name;
-        Planned = planned;
-        Actual = actual;
-        Difference = difference;
-    }
-
-    public string Name { get; private set; }
-    public decimal Planned { get; private set; }
-    public decimal Actual { get; private set; }
-    public decimal Difference { get; private set; }
+    public int Id { get; } = id;
+    public string Name { get; } = name;
+    public decimal Planned { get; } = planned;
+    public decimal Actual { get; } = actual;
+    public decimal Difference { get; } = difference;
 
     public override bool Equals(object? obj)
     {
@@ -24,7 +17,8 @@ public class BudgetCategoryResponse
             return false;
         }
 
-        return Name == other.Name
+        return Id == other.Id
+            && Name == other.Name
             && Planned == other.Planned
             && Actual == other.Actual
             && Difference == other.Difference;
@@ -32,6 +26,6 @@ public class BudgetCategoryResponse
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(Name, Planned, Actual, Difference);
+        return HashCode.Combine(Id, Name, Planned, Actual, Difference);
     }
 }

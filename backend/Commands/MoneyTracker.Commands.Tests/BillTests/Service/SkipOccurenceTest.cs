@@ -1,5 +1,5 @@
 ﻿using MoneyTracker.Authentication.DTOs;
-using MoneyTracker.Authentication.Entities;
+using MoneyTracker.Commands.Domain.Entities.Account;
 using MoneyTracker.Commands.Domain.Entities.Bill;
 using MoneyTracker.Common.Utilities.DateTimeUtil;
 using MoneyTracker.Contracts.Requests.Bill;
@@ -9,7 +9,7 @@ namespace MoneyTracker.Commands.Tests.BillTests.Service;
 public sealed class SkipOccurenceTest : BillTestHelper
 {
     [Fact]
-    public async void SuccessfullySkipOccurenceInBill()
+    public async Task SuccessfullySkipOccurenceInBill()
     {
         var userId = 52;
         var authedUser = new AuthenticatedUser(userId);
@@ -21,28 +21,31 @@ public sealed class SkipOccurenceTest : BillTestHelper
         var frequencyToCheck = "POLEMNB";
         var monthDay = -2;
         var editBillEntity = new EditBillEntity(billId, nextDueDate: dateToBecome);
+        var previousBillPayerId = 1734;
 
         var mockDateTime = new Mock<IDateTimeProvider>();
         mockDateTime.Setup(x => x.Now).Returns(new DateTime(2024, 6, 6, 10, 0, 0));
-        _mockUserRepository.Setup(x => x.GetUserAuthFromToken(tokenToDecode))
-            .Returns(Task.FromResult(new UserAuthentication(new UserEntity(userId, "", ""), tokenToDecode,
-            new DateTime(2024, 6, 6, 10, 0, 0), mockDateTime.Object)));
+        _mockUserService.Setup(x => x.GetUserFromToken(tokenToDecode))
+            .ReturnsAsync(authedUser);
 
-        _mockBillDatabase.Setup(x => x.IsBillAssociatedWithUser(authedUser, billId)).Returns(Task.FromResult(true));
         _mockBillDatabase.Setup(x => x.GetBillById(billId))
-            .Returns(Task.FromResult(new BillEntity(userId, 0, 0, new DateOnly(), monthDay, frequencyToCheck, -1, -1)));
+            .Returns(Task.FromResult(new BillEntity(billId, 0, 0, new DateOnly(), monthDay, frequencyToCheck, -1, previousBillPayerId)));
         _mockBillDatabase.Setup(x => x.EditBill(editBillEntity));
+
+        _mockAccountDatabase.Setup(x => x.GetAccountById(previousBillPayerId)).ReturnsAsync(new AccountEntity(-1, "", userId));
 
         _mockFrequencyCalculation.Setup(x => x.CalculateNextDueDate(frequencyToCheck, monthDay, dateToEvaluate))
             .Returns(dateToBecome);
 
-        await _billService.SkipOccurence(tokenToDecode, skipBillOccurence);
+        var result = await _billService.SkipOccurence(tokenToDecode, skipBillOccurence);
         Assert.Multiple(() =>
         {
-            _mockUserRepository.Verify(x => x.GetUserAuthFromToken(tokenToDecode), Times.Once);
-            _mockBillDatabase.Verify(x => x.IsBillAssociatedWithUser(authedUser, billId), Times.Once);
-            _mockBillDatabase.Verify(x => x.GetBillById(billId), Times.Once);
+            Assert.True(result.IsSuccess);
+
+            _mockUserService.Verify(x => x.GetUserFromToken(tokenToDecode), Times.Once);
+            _mockBillDatabase.Verify(x => x.GetBillById(billId), Times.Exactly(2));
             _mockBillDatabase.Verify(x => x.EditBill(editBillEntity), Times.Once);
+            _mockAccountDatabase.Verify(x => x.GetAccountById(previousBillPayerId), Times.Once);
             _mockFrequencyCalculation.Verify(x => x.CalculateNextDueDate(frequencyToCheck, monthDay, dateToEvaluate), Times.Once);
 
             EnsureAllMocksHadNoOtherCalls();
@@ -50,7 +53,7 @@ public sealed class SkipOccurenceTest : BillTestHelper
     }
 
     [Fact]
-    public void BillDoesntBelongToUser_Fails()
+    public async Task BillDoesntBelongToUser_Fails()
     {
         var userId = 52;
         var authedUser = new AuthenticatedUser(userId);
@@ -59,25 +62,26 @@ public sealed class SkipOccurenceTest : BillTestHelper
         var dateToEvaluate = new DateOnly(2024, 10, 8);
         var dateToBecome = new DateOnly(2024, 11, 8);
         var skipBillOccurence = new SkipBillOccurrenceRequest(billId, dateToEvaluate);
+        var previousBillPayerId = 782;
 
         var mockDateTime = new Mock<IDateTimeProvider>();
         mockDateTime.Setup(x => x.Now).Returns(new DateTime(2024, 6, 6, 10, 0, 0));
-        _mockUserRepository.Setup(x => x.GetUserAuthFromToken(tokenToDecode))
-            .Returns(Task.FromResult(new UserAuthentication(new UserEntity(userId, "", ""), tokenToDecode,
-            new DateTime(2024, 6, 6, 10, 0, 0), mockDateTime.Object)));
+        _mockUserService.Setup(x => x.GetUserFromToken(tokenToDecode))
+            .ReturnsAsync(authedUser);
 
-        _mockBillDatabase.Setup(x => x.IsBillAssociatedWithUser(authedUser, billId)).Returns(Task.FromResult(false));
+        _mockBillDatabase.Setup(x => x.GetBillById(billId))
+            .Returns(Task.FromResult(new BillEntity(-1, 0, 0, new DateOnly(), -1, "", -1, previousBillPayerId)));
 
-        Assert.Multiple(async () =>
+        _mockAccountDatabase.Setup(x => x.GetAccountById(previousBillPayerId)).ReturnsAsync(new AccountEntity(billId, "", userId + 2));
+
+        var result = await _billService.SkipOccurence(tokenToDecode, skipBillOccurence);
+        Assert.Multiple(() =>
         {
-            var error = await Assert.ThrowsAsync<InvalidDataException>(async () =>
-            {
-                await _billService.SkipOccurence(tokenToDecode, skipBillOccurence);
-            });
-            Assert.Equal("Bill not found", error.Message);
+            Assert.Equal("Bill not found", result.Error.Description);
 
-            _mockUserRepository.Verify(x => x.GetUserAuthFromToken(tokenToDecode), Times.Once);
-            _mockBillDatabase.Verify(x => x.IsBillAssociatedWithUser(authedUser, billId), Times.Once);
+            _mockUserService.Verify(x => x.GetUserFromToken(tokenToDecode), Times.Once);
+            _mockBillDatabase.Verify(x => x.GetBillById(billId), Times.Once);
+            _mockAccountDatabase.Verify(x => x.GetAccountById(previousBillPayerId), Times.Once);
 
             EnsureAllMocksHadNoOtherCalls();
         });

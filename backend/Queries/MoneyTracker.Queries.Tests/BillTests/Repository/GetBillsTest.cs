@@ -40,8 +40,8 @@ public sealed class GetBillsTest : IAsyncLifetime
 
         var expected = new List<BillEntity>()
         {
-            new(2, "company a", 100, new DateOnly(2024, 8, 30), 30, "Monthly", "Wages & Salary : Net Pay", "bank b"),
-            new(1, "supermarket a", 23, new DateOnly(2024, 9, 3), 3, "Weekly", "Groceries", "bank a"),
+            new(2, 12, "company a", 100, new DateOnly(2024, 8, 30), 30, "Monthly", 1, "Wages & Salary : Net Pay", 2, "bank b"),
+            new(1, 11, "supermarket a", 23, new DateOnly(2024, 9, 3), 3, "Weekly", 4, "Groceries", 1, "bank a"),
         };
 
         Assert.Equal(expected, actual);
@@ -57,7 +57,7 @@ public sealed class GetBillsTest : IAsyncLifetime
 
         var expected = new List<BillEntity>()
         {
-            new(3, "company a", 100, new DateOnly(2024, 8, 30), 30, "Monthly", "Wages & Salary : Net Pay", "bank a"),
+            new(3, 12, "company a", 100, new DateOnly(2024, 8, 30), 30, "Monthly", 1, "Wages & Salary : Net Pay", 3, "bank a"),
         };
 
         Assert.Equal(expected, actual);

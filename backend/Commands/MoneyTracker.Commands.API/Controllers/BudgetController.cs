@@ -21,22 +21,25 @@ public class BudgetController
 
     [HttpPost]
     [Route("add")]
-    public Task AddBudget(NewBudgetCategoryRequest newRequest)
+    public async Task<IActionResult> AddBudget(NewBudgetCategoryRequest newRequest)
     {
-        return _budgetService.AddBudgetCategory(ControllerHelper.GetToken(_httpContextAccessor), newRequest);
+        var result = await _budgetService.AddBudgetCategory(ControllerHelper.GetToken(_httpContextAccessor), newRequest);
+        return ControllerHelper.Convert(result);
     }
 
     [HttpPatch]
     [Route("edit")]
-    public Task EditBudget(EditBudgetCategoryRequest editRequest)
+    public async Task<IActionResult> EditBudget(EditBudgetCategoryRequest editRequest)
     {
-        return _budgetService.EditBudgetCategory(ControllerHelper.GetToken(_httpContextAccessor), editRequest);
+        var result = await _budgetService.EditBudgetCategory(ControllerHelper.GetToken(_httpContextAccessor), editRequest);
+        return ControllerHelper.Convert(result);
     }
 
     [HttpDelete]
     [Route("delete")]
-    public Task DeleteBudget(DeleteBudgetCategoryRequest deleteRequest)
+    public async Task<IActionResult> DeleteBudget(DeleteBudgetCategoryRequest deleteRequest)
     {
-        return _budgetService.DeleteBudgetCategory(ControllerHelper.GetToken(_httpContextAccessor), deleteRequest);
+        var result = await _budgetService.DeleteBudgetCategory(ControllerHelper.GetToken(_httpContextAccessor), deleteRequest);
+        return ControllerHelper.Convert(result);
     }
 }

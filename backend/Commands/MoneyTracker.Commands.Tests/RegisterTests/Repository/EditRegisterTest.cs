@@ -7,11 +7,11 @@ namespace MoneyTracker.Commands.Tests.RegisterTests.Repository;
 public sealed class EditRegisterTest : RegisterRespositoryTestHelper
 {
     private readonly int _id = 1;
-    private readonly int _payee = 7;
+    private readonly int _payeeId = 7;
     private readonly decimal _amount = 90;
     private readonly DateOnly _datePaid = new DateOnly(2025, 5, 25);
     private readonly int _categoryId = 1;
-    private readonly int _accountId = 2;
+    private readonly int _payerId = 2;
 
     private async Task SetupDb()
     {
@@ -27,11 +27,11 @@ public sealed class EditRegisterTest : RegisterRespositoryTestHelper
             """;
         await using var commandAddBaseBillData = new NpgsqlCommand(addBaseTransactionData, conn);
         commandAddBaseBillData.Parameters.Add(new NpgsqlParameter("@id", _id));
-        commandAddBaseBillData.Parameters.Add(new NpgsqlParameter("@payee", _payee));
+        commandAddBaseBillData.Parameters.Add(new NpgsqlParameter("@payee", _payeeId));
         commandAddBaseBillData.Parameters.Add(new NpgsqlParameter("@amount", _amount));
         commandAddBaseBillData.Parameters.Add(new NpgsqlParameter("@datePaid", _datePaid));
         commandAddBaseBillData.Parameters.Add(new NpgsqlParameter("@category_id", _categoryId));
-        commandAddBaseBillData.Parameters.Add(new NpgsqlParameter("@account_id", _accountId));
+        commandAddBaseBillData.Parameters.Add(new NpgsqlParameter("@account_id", _payerId));
         await commandAddBaseBillData.ExecuteNonQueryAsync();
     }
 
@@ -44,19 +44,19 @@ public sealed class EditRegisterTest : RegisterRespositoryTestHelper
     };
 
     [Theory, MemberData(nameof(OnlyOneItemNotNull))]
-    public async void EditBaseBillItemInDatabase(int? payee, int? amount, DateOnly? datePaid, int? categoryId, int? accountId)
+    public async void EditBaseBillItemInDatabase(int? payee, int? amount, DateOnly? datePaid, int? categoryId, int? payerId)
     {
         await SetupDb();
 
-        var editBillRequest = new EditTransactionEntity(_id, payee, amount, datePaid, categoryId, accountId);
+        var editBillRequest = new EditTransactionEntity(_id, payee, amount, datePaid, categoryId, payerId);
         await _registerRepo.EditTransaction(editBillRequest);
 
         var expectedBillEntity = new TransactionEntity(_id,
-            payee ?? _payee,
+            payee ?? _payeeId,
             amount ?? _amount,
             datePaid ?? _datePaid,
             categoryId ?? _categoryId,
-            accountId ?? _accountId);
+            payerId ?? _payerId);
 
         var results = await GetAllTransactionEntities();
 

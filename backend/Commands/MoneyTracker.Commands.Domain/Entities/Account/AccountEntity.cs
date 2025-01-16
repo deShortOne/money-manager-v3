@@ -1,19 +1,22 @@
 ﻿
 namespace MoneyTracker.Commands.Domain.Entities.Account;
-public class AccountEntity(int id, string name)
+public class AccountEntity(int id, string name, int userId)
 {
     public int Id { get; } = id;
     public string Name { get; } = name;
+    public int UserId { get; } = userId;
 
     public override bool Equals(object? obj)
     {
         var other = obj as AccountEntity;
         if (other == null) return false;
-        return Id == other.Id && Name == other.Name;
+        return Id == other.Id
+            && Name == other.Name
+            && UserId == other.UserId;
     }
 
     public override int GetHashCode()
     {
-        return Id;
+        return HashCode.Combine(Id, Name, UserId);
     }
 }

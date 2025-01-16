@@ -1,12 +1,14 @@
 ﻿
+using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Commands.DatabaseMigration;
 using MoneyTracker.Commands.DatabaseMigration.Models;
+using MoneyTracker.Commands.Domain.Entities.Account;
 using MoneyTracker.Commands.Domain.Repositories;
 using MoneyTracker.Commands.Infrastructure.Postgres;
 using Testcontainers.PostgreSql;
 
 namespace MoneyTracker.Commands.Tests.AccountTests;
-public class IsValidAccountTest : IAsyncLifetime
+public class GetAccountByIdTest : IAsyncLifetime
 {
     public readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder()
 #if RUN_LOCAL
@@ -33,23 +35,26 @@ public class IsValidAccountTest : IAsyncLifetime
     }
 
     [Fact]
-    public void ValidAccounts()
+    public async void GetAccountId1()
     {
-
-        Assert.Multiple(async () =>
-        {
-            Assert.True(await _accountRepo.IsValidAccount(1));
-            Assert.True(await _accountRepo.IsValidAccount(5));
-        });
+        Assert.Equal(new AccountEntity(1, "bank a", 1), await _accountRepo.GetAccountById(1));
     }
 
     [Fact]
-    public void AccountsDoNotExist()
+    public async void GetAccountId2()
     {
-        Assert.Multiple(async () =>
-        {
-            Assert.False(await _accountRepo.IsValidAccount(-1));
-            Assert.False(await _accountRepo.IsValidAccount(0));
-        });
+        Assert.Equal(new AccountEntity(2, "bank b", 1), await _accountRepo.GetAccountById(2));
+    }
+
+    [Fact]
+    public async void GetAccountId3()
+    {
+        Assert.Equal(new AccountEntity(3, "bank a", 2), await _accountRepo.GetAccountById(3));
+    }
+
+    [Fact]
+    public async void FailToGetInvalidAccount()
+    {
+        Assert.Null(await _accountRepo.GetAccountById(-1));
     }
 }

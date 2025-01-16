@@ -1,6 +1,6 @@
 ﻿using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Authentication.Entities;
-using MoneyTracker.Common.Utilities.DateTimeUtil;
+using MoneyTracker.Common.Result;
 using MoneyTracker.Contracts.Responses.Budget;
 using MoneyTracker.Queries.Domain.Entities.BudgetCategory;
 using Moq;
@@ -9,25 +9,25 @@ namespace MoneyTracker.Queries.Tests.BudgetTests.Service;
 public sealed class GetAllBillsTest : BudgetTestHelper
 {
     [Fact]
-    public void SuccessfullyGetBBudget()
+    public void SuccessfullyGetBudget()
     {
         var userId = 52;
         var authedUser = new AuthenticatedUser(userId);
         var tokenToDecode = "tokenToDecode";
         List<BudgetGroupEntity> budgetDatabaseReturn = [
-            new(99, "name 1", 59, 77, 99, [new("Purposefully not equal", -21, 42, 56)]),
-            new(23, "group name 2", 189, 154, 59, [new("something fun", 121, 46, 32), new("", 68, 108, 27)]),
+            new(99, "name 1", 59, 77, 99, [new(24, "Purposefully not equal", -21, 42, 56)]),
+            new(23, "group name 2", 189, 154, 59, [new(65, "something fun", 121, 46, 32), new(10, "", 68, 108, 27)]),
         ];
         List<BudgetGroupResponse> expected = [
-            new(99, "name 1", 59, 77, 99, [new("Purposefully not equal", -21, 42, 56)]),
-            new(23, "group name 2", 189, 154, 59, [new("something fun", 121, 46, 32), new("", 68, 108, 27)]),
+            new(99, "name 1", 59, 77, 99, [new(24, "Purposefully not equal", -21, 42, 56)]),
+            new(23, "group name 2", 189, 154, 59, [new(65, "something fun", 121, 46, 32), new(10, "", 68, 108, 27)]),
         ];
 
-        var mockDateTime = new Mock<IDateTimeProvider>();
-        mockDateTime.Setup(x => x.Now).Returns(new DateTime(2024, 6, 6, 10, 0, 0));
+        var mockUserAuth = new Mock<IUserAuthentication>();
+        mockUserAuth.Setup(x => x.CheckValidation()).Returns(Result.Success());
+        mockUserAuth.Setup(x => x.User).Returns(new UserEntity(userId, "", ""));
         _mockUserRepository.Setup(x => x.GetUserAuthFromToken(tokenToDecode))
-            .ReturnsAsync(new UserAuthentication(new UserEntity(userId, "", ""), tokenToDecode,
-            new DateTime(2024, 6, 6, 10, 0, 0), mockDateTime.Object));
+            .ReturnsAsync(mockUserAuth.Object);
 
         _mockBudgetDatabase.Setup(x => x.GetBudget(authedUser)).Returns(Task.FromResult(budgetDatabaseReturn));
 

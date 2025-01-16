@@ -16,7 +16,7 @@ export async function getAllTransactions(authToken: string): Promise<Result<Tran
         return JSON.parse(JSON.stringify(new SuccessResult(await response.json())));
     }
     console.log("error returned get transactions");
-    return JSON.parse(JSON.stringify(new ErrorResult("Failed to get transactions", false)));
+    return JSON.parse(JSON.stringify(new ErrorResult(await response.text(), false)));
 }
 
 export async function addNewTransactions(authToken: string, transaction: Newtransaction): Promise<Result<Transaction[]>> {
@@ -27,18 +27,18 @@ export async function addNewTransactions(authToken: string, transaction: Newtran
             "Authorization": "Bearer " + authToken,
         },
         body: JSON.stringify({
-            payee: transaction.payee,
+            payeeId: transaction.payeeId,
             amount: transaction.amount,
             datePaid: convertDateToString(transaction.datePaid),
-            category: transaction.category,
-            accountId: transaction.account,
+            categoryId: transaction.categoryId,
+            payerId: transaction.payerId,
         }),
     });
     if (response.ok) {
         return JSON.parse(JSON.stringify(new SuccessResult(await response.text())));
     }
     console.log("error returned adding new transaction");
-    return JSON.parse(JSON.stringify(new ErrorResult("Cannot add new transaction", false)));
+    return JSON.parse(JSON.stringify(new ErrorResult(await response.text(), false)));
 }
 
 export async function editTransaction(authToken: string, transaction: UpdateTransaction): Promise<Result<Transaction[]>> {
@@ -50,18 +50,18 @@ export async function editTransaction(authToken: string, transaction: UpdateTran
         },
         body: JSON.stringify({
             id: transaction.id,
-            payee: transaction.payee,
+            payeeId: transaction.payeeId,
             amount: transaction.amount,
             datePaid: convertDateToString(transaction.datePaid),
-            category: transaction.category,
-            accountId: transaction.account,
+            categoryId: transaction.categoryId,
+            payerId: transaction.payerId,
         }),
     });
     if (response.ok) {
         return JSON.parse(JSON.stringify(new SuccessResult(await response.text())));
     }
     console.log("error returned editing transaction");
-    return JSON.parse(JSON.stringify(new ErrorResult("Cannot edit transaction", false)));
+    return JSON.parse(JSON.stringify(new ErrorResult(await response.text(), false)));
 }
 
 export async function deleteTransaction(authToken: string, transactionId: number): Promise<Result<Transaction>> {
@@ -80,5 +80,5 @@ export async function deleteTransaction(authToken: string, transactionId: number
     }
 
     console.log("error returned delete transaction");
-    return JSON.parse(JSON.stringify(new ErrorResult("Error deleting transaction", false)));
+    return JSON.parse(JSON.stringify(new ErrorResult(await response.text(), false)));
 }

@@ -1,4 +1,4 @@
-
+﻿
 using System.Data;
 using System.Data.Common;
 using MoneyTracker.Authentication.Entities;
@@ -17,7 +17,7 @@ public class UserRepository : IUserRepository
         _dateTimeProvider = dateTimeProvider;
     }
 
-    public async Task<UserAuthentication?> GetUserAuthFromToken(string token)
+    public async Task<IUserAuthentication?> GetUserAuthFromToken(string token)
     {
         var query = """
             SELECT user_id, expires, name, password

@@ -22,15 +22,28 @@ public class RegisterService : IRegisterService
         var userAuth = await _userRepository.GetUserAuthFromToken(token);
         if (userAuth == null)
             throw new InvalidDataException("Token not found");
-        userAuth.ThrowIfInvalid();
+        userAuth.CheckValidation();
 
         var user = new AuthenticatedUser(userAuth.User.Id);
         var dtoFromDb = await _dbService.GetAllTransactions(user);
         List<TransactionResponse> res = [];
         foreach (var transaction in dtoFromDb)
         {
-            res.Add(new(transaction.Id, transaction.Payee, transaction.Amount,
-                transaction.DatePaid, transaction.CategoryName, transaction.AccountName));
+            res.Add(new(transaction.Id,
+                new(
+                    transaction.PayeeId,
+                    transaction.PayeeName
+                ),
+                transaction.Amount,
+                transaction.DatePaid,
+                new(
+                    transaction.CategoryId,
+                    transaction.CategoryName
+                ),
+                new(
+                    transaction.PayerId,
+                    transaction.PayerName
+                )));
         }
         return res;
     }

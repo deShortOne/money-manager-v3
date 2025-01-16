@@ -1,8 +1,7 @@
 ﻿
 using MoneyTracker.Authentication.DTOs;
-using MoneyTracker.Authentication.Entities;
+using MoneyTracker.Commands.Domain.Entities.Account;
 using MoneyTracker.Commands.Domain.Entities.Transaction;
-using MoneyTracker.Common.Utilities.DateTimeUtil;
 using MoneyTracker.Contracts.Requests.Transaction;
 using Moq;
 
@@ -29,31 +28,35 @@ public sealed class EditRegisterTest : RegisterTestHelper
     };
 
     [Theory, MemberData(nameof(OnlyOneItemNotNull))]
-    public async void EditTransactionOneItemOnly(int? payee, int? amount, DateOnly? datePaid, int? categoryId, int? accountId)
+    public async void EditTransactionOneItemOnly(int? payee, int? amount, DateOnly? datePaid, int? categoryId, int? payerId)
     {
-        var mockDateTime = new Mock<IDateTimeProvider>();
-        mockDateTime.Setup(x => x.Now).Returns(new DateTime(2024, 6, 6, 10, 0, 0));
-        _mockUserRepository.Setup(x => x.GetUserAuthFromToken(_tokenToDecode))
-            .Returns(Task.FromResult(new UserAuthentication(new UserEntity(_userId, "", ""), _tokenToDecode,
-            new DateTime(2024, 6, 6, 10, 0, 0), mockDateTime.Object)));
+        var commonTransactionId = 714;
 
-        _mockRegisterDatabase.Setup(x => x.IsTransactionOwnedByUser(_authedUser, _transactionId)).Returns(Task.FromResult(true));
-        if (accountId != null)
-            _mockAccountDatabase.Setup(x => x.IsAccountOwnedByUser(_authedUser, (int)accountId)).Returns(Task.FromResult(true));
+        _mockUserService.Setup(x => x.GetUserFromToken(_tokenToDecode))
+            .ReturnsAsync(_authedUser);
 
-        var editTransactionRequest = new EditTransactionRequest(_transactionId, payee, amount, datePaid, categoryId, accountId);
-        var editTransaction = new EditTransactionEntity(_transactionId, payee, amount, datePaid, categoryId, accountId);
+        if (payerId != null)
+            _mockAccountDatabase.Setup(x => x.GetAccountById((int)payerId)).ReturnsAsync(new AccountEntity(1, "", _userId));
+
+        var editTransactionRequest = new EditTransactionRequest(_transactionId, payee, amount, datePaid, categoryId, payerId);
+        var editTransaction = new EditTransactionEntity(_transactionId, payee, amount, datePaid, categoryId, payerId);
+
+        _mockRegisterDatabase.Setup(x => x.GetTransaction(_transactionId))
+            .ReturnsAsync(new TransactionEntity(commonTransactionId, -1, -1, new DateOnly(), -1, commonTransactionId));
+        _accountService.Setup(x => x.DoesUserOwnAccount(_authedUser, commonTransactionId))
+            .ReturnsAsync(true);
 
         await _registerService.EditTransaction(_tokenToDecode, editTransactionRequest);
 
         Assert.Multiple(() =>
         {
-            _mockUserRepository.Verify(x => x.GetUserAuthFromToken(_tokenToDecode), Times.Once);
-            _mockRegisterDatabase.Verify(x => x.IsTransactionOwnedByUser(_authedUser, _transactionId), Times.Once);
+            _mockUserService.Verify(x => x.GetUserFromToken(_tokenToDecode), Times.Once);
             _mockRegisterDatabase.Verify(x => x.EditTransaction(editTransaction), Times.Once);
+            _mockRegisterDatabase.Verify(x => x.GetTransaction(_transactionId), Times.Once);
+            _accountService.Verify(x => x.DoesUserOwnAccount(_authedUser, commonTransactionId), Times.Once);
 
-            if (accountId != null)
-                _mockAccountDatabase.Verify(x => x.IsAccountOwnedByUser(_authedUser, (int)accountId), Times.Once);
+            if (payerId != null)
+                _mockAccountDatabase.Verify(x => x.GetAccountById((int)payerId), Times.Once);
 
             EnsureAllMocksHadNoOtherCalls();
         });

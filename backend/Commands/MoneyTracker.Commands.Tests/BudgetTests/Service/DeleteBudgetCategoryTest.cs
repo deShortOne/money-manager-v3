@@ -1,7 +1,6 @@
-
+﻿
 
 using MoneyTracker.Authentication.DTOs;
-using MoneyTracker.Authentication.Entities;
 using MoneyTracker.Commands.Domain.Entities.BudgetCategory;
 using MoneyTracker.Commands.Tests.BudgetTests.Service;
 using MoneyTracker.Common.Utilities.DateTimeUtil;
@@ -22,11 +21,8 @@ public class DeleteBudgetCategoryTest : BudgetTestHelper
         var deleteBudgetCategoryRequest = new DeleteBudgetCategoryRequest(budgetGroupId, categoryId);
         var deleteBudgetCategory = new DeleteBudgetCategoryEntity(userId, budgetGroupId, categoryId);
 
-        var mockDateTime = new Mock<IDateTimeProvider>();
-        mockDateTime.Setup(x => x.Now).Returns(new DateTime(2024, 6, 6, 10, 0, 0));
-        _mockUserRepository.Setup(x => x.GetUserAuthFromToken(tokenToDecode))
-            .Returns(Task.FromResult(new UserAuthentication(new UserEntity(userId, "", ""), tokenToDecode, 
-            new DateTime(2024, 6, 6, 10, 0, 0), mockDateTime.Object)));
+        _mockUserService.Setup(x => x.GetUserFromToken(tokenToDecode))
+            .ReturnsAsync(authedUser);
 
         _mockBudgetCategoryDatabase.Setup(x => x.DeleteBudgetCategory(deleteBudgetCategory));
 
@@ -34,7 +30,7 @@ public class DeleteBudgetCategoryTest : BudgetTestHelper
 
         Assert.Multiple(() =>
         {
-            _mockUserRepository.Verify(x => x.GetUserAuthFromToken(tokenToDecode), Times.Once);
+            _mockUserService.Verify(x => x.GetUserFromToken(tokenToDecode), Times.Once);
             _mockBudgetCategoryDatabase.Verify(x => x.DeleteBudgetCategory(deleteBudgetCategory), Times.Once);
 
             EnsureAllMocksHadNoOtherCalls();

@@ -1,4 +1,5 @@
-using MoneyTracker.Commands.Application;
+﻿using MoneyTracker.Commands.Application;
+using MoneyTracker.Commands.Domain.Handlers;
 using MoneyTracker.Commands.Domain.Repositories;
 using MoneyTracker.Common.Utilities.IdGeneratorUtil;
 using Moq;
@@ -9,7 +10,8 @@ public class RegisterTestHelper
     public readonly Mock<IRegisterCommandRepository> _mockRegisterDatabase = new();
     public readonly Mock<IAccountCommandRepository> _mockAccountDatabase = new();
     public readonly Mock<IIdGenerator> _mockIdGenerator = new();
-    public readonly Mock<IUserCommandRepository> _mockUserRepository = new();
+    public readonly Mock<IUserService> _mockUserService = new();
+    public readonly Mock<IAccountService> _accountService = new();
 
     public readonly RegisterService _registerService;
 
@@ -19,8 +21,9 @@ public class RegisterTestHelper
             _mockRegisterDatabase.Object,
             _mockAccountDatabase.Object,
             _mockIdGenerator.Object,
-            _mockUserRepository.Object
-        );
+            _mockUserService.Object,
+            _accountService.Object
+            );
     }
 
     public void EnsureAllMocksHadNoOtherCalls()
@@ -28,6 +31,7 @@ public class RegisterTestHelper
         _mockRegisterDatabase.VerifyNoOtherCalls();
         _mockAccountDatabase.VerifyNoOtherCalls();
         _mockIdGenerator.VerifyNoOtherCalls();
-        _mockUserRepository.VerifyNoOtherCalls();
+        _mockUserService.VerifyNoOtherCalls();
+        _accountService.VerifyNoOtherCalls();
     }
 }

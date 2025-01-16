@@ -1,13 +1,13 @@
 ﻿
 namespace MoneyTracker.Commands.Domain.Entities.Transaction;
-public class EditTransactionEntity(int id, int? payee, decimal? amount, DateOnly? datePaid, int? categoryId, int? accountId)
+public class EditTransactionEntity(int id, int? payeeId, decimal? amount, DateOnly? datePaid, int? categoryId, int? payerId)
 {
     public int Id { get; } = id;
-    public int? Payee { get; } = payee;
+    public int? PayeeId { get; } = payeeId;
     public decimal? Amount { get; } = amount;
     public DateOnly? DatePaid { get; } = datePaid;
     public int? CategoryId { get; } = categoryId;
-    public int? AccountId { get; } = accountId;
+    public int? PayerId { get; } = payerId;
 
     public override bool Equals(object? obj)
     {
@@ -19,15 +19,15 @@ public class EditTransactionEntity(int id, int? payee, decimal? amount, DateOnly
         }
 
         return Id == other.Id &&
-            Payee == other.Payee &&
+            PayeeId == other.PayeeId &&
             Amount == other.Amount &&
             DatePaid == other.DatePaid &&
             CategoryId == other.CategoryId &&
-            AccountId == other.AccountId;
+            PayerId == other.PayerId;
     }
 
     public override int GetHashCode()
     {
-        return Id;
+        return HashCode.Combine(Id, PayeeId, Amount, DatePaid, CategoryId, PayerId);
     }
 }

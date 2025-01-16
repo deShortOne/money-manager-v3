@@ -1,4 +1,5 @@
 ﻿using MoneyTracker.Commands.Application;
+using MoneyTracker.Commands.Domain.Handlers;
 using MoneyTracker.Commands.Domain.Repositories;
 using Moq;
 
@@ -7,6 +8,7 @@ public class BudgetTestHelper
 {
     public readonly Mock<IBudgetCommandRepository> _mockBudgetCategoryDatabase = new();
     public readonly Mock<IUserCommandRepository> _mockUserRepository = new();
+    public readonly Mock<IUserService> _mockUserService = new();
 
     public readonly BudgetService _budgetService;
 
@@ -14,7 +16,8 @@ public class BudgetTestHelper
     {
         _budgetService = new BudgetService(
             _mockBudgetCategoryDatabase.Object,
-            _mockUserRepository.Object
+            _mockUserRepository.Object,
+            _mockUserService.Object
         );
     }
 
@@ -22,5 +25,6 @@ public class BudgetTestHelper
     {
         _mockBudgetCategoryDatabase.VerifyNoOtherCalls();
         _mockUserRepository.VerifyNoOtherCalls();
+        _mockUserService.VerifyNoOtherCalls();
     }
 }

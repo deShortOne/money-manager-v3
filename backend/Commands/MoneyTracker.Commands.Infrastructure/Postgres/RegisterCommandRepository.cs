@@ -16,6 +16,36 @@ public class RegisterCommandRepository : IRegisterCommandRepository
         _database = db;
     }
 
+    public async Task<TransactionEntity?> GetTransaction(int transactionId)
+    {
+        var query = """
+            SELECT id,
+                payee,
+                amount,
+                datepaid,
+                category_id,
+                account_id
+            FROM register
+            WHERE id = @transaction_id;
+         """;
+        var queryParams = new List<DbParameter>()
+        {
+            new NpgsqlParameter("transaction_id", transactionId),
+        };
+
+        using var reader = await _database.GetTable(query, queryParams);
+
+        if (reader.Rows.Count != 0)
+            return new TransactionEntity(
+                reader.Rows[0].Field<int>("id"),
+                reader.Rows[0].Field<int>("payee"),
+                reader.Rows[0].Field<decimal>("amount"),
+                DateOnly.FromDateTime(reader.Rows[0].Field<DateTime>("datepaid")),
+                reader.Rows[0].Field<int>("category_id"),
+                reader.Rows[0].Field<int>("account_id"));
+        return null;
+    }
+
     public async Task AddTransaction(TransactionEntity transaction)
     {
         var query = """
@@ -25,11 +55,11 @@ public class RegisterCommandRepository : IRegisterCommandRepository
         var queryParams = new List<DbParameter>()
         {
             new NpgsqlParameter("id", transaction.Id),
-            new NpgsqlParameter("payee", transaction.Payee),
+            new NpgsqlParameter("payee", transaction.PayeeId),
             new NpgsqlParameter("amount", transaction.Amount),
             new NpgsqlParameter("datePaid", transaction.DatePaid),
             new NpgsqlParameter("category_id", transaction.CategoryId),
-            new NpgsqlParameter("account_id", transaction.AccountId),
+            new NpgsqlParameter("account_id", transaction.PayerId),
         };
 
         await _database.GetTable(query, queryParams);
@@ -42,10 +72,10 @@ public class RegisterCommandRepository : IRegisterCommandRepository
         {
             new NpgsqlParameter("id", tramsaction.Id),
         };
-        if (tramsaction.Payee != null)
+        if (tramsaction.PayeeId != null)
         {
             setParamsLis.Add("payee = @payee");
-            queryParams.Add(new NpgsqlParameter("payee", tramsaction.Payee));
+            queryParams.Add(new NpgsqlParameter("payee", tramsaction.PayeeId));
         }
         if (tramsaction.Amount != null)
         {
@@ -62,10 +92,10 @@ public class RegisterCommandRepository : IRegisterCommandRepository
             setParamsLis.Add("category_id = @category_id");
             queryParams.Add(new NpgsqlParameter("category_id", tramsaction.CategoryId));
         }
-        if (tramsaction.AccountId != null)
+        if (tramsaction.PayerId != null)
         {
             setParamsLis.Add("account_id = @account_id");
-            queryParams.Add(new NpgsqlParameter("account_id", tramsaction.AccountId));
+            queryParams.Add(new NpgsqlParameter("account_id", tramsaction.PayerId));
         }
 
         if (setParamsLis.Count == 0)
@@ -95,29 +125,7 @@ public class RegisterCommandRepository : IRegisterCommandRepository
         await _database.UpdateTable(query, queryParams);
     }
 
-    public async Task<bool> IsTransactionOwnedByUser(AuthenticatedUser user, int transactionId)
-    {
-        var query = """
-            SELECT 1
-            FROM register
-            WHERE id = @transaction_id
-            AND account_id IN (
-                SELECT id
-                FROM account
-                WHERE users_id = @user_id
-            )
-            """;
-        var queryParams = new List<DbParameter>()
-        {
-            new NpgsqlParameter("transaction_id", transactionId),
-            new NpgsqlParameter("user_id", user.Id),
-        };
-        var reader = await _database.GetTable(query, queryParams);
-
-        return reader.Rows.Count != 0 && reader.Rows[0].Field<int>(0) == 1;
-    }
-
-    public async Task<int> GetLastTransactionId() 
+    public async Task<int> GetLastTransactionId()
     {
         var query = """
             SELECT MAX(id) AS last_id

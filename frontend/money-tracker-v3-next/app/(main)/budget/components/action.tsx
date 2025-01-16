@@ -14,8 +14,8 @@ export async function getAllBudgets(authToken: string): Promise<Result<BudgetGro
     if (response.ok) {
         return JSON.parse(JSON.stringify(new SuccessResult(await response.json())));
     }
-    console.log("error returned login user");
-    return JSON.parse(JSON.stringify(new ErrorResult("Username and password not found", false)));
+    console.log("error returned getting budget");
+    return JSON.parse(JSON.stringify(new ErrorResult(await response.text(), false)));
 }
 
 export async function addNewBudgetCategory(authToken: string, budgetCategory: UpdateBudgetCategory): Promise<Result<BudgetGroup[]>> {
@@ -35,10 +35,15 @@ export async function addNewBudgetCategory(authToken: string, budgetCategory: Up
         return JSON.parse(JSON.stringify(new SuccessResult(await response.text())));
     }
     console.log("error returned adding new budget category");
-    return JSON.parse(JSON.stringify(new ErrorResult("error returned adding new budget category", false)));
+    return JSON.parse(JSON.stringify(new ErrorResult(await response.text(), false)));
 }
 
 export async function editBudgetCategory(authToken: string, budgetCategory: UpdateBudgetCategory): Promise<Result<BudgetGroup[]>> {
+    console.log({
+        "budgetGroupId": budgetCategory.budgetGroupId,
+        "budgetCategoryId": budgetCategory.categoryId,
+        "budgetCategoryPlanned": budgetCategory.planned,
+    })
     const response = await fetch(`http://localhost:1234/Budget/edit`, {
         method: "PATCH",
         headers: {
@@ -54,8 +59,10 @@ export async function editBudgetCategory(authToken: string, budgetCategory: Upda
     if (response.ok) {
         return JSON.parse(JSON.stringify(new SuccessResult(await response.text())));
     }
+
+    console.log(response)
     console.log("error returned editing budget category");
-    return JSON.parse(JSON.stringify(new ErrorResult("Error returned editing budget category", false)));
+    return JSON.parse(JSON.stringify(new ErrorResult(await response.text(), false)));
 }
 
 export async function deleteBudgetCategory(authToken: string, budgetGroupId: number, budgetCategoryId: number): Promise<Result<BudgetGroup[]>> {
@@ -74,5 +81,5 @@ export async function deleteBudgetCategory(authToken: string, budgetGroupId: num
         return JSON.parse(JSON.stringify(new SuccessResult(await response.text())));
     }
     console.log("error returned deleting budget category");
-    return JSON.parse(JSON.stringify(new ErrorResult("Error returned deleting budget category", false)));
+    return JSON.parse(JSON.stringify(new ErrorResult(await response.text(), false)));
 }

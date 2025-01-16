@@ -1,5 +1,4 @@
-﻿using MoneyTracker.Authentication.Authentication;
-using MoneyTracker.Authentication.DTOs;
+﻿using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Authentication.Entities;
 using Moq;
 
@@ -75,7 +74,7 @@ public class AuthenticateUserTest : UserTestHelper
     }
 
     [Fact]
-    public void User1_CorrectUsernameWrongPassword_FailsToAuthenticateUser()
+    public async Task User1_CorrectUsernameWrongPassword_FailsToAuthenticateUser()
     {
         var userToAuthenticate = new LoginWithUsernameAndPassword("root", "root-");
 
@@ -85,13 +84,10 @@ public class AuthenticateUserTest : UserTestHelper
         _mockPasswordHasher.Setup(x => x.VerifyPassword("root-pass", "root-", ""))
             .Returns(false);
 
-        Assert.Multiple(async () =>
+        var result = await _userService.LoginUser(userToAuthenticate);
+        Assert.Multiple(() =>
         {
-            var error = await Assert.ThrowsAsync<InvalidDataException>(async () =>
-            {
-                await _userService.LoginUser(userToAuthenticate);
-            });
-            Assert.Equal("User does not exist", error.Message);
+            Assert.Equal("User does not exist", result.Error.Description);
 
             _mockUserDatabase.Verify(x => x.GetUserByUsername("root"), Times.Once);
             _mockPasswordHasher.Verify(x => x.VerifyPassword("root-pass", "root-", ""), Times.Once);
@@ -100,21 +96,17 @@ public class AuthenticateUserTest : UserTestHelper
     }
 
     [Fact]
-    public void FailToLogInUserThatDoesntExist_()
+    public async Task FailToLogInUserThatDoesntExist_()
     {
         var userToAuthenticate = new LoginWithUsernameAndPassword("broken root", "broken root-pass");
 
         _mockUserDatabase.Setup(x => x.GetUserByUsername(It.IsAny<string>()))
             .Returns(Task.FromResult<UserEntity>(null));
 
-        Assert.Multiple(async () =>
+        var result = await _userService.LoginUser(userToAuthenticate);
+        Assert.Multiple(() =>
         {
-            var error = await Assert.ThrowsAsync<InvalidDataException>(async () =>
-            {
-                await _userService.LoginUser(userToAuthenticate);
-            });
-
-            Assert.Equal("User does not exist", error.Message);
+            Assert.Equal("User does not exist", result.Error.Description);
 
             _mockUserDatabase.Verify(x => x.GetUserByUsername(It.IsAny<string>()), Times.Once);
             EnsureAllMocksHadNoOtherCalls();

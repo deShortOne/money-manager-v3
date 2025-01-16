@@ -1,6 +1,8 @@
 ﻿using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Common.Utilities.CalculationUtil;
+using MoneyTracker.Contracts.Responses.Account;
 using MoneyTracker.Contracts.Responses.Bill;
+using MoneyTracker.Contracts.Responses.Category;
 using MoneyTracker.Queries.Domain.Entities.Bill;
 using MoneyTracker.Queries.Domain.Handlers;
 using MoneyTracker.Queries.Domain.Repositories;
@@ -26,7 +28,7 @@ public class BillService : IBillService
         var userAuth = await _userRepository.GetUserAuthFromToken(token);
         if (userAuth == null)
             throw new InvalidDataException("Token not found");
-        userAuth.ThrowIfInvalid();
+        userAuth.CheckValidation();
 
         var user = new AuthenticatedUser(userAuth.User.Id);
         return ConvertFromRepoDTOToDTO(await _dbService.GetAllBills(user));
@@ -43,15 +45,27 @@ public class BillService : IBillService
         foreach (var bill in billRepoDTO)
         {
             res.Add(new BillResponse(
-               bill.Id,
-               bill.Payee,
-               bill.Amount,
-               bill.NextDueDate,
-               bill.Frequency,
-               bill.CategoryName,
-               _frequencyCalculation.CalculateOverDueBillInfo(bill.MonthDay, bill.Frequency,
-                   bill.NextDueDate),
-               bill.Payer
+                bill.Id,
+                new(
+                    bill.PayeeId,
+                    bill.PayeeName
+                ),
+                bill.Amount,
+                bill.NextDueDate,
+                bill.Frequency,
+                new(
+                    bill.CategoryId,
+                    bill.CategoryName
+                ),
+                _frequencyCalculation.CalculateOverDueBillInfo(
+                    bill.MonthDay,
+                    bill.Frequency,
+                   bill.NextDueDate
+                ),
+                new(
+                    bill.PayerId,
+                    bill.PayerName
+                )
            ));
         }
 

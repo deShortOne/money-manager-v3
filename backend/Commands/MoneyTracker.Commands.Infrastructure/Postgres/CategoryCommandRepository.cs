@@ -61,24 +61,30 @@ public class CategoryCommandRepository : ICategoryCommandRepository
         await _database.UpdateTable(query, queryParams);
     }
 
-    public async Task<bool> DoesCategoryExist(int categoryId)
+    public async Task<CategoryEntity?> GetCategory(int categoryId)
     {
         var query = """
-            SELECT 1
+            SELECT id,
+                name
             FROM category
-            WHERE id = @id;
-            """;
+            WHERE id = @category_id;
+         """;
         var queryParams = new List<DbParameter>()
         {
-            new NpgsqlParameter("id", categoryId),
+            new NpgsqlParameter("category_id", categoryId),
         };
 
-        var reader = await _database.GetTable(query, queryParams);
+        using var reader = await _database.GetTable(query, queryParams);
 
-        return reader.Rows.Count != 0;
+        if (reader.Rows.Count != 0)
+            return new CategoryEntity(
+                reader.Rows[0].Field<int>("id"),
+                reader.Rows[0].Field<string>("name")!);
+        return null;
+
     }
 
-    public async Task<int> GetLastCategoryId() 
+    public async Task<int> GetLastCategoryId()
     {
         var query = """
             SELECT MAX(id) as last_id

@@ -11,11 +11,12 @@ enum WhatToShow {
 
 function decideWhatContentToShow(): WhatToShow {
     const pathname = usePathname();
+    const [token] = useCookies(["token"]);
     const pathIsSignInOrSignUpPage = ["/sign-in", "/sign-up"];
+
     if (pathIsSignInOrSignUpPage.includes(pathname))
         return WhatToShow.BLANK;
 
-    const [token] = useCookies(["token"]);
     if (token.token != "")
         return WhatToShow["LOGGED-IN"];
 

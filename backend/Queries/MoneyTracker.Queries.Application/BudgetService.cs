@@ -24,7 +24,7 @@ public class BudgetService : IBudgetService
         var userAuth = await _userRepository.GetUserAuthFromToken(token);
         if (userAuth == null)
             throw new InvalidDataException("Token not found");
-        userAuth.ThrowIfInvalid();
+        userAuth.CheckValidation();
 
         var user = new AuthenticatedUser(userAuth.User.Id);
         return ConvertFromRepoDTOToDTO(await _dbService.GetBudget(user));
@@ -38,7 +38,7 @@ public class BudgetService : IBudgetService
             List<BudgetCategoryResponse> tmpCategoryLis = [];
             foreach (var category in bill.Categories)
             {
-                tmpCategoryLis.Add(new(category.Name, category.Planned, category.Actual, category.Difference));
+                tmpCategoryLis.Add(new(category.Id, category.Name, category.Planned, category.Actual, category.Difference));
             }
 
             res.Add(new BudgetGroupResponse(

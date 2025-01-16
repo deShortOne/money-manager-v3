@@ -40,14 +40,14 @@ public sealed class GetBudgetTest : IAsyncLifetime
 
         var expected = new List<BudgetGroupEntity>()
         {
-            new(1, "Income", 1800, 1800, 0, [new("Wages & Salary : Net Pay", 1800, 1800, 0)]),
+            new(1, "Income", 1800, 1800, 0, [new(1, "Wages & Salary : Net Pay", 1800, 1800, 0)]),
             new(2, "Committed Expenses", 610, 585, 25, [
-                new("Bills : Cell Phone", 10, 10, 0),
-                new("Bills : Rent", 500, 500, 0),
-                new("Groceries", 100, 75, 25),
+                new(2, "Bills : Cell Phone", 10, 10, 0),
+                new(3, "Bills : Rent", 500, 500, 0),
+                new(4, "Groceries", 100, 75, 25),
             ]),
             new(3, "Fun", 0, 0, 0, []),
-            new(4, "Irregular Expenses", 50, 150, -100, [new("Hobby", 50, 150, -100)]),
+            new(4, "Irregular Expenses", 50, 150, -100, [new(5, "Hobby", 50, 150, -100)]),
             new(5, "Savings & Debt", 0, 0, 0, []),
             new(6, "Retirement", 0, 0, 0, []),
         };

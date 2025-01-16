@@ -1,10 +1,9 @@
 ﻿using MoneyTracker.Authentication.DTOs;
-using MoneyTracker.Authentication.Interfaces;
 using MoneyTracker.Commands.Domain.Entities.Bill;
 using MoneyTracker.Commands.Domain.Handlers;
 using MoneyTracker.Commands.Domain.Repositories;
+using MoneyTracker.Common.Result;
 using MoneyTracker.Common.Utilities.CalculationUtil;
-using MoneyTracker.Common.Utilities.DateTimeUtil;
 using MoneyTracker.Common.Utilities.IdGeneratorUtil;
 using MoneyTracker.Contracts.Requests.Bill;
 
@@ -16,102 +15,117 @@ public class BillService : IBillService
     private readonly IIdGenerator _idGenerator;
     private readonly IFrequencyCalculation _frequencyCalculation;
     private readonly IMonthDayCalculator _monthDayCalculator;
-    private readonly ICategoryCommandRepository _categoryDatabase;
-    private readonly IUserCommandRepository _userRepository;
+    private readonly ICategoryService _categoryService;
+    private readonly IUserService _userService;
+    private readonly IAccountService _accountService;
 
     public BillService(IBillCommandRepository dbService,
         IAccountCommandRepository accountDatabase,
         IIdGenerator idGenerator,
         IFrequencyCalculation frequencyCalculation,
         IMonthDayCalculator monthDayCalculator,
-        ICategoryCommandRepository categoryDatabase,
-        IUserCommandRepository userRepository)
+        ICategoryService categoryService,
+        IUserService userService,
+        IAccountService accountService
+        )
     {
         _dbService = dbService;
         _accountDatabase = accountDatabase;
         _idGenerator = idGenerator;
         _frequencyCalculation = frequencyCalculation;
         _monthDayCalculator = monthDayCalculator;
-        _categoryDatabase = categoryDatabase;
-        _userRepository = userRepository;
+        _categoryService = categoryService;
+        _userService = userService;
+        _accountService = accountService;
     }
 
-    public async Task AddBill(string token, NewBillRequest newBill)
+    public async Task<Result> AddBill(string token, NewBillRequest newBill)
     {
-        var userAuth = await _userRepository.GetUserAuthFromToken(token);
-        if (userAuth == null)
-            throw new InvalidDataException("Token not found");
-        userAuth.ThrowIfInvalid();
+        var userResult = await _userService.GetUserFromToken(token);
+        if (!userResult.IsSuccess)
+            return userResult;
 
-        var user = new AuthenticatedUser(userAuth.User.Id);
-        if (!await _accountDatabase.IsAccountOwnedByUser(user, newBill.Payer))
+        var user = userResult.Value;
+        if (newBill.Amount < 0)
         {
-            throw new InvalidDataException("Account not found");
+            return Result.Failure(Error.Validation("BillService.AddBill", "Amount must be a positive number"));
         }
-        if (!await _accountDatabase.IsValidAccount(newBill.Payee))
+
+        if (!await _accountService.DoesUserOwnAccount(user, newBill.PayerId))
         {
-            throw new InvalidDataException("Payee account not found");
+            return Result.Failure(Error.Validation("BillService.AddBill", "Payer account not found"));
+        }
+        var payeeAccount = await _accountDatabase.GetAccountById(newBill.PayeeId);
+        if (payeeAccount == null)
+        {
+            return Result.Failure(Error.Validation("BillService.AddBill", "Payee account not found"));
         }
         if (!_frequencyCalculation.DoesFrequencyExist(newBill.Frequency))
         {
-            throw new InvalidDataException("Invalid frequency");
+            return Result.Failure(Error.Validation("BillService.AddBill", "Frequency type not found"));
         }
-        if (!await _categoryDatabase.DoesCategoryExist(newBill.CategoryId))
+        if (!await _categoryService.DoesCategoryExist(newBill.CategoryId))
         {
-            throw new InvalidDataException("Invalid category");
+            return Result.Failure(Error.Validation("BillService.AddBill", "Category not found"));
         }
 
         var dtoToDb = new BillEntity(
             _idGenerator.NewInt(await _dbService.GetLastId()),
-            newBill.Payee,
+            newBill.PayeeId,
             newBill.Amount,
             newBill.NextDueDate,
             _monthDayCalculator.Calculate(newBill.NextDueDate),
             newBill.Frequency,
             newBill.CategoryId,
-            newBill.Payer
+            newBill.PayerId
         );
         await _dbService.AddBill(dtoToDb);
+
+        return Result.Success();
     }
 
-    public async Task EditBill(string token, EditBillRequest editBill)
+    public async Task<Result> EditBill(string token, EditBillRequest editBill)
     {
-        var userAuth = await _userRepository.GetUserAuthFromToken(token);
-        if (userAuth == null)
-            throw new InvalidDataException("Token not found");
-        userAuth.ThrowIfInvalid();
+        var userResult = await _userService.GetUserFromToken(token);
+        if (!userResult.IsSuccess)
+            return userResult;
 
-        var user = new AuthenticatedUser(userAuth.User.Id);
-        if (editBill.Payee == null && editBill.Amount == null &&
+        var user = userResult.Value;
+        if (editBill.PayeeId == null && editBill.Amount == null &&
             editBill.Amount == null && editBill.NextDueDate == null &&
-            editBill.Frequency == null && editBill.Category == null &&
-            editBill.AccountId == null)
+            editBill.Frequency == null && editBill.CategoryId == null &&
+            editBill.PayerId == null)
         {
-            throw new InvalidDataException("Must have at least one non-null value");
+            return Result.Failure(Error.Validation("BillService.EditBill", "Must have at least one non-null value"));
         }
 
-        if (!await _dbService.IsBillAssociatedWithUser(user, editBill.Id))
+        var doesUserOwnBill = await DoesUserOwnBill(editBill.Id, user);
+        if (!doesUserOwnBill)
         {
-            throw new InvalidDataException("Bill not found");
+            return Result.Failure(Error.Validation("BillService.EditBill", "Bill not found"));
         }
-        if (editBill.AccountId != null &&
-            !await _accountDatabase.IsAccountOwnedByUser(user, (int)editBill.AccountId))
+
+        if (editBill.PayerId != null)
         {
-            throw new InvalidDataException("Account not found");
+            if (!await _accountService.DoesUserOwnAccount(user, (int)editBill.PayerId))
+                return Result.Failure(Error.Validation("BillService.EditBill", "Payer account not found"));
         }
-        if (editBill.Payee != null &&
-            !await _accountDatabase.IsValidAccount((int)editBill.Payee))
+        if (editBill.PayeeId != null)
         {
-            throw new InvalidDataException("Payee account not found");
+            var payeeAccount = await _accountDatabase.GetAccountById((int)editBill.PayeeId);
+            if (payeeAccount == null)
+            {
+                return Result.Failure(Error.Validation("BillService.EditBill", "Payee account not found"));
+            }
         }
         if (editBill.Frequency != null &&
             !_frequencyCalculation.DoesFrequencyExist(editBill.Frequency))
         {
-            throw new InvalidDataException("Invalid frequency");
+            return Result.Failure(Error.Validation("BillService.EditBill", "Frequency type not found"));
         }
-        if (editBill.Category != null && !await _categoryDatabase.DoesCategoryExist((int)editBill.Category))
+        if (editBill.CategoryId != null && !await _categoryService.DoesCategoryExist((int)editBill.CategoryId))
         {
-            throw new InvalidDataException("Invalid category");
+            return Result.Failure(Error.Validation("BillService.EditBill", "Category not found"));
         }
 
         int? monthDay = null;
@@ -122,54 +136,79 @@ public class BillService : IBillService
 
         var dtoToDb = new EditBillEntity(
             editBill.Id,
-            editBill.Payee,
+            editBill.PayeeId,
             editBill.Amount,
             editBill.NextDueDate,
             monthDay,
             editBill.Frequency,
-            editBill.Category,
-            editBill.AccountId
+            editBill.CategoryId,
+            editBill.PayerId
         );
         await _dbService.EditBill(dtoToDb);
+
+        return Result.Success();
     }
 
-    public async Task DeleteBill(string token, DeleteBillRequest deleteBill)
+    public async Task<Result> DeleteBill(string token, DeleteBillRequest deleteBill)
     {
-        var userAuth = await _userRepository.GetUserAuthFromToken(token);
-        if (userAuth == null)
-            throw new InvalidDataException("Token not found");
-        userAuth.ThrowIfInvalid();
+        var userResult = await _userService.GetUserFromToken(token);
+        if (!userResult.IsSuccess)
+            return userResult;
 
-        var user = new AuthenticatedUser(userAuth.User.Id);
-        if (!await _dbService.IsBillAssociatedWithUser(user, deleteBill.Id))
+        var user = userResult.Value;
+        var doesUserOwnBill = await DoesUserOwnBill(deleteBill.Id, user);
+        if (!doesUserOwnBill)
         {
-            throw new InvalidDataException("Bill not found");
+            return Result.Failure(Error.Validation("BillService.DeleteBill", "Bill not found"));
         }
 
         await _dbService.DeleteBill(deleteBill.Id);
+
+        return Result.Success();
     }
 
-    public async Task SkipOccurence(string token, SkipBillOccurrenceRequest skipBillDTO)
+    public async Task<Result> SkipOccurence(string token, SkipBillOccurrenceRequest skipBillDTO)
     {
-        var userAuth = await _userRepository.GetUserAuthFromToken(token);
-        if (userAuth == null)
-            throw new InvalidDataException("Token not found");
-        userAuth.ThrowIfInvalid();
+        var userResult = await _userService.GetUserFromToken(token);
+        if (!userResult.IsSuccess)
+            return userResult;
 
-        var user = new AuthenticatedUser(userAuth.User.Id);
-        if (!await _dbService.IsBillAssociatedWithUser(user, skipBillDTO.Id))
+        var user = userResult.Value;
+        var doesUserOwnBill = await DoesUserOwnBill(skipBillDTO.Id, user);
+        if (!doesUserOwnBill)
         {
-            throw new InvalidDataException("Bill not found");
+            return Result.Failure(Error.Validation("BillService.SkipOccurence", "Bill not found"));
         }
 
         var bill = await _dbService.GetBillById(skipBillDTO.Id);
         if (bill == null)
         {
-            throw new InvalidDataException("Unexpected database error - bill not found"); // log this
+            return Result.Failure(Error.Failure("BillService.SkipOccurence", "Bill not found"));
         }
         var newDueDate = _frequencyCalculation.CalculateNextDueDate(bill.Frequency, bill.MonthDay, skipBillDTO.SkipDatePastThisDate);
 
         var editBill = new EditBillEntity(skipBillDTO.Id, nextDueDate: newDueDate);
         await _dbService.EditBill(editBill);
+
+        return Result.Success();
+    }
+
+    private async Task<bool> DoesUserOwnBill(int billId, AuthenticatedUser user)
+    {
+        var bill = await _dbService.GetBillById(billId);
+        if (bill == null)
+        {
+            return false;
+        }
+        var billsPayerAccount = await _accountDatabase.GetAccountById(bill.PayerId);
+        if (billsPayerAccount == null)
+        {
+            return false;
+        }
+        if (billsPayerAccount.UserId != user.Id)
+        {
+            return false;
+        }
+        return true;
     }
 }
