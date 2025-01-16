@@ -11,6 +11,7 @@ public class RegisterTestHelper
     public readonly Mock<IAccountCommandRepository> _mockAccountDatabase = new();
     public readonly Mock<IIdGenerator> _mockIdGenerator = new();
     public readonly Mock<IUserService> _mockUserService = new();
+    public readonly Mock<IAccountService> _accountService = new();
 
     public readonly RegisterService _registerService;
 
@@ -20,8 +21,9 @@ public class RegisterTestHelper
             _mockRegisterDatabase.Object,
             _mockAccountDatabase.Object,
             _mockIdGenerator.Object,
-            _mockUserService.Object
-        );
+            _mockUserService.Object,
+            _accountService.Object
+            );
     }
 
     public void EnsureAllMocksHadNoOtherCalls()
@@ -30,5 +32,6 @@ public class RegisterTestHelper
         _mockAccountDatabase.VerifyNoOtherCalls();
         _mockIdGenerator.VerifyNoOtherCalls();
         _mockUserService.VerifyNoOtherCalls();
+        _accountService.VerifyNoOtherCalls();
     }
 }

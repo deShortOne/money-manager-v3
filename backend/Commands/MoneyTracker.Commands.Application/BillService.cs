@@ -17,6 +17,7 @@ public class BillService : IBillService
     private readonly IMonthDayCalculator _monthDayCalculator;
     private readonly ICategoryService _categoryService;
     private readonly IUserService _userService;
+    private readonly IAccountService _accountService;
 
     public BillService(IBillCommandRepository dbService,
         IAccountCommandRepository accountDatabase,
@@ -24,7 +25,8 @@ public class BillService : IBillService
         IFrequencyCalculation frequencyCalculation,
         IMonthDayCalculator monthDayCalculator,
         ICategoryService categoryService,
-        IUserService userService
+        IUserService userService,
+        IAccountService accountService
         )
     {
         _dbService = dbService;
@@ -34,6 +36,7 @@ public class BillService : IBillService
         _monthDayCalculator = monthDayCalculator;
         _categoryService = categoryService;
         _userService = userService;
+        _accountService = accountService;
     }
 
     public async Task<Result> AddBill(string token, NewBillRequest newBill)
@@ -48,16 +51,10 @@ public class BillService : IBillService
             return Result.Failure(Error.Validation("BillService.AddBill", "Amount must be a positive number"));
         }
 
-        var payerAccount = await _accountDatabase.GetAccountById(newBill.PayerId);
-        if (payerAccount == null) // to be logged differently
+        if (!await _accountService.DoesUserOwnAccount(user, newBill.PayerId))
         {
             return Result.Failure(Error.Validation("BillService.AddBill", "Payer account not found"));
         }
-        if (payerAccount.UserId != user.Id)
-        {
-            return Result.Failure(Error.Validation("BillService.AddBill", "Payer account not found"));
-        }
-
         var payeeAccount = await _accountDatabase.GetAccountById(newBill.PayeeId);
         if (payeeAccount == null)
         {
@@ -110,15 +107,8 @@ public class BillService : IBillService
 
         if (editBill.PayerId != null)
         {
-            var payerAccount = await _accountDatabase.GetAccountById((int)editBill.PayerId);
-            if (payerAccount == null) // to be logged differently
-            {
+            if (!await _accountService.DoesUserOwnAccount(user, (int)editBill.PayerId))
                 return Result.Failure(Error.Validation("BillService.EditBill", "Payer account not found"));
-            }
-            if (payerAccount.UserId != user.Id)
-            {
-                return Result.Failure(Error.Validation("BillService.EditBill", "Payer account not found"));
-            }
         }
         if (editBill.PayeeId != null)
         {

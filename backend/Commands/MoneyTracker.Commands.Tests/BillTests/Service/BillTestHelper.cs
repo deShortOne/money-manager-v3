@@ -15,6 +15,7 @@ public class BillTestHelper
     public readonly Mock<IMonthDayCalculator> _mockMonthDayCalculator = new();
     public readonly Mock<ICategoryService> _mockCategoryService = new();
     public readonly Mock<IUserService> _mockUserService = new();
+    public readonly Mock<IAccountService> _mockAccountService = new();
 
     public readonly BillService _billService;
 
@@ -26,7 +27,8 @@ public class BillTestHelper
             _mockFrequencyCalculation.Object,
             _mockMonthDayCalculator.Object,
             _mockCategoryService.Object,
-            _mockUserService.Object
+            _mockUserService.Object,
+            _mockAccountService.Object
             );
     }
 
@@ -39,5 +41,6 @@ public class BillTestHelper
         _mockMonthDayCalculator.VerifyNoOtherCalls();
         _mockCategoryService.VerifyNoOtherCalls();
         _mockUserService.VerifyNoOtherCalls();
+        _mockAccountService.VerifyNoOtherCalls();
     }
 }

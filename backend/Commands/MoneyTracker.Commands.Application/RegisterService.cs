@@ -9,21 +9,24 @@ using MoneyTracker.Contracts.Requests.Transaction;
 namespace MoneyTracker.Commands.Application;
 public class RegisterService : IRegisterService
 {
-    private readonly IRegisterCommandRepository _dbService;
+    private readonly IRegisterCommandRepository _registerDb;
     private readonly IAccountCommandRepository _accountDb;
     private readonly IIdGenerator _idGenerator;
     private readonly IUserService _userService;
+    private readonly IAccountService _accountService;
 
-    public RegisterService(IRegisterCommandRepository dbService,
+    public RegisterService(IRegisterCommandRepository registerDb,
         IAccountCommandRepository accountDb,
         IIdGenerator idGenerator,
-        IUserService userService
+        IUserService userService,
+        IAccountService accountService
         )
     {
-        _dbService = dbService;
+        _registerDb = registerDb;
         _accountDb = accountDb;
         _idGenerator = idGenerator;
         _userService = userService;
+        _accountService = accountService;
     }
 
     public async Task<Result> AddTransaction(string token, NewTransactionRequest newTransaction)
@@ -43,7 +46,7 @@ public class RegisterService : IRegisterService
         {
             return Result.Failure(Error.Validation("RegisterService.AddTransaction", "Payer account not found"));
         }
-        var newTransactionId = _idGenerator.NewInt(await _dbService.GetLastTransactionId());
+        var newTransactionId = _idGenerator.NewInt(await _registerDb.GetLastTransactionId());
 
         var dtoToDb = new TransactionEntity(newTransactionId,
             newTransaction.PayeeId,
@@ -52,7 +55,7 @@ public class RegisterService : IRegisterService
             newTransaction.CategoryId,
             newTransaction.PayerId);
 
-        await _dbService.AddTransaction(dtoToDb);
+        await _registerDb.AddTransaction(dtoToDb);
 
         return Result.Success();
     }
@@ -64,7 +67,7 @@ public class RegisterService : IRegisterService
             return userResult;
 
         var user = userResult.Value;
-        if (!await _dbService.IsTransactionOwnedByUser(user, editTransaction.Id))
+        if (!await DoesUserOwnTransaction(user, editTransaction.Id))
         {
             return Result.Failure(Error.Validation("RegisterService.EditTransaction", "Transaction not found"));
         }
@@ -82,7 +85,7 @@ public class RegisterService : IRegisterService
         var dtoToDb = new EditTransactionEntity(editTransaction.Id, editTransaction.PayeeId, editTransaction.Amount,
             editTransaction.DatePaid, editTransaction.CategoryId, editTransaction.PayerId);
 
-        await _dbService.EditTransaction(dtoToDb);
+        await _registerDb.EditTransaction(dtoToDb);
 
         return Result.Success();
     }
@@ -94,13 +97,22 @@ public class RegisterService : IRegisterService
             return userResult;
 
         var user = userResult.Value;
-        if (!await _dbService.IsTransactionOwnedByUser(user, deleteTransaction.Id))
+        if (!await DoesUserOwnTransaction(user, deleteTransaction.Id))
         {
             return Result.Failure(Error.Validation("RegisterService.DeleteTransaction", "Transaction not found"));
         }
 
-        await _dbService.DeleteTransaction(deleteTransaction.Id);
+        await _registerDb.DeleteTransaction(deleteTransaction.Id);
 
         return Result.Success();
+    }
+
+    public async Task<bool> DoesUserOwnTransaction(AuthenticatedUser user, int transactionId)
+    {
+        var transaction = await _registerDb.GetTransaction(transactionId);
+        if (transaction == null)
+            return false;
+
+        return await _accountService.DoesUserOwnAccount(user, transaction.PayerId);
     }
 }

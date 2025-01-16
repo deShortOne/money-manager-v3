@@ -30,23 +30,30 @@ public sealed class EditRegisterTest : RegisterTestHelper
     [Theory, MemberData(nameof(OnlyOneItemNotNull))]
     public async void EditTransactionOneItemOnly(int? payee, int? amount, DateOnly? datePaid, int? categoryId, int? payerId)
     {
+        var commonTransactionId = 714;
+
         _mockUserService.Setup(x => x.GetUserFromToken(_tokenToDecode))
             .ReturnsAsync(_authedUser);
 
-        _mockRegisterDatabase.Setup(x => x.IsTransactionOwnedByUser(_authedUser, _transactionId)).Returns(Task.FromResult(true));
         if (payerId != null)
             _mockAccountDatabase.Setup(x => x.GetAccountById((int)payerId)).ReturnsAsync(new AccountEntity(1, "", _userId));
 
         var editTransactionRequest = new EditTransactionRequest(_transactionId, payee, amount, datePaid, categoryId, payerId);
         var editTransaction = new EditTransactionEntity(_transactionId, payee, amount, datePaid, categoryId, payerId);
 
+        _mockRegisterDatabase.Setup(x => x.GetTransaction(_transactionId))
+            .ReturnsAsync(new TransactionEntity(commonTransactionId, -1, -1, new DateOnly(), -1, commonTransactionId));
+        _accountService.Setup(x => x.DoesUserOwnAccount(_authedUser, commonTransactionId))
+            .ReturnsAsync(true);
+
         await _registerService.EditTransaction(_tokenToDecode, editTransactionRequest);
 
         Assert.Multiple(() =>
         {
             _mockUserService.Verify(x => x.GetUserFromToken(_tokenToDecode), Times.Once);
-            _mockRegisterDatabase.Verify(x => x.IsTransactionOwnedByUser(_authedUser, _transactionId), Times.Once);
             _mockRegisterDatabase.Verify(x => x.EditTransaction(editTransaction), Times.Once);
+            _mockRegisterDatabase.Verify(x => x.GetTransaction(_transactionId), Times.Once);
+            _accountService.Verify(x => x.DoesUserOwnAccount(_authedUser, commonTransactionId), Times.Once);
 
             if (payerId != null)
                 _mockAccountDatabase.Verify(x => x.GetAccountById((int)payerId), Times.Once);

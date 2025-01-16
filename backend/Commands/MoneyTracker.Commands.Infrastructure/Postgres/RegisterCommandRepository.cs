@@ -16,6 +16,36 @@ public class RegisterCommandRepository : IRegisterCommandRepository
         _database = db;
     }
 
+    public async Task<TransactionEntity?> GetTransaction(int transactionId)
+    {
+        var query = """
+            SELECT id,
+                payee,
+                amount,
+                datepaid,
+                category_id,
+                account_id
+            FROM register
+            WHERE id = @transaction_id;
+         """;
+        var queryParams = new List<DbParameter>()
+        {
+            new NpgsqlParameter("transaction_id", transactionId),
+        };
+
+        using var reader = await _database.GetTable(query, queryParams);
+
+        if (reader.Rows.Count != 0)
+            return new TransactionEntity(
+                reader.Rows[0].Field<int>("id"),
+                reader.Rows[0].Field<int>("payee"),
+                reader.Rows[0].Field<decimal>("amount"),
+                DateOnly.FromDateTime(reader.Rows[0].Field<DateTime>("datepaid")),
+                reader.Rows[0].Field<int>("category_id"),
+                reader.Rows[0].Field<int>("account_id"));
+        return null;
+    }
+
     public async Task AddTransaction(TransactionEntity transaction)
     {
         var query = """
@@ -95,29 +125,7 @@ public class RegisterCommandRepository : IRegisterCommandRepository
         await _database.UpdateTable(query, queryParams);
     }
 
-    public async Task<bool> IsTransactionOwnedByUser(AuthenticatedUser user, int transactionId)
-    {
-        var query = """
-            SELECT 1
-            FROM register
-            WHERE id = @transaction_id
-            AND account_id IN (
-                SELECT id
-                FROM account
-                WHERE users_id = @user_id
-            )
-            """;
-        var queryParams = new List<DbParameter>()
-        {
-            new NpgsqlParameter("transaction_id", transactionId),
-            new NpgsqlParameter("user_id", user.Id),
-        };
-        var reader = await _database.GetTable(query, queryParams);
-
-        return reader.Rows.Count != 0 && reader.Rows[0].Field<int>(0) == 1;
-    }
-
-    public async Task<int> GetLastTransactionId() 
+    public async Task<int> GetLastTransactionId()
     {
         var query = """
             SELECT MAX(id) AS last_id

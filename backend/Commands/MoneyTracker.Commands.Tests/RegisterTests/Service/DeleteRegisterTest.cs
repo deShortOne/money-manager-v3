@@ -1,7 +1,6 @@
 ﻿
 using MoneyTracker.Authentication.DTOs;
-using MoneyTracker.Authentication.Entities;
-using MoneyTracker.Common.Utilities.DateTimeUtil;
+using MoneyTracker.Commands.Domain.Entities.Transaction;
 using MoneyTracker.Contracts.Requests.Transaction;
 using Moq;
 
@@ -22,20 +21,27 @@ public sealed class DeleteRegisterTest : RegisterTestHelper
     [Fact]
     public async void SuccessfullyAddNewTransaction()
     {
+        var commonAccountId = 1562;
+
         _mockUserService.Setup(x => x.GetUserFromToken(_tokenToDecode))
             .ReturnsAsync(_authedUser);
 
-        _mockRegisterDatabase.Setup(x => x.IsTransactionOwnedByUser(_authedUser, _transactionId)).Returns(Task.FromResult(true));
-
         var newTransactionRequest = new DeleteTransactionRequest(_transactionId);
+
+        _mockRegisterDatabase.Setup(x => x.GetTransaction(_transactionId))
+            .ReturnsAsync(new TransactionEntity(_transactionId, -1, -1, new DateOnly(), -1, commonAccountId));
+
+        _accountService.Setup(x => x.DoesUserOwnAccount(_authedUser, commonAccountId))
+            .ReturnsAsync(true);
 
         await _registerService.DeleteTransaction(_tokenToDecode, newTransactionRequest);
 
         Assert.Multiple(() =>
         {
             _mockUserService.Verify(x => x.GetUserFromToken(_tokenToDecode), Times.Once);
-            _mockRegisterDatabase.Verify(x => x.IsTransactionOwnedByUser(_authedUser, _transactionId), Times.Once);
             _mockRegisterDatabase.Verify(x => x.DeleteTransaction(_transactionId), Times.Once);
+            _mockRegisterDatabase.Verify(x => x.GetTransaction(_transactionId), Times.Once);
+            _accountService.Verify(x => x.DoesUserOwnAccount(_authedUser, commonAccountId), Times.Once);
 
             EnsureAllMocksHadNoOtherCalls();
         });
