@@ -1,4 +1,4 @@
-﻿
+
 namespace MoneyTracker.Authentication.Entities;
 public class TokenMapToUserEntity(int userId, DateTime expires)
 {

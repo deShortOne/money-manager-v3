@@ -1,4 +1,4 @@
-﻿
+
 namespace MoneyTracker.Contracts.Requests.Transaction;
 public class EditTransactionRequest(int id, int? payeeId = null, decimal? amount = null,
         DateOnly? datePaid = null, int? categoryId = null, int? payerId = null)

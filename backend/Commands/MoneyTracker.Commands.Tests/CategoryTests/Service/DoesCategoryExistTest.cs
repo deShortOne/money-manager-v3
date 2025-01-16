@@ -1,4 +1,4 @@
-﻿
+
 using MoneyTracker.Commands.Domain.Entities.Category;
 using MoneyTracker.Contracts.Requests.Category;
 using Moq;

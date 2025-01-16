@@ -1,4 +1,4 @@
-﻿
+
 namespace MoneyTracker.Contracts.Responses.Account;
 public class AccountResponse(int id, string name)
 {

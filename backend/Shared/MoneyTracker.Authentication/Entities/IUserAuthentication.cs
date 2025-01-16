@@ -1,4 +1,4 @@
-﻿using MoneyTracker.Common.Result;
+using MoneyTracker.Common.Result;
 
 namespace MoneyTracker.Authentication.Entities;
 public interface IUserAuthentication

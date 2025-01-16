@@ -1,4 +1,4 @@
-﻿using MoneyTracker.Authentication.Interfaces;
+using MoneyTracker.Authentication.Interfaces;
 using MoneyTracker.Common.Utilities.CalculationUtil;
 using MoneyTracker.Queries.Application;
 using MoneyTracker.Queries.Domain.Repositories;

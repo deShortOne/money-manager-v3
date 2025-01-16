@@ -1,4 +1,4 @@
-﻿
+
 namespace MoneyTracker.Common.Result;
 public sealed class ResultT<TValue> : Result
 {
@@ -38,5 +38,10 @@ public sealed class ResultT<TValue> : Result
                 return false;
 
         return base.Equals(other);
+    }
+
+    public override int GetHashCode()
+    {
+        throw new NotImplementedException();
     }
 }

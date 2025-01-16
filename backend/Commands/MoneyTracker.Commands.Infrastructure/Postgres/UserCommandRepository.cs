@@ -40,11 +40,11 @@ public class UserCommandRepository : IUserCommandRepository
             SELECT MAX(id) as last_id
             from users;
          """;
-         using var reader = await _database.GetTable(query);
+        using var reader = await _database.GetTable(query);
 
-        foreach(DataColumn column in reader.Columns)
+        foreach (DataColumn column in reader.Columns)
         {
-            
+
             Console.WriteLine(column.ColumnName);
         }
 

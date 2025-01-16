@@ -1,4 +1,4 @@
-﻿
+
 namespace MoneyTracker.Contracts.Requests.Budget;
 public class NewBudgetCategoryRequest(int budgetGroupId, int categoryId, decimal planned)
 {

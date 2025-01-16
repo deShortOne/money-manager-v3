@@ -1,4 +1,4 @@
-﻿
+
 namespace MoneyTracker.Tests.FrequencyCalculationTests.MonthDayCalculator;
 public sealed class Calculate
 {

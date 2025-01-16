@@ -1,4 +1,4 @@
-﻿using MoneyTracker.Commands.Domain.Entities.Account;
+using MoneyTracker.Commands.Domain.Entities.Account;
 
 namespace MoneyTracker.Commands.Domain.Repositories;
 public interface IAccountCommandRepository

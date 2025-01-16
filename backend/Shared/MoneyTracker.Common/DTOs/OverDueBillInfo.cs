@@ -1,4 +1,4 @@
-﻿
+
 namespace MoneyTracker.Common.DTOs;
 public class OverDueBillInfo(int daysOverDue, DateOnly[] pastOccurences)
 {

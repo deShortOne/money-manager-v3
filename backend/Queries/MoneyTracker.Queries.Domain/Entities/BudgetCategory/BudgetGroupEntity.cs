@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 
 namespace MoneyTracker.Queries.Domain.Entities.BudgetCategory;
 public class BudgetGroupEntity

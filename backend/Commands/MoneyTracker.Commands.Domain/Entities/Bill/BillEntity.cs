@@ -1,4 +1,4 @@
-﻿
+
 namespace MoneyTracker.Commands.Domain.Entities.Bill;
 public class BillEntity(int id, int payeeId, decimal amount, DateOnly nextDueDate, int monthDay,
     string frequency, int categoryId, int payerId)

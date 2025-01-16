@@ -1,4 +1,4 @@
-﻿using MoneyTracker.Authentication.DTOs;
+using MoneyTracker.Authentication.DTOs;
 
 namespace MoneyTracker.Commands.Domain.Handlers;
 public interface IAccountService

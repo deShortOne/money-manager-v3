@@ -1,4 +1,4 @@
-﻿using MoneyTracker.Contracts.Responses.Category;
+using MoneyTracker.Contracts.Responses.Category;
 using MoneyTracker.Queries.Domain.Handlers;
 using MoneyTracker.Queries.Domain.Repositories;
 

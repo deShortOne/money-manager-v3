@@ -1,4 +1,4 @@
-﻿
+
 namespace MoneyTracker.Commands.Domain.Entities.BudgetCategory;
 public class BudgetCategoryEntity(int userId, int budgetGroupId, int categoryId, decimal planned)
 {

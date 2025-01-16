@@ -1,4 +1,4 @@
-﻿using MoneyTracker.Commands.Domain.Entities.BudgetCategory;
+using MoneyTracker.Commands.Domain.Entities.BudgetCategory;
 
 namespace MoneyTracker.Commands.Domain.Repositories;
 public interface IBudgetCommandRepository

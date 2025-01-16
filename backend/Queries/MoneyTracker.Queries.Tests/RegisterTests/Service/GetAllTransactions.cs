@@ -1,4 +1,4 @@
-﻿using MoneyTracker.Authentication.DTOs;
+using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Authentication.Entities;
 using MoneyTracker.Common.Result;
 using MoneyTracker.Contracts.Responses.Transaction;
@@ -19,7 +19,7 @@ public sealed class GetAllTransactionsTest : RegisterTestHelper
             new(3, 78, "Payee B", 70.50M, new DateOnly(2024, 7, 25), 81, "Category 2", 66, "Account B"),
         ];
         List<TransactionResponse> expected = [
-            new(1, new(89, "Payee A"), 120.50M, new DateOnly(2023, 11, 13), new (80, "Category A"), new(69, "Account 1")),
+            new(1, new(89, "Payee A"), 120.50M, new DateOnly(2023, 11, 13), new(80, "Category A"), new(69, "Account 1")),
             new(3, new(78, "Payee B"), 70.50M, new DateOnly(2024, 7, 25), new(81, "Category 2"), new(66, "Account B")),
         ];
 

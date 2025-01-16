@@ -1,4 +1,4 @@
-﻿using MoneyTracker.Authentication.DTOs;
+using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Queries.Domain.Entities.BudgetCategory;
 
 namespace MoneyTracker.Queries.Domain.Repositories;

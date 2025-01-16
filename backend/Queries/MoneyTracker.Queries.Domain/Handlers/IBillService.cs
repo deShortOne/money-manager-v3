@@ -1,4 +1,4 @@
-﻿using MoneyTracker.Contracts.Responses.Bill;
+using MoneyTracker.Contracts.Responses.Bill;
 
 namespace MoneyTracker.Queries.Domain.Handlers;
 public interface IBillService

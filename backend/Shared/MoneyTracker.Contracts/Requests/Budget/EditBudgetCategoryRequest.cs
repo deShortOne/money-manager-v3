@@ -1,4 +1,4 @@
-﻿
+
 namespace MoneyTracker.Contracts.Requests.Budget;
 public class EditBudgetCategoryRequest(int budgetCategoryId, int? budgetGroupId = null, decimal? budgetCategoryPlanned = null)
 {

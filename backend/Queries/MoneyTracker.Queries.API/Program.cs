@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.OpenApi.Models;
 using MoneyTracker.Authentication;
 using MoneyTracker.Authentication.Authentication;
@@ -23,7 +23,8 @@ internal class Program
         builder.Services.AddControllers();
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen(config => {
+        builder.Services.AddSwaggerGen(config =>
+        {
             config.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
             {
                 Name = "Authorization",
@@ -45,7 +46,8 @@ internal class Program
                     Array.Empty<string>()
                 }
             });
-            config.MapType<DateOnly>(() => new OpenApiSchema { 
+            config.MapType<DateOnly>(() => new OpenApiSchema
+            {
                 Type = "string",
                 Format = "date"
             });

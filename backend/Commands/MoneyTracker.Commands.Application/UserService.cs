@@ -1,4 +1,4 @@
-﻿
+
 using Microsoft.AspNetCore.Http.HttpResults;
 using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Authentication.Entities;

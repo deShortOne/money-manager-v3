@@ -1,4 +1,4 @@
-﻿using MoneyTracker.Common.Interfaces;
+using MoneyTracker.Common.Interfaces;
 
 namespace MoneyTracker.Authentication.Utils;
 public class PasswordHasher : IPasswordHasher

@@ -1,4 +1,4 @@
-﻿
+
 using MoneyTracker.Authentication.Entities;
 
 public interface IUserRepository

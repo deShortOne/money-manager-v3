@@ -1,4 +1,4 @@
-﻿using MoneyTracker.Authentication.DTOs;
+using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Queries.DatabaseMigration;
 using MoneyTracker.Queries.DatabaseMigration.Models;
 using MoneyTracker.Queries.Domain.Entities.BudgetCategory;

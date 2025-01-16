@@ -1,4 +1,4 @@
-﻿
+
 using MoneyTracker.Common.Result;
 using MoneyTracker.Common.Utilities.DateTimeUtil;
 

@@ -1,4 +1,4 @@
-﻿using MoneyTracker.Common.DTOs;
+using MoneyTracker.Common.DTOs;
 using MoneyTracker.Contracts.Responses.Account;
 using MoneyTracker.Contracts.Responses.Category;
 

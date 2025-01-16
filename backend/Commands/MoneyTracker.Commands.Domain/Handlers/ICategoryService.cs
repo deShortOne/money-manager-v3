@@ -1,4 +1,4 @@
-﻿using MoneyTracker.Contracts.Requests.Category;
+using MoneyTracker.Contracts.Requests.Category;
 
 namespace MoneyTracker.Commands.Domain.Handlers;
 public interface ICategoryService

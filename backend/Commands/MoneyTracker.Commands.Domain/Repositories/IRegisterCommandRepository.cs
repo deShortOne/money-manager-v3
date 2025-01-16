@@ -1,4 +1,4 @@
-﻿using MoneyTracker.Commands.Domain.Entities.Transaction;
+using MoneyTracker.Commands.Domain.Entities.Transaction;
 
 namespace MoneyTracker.Commands.Domain.Repositories;
 public interface IRegisterCommandRepository

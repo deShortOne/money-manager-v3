@@ -1,4 +1,4 @@
-﻿using MoneyTracker.Commands.Application;
+using MoneyTracker.Commands.Application;
 using MoneyTracker.Commands.Domain.Handlers;
 using MoneyTracker.Commands.Domain.Repositories;
 using MoneyTracker.Common.Utilities.IdGeneratorUtil;

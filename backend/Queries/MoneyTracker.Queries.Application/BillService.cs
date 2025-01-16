@@ -1,4 +1,4 @@
-﻿using MoneyTracker.Authentication.DTOs;
+using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Common.Utilities.CalculationUtil;
 using MoneyTracker.Contracts.Responses.Account;
 using MoneyTracker.Contracts.Responses.Bill;

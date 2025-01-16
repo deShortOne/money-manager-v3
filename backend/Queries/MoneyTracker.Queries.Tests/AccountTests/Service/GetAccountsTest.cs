@@ -1,4 +1,4 @@
-﻿using MoneyTracker.Authentication.DTOs;
+using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Authentication.Entities;
 using MoneyTracker.Common.DTOs;
 using MoneyTracker.Common.Result;

@@ -1,4 +1,4 @@
-﻿
+
 using MoneyTracker.Authentication.Entities;
 using MoneyTracker.Common.Result;
 using Moq;

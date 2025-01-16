@@ -1,4 +1,4 @@
-﻿
+
 namespace MoneyTracker.Common.Interfaces;
 public interface IPasswordHasher
 {

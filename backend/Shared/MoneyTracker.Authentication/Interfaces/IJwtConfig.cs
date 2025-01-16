@@ -1,4 +1,4 @@
-﻿
+
 namespace MoneyTracker.Authentication.Interfaces;
 public interface IJwtConfig
 {

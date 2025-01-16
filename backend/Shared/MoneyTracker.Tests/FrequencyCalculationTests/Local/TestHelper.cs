@@ -1,4 +1,4 @@
-﻿using MoneyTracker.Common.Utilities.DateTimeUtil;
+using MoneyTracker.Common.Utilities.DateTimeUtil;
 using Moq;
 
 namespace MoneyTracker.Tests.FrequencyCalculationTests.Local;

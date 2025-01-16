@@ -1,4 +1,4 @@
-﻿
+
 namespace MoneyTracker.Common.Utilities.DateTimeUtil;
 
 public interface IDateTimeProvider

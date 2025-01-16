@@ -1,4 +1,4 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using System.Net.Sockets;
 
 namespace MoneyTracker.Contracts.Responses.Budget;

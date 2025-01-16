@@ -28,8 +28,9 @@ public sealed class LoginUserTest : UserTestHelper
         _mockAuthService.Setup(x => x.GenerateToken(userIdentity, _timeExpire)).Returns(_newToken.ToString());
         _mockDateTimeProvider.Setup(x => x.Now).Returns(_timeNow);
         _mockUserDatabase.Setup(x => x.StoreTemporaryTokenToUser(userAuthentication));
-        
-        Assert.Multiple(async () => {
+
+        Assert.Multiple(async () =>
+        {
             await _userService.LoginUser(new LoginWithUsernameAndPassword(_username, _passwordFromLogin));
 
             _mockUserDatabase.Verify(x => x.GetUserByUsername(_username), Times.Once);

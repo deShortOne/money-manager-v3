@@ -1,4 +1,4 @@
-﻿
+
 using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Commands.Domain.Entities.Account;
 using MoneyTracker.Commands.Domain.Entities.Transaction;

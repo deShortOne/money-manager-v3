@@ -1,4 +1,4 @@
-﻿
+
 namespace MoneyTracker.Commands.Domain.Entities.Bill;
 public class EditBillEntity(int id,
     int? payeeId = null,

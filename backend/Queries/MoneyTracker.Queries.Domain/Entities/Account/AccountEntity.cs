@@ -1,4 +1,4 @@
-﻿
+
 namespace MoneyTracker.Queries.Domain.Entities.Account;
 public class AccountEntity(int id, string name)
 {
