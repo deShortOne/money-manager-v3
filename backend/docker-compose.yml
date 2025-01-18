@@ -16,6 +16,21 @@ services:
     volumes:
       - master-database:/var/lib/postgresql/data
 
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    hostname: "rabbitmq"
+    ports:
+      - ${RABBIT_MSG_PORT}:5672
+      - ${RABBIT_MNGT_PORT}:15672
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 5s
+      timeout: 15s
+      retries: 3
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
   be-base:
     build:
       context: .
@@ -31,14 +46,18 @@ services:
       - "1235:8080"
     environment:
       Database:Paelagus_RO: "User ID=${DOCKER_DB_USERNAME};Password=${DOCKER_DB_PASSWORD};Host=postgres-master;Port=5432;Database=${DOCKER_DB_DATABASE}"
+      Messaging:Lepus: amqp://guest:guest@rabbitmq:5672
       ASPNETCORE_ENVIRONMENT: "Development"
       Jwt:iss: ${jwt_iss}
       Jwt:aud: ${jwt_aud}
       Jwt:key: ${jwt_key}
     links:
       - postgres-master
+      - rabbitmq
     depends_on:
       postgres-master:
+        condition: service_healthy
+      rabbitmq:
         condition: service_healthy
       be-base:
         condition: service_completed_successfully
@@ -51,17 +70,22 @@ services:
       - "1234:8080"
     environment:
       Database:Paelagus_RO: "User ID=${DOCKER_DB_USERNAME};Password=${DOCKER_DB_PASSWORD};Host=postgres-master;Port=5432;Database=${DOCKER_DB_DATABASE}"
+      Messaging:Lepus: amqp://guest:guest@rabbitmq:5672
       ASPNETCORE_ENVIRONMENT: "Development"
       Jwt:iss: ${jwt_iss}
       Jwt:aud: ${jwt_aud}
       Jwt:key: ${jwt_key}
     links:
       - postgres-master
+      - rabbitmq
     depends_on:
       postgres-master:
+        condition: service_healthy
+      rabbitmq:
         condition: service_healthy
       be-base:
         condition: service_completed_successfully
 
 volumes:
- master-database:
+  master-database:
+  rabbitmq_data:

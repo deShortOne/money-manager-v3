@@ -3,6 +3,7 @@ using MoneyTracker.Commands.Domain.Handlers;
 using MoneyTracker.Commands.Domain.Repositories;
 using MoneyTracker.Common.Utilities.CalculationUtil;
 using MoneyTracker.Common.Utilities.IdGeneratorUtil;
+using MoneyTracker.PlatformService.Domain;
 using Moq;
 
 namespace MoneyTracker.Commands.Tests.BillTests.Service;
@@ -16,6 +17,7 @@ public class BillTestHelper
     public readonly Mock<ICategoryService> _mockCategoryService = new();
     public readonly Mock<IUserService> _mockUserService = new();
     public readonly Mock<IAccountService> _mockAccountService = new();
+    public readonly Mock<IMessageBusClient> _mockMessageBusClient = new();
 
     public readonly BillService _billService;
 
@@ -28,7 +30,8 @@ public class BillTestHelper
             _mockMonthDayCalculator.Object,
             _mockCategoryService.Object,
             _mockUserService.Object,
-            _mockAccountService.Object
+            _mockAccountService.Object,
+            _mockMessageBusClient.Object
             );
     }
 
@@ -42,5 +45,6 @@ public class BillTestHelper
         _mockCategoryService.VerifyNoOtherCalls();
         _mockUserService.VerifyNoOtherCalls();
         _mockAccountService.VerifyNoOtherCalls();
+        _mockMessageBusClient.VerifyNoOtherCalls();
     }
 }

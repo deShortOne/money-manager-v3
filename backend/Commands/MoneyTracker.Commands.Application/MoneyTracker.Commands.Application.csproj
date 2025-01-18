@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Shared\MoneyTracker.PlatformService\MoneyTracker.PlatformService.csproj" />
     <ProjectReference Include="..\MoneyTracker.Commands.Domain\MoneyTracker.Commands.Domain.csproj" />
   </ItemGroup>
 

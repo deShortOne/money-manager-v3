@@ -6,6 +6,8 @@ using MoneyTracker.Common.Result;
 using MoneyTracker.Common.Utilities.CalculationUtil;
 using MoneyTracker.Common.Utilities.IdGeneratorUtil;
 using MoneyTracker.Contracts.Requests.Bill;
+using MoneyTracker.PlatformService.Domain;
+using MoneyTracker.PlatformService.DTOs;
 
 namespace MoneyTracker.Commands.Application;
 public class BillService : IBillService
@@ -18,6 +20,7 @@ public class BillService : IBillService
     private readonly ICategoryService _categoryService;
     private readonly IUserService _userService;
     private readonly IAccountService _accountService;
+    private readonly IMessageBusClient _messageBus;
 
     public BillService(IBillCommandRepository dbService,
         IAccountCommandRepository accountDatabase,
@@ -26,7 +29,8 @@ public class BillService : IBillService
         IMonthDayCalculator monthDayCalculator,
         ICategoryService categoryService,
         IUserService userService,
-        IAccountService accountService
+        IAccountService accountService,
+        IMessageBusClient messageBus
         )
     {
         _dbService = dbService;
@@ -37,6 +41,7 @@ public class BillService : IBillService
         _categoryService = categoryService;
         _userService = userService;
         _accountService = accountService;
+        _messageBus = messageBus;
     }
 
     public async Task<Result> AddBill(string token, NewBillRequest newBill)

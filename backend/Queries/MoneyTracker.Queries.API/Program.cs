@@ -6,6 +6,7 @@ using MoneyTracker.Authentication.Interfaces;
 using MoneyTracker.Common.Interfaces;
 using MoneyTracker.Common.Utilities.CalculationUtil;
 using MoneyTracker.Common.Utilities.DateTimeUtil;
+using MoneyTracker.PlatformService;
 using MoneyTracker.Queries.Application;
 using MoneyTracker.Queries.Domain.Handlers;
 using MoneyTracker.Queries.Domain.Repositories;
@@ -56,6 +57,7 @@ internal class Program
         var database = new PostgresDatabase(builder.Configuration["Database:Paelagus_RO"]!);
 
         Startup.Start(builder, database);
+        PlatformServiceStartup.StartSubscriber(builder);
 
         builder.Services
             .AddHttpContextAccessor()

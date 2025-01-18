@@ -39,7 +39,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoneyTracker.Queries.DataMi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoneyTracker.Queries.API", "Queries\MoneyTracker.Queries.API\MoneyTracker.Queries.API.csproj", "{3B6A0A34-5DF3-45C0-A404-C725E22079D2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoneyTracker.Commands.API", "Commands\MoneyTracker.Commands.API\MoneyTracker.Commands.API.csproj", "{3632B02F-8BD1-44FC-AE5F-AFA17E24B4FD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoneyTracker.Commands.API", "Commands\MoneyTracker.Commands.API\MoneyTracker.Commands.API.csproj", "{3632B02F-8BD1-44FC-AE5F-AFA17E24B4FD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoneyTracker.PlatformService", "Shared\MoneyTracker.PlatformService\MoneyTracker.PlatformService.csproj", "{1B1B9BCD-DC7B-475E-8F6A-FFF50B8C713B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -111,6 +113,10 @@ Global
 		{3632B02F-8BD1-44FC-AE5F-AFA17E24B4FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3632B02F-8BD1-44FC-AE5F-AFA17E24B4FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3632B02F-8BD1-44FC-AE5F-AFA17E24B4FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1B1B9BCD-DC7B-475E-8F6A-FFF50B8C713B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1B1B9BCD-DC7B-475E-8F6A-FFF50B8C713B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1B1B9BCD-DC7B-475E-8F6A-FFF50B8C713B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1B1B9BCD-DC7B-475E-8F6A-FFF50B8C713B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -132,6 +138,7 @@ Global
 		{4B81AD87-8B54-4A75-AF03-99E22A274E52} = {8A3E641C-AC44-4217-A765-9CAD289AC7E6}
 		{3B6A0A34-5DF3-45C0-A404-C725E22079D2} = {8A3E641C-AC44-4217-A765-9CAD289AC7E6}
 		{3632B02F-8BD1-44FC-AE5F-AFA17E24B4FD} = {E4564A5D-9FB8-4034-B587-DF72F1CE7298}
+		{1B1B9BCD-DC7B-475E-8F6A-FFF50B8C713B} = {73D7E682-5743-413C-BC9D-04F2BC2B5044}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C05BF204-356E-4503-B959-74ED22AB7CB0}
