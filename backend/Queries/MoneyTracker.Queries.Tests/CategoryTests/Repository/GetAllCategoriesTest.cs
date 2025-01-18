@@ -33,7 +33,7 @@ public sealed class GetAllCategoriesTest : IAsyncLifetime
     public async void FirstLoadCheckTablesThatDataAreThere()
     {
         var db = new PostgresDatabase(_postgres.GetConnectionString());
-        var budgetDb = new CategoryRepository(db);
+        var budgetDb = new CategoryDatabase(db);
 
         var actual = await budgetDb.GetAllCategories();
 

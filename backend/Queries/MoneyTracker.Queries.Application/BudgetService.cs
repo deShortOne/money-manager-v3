@@ -4,19 +4,19 @@ using MoneyTracker.Common.Result;
 using MoneyTracker.Contracts.Responses.Budget;
 using MoneyTracker.Queries.Domain.Entities.BudgetCategory;
 using MoneyTracker.Queries.Domain.Handlers;
-using MoneyTracker.Queries.Domain.Repositories.Database;
+using MoneyTracker.Queries.Domain.Repositories.Service;
 
 namespace MoneyTracker.Queries.Application;
 public class BudgetService : IBudgetService
 {
-    private readonly IBudgetDatabase _dbService;
-    private readonly IUserDatabase _userRepository;
+    private readonly IBudgetRepositoryService _budgetRepository;
+    private readonly IUserRepositoryService _userRepository;
 
     public BudgetService(
-        IBudgetDatabase dbService,
-        IUserDatabase userRepository)
+        IBudgetRepositoryService budgetRepository,
+        IUserRepositoryService userRepository)
     {
-        _dbService = dbService;
+        _budgetRepository = budgetRepository;
         _userRepository = userRepository;
     }
 
@@ -28,7 +28,7 @@ public class BudgetService : IBudgetService
         userAuth.CheckValidation();
 
         var user = new AuthenticatedUser(userAuth.User.Id);
-        var budgetResult = await _dbService.GetBudget(user);
+        var budgetResult = await _budgetRepository.GetBudget(user);
         if (!budgetResult.IsSuccess)
             return budgetResult.Error!;
 

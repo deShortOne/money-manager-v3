@@ -8,11 +8,11 @@ using MoneyTracker.Queries.Domain.Repositories.Database;
 using Npgsql;
 
 namespace MoneyTracker.Queries.Infrastructure.Postgres;
-public class RegisterRepository : IRegisterDatabase
+public class RegisterDatabase : IRegisterDatabase
 {
     private readonly IDatabase _database;
 
-    public RegisterRepository(IDatabase db)
+    public RegisterDatabase(IDatabase db)
     {
         _database = db;
     }

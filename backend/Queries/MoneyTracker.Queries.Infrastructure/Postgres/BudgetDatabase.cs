@@ -8,10 +8,10 @@ using MoneyTracker.Queries.Domain.Repositories.Database;
 using Npgsql;
 
 namespace MoneyTracker.Queries.Infrastructure.Postgres;
-public class BudgetRepository : IBudgetDatabase
+public class BudgetDatabase : IBudgetDatabase
 {
     private readonly IDatabase _database;
-    public BudgetRepository(IDatabase db)
+    public BudgetDatabase(IDatabase db)
     {
         _database = db;
     }

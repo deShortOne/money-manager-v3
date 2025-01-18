@@ -1,13 +1,12 @@
-using MoneyTracker.Authentication.Interfaces;
 using MoneyTracker.Queries.Application;
-using MoneyTracker.Queries.Domain.Repositories.Database;
+using MoneyTracker.Queries.Domain.Repositories.Service;
 using Moq;
 
 namespace MoneyTracker.Queries.Tests.RegisterTests.Service;
 public class RegisterTestHelper
 {
-    public readonly Mock<IRegisterDatabase> _mockRegisterDatabase = new();
-    public readonly Mock<IUserDatabase> _mockUserRepository = new();
+    public readonly Mock<IRegisterRepositoryService> _mockRegisterDatabase = new();
+    public readonly Mock<IUserRepositoryService> _mockUserRepository = new();
 
     public readonly RegisterService _budgetService;
 

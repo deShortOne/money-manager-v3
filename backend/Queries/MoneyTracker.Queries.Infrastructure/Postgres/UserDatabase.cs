@@ -7,12 +7,12 @@ using MoneyTracker.Common.Utilities.DateTimeUtil;
 using MoneyTracker.Queries.Domain.Repositories.Database;
 using Npgsql;
 
-public class UserRepository : IUserDatabase
+public class UserDatabase : IUserDatabase
 {
     private readonly IDatabase _database;
     private readonly IDateTimeProvider _dateTimeProvider;
 
-    public UserRepository(IDatabase db, IDateTimeProvider dateTimeProvider)
+    public UserDatabase(IDatabase db, IDateTimeProvider dateTimeProvider)
     {
         _database = db;
         _dateTimeProvider = dateTimeProvider;

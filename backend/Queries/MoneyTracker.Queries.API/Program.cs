@@ -10,7 +10,9 @@ using MoneyTracker.PlatformService;
 using MoneyTracker.Queries.Application;
 using MoneyTracker.Queries.Domain.Handlers;
 using MoneyTracker.Queries.Domain.Repositories.Database;
+using MoneyTracker.Queries.Domain.Repositories.Service;
 using MoneyTracker.Queries.Infrastructure.Postgres;
+using MoneyTracker.Queries.Infrastructure.Service.DatabaseOnly;
 
 [ExcludeFromCodeCoverage]
 internal class Program
@@ -63,31 +65,36 @@ internal class Program
             .AddHttpContextAccessor()
             .AddSingleton<IDatabase>(_ => database)
             .AddSingleton<IUserService, UserService>()
-            .AddSingleton<IUserDatabase, UserRepository>()
-            .AddSingleton<IAuthenticationService, AuthenticationService>();
+            .AddSingleton<IUserDatabase, UserDatabase>()
+            .AddSingleton<IAuthenticationService, AuthenticationService>()
+            .AddSingleton<IUserRepositoryService, UserRepository>();
 
         builder.Services
             .AddSingleton<IAccountService, AccountService>()
-            .AddSingleton<IAccountDatabase, AccountRepository>();
+            .AddSingleton<IAccountDatabase, AccountDatabase>()
+            .AddSingleton<IAccountRepositoryService, AccountRepository>();
 
         builder.Services
             .AddSingleton<IBillService, BillService>()
-            .AddSingleton<IBillDatabase, BillRepository>()
+            .AddSingleton<IBillDatabase, BillDatabase>()
             .AddSingleton<IDateTimeProvider, DateTimeProvider>()
             .AddSingleton<IFrequencyCalculation, FrequencyCalculation>()
-            .AddSingleton<IBillDatabase, BillRepository>();
+            .AddSingleton<IBillRepositoryService, BillRepository>();
 
         builder.Services
             .AddSingleton<IBudgetService, BudgetService>()
-            .AddSingleton<IBudgetDatabase, BudgetRepository>();
+            .AddSingleton<IBudgetDatabase, BudgetDatabase>()
+            .AddSingleton<IBudgetRepositoryService, BudgetRepository>();
 
         builder.Services
             .AddSingleton<ICategoryService, CategoryService>()
-            .AddSingleton<ICategoryDatabase, CategoryRepository>();
+            .AddSingleton<ICategoryDatabase, CategoryDatabase>()
+            .AddSingleton<ICategoryRepositoryService, CategoryRepository>();
 
         builder.Services
             .AddSingleton<IRegisterService, RegisterService>()
-            .AddSingleton<IRegisterDatabase, RegisterRepository>();
+            .AddSingleton<IRegisterDatabase, RegisterDatabase>()
+            .AddSingleton<IRegisterRepositoryService, RegisterRepository>();
 
         var app = builder.Build();
 

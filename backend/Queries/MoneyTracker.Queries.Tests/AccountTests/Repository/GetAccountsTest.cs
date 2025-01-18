@@ -32,7 +32,7 @@ public sealed class GetAccountsTest : IAsyncLifetime
     public async void FirstLoadCheckTablesThatDataAreThere()
     {
         var db = new PostgresDatabase(_postgres.GetConnectionString());
-        var accountDb = new AccountRepository(db);
+        var accountDb = new AccountDatabase(db);
 
         var actual = await accountDb.GetAccounts(new AuthenticatedUser(1));
 

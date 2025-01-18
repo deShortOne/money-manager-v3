@@ -1,25 +1,23 @@
 using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Common.Result;
 using MoneyTracker.Common.Utilities.CalculationUtil;
-using MoneyTracker.Contracts.Responses.Account;
 using MoneyTracker.Contracts.Responses.Bill;
-using MoneyTracker.Contracts.Responses.Category;
 using MoneyTracker.Queries.Domain.Entities.Bill;
 using MoneyTracker.Queries.Domain.Handlers;
-using MoneyTracker.Queries.Domain.Repositories.Database;
+using MoneyTracker.Queries.Domain.Repositories.Service;
 
 namespace MoneyTracker.Queries.Application;
 public class BillService : IBillService
 {
-    private readonly IBillDatabase _dbService;
+    private readonly IBillRepositoryService _billRepository;
     private readonly IFrequencyCalculation _frequencyCalculation;
-    private readonly IUserDatabase _userRepository;
+    private readonly IUserRepositoryService _userRepository;
 
-    public BillService(IBillDatabase dbService,
+    public BillService(IBillRepositoryService billRepository,
         IFrequencyCalculation frequencyCalculation,
-        IUserDatabase userRepository)
+        IUserRepositoryService userRepository)
     {
-        _dbService = dbService;
+        _billRepository = billRepository;
         _frequencyCalculation = frequencyCalculation;
         _userRepository = userRepository;
     }
@@ -32,7 +30,7 @@ public class BillService : IBillService
         userAuth.CheckValidation();
 
         var user = new AuthenticatedUser(userAuth.User.Id);
-        var billsResult = await _dbService.GetAllBills(user);
+        var billsResult = await _billRepository.GetAllBills(user);
         if (!billsResult.IsSuccess)
             return billsResult.Error!;
 

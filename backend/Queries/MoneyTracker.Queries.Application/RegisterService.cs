@@ -1,20 +1,19 @@
 using MoneyTracker.Authentication.DTOs;
-using MoneyTracker.Authentication.Interfaces;
 using MoneyTracker.Common.Result;
 using MoneyTracker.Contracts.Responses.Transaction;
 using MoneyTracker.Queries.Domain.Handlers;
-using MoneyTracker.Queries.Domain.Repositories.Database;
+using MoneyTracker.Queries.Domain.Repositories.Service;
 
 namespace MoneyTracker.Queries.Application;
 public class RegisterService : IRegisterService
 {
-    private readonly IRegisterDatabase _dbService;
-    private readonly IUserDatabase _userRepository;
+    private readonly IRegisterRepositoryService _registerRepository;
+    private readonly IUserRepositoryService _userRepository;
 
-    public RegisterService(IRegisterDatabase dbService,
-        IUserDatabase userRepository)
+    public RegisterService(IRegisterRepositoryService registerDatabase,
+        IUserRepositoryService userRepository)
     {
-        _dbService = dbService;
+        this._registerRepository = registerDatabase;
         _userRepository = userRepository;
     }
 
@@ -26,7 +25,7 @@ public class RegisterService : IRegisterService
         userAuth.CheckValidation();
 
         var user = new AuthenticatedUser(userAuth.User.Id);
-        var transactionsResult = await _dbService.GetAllTransactions(user);
+        var transactionsResult = await _registerRepository.GetAllTransactions(user);
         if (!transactionsResult.IsSuccess)
             return transactionsResult.Error!;
 

@@ -1,15 +1,14 @@
-using MoneyTracker.Authentication.Interfaces;
 using MoneyTracker.Common.Utilities.CalculationUtil;
 using MoneyTracker.Queries.Application;
-using MoneyTracker.Queries.Domain.Repositories.Database;
+using MoneyTracker.Queries.Domain.Repositories.Service;
 using Moq;
 
 namespace MoneyTracker.Queries.Tests.BillTests.Service;
 public class BillTestHelper
 {
-    public readonly Mock<IBillDatabase> _mockBillDatabase = new();
+    public readonly Mock<IBillRepositoryService> _mockBillDatabase = new();
     public readonly Mock<IFrequencyCalculation> _mockFrequencyCalculation = new();
-    public readonly Mock<IUserDatabase> _mockUserRepository = new();
+    public readonly Mock<IUserRepositoryService> _mockUserRepository = new();
 
     public readonly BillService _billService;
 

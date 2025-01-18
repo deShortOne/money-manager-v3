@@ -5,11 +5,11 @@ using MoneyTracker.Queries.Domain.Entities.Category;
 using MoneyTracker.Queries.Domain.Repositories.Database;
 
 namespace MoneyTracker.Queries.Infrastructure.Postgres;
-public class CategoryRepository : ICategoryDatabase
+public class CategoryDatabase : ICategoryDatabase
 {
     private readonly IDatabase _database;
 
-    public CategoryRepository(IDatabase db)
+    public CategoryDatabase(IDatabase db)
     {
         _database = db;
     }

@@ -3,16 +3,17 @@ using MoneyTracker.Common.Result;
 using MoneyTracker.Contracts.Responses.Account;
 using MoneyTracker.Queries.Domain.Handlers;
 using MoneyTracker.Queries.Domain.Repositories.Database;
+using MoneyTracker.Queries.Domain.Repositories.Service;
 
 namespace MoneyTracker.Queries.Application;
 public class AccountService : IAccountService
 {
     private readonly IAccountDatabase _dbService;
-    private readonly IUserDatabase _userRepository;
+    private readonly IUserRepositoryService _userRepository;
 
     public AccountService(
         IAccountDatabase dbService,
-        IUserDatabase userRepository)
+        IUserRepositoryService userRepository)
     {
         _dbService = dbService;
         _userRepository = userRepository;

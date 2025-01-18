@@ -2,14 +2,14 @@
 using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Common.Interfaces;
 using MoneyTracker.Queries.Domain.Handlers;
-using MoneyTracker.Queries.Domain.Repositories.Database;
+using MoneyTracker.Queries.Domain.Repositories.Service;
 
 public class UserService : IUserService
 {
-    private readonly IUserDatabase _userRepository;
+    private readonly IUserRepositoryService _userRepository;
     private readonly IPasswordHasher _passwordHasher;
 
-    public UserService(IUserDatabase userRepository,
+    public UserService(IUserRepositoryService userRepository,
         IPasswordHasher passwordHasher)
     {
         _userRepository = userRepository;
