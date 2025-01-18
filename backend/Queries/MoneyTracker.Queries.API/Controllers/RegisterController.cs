@@ -21,8 +21,10 @@ public class RegisterController
 
     [HttpPost]
     [Route("get")]
-    public Task<List<TransactionResponse>> GetAllTransactions()
+    public async Task<IActionResult> GetAllTransactions()
     {
-        return _registerService.GetAllTransactions(ControllerHelper.GetToken(_httpContextAccessor));
+        var transactionsResult = await _registerService.GetAllTransactions(ControllerHelper.GetToken(_httpContextAccessor));
+
+        return ControllerHelper.Convert(transactionsResult);
     }
 }

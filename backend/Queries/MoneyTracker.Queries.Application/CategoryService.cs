@@ -1,3 +1,4 @@
+using MoneyTracker.Common.Result;
 using MoneyTracker.Contracts.Responses.Category;
 using MoneyTracker.Queries.Domain.Handlers;
 using MoneyTracker.Queries.Domain.Repositories;
@@ -12,11 +13,14 @@ public class CategoryService : ICategoryService
         _dbService = dbService;
     }
 
-    public async Task<List<CategoryResponse>> GetAllCategories()
+    public async Task<ResultT<List<CategoryResponse>>> GetAllCategories()
     {
-        var dtoLisFromDb = await _dbService.GetAllCategories();
+        var categoriesResult = await _dbService.GetAllCategories();
+        if (!categoriesResult.IsSuccess)
+            return categoriesResult.Error!;
+
         List<CategoryResponse> res = [];
-        foreach (var category in dtoLisFromDb)
+        foreach (var category in categoriesResult.Value)
         {
             res.Add(new(category.Id, category.Name));
         }

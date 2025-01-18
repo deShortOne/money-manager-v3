@@ -2,6 +2,7 @@ using System.Data;
 using System.Data.Common;
 using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Common.Interfaces;
+using MoneyTracker.Common.Result;
 using MoneyTracker.Queries.Domain.Entities.Bill;
 using MoneyTracker.Queries.Domain.Repositories;
 using Npgsql;
@@ -15,7 +16,7 @@ public class BillRepository : IBillRepository
         _database = db;
     }
 
-    public async Task<List<BillEntity>> GetAllBills(AuthenticatedUser user)
+    public async Task<ResultT<List<BillEntity>>> GetAllBills(AuthenticatedUser user)
     {
         string query = """
             SELECT b.id,

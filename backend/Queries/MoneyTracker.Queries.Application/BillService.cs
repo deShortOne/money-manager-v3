@@ -1,4 +1,5 @@
 using MoneyTracker.Authentication.DTOs;
+using MoneyTracker.Common.Result;
 using MoneyTracker.Common.Utilities.CalculationUtil;
 using MoneyTracker.Contracts.Responses.Account;
 using MoneyTracker.Contracts.Responses.Bill;
@@ -23,7 +24,7 @@ public class BillService : IBillService
         _userRepository = userRepository;
     }
 
-    public async Task<List<BillResponse>> GetAllBills(string token)
+    public async Task<ResultT<List<BillResponse>>> GetAllBills(string token)
     {
         var userAuth = await _userRepository.GetUserAuthFromToken(token);
         if (userAuth == null)
@@ -31,7 +32,11 @@ public class BillService : IBillService
         userAuth.CheckValidation();
 
         var user = new AuthenticatedUser(userAuth.User.Id);
-        return ConvertFromRepoDTOToDTO(await _dbService.GetAllBills(user));
+        var billsResult = await _dbService.GetAllBills(user);
+        if (!billsResult.IsSuccess)
+            return billsResult.Error!;
+
+        return ConvertFromRepoDTOToDTO(billsResult.Value);
     }
 
     public Task<List<string>> GetAllFrequencyNames()

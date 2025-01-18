@@ -1,8 +1,8 @@
 using System.Data;
 using MoneyTracker.Common.Interfaces;
+using MoneyTracker.Common.Result;
 using MoneyTracker.Queries.Domain.Entities.Category;
 using MoneyTracker.Queries.Domain.Repositories;
-using Npgsql;
 
 namespace MoneyTracker.Queries.Infrastructure.Postgres;
 public class CategoryRepository : ICategoryRepository
@@ -14,7 +14,7 @@ public class CategoryRepository : ICategoryRepository
         _database = db;
     }
 
-    public async Task<List<CategoryEntity>> GetAllCategories()
+    public async Task<ResultT<List<CategoryEntity>>> GetAllCategories()
     {
         // UPSERTS!! and gets id
         var queryGetAllCategories = """

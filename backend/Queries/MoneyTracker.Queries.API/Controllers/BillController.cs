@@ -21,9 +21,10 @@ public class BillController
 
     [HttpPost]
     [Route("get")]
-    public Task<List<BillResponse>> GetAllBills()
+    public async Task<IActionResult> GetAllBills()
     {
-        return _billService.GetAllBills(ControllerHelper.GetToken(_httpContextAccessor));
+        var billsResult = await _billService.GetAllBills(ControllerHelper.GetToken(_httpContextAccessor));
+        return ControllerHelper.Convert(billsResult);
     }
 
     [HttpGet]

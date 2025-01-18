@@ -1,4 +1,6 @@
 
+using System.Text.Json.Serialization;
+
 namespace MoneyTracker.Contracts.Responses.Category;
 public class CategoryResponse
 {
@@ -8,8 +10,11 @@ public class CategoryResponse
         Name = name;
     }
 
-    public int Id { get; private set; }
-    public string Name { get; private set; }
+    [JsonPropertyName("id")]
+    public int Id { get; }
+
+    [JsonPropertyName("name")]
+    public string Name { get; }
 
     public override bool Equals(object? obj)
     {

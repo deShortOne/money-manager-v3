@@ -1,4 +1,5 @@
 
+using System.Text.Json.Serialization;
 using MoneyTracker.Contracts.Responses.Account;
 using MoneyTracker.Contracts.Responses.Category;
 
@@ -12,11 +13,22 @@ public class TransactionResponse(
     AccountResponse payer)
 {
 
+    [JsonPropertyName("id")]
     public int Id { get; } = id;
+
+    [JsonPropertyName("payee")]
     public AccountResponse Payee { get; } = payee;
+
+    [JsonPropertyName("amount")]
     public decimal Amount { get; } = amount;
+
+    [JsonPropertyName("datepaid")]
     public DateOnly DatePaid { get; } = datePaid;
+
+    [JsonPropertyName("category")]
     public CategoryResponse Category { get; } = category;
+
+    [JsonPropertyName("payer")]
     public AccountResponse Payer { get; } = payer;
 
     public override bool Equals(object? obj)

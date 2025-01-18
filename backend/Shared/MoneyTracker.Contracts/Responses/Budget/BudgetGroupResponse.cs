@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Net.Sockets;
+using System.Text.Json.Serialization;
 
 namespace MoneyTracker.Contracts.Responses.Budget;
 public class BudgetGroupResponse
@@ -20,16 +21,26 @@ public class BudgetGroupResponse
         _categories = categories;
     }
 
-    public int Id { get; private set; }
-    public string Name { get; private set; }
+    [JsonPropertyName("id")]
+    public int Id { get; }
+
+    [JsonPropertyName("name")]
+    public string Name { get; }
+
+    [JsonPropertyName("categories")]
     public IList<BudgetCategoryResponse> Categories
     {
         get => new ReadOnlyCollection<BudgetCategoryResponse>(_categories);
         private set => _categories = value;
     }
 
+    [JsonPropertyName("planned")]
     public decimal Planned { get; private set; }
+
+    [JsonPropertyName("actual")]
     public decimal Actual { get; private set; }
+
+    [JsonPropertyName("difference")]
     public decimal Difference { get; private set; }
 
     public void AddBudgetCategoryDTO(BudgetCategoryResponse newBudgetCategory)

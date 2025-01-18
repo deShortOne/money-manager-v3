@@ -1,5 +1,6 @@
 using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Authentication.Interfaces;
+using MoneyTracker.Common.Result;
 using MoneyTracker.Contracts.Responses.Budget;
 using MoneyTracker.Queries.Domain.Entities.BudgetCategory;
 using MoneyTracker.Queries.Domain.Handlers;
@@ -19,7 +20,7 @@ public class BudgetService : IBudgetService
         _userRepository = userRepository;
     }
 
-    public async Task<List<BudgetGroupResponse>> GetBudget(string token)
+    public async Task<ResultT<List<BudgetGroupResponse>>> GetBudget(string token)
     {
         var userAuth = await _userRepository.GetUserAuthFromToken(token);
         if (userAuth == null)
@@ -27,7 +28,11 @@ public class BudgetService : IBudgetService
         userAuth.CheckValidation();
 
         var user = new AuthenticatedUser(userAuth.User.Id);
-        return ConvertFromRepoDTOToDTO(await _dbService.GetBudget(user));
+        var budgetResult = await _dbService.GetBudget(user);
+        if (!budgetResult.IsSuccess)
+            return budgetResult.Error!;
+
+        return ConvertFromRepoDTOToDTO(budgetResult.Value);
     }
 
     private List<BudgetGroupResponse> ConvertFromRepoDTOToDTO(List<BudgetGroupEntity> billRepoDTO)

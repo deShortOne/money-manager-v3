@@ -1,5 +1,6 @@
 using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Authentication.Interfaces;
+using MoneyTracker.Common.Result;
 using MoneyTracker.Contracts.Responses.Transaction;
 using MoneyTracker.Queries.Domain.Handlers;
 using MoneyTracker.Queries.Domain.Repositories;
@@ -17,7 +18,7 @@ public class RegisterService : IRegisterService
         _userRepository = userRepository;
     }
 
-    public async Task<List<TransactionResponse>> GetAllTransactions(string token)
+    public async Task<ResultT<List<TransactionResponse>>> GetAllTransactions(string token)
     {
         var userAuth = await _userRepository.GetUserAuthFromToken(token);
         if (userAuth == null)
@@ -25,9 +26,12 @@ public class RegisterService : IRegisterService
         userAuth.CheckValidation();
 
         var user = new AuthenticatedUser(userAuth.User.Id);
-        var dtoFromDb = await _dbService.GetAllTransactions(user);
+        var transactionsResult = await _dbService.GetAllTransactions(user);
+        if (!transactionsResult.IsSuccess)
+            return transactionsResult.Error!;
+
         List<TransactionResponse> res = [];
-        foreach (var transaction in dtoFromDb)
+        foreach (var transaction in transactionsResult.Value)
         {
             res.Add(new(transaction.Id,
                 new(

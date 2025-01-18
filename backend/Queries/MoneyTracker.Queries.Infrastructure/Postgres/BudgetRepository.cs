@@ -2,6 +2,7 @@ using System.Data;
 using System.Data.Common;
 using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Common.Interfaces;
+using MoneyTracker.Common.Result;
 using MoneyTracker.Queries.Domain.Entities.BudgetCategory;
 using MoneyTracker.Queries.Domain.Repositories;
 using Npgsql;
@@ -15,7 +16,7 @@ public class BudgetRepository : IBudgetRepository
         _database = db;
     }
 
-    public async Task<List<BudgetGroupEntity>> GetBudget(AuthenticatedUser user)
+    public async Task<ResultT<List<BudgetGroupEntity>>> GetBudget(AuthenticatedUser user)
     {
         string query = """
             SELECT bg.id,

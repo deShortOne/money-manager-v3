@@ -2,6 +2,7 @@ using System.Data;
 using System.Data.Common;
 using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Common.Interfaces;
+using MoneyTracker.Common.Result;
 using MoneyTracker.Queries.Domain.Entities.Transaction;
 using MoneyTracker.Queries.Domain.Repositories;
 using Npgsql;
@@ -16,7 +17,7 @@ public class RegisterRepository : IRegisterRepository
         _database = db;
     }
 
-    public async Task<List<TransactionEntity>> GetAllTransactions(AuthenticatedUser user)
+    public async Task<ResultT<List<TransactionEntity>>> GetAllTransactions(AuthenticatedUser user)
     {
         var query = """
 			SELECT register.id,

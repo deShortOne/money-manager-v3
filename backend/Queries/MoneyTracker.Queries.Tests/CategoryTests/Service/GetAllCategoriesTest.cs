@@ -18,7 +18,7 @@ public sealed class GetAllCategories : CategoryTestHelper
         ];
 
 
-        _mockCategoryDatabase.Setup(x => x.GetAllCategories()).Returns(Task.FromResult(categoryDatabaseReturn));
+        _mockCategoryDatabase.Setup(x => x.GetAllCategories()).ReturnsAsync(categoryDatabaseReturn);
 
         Assert.Multiple(async () =>
         {

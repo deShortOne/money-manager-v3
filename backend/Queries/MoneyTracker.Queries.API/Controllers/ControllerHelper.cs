@@ -1,5 +1,6 @@
 
 using System.Diagnostics.CodeAnalysis;
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using MoneyTracker.Common.Result;
 
@@ -18,10 +19,16 @@ public class ControllerHelper
         }
         return "";
     }
-    public static IActionResult Convert(Result result)
+
+    public static IActionResult Convert<T>(ResultT<T> result)
     {
         if (result.IsSuccess)
-            return new OkResult();
+            return new ContentResult
+            {
+                Content = JsonSerializer.Serialize(result.Value),
+                ContentType = "application/json",
+                StatusCode = StatusCodes.Status200OK,
+            };
         if (result.Error != null)
         {
             switch (result.Error.ErrorType)
