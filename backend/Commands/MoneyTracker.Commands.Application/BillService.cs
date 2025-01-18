@@ -53,25 +53,25 @@ public class BillService : IBillService
         var user = userResult.Value;
         if (newBill.Amount < 0)
         {
-            return Result.Failure(Error.Validation("BillService.AddBill", "Amount must be a positive number"));
+            return Error.Validation("BillService.AddBill", "Amount must be a positive number");
         }
 
         if (!await _accountService.DoesUserOwnAccount(user, newBill.PayerId))
         {
-            return Result.Failure(Error.Validation("BillService.AddBill", "Payer account not found"));
+            return Error.Validation("BillService.AddBill", "Payer account not found");
         }
         var payeeAccount = await _accountDatabase.GetAccountById(newBill.PayeeId);
         if (payeeAccount == null)
         {
-            return Result.Failure(Error.Validation("BillService.AddBill", "Payee account not found"));
+            return Error.Validation("BillService.AddBill", "Payee account not found");
         }
         if (!_frequencyCalculation.DoesFrequencyExist(newBill.Frequency))
         {
-            return Result.Failure(Error.Validation("BillService.AddBill", "Frequency type not found"));
+            return Error.Validation("BillService.AddBill", "Frequency type not found");
         }
         if (!await _categoryService.DoesCategoryExist(newBill.CategoryId))
         {
-            return Result.Failure(Error.Validation("BillService.AddBill", "Category not found"));
+            return Error.Validation("BillService.AddBill", "Category not found");
         }
 
         var dtoToDb = new BillEntity(
@@ -85,6 +85,8 @@ public class BillService : IBillService
             newBill.PayerId
         );
         await _dbService.AddBill(dtoToDb);
+
+        await _messageBus.PublishEvent(new EventUpdate(user, DataTypes.Bill), CancellationToken.None);
 
         return Result.Success();
     }
@@ -101,36 +103,36 @@ public class BillService : IBillService
             editBill.Frequency == null && editBill.CategoryId == null &&
             editBill.PayerId == null)
         {
-            return Result.Failure(Error.Validation("BillService.EditBill", "Must have at least one non-null value"));
+            return Error.Validation("BillService.EditBill", "Must have at least one non-null value");
         }
 
         var doesUserOwnBill = await DoesUserOwnBill(editBill.Id, user);
         if (!doesUserOwnBill)
         {
-            return Result.Failure(Error.Validation("BillService.EditBill", "Bill not found"));
+            return Error.Validation("BillService.EditBill", "Bill not found");
         }
 
         if (editBill.PayerId != null)
         {
             if (!await _accountService.DoesUserOwnAccount(user, (int)editBill.PayerId))
-                return Result.Failure(Error.Validation("BillService.EditBill", "Payer account not found"));
+                return Error.Validation("BillService.EditBill", "Payer account not found");
         }
         if (editBill.PayeeId != null)
         {
             var payeeAccount = await _accountDatabase.GetAccountById((int)editBill.PayeeId);
             if (payeeAccount == null)
             {
-                return Result.Failure(Error.Validation("BillService.EditBill", "Payee account not found"));
+                return Error.Validation("BillService.EditBill", "Payee account not found");
             }
         }
         if (editBill.Frequency != null &&
             !_frequencyCalculation.DoesFrequencyExist(editBill.Frequency))
         {
-            return Result.Failure(Error.Validation("BillService.EditBill", "Frequency type not found"));
+            return Error.Validation("BillService.EditBill", "Frequency type not found");
         }
         if (editBill.CategoryId != null && !await _categoryService.DoesCategoryExist((int)editBill.CategoryId))
         {
-            return Result.Failure(Error.Validation("BillService.EditBill", "Category not found"));
+            return Error.Validation("BillService.EditBill", "Category not found");
         }
 
         int? monthDay = null;
@@ -151,6 +153,8 @@ public class BillService : IBillService
         );
         await _dbService.EditBill(dtoToDb);
 
+        await _messageBus.PublishEvent(new EventUpdate(user, DataTypes.Bill), CancellationToken.None);
+
         return Result.Success();
     }
 
@@ -164,10 +168,12 @@ public class BillService : IBillService
         var doesUserOwnBill = await DoesUserOwnBill(deleteBill.Id, user);
         if (!doesUserOwnBill)
         {
-            return Result.Failure(Error.Validation("BillService.DeleteBill", "Bill not found"));
+            return Error.Validation("BillService.DeleteBill", "Bill not found");
         }
 
         await _dbService.DeleteBill(deleteBill.Id);
+
+        await _messageBus.PublishEvent(new EventUpdate(user, DataTypes.Bill), CancellationToken.None);
 
         return Result.Success();
     }
@@ -182,18 +188,20 @@ public class BillService : IBillService
         var doesUserOwnBill = await DoesUserOwnBill(skipBillDTO.Id, user);
         if (!doesUserOwnBill)
         {
-            return Result.Failure(Error.Validation("BillService.SkipOccurence", "Bill not found"));
+            return Error.Validation("BillService.SkipOccurence", "Bill not found");
         }
 
         var bill = await _dbService.GetBillById(skipBillDTO.Id);
         if (bill == null)
         {
-            return Result.Failure(Error.Failure("BillService.SkipOccurence", "Bill not found"));
+            return Error.Failure("BillService.SkipOccurence", "Bill not found");
         }
         var newDueDate = _frequencyCalculation.CalculateNextDueDate(bill.Frequency, bill.MonthDay, skipBillDTO.SkipDatePastThisDate);
 
         var editBill = new EditBillEntity(skipBillDTO.Id, nextDueDate: newDueDate);
         await _dbService.EditBill(editBill);
+
+        await _messageBus.PublishEvent(new EventUpdate(user, DataTypes.Bill), CancellationToken.None);
 
         return Result.Success();
     }

@@ -3,6 +3,8 @@ using MoneyTracker.Commands.Domain.Entities.Account;
 using MoneyTracker.Commands.Domain.Entities.Bill;
 using MoneyTracker.Common.Utilities.DateTimeUtil;
 using MoneyTracker.Contracts.Requests.Bill;
+using MoneyTracker.PlatformService.Domain;
+using MoneyTracker.PlatformService.DTOs;
 using Moq;
 
 namespace MoneyTracker.Commands.Tests.BillTests.Service;
@@ -35,6 +37,8 @@ public sealed class DeleteBillTest : BillTestHelper
             _mockBillDatabase.Verify(x => x.GetBillById(billId), Times.Once);
             _mockBillDatabase.Verify(x => x.DeleteBill(billId), Times.Once);
             _mockAccountDatabase.Verify(x => x.GetAccountById(payerId), Times.Once);
+
+            _mockMessageBusClient.Verify(x => x.PublishEvent(new EventUpdate(authedUser, DataTypes.Bill), It.IsAny<CancellationToken>()), Times.Once);
 
             EnsureAllMocksHadNoOtherCalls();
         });

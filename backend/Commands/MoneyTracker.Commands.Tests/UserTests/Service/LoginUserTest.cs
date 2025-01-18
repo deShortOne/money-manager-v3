@@ -1,6 +1,8 @@
 
 using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Authentication.Entities;
+using MoneyTracker.PlatformService.Domain;
+using MoneyTracker.PlatformService.DTOs;
 using Moq;
 
 namespace MoneyTracker.Commands.Tests.UserTests.Service;
@@ -38,6 +40,11 @@ public sealed class LoginUserTest : UserTestHelper
             _mockDateTimeProvider.Verify(x => x.Now, Times.Once);
             _mockAuthService.Verify(x => x.GenerateToken(userIdentity, _timeExpire), Times.Once);
             _mockUserDatabase.Verify(x => x.StoreTemporaryTokenToUser(userAuthentication), Times.Once);
+
+            _mockMessageBusClient.Verify(x => x.PublishEvent(
+                new EventUpdate(new AuthenticatedUser(_userId), DataTypes.User), It.IsAny<CancellationToken>()
+                ), Times.Once);
+
             EnsureAllMocksHadNoOtherCalls();
         });
     }

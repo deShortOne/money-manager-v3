@@ -5,6 +5,8 @@ using MoneyTracker.Commands.Domain.Repositories;
 using MoneyTracker.Common.Result;
 using MoneyTracker.Common.Utilities.IdGeneratorUtil;
 using MoneyTracker.Contracts.Requests.Transaction;
+using MoneyTracker.PlatformService.Domain;
+using MoneyTracker.PlatformService.DTOs;
 
 namespace MoneyTracker.Commands.Application;
 public class RegisterService : IRegisterService
@@ -14,12 +16,14 @@ public class RegisterService : IRegisterService
     private readonly IIdGenerator _idGenerator;
     private readonly IUserService _userService;
     private readonly IAccountService _accountService;
+    private readonly IMessageBusClient _messageBus;
 
     public RegisterService(IRegisterCommandRepository registerDb,
         IAccountCommandRepository accountDb,
         IIdGenerator idGenerator,
         IUserService userService,
-        IAccountService accountService
+        IAccountService accountService,
+        IMessageBusClient messageBus
         )
     {
         _registerDb = registerDb;
@@ -27,6 +31,7 @@ public class RegisterService : IRegisterService
         _idGenerator = idGenerator;
         _userService = userService;
         _accountService = accountService;
+        _messageBus = messageBus;
     }
 
     public async Task<Result> AddTransaction(string token, NewTransactionRequest newTransaction)
@@ -40,11 +45,11 @@ public class RegisterService : IRegisterService
         var payerAccount = await _accountDb.GetAccountById(newTransaction.PayerId);
         if (payerAccount == null) // to be logged differently
         {
-            return Result.Failure(Error.Validation("RegisterService.AddTransaction", "Payer account not found"));
+            return Error.Validation("RegisterService.AddTransaction", "Payer account not found");
         }
         if (payerAccount.UserId != user.Id)
         {
-            return Result.Failure(Error.Validation("RegisterService.AddTransaction", "Payer account not found"));
+            return Error.Validation("RegisterService.AddTransaction", "Payer account not found");
         }
         var newTransactionId = _idGenerator.NewInt(await _registerDb.GetLastTransactionId());
 
@@ -56,6 +61,8 @@ public class RegisterService : IRegisterService
             newTransaction.PayerId);
 
         await _registerDb.AddTransaction(dtoToDb);
+
+        await _messageBus.PublishEvent(new EventUpdate(user, DataTypes.Register), CancellationToken.None);
 
         return Result.Success();
     }
@@ -69,23 +76,25 @@ public class RegisterService : IRegisterService
         var user = userResult.Value;
         if (!await DoesUserOwnTransaction(user, editTransaction.Id))
         {
-            return Result.Failure(Error.Validation("RegisterService.EditTransaction", "Transaction not found"));
+            return Error.Validation("RegisterService.EditTransaction", "Transaction not found");
         }
         if (editTransaction.PayerId != null)
         {
             var payerAccount = await _accountDb.GetAccountById((int)editTransaction.PayerId);
             if (payerAccount == null)
             {
-                return Result.Failure(Error.Validation("RegisterService.EditTransaction", "Payer account not found"));
+                return Error.Validation("RegisterService.EditTransaction", "Payer account not found");
             }
             if (payerAccount.UserId != user.Id)
-                return Result.Failure(Error.Validation("RegisterService.EditTransaction", "Payer account not found"));
+                return Error.Validation("RegisterService.EditTransaction", "Payer account not found");
         }
 
         var dtoToDb = new EditTransactionEntity(editTransaction.Id, editTransaction.PayeeId, editTransaction.Amount,
             editTransaction.DatePaid, editTransaction.CategoryId, editTransaction.PayerId);
 
         await _registerDb.EditTransaction(dtoToDb);
+
+        await _messageBus.PublishEvent(new EventUpdate(user, DataTypes.Register), CancellationToken.None);
 
         return Result.Success();
     }
@@ -99,10 +108,12 @@ public class RegisterService : IRegisterService
         var user = userResult.Value;
         if (!await DoesUserOwnTransaction(user, deleteTransaction.Id))
         {
-            return Result.Failure(Error.Validation("RegisterService.DeleteTransaction", "Transaction not found"));
+            return Error.Validation("RegisterService.DeleteTransaction", "Transaction not found");
         }
 
         await _registerDb.DeleteTransaction(deleteTransaction.Id);
+
+        await _messageBus.PublishEvent(new EventUpdate(user, DataTypes.Register), CancellationToken.None);
 
         return Result.Success();
     }

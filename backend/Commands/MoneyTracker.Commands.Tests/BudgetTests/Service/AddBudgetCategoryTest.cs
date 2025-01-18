@@ -1,9 +1,9 @@
 
 using MoneyTracker.Authentication.DTOs;
-using MoneyTracker.Authentication.Entities;
 using MoneyTracker.Commands.Domain.Entities.BudgetCategory;
-using MoneyTracker.Common.Utilities.DateTimeUtil;
 using MoneyTracker.Contracts.Requests.Budget;
+using MoneyTracker.PlatformService.Domain;
+using MoneyTracker.PlatformService.DTOs;
 using Moq;
 
 namespace MoneyTracker.Commands.Tests.BudgetTests.Service;
@@ -26,7 +26,7 @@ public sealed class AddBudgetCategoryTest : BudgetTestHelper
     }
 
     [Fact]
-    public async void SuccessfullyAddNewBill()
+    public async void SuccessfullyAddNewBudgetCategory()
     {
         var authedUser = new AuthenticatedUser(_userId);
         _mockUserService.Setup(x => x.GetUserFromToken(_tokenToDecode))
@@ -38,6 +38,8 @@ public sealed class AddBudgetCategoryTest : BudgetTestHelper
         {
             _mockUserService.Verify(x => x.GetUserFromToken(_tokenToDecode), Times.Once);
             _mockBudgetCategoryDatabase.Verify(x => x.AddBudgetCategory(_newBudgetCategoryEntity));
+
+            _mockMessageBusClient.Verify(x => x.PublishEvent(new EventUpdate(authedUser, DataTypes.Budget), It.IsAny<CancellationToken>()), Times.Once);
 
             EnsureAllMocksHadNoOtherCalls();
         });

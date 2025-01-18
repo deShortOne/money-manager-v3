@@ -4,6 +4,8 @@ using MoneyTracker.Commands.Domain.Handlers;
 using MoneyTracker.Commands.Domain.Repositories;
 using MoneyTracker.Common.Result;
 using MoneyTracker.Contracts.Requests.Budget;
+using MoneyTracker.PlatformService.Domain;
+using MoneyTracker.PlatformService.DTOs;
 
 namespace MoneyTracker.Commands.Application;
 public class BudgetService : IBudgetService
@@ -11,16 +13,19 @@ public class BudgetService : IBudgetService
     private readonly IBudgetCommandRepository _dbService;
     private readonly IUserCommandRepository _userRepository;
     private readonly IUserService _userService;
+    private readonly IMessageBusClient _messageBus;
 
     public BudgetService(
         IBudgetCommandRepository dbService,
         IUserCommandRepository userRepository,
-        IUserService userService
+        IUserService userService,
+        IMessageBusClient messageBus
         )
     {
         _dbService = dbService;
         _userRepository = userRepository;
         _userService = userService;
+        _messageBus = messageBus;
     }
 
     public async Task<Result> AddBudgetCategory(string token, NewBudgetCategoryRequest newBudget)
@@ -33,6 +38,8 @@ public class BudgetService : IBudgetService
         var dtoToDb = new BudgetCategoryEntity(user.Id, newBudget.BudgetGroupId, newBudget.CategoryId, newBudget.Planned);
 
         await _dbService.AddBudgetCategory(dtoToDb);
+
+        await _messageBus.PublishEvent(new EventUpdate(user, DataTypes.Budget), CancellationToken.None);
 
         return Result.Success();
     }
@@ -48,6 +55,8 @@ public class BudgetService : IBudgetService
 
         await _dbService.EditBudgetCategory(dtoToDb);
 
+        await _messageBus.PublishEvent(new EventUpdate(user, DataTypes.Budget), CancellationToken.None);
+
         return Result.Success();
     }
 
@@ -61,6 +70,8 @@ public class BudgetService : IBudgetService
         var dtoToDb = new DeleteBudgetCategoryEntity(user.Id, deleteBudgetCategory.BudgetGroupId, deleteBudgetCategory.BudgetCategoryId);
 
         await _dbService.DeleteBudgetCategory(dtoToDb);
+
+        await _messageBus.PublishEvent(new EventUpdate(user, DataTypes.Budget), CancellationToken.None);
 
         return Result.Success();
     }
