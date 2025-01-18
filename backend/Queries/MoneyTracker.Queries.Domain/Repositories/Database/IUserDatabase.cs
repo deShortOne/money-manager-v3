@@ -1,7 +1,8 @@
 
 using MoneyTracker.Authentication.Entities;
 
-public interface IUserRepository
+namespace MoneyTracker.Queries.Domain.Repositories.Database;
+public interface IUserDatabase
 {
     Task<UserEntity?> GetUserByUsername(string username);
     Task<string?> GetLastUserTokenForUser(UserEntity user);

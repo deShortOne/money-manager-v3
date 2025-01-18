@@ -1,14 +1,14 @@
 using MoneyTracker.Common.Result;
 using MoneyTracker.Contracts.Responses.Category;
 using MoneyTracker.Queries.Domain.Handlers;
-using MoneyTracker.Queries.Domain.Repositories;
+using MoneyTracker.Queries.Domain.Repositories.Database;
 
 namespace MoneyTracker.Queries.Application;
 public class CategoryService : ICategoryService
 {
-    private readonly ICategoryRepository _dbService;
+    private readonly ICategoryDatabase _dbService;
 
-    public CategoryService(ICategoryRepository dbService)
+    public CategoryService(ICategoryDatabase dbService)
     {
         _dbService = dbService;
     }

@@ -1,13 +1,13 @@
 using MoneyTracker.Authentication.Interfaces;
 using MoneyTracker.Queries.Application;
-using MoneyTracker.Queries.Domain.Repositories;
+using MoneyTracker.Queries.Domain.Repositories.Database;
 using Moq;
 
 namespace MoneyTracker.Queries.Tests.BudgetTests.Service;
 public class BudgetTestHelper
 {
-    public readonly Mock<IBudgetRepository> _mockBudgetDatabase = new();
-    public readonly Mock<IUserRepository> _mockUserRepository = new();
+    public readonly Mock<IBudgetDatabase> _mockBudgetDatabase = new();
+    public readonly Mock<IUserDatabase> _mockUserRepository = new();
 
     public readonly BudgetService _budgetService;
 

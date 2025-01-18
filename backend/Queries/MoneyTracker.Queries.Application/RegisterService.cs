@@ -3,16 +3,16 @@ using MoneyTracker.Authentication.Interfaces;
 using MoneyTracker.Common.Result;
 using MoneyTracker.Contracts.Responses.Transaction;
 using MoneyTracker.Queries.Domain.Handlers;
-using MoneyTracker.Queries.Domain.Repositories;
+using MoneyTracker.Queries.Domain.Repositories.Database;
 
 namespace MoneyTracker.Queries.Application;
 public class RegisterService : IRegisterService
 {
-    private readonly IRegisterRepository _dbService;
-    private readonly IUserRepository _userRepository;
+    private readonly IRegisterDatabase _dbService;
+    private readonly IUserDatabase _userRepository;
 
-    public RegisterService(IRegisterRepository dbService,
-        IUserRepository userRepository)
+    public RegisterService(IRegisterDatabase dbService,
+        IUserDatabase userRepository)
     {
         _dbService = dbService;
         _userRepository = userRepository;

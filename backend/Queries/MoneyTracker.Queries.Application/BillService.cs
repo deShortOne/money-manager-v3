@@ -6,18 +6,18 @@ using MoneyTracker.Contracts.Responses.Bill;
 using MoneyTracker.Contracts.Responses.Category;
 using MoneyTracker.Queries.Domain.Entities.Bill;
 using MoneyTracker.Queries.Domain.Handlers;
-using MoneyTracker.Queries.Domain.Repositories;
+using MoneyTracker.Queries.Domain.Repositories.Database;
 
 namespace MoneyTracker.Queries.Application;
 public class BillService : IBillService
 {
-    private readonly IBillRepository _dbService;
+    private readonly IBillDatabase _dbService;
     private readonly IFrequencyCalculation _frequencyCalculation;
-    private readonly IUserRepository _userRepository;
+    private readonly IUserDatabase _userRepository;
 
-    public BillService(IBillRepository dbService,
+    public BillService(IBillDatabase dbService,
         IFrequencyCalculation frequencyCalculation,
-        IUserRepository userRepository)
+        IUserDatabase userRepository)
     {
         _dbService = dbService;
         _frequencyCalculation = frequencyCalculation;

@@ -2,10 +2,10 @@ using System.Data;
 using MoneyTracker.Common.Interfaces;
 using MoneyTracker.Common.Result;
 using MoneyTracker.Queries.Domain.Entities.Category;
-using MoneyTracker.Queries.Domain.Repositories;
+using MoneyTracker.Queries.Domain.Repositories.Database;
 
 namespace MoneyTracker.Queries.Infrastructure.Postgres;
-public class CategoryRepository : ICategoryRepository
+public class CategoryRepository : ICategoryDatabase
 {
     private readonly IDatabase _database;
 

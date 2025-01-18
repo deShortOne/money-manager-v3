@@ -4,11 +4,11 @@ using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Common.Interfaces;
 using MoneyTracker.Common.Result;
 using MoneyTracker.Queries.Domain.Entities.BudgetCategory;
-using MoneyTracker.Queries.Domain.Repositories;
+using MoneyTracker.Queries.Domain.Repositories.Database;
 using Npgsql;
 
 namespace MoneyTracker.Queries.Infrastructure.Postgres;
-public class BudgetRepository : IBudgetRepository
+public class BudgetRepository : IBudgetDatabase
 {
     private readonly IDatabase _database;
     public BudgetRepository(IDatabase db)

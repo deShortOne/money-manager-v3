@@ -4,9 +4,10 @@ using System.Data.Common;
 using MoneyTracker.Authentication.Entities;
 using MoneyTracker.Common.Interfaces;
 using MoneyTracker.Common.Utilities.DateTimeUtil;
+using MoneyTracker.Queries.Domain.Repositories.Database;
 using Npgsql;
 
-public class UserRepository : IUserRepository
+public class UserRepository : IUserDatabase
 {
     private readonly IDatabase _database;
     private readonly IDateTimeProvider _dateTimeProvider;

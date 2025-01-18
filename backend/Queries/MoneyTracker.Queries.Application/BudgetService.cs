@@ -4,17 +4,17 @@ using MoneyTracker.Common.Result;
 using MoneyTracker.Contracts.Responses.Budget;
 using MoneyTracker.Queries.Domain.Entities.BudgetCategory;
 using MoneyTracker.Queries.Domain.Handlers;
-using MoneyTracker.Queries.Domain.Repositories;
+using MoneyTracker.Queries.Domain.Repositories.Database;
 
 namespace MoneyTracker.Queries.Application;
 public class BudgetService : IBudgetService
 {
-    private readonly IBudgetRepository _dbService;
-    private readonly IUserRepository _userRepository;
+    private readonly IBudgetDatabase _dbService;
+    private readonly IUserDatabase _userRepository;
 
     public BudgetService(
-        IBudgetRepository dbService,
-        IUserRepository userRepository)
+        IBudgetDatabase dbService,
+        IUserDatabase userRepository)
     {
         _dbService = dbService;
         _userRepository = userRepository;
