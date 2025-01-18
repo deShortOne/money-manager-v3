@@ -1,8 +1,8 @@
-using MoneyTracker.Authentication.DTOs;
+using MoneyTracker.Common.Result;
 using MoneyTracker.Contracts.Responses.Account;
 
 namespace MoneyTracker.Queries.Domain.Handlers;
 public interface IAccountService
 {
-    Task<List<AccountResponse>> GetAccounts(string token);
+    Task<ResultT<List<AccountResponse>>> GetAccounts(string token);
 }

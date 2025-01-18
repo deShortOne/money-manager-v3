@@ -2,6 +2,7 @@ using System.Data;
 using System.Data.Common;
 using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Common.Interfaces;
+using MoneyTracker.Common.Result;
 using MoneyTracker.Queries.Domain.Entities.Account;
 using MoneyTracker.Queries.Domain.Repositories;
 using Npgsql;
@@ -15,7 +16,7 @@ public class AccountRepository : IAccountRepository
         _database = db;
     }
 
-    public async Task<List<AccountEntity>> GetAccounts(AuthenticatedUser user)
+    public async Task<ResultT<List<AccountEntity>>> GetAccounts(AuthenticatedUser user)
     {
         var query = """
             SELECT id, name
@@ -28,7 +29,7 @@ public class AccountRepository : IAccountRepository
             new NpgsqlParameter("userid", user.Id),
         };
 
-        var reader = await _database.GetTable(query, queryParams);
+        using var reader = await _database.GetTable(query, queryParams);
 
         List<AccountEntity> res = [];
         foreach (DataRow row in reader.Rows)

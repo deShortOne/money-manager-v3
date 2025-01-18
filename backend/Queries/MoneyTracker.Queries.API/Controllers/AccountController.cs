@@ -21,8 +21,10 @@ public class AccountController
 
     [HttpPost]
     [Route("get")]
-    public Task<List<AccountResponse>> GetAllAccounts()
+    public async Task<IActionResult> GetAllAccounts()
     {
-        return _accountService.GetAccounts(ControllerHelper.GetToken(_httpContextAccessor));
+        var accounts = await _accountService.GetAccounts(ControllerHelper.GetToken(_httpContextAccessor));
+
+        return ControllerHelper.Convert(accounts);
     }
 }

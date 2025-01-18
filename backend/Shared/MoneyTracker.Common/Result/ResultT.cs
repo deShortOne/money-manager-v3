@@ -1,4 +1,6 @@
 
+using System.Collections;
+
 namespace MoneyTracker.Common.Result;
 public sealed class ResultT<TValue> : Result
 {
@@ -34,8 +36,18 @@ public sealed class ResultT<TValue> : Result
         if (other == null) return false;
 
         if (IsSuccess && Value != null)
-            if (!Value.Equals(other.Value))
+        {
+            if (Value is IList && other.Value is IList)
+            {
+                var thisListValue = (IList)Value;
+                var otherListValue = (IList)Value;
+
+                if (!thisListValue.Equals(otherListValue))
+                    return false;
+            }
+            else if (!Value.Equals(other.Value))
                 return false;
+        }
 
         return base.Equals(other);
     }
