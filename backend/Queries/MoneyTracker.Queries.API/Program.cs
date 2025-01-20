@@ -9,10 +9,12 @@ using MoneyTracker.Common.Utilities.DateTimeUtil;
 using MoneyTracker.PlatformService;
 using MoneyTracker.Queries.Application;
 using MoneyTracker.Queries.Domain.Handlers;
+using MoneyTracker.Queries.Domain.Repositories.Cache;
 using MoneyTracker.Queries.Domain.Repositories.Database;
 using MoneyTracker.Queries.Domain.Repositories.Service;
+using MoneyTracker.Queries.Infrastructure.Mongo;
 using MoneyTracker.Queries.Infrastructure.Postgres;
-using MoneyTracker.Queries.Infrastructure.Service.DatabaseOnly;
+using MoneyTracker.Queries.Infrastructure.Service.CacheAsidePattern;
 
 [ExcludeFromCodeCoverage]
 internal class Program
@@ -57,7 +59,9 @@ internal class Program
         });
 
         var database = new PostgresDatabase(builder.Configuration["Database:Paelagus_RO"]!);
+        var cache = new MongoDatabase(builder.Configuration["Datastore:Cache"]!);
 
+        builder.Services.AddSingleton(_ => cache);
         Startup.Start(builder, database);
         PlatformServiceStartup.StartSubscriber(builder);
 
@@ -72,29 +76,34 @@ internal class Program
         builder.Services
             .AddSingleton<IAccountService, AccountService>()
             .AddSingleton<IAccountDatabase, AccountDatabase>()
-            .AddSingleton<IAccountRepositoryService, AccountRepository>();
+            .AddSingleton<IAccountRepositoryService, AccountRepository>()
+            .AddSingleton<IAccountCache, AccountCache>();
 
         builder.Services
             .AddSingleton<IBillService, BillService>()
             .AddSingleton<IBillDatabase, BillDatabase>()
             .AddSingleton<IDateTimeProvider, DateTimeProvider>()
             .AddSingleton<IFrequencyCalculation, FrequencyCalculation>()
-            .AddSingleton<IBillRepositoryService, BillRepository>();
+            .AddSingleton<IBillRepositoryService, BillRepository>()
+            .AddSingleton<IBillCache, BillCache>();
 
         builder.Services
             .AddSingleton<IBudgetService, BudgetService>()
             .AddSingleton<IBudgetDatabase, BudgetDatabase>()
-            .AddSingleton<IBudgetRepositoryService, BudgetRepository>();
+            .AddSingleton<IBudgetRepositoryService, BudgetRepository>()
+            .AddSingleton<IBudgetCache, BudgetCache>();
 
         builder.Services
             .AddSingleton<ICategoryService, CategoryService>()
             .AddSingleton<ICategoryDatabase, CategoryDatabase>()
-            .AddSingleton<ICategoryRepositoryService, CategoryRepository>();
+            .AddSingleton<ICategoryRepositoryService, CategoryRepository>()
+            .AddSingleton<ICategoryCache, CategoryCache>();
 
         builder.Services
             .AddSingleton<IRegisterService, RegisterService>()
             .AddSingleton<IRegisterDatabase, RegisterDatabase>()
-            .AddSingleton<IRegisterRepositoryService, RegisterRepository>();
+            .AddSingleton<IRegisterRepositoryService, RegisterRepository>()
+            .AddSingleton<IRegisterCache, RegisterCache>();
 
         var app = builder.Build();
 

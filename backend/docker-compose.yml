@@ -31,6 +31,20 @@ services:
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
 
+  mongo:
+    image: mongo:8
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
+    healthcheck:
+      test: "mongosh --quiet --eval 'quit(db.runCommand({ ping: 1 }).ok ? 0 : 2)'"
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    volumes:
+      - cache-database:/var/lib/mongodb/data
+
   be-base:
     build:
       context: .
@@ -46,6 +60,7 @@ services:
       - "1235:8080"
     environment:
       Database:Paelagus_RO: "User ID=${DOCKER_DB_USERNAME};Password=${DOCKER_DB_PASSWORD};Host=postgres-master;Port=5432;Database=${DOCKER_DB_DATABASE}"
+      Datastore:Cache: "mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@mongo:27017"
       Messaging:Lepus: amqp://guest:guest@rabbitmq:5672
       ASPNETCORE_ENVIRONMENT: "Development"
       Jwt:iss: ${jwt_iss}
@@ -54,10 +69,13 @@ services:
     links:
       - postgres-master
       - rabbitmq
+      - mongo
     depends_on:
       postgres-master:
         condition: service_healthy
       rabbitmq:
+        condition: service_healthy
+      mongo:
         condition: service_healthy
       be-base:
         condition: service_completed_successfully
@@ -89,3 +107,4 @@ services:
 volumes:
   master-database:
   rabbitmq_data:
+  cache-database:

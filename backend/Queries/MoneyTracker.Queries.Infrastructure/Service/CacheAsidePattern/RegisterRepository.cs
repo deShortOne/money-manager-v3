@@ -7,7 +7,7 @@ using MoneyTracker.Queries.Domain.Repositories.Database;
 using MoneyTracker.Queries.Domain.Repositories.Service;
 
 namespace MoneyTracker.Queries.Infrastructure.Service.CacheAsidePattern;
-internal class RegisterRepository : IRegisterRepositoryService
+public class RegisterRepository : IRegisterRepositoryService
 {
     private readonly IRegisterDatabase _registerDatabase;
     private readonly IRegisterCache _registerCache;
