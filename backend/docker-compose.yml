@@ -30,9 +30,12 @@ services:
       retries: 3
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
+    logging:
+        driver: none
 
   mongo:
     image: mongo:8
+    command: mongod --quiet --logpath /dev/null 
     restart: always
     environment:
       MONGO_INITDB_ROOT_USERNAME: ${MONGO_USERNAME}
