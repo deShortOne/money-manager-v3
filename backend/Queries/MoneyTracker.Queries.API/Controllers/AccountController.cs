@@ -1,6 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Mvc;
-using MoneyTracker.Contracts.Responses.Account;
 using MoneyTracker.Queries.Domain.Handlers;
 
 namespace MoneyTracker.Queries.API.Controllers;
@@ -19,7 +18,7 @@ public class AccountController
         _accountService = accountService;
     }
 
-    [HttpPost]
+    [HttpGet]
     [Route("get")]
     public async Task<IActionResult> GetAllAccounts()
     {

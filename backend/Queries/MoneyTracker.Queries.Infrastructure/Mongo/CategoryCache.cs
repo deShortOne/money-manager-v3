@@ -18,6 +18,10 @@ public class CategoryCache : ICategoryCache
     {
         var categoriessLisIterable = await _categoriesCollection.FindAsync(_ => true);
         var categoriessLis = await categoriessLisIterable.ToListAsync();
+        if (categoriessLis.Count != 1)
+        {
+            return Error.NotFound("CategoryCache.GetAllCategories", $"Found {categoriessLis.Count} category");
+        }
 
         return categoriessLis[0].Categories;
     }

@@ -1,7 +1,7 @@
 
 export async function GET() {
     const response = await fetch(`http://localhost:1235/Category/get`, {
-        method: "POST",
+        method: "GET",
         headers: {
             "Content-Type": "application/json",
         },

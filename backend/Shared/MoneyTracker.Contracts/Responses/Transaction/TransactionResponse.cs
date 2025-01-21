@@ -22,7 +22,7 @@ public class TransactionResponse(
     [JsonPropertyName("amount")]
     public decimal Amount { get; } = amount;
 
-    [JsonPropertyName("datepaid")]
+    [JsonPropertyName("datePaid")]
     public DateOnly DatePaid { get; } = datePaid;
 
     [JsonPropertyName("category")]

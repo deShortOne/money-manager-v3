@@ -4,7 +4,7 @@ export async function GET(request: NextRequest) {
     const token = request.cookies.get('token');
 
     const response = await fetch(`http://localhost:1235/Account/get`, {
-        method: "POST",
+        method: "GET",
         headers: {
             "Content-Type": "application/json",
             "Authorization": "Bearer " + token?.value,

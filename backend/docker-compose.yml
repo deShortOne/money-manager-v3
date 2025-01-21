@@ -39,9 +39,9 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD}
     healthcheck:
       test: "mongosh --quiet --eval 'quit(db.runCommand({ ping: 1 }).ok ? 0 : 2)'"
-      interval: 30s
-      timeout: 10s
-      retries: 5
+      interval: 5s
+      timeout: 15s
+      retries: 3
     volumes:
       - cache-database:/var/lib/mongodb/data
 

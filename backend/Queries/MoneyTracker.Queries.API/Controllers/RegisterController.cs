@@ -1,6 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Mvc;
-using MoneyTracker.Contracts.Responses.Transaction;
 using MoneyTracker.Queries.Domain.Handlers;
 
 namespace MoneyTracker.Queries.API.Controllers;
@@ -19,7 +18,7 @@ public class RegisterController
         _registerService = registerService;
     }
 
-    [HttpPost]
+    [HttpGet]
     [Route("get")]
     public async Task<IActionResult> GetAllTransactions()
     {

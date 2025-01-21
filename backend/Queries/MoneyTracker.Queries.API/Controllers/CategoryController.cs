@@ -18,7 +18,7 @@ public class CategoryController
         _categoryService = categoryService;
     }
 
-    [HttpPost]
+    [HttpGet]
     [Route("get")]
     public async Task<IActionResult> GetAllCategories()
     {
