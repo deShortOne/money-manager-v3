@@ -3,14 +3,15 @@
 using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Commands.Domain.Entities.BudgetCategory;
 using MoneyTracker.Commands.Tests.BudgetTests.Service;
-using MoneyTracker.Common.Utilities.DateTimeUtil;
 using MoneyTracker.Contracts.Requests.Budget;
+using MoneyTracker.PlatformService.Domain;
+using MoneyTracker.PlatformService.DTOs;
 using Moq;
 
 public class DeleteBudgetCategoryTest : BudgetTestHelper
 {
     [Fact]
-    public async void SuccessfullyDeleteBill()
+    public async void SuccessfullyDeleteBudgetCategory()
     {
         var userId = 52;
         var authedUser = new AuthenticatedUser(userId);
@@ -32,6 +33,8 @@ public class DeleteBudgetCategoryTest : BudgetTestHelper
         {
             _mockUserService.Verify(x => x.GetUserFromToken(tokenToDecode), Times.Once);
             _mockBudgetCategoryDatabase.Verify(x => x.DeleteBudgetCategory(deleteBudgetCategory), Times.Once);
+
+            _mockMessageBusClient.Verify(x => x.PublishEvent(new EventUpdate(authedUser, DataTypes.Budget), It.IsAny<CancellationToken>()), Times.Once);
 
             EnsureAllMocksHadNoOtherCalls();
         });

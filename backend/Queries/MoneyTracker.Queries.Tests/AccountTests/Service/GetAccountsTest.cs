@@ -20,10 +20,10 @@ public sealed class GetAccountsTest : AccountTestHelper
             new(1, "fds"),
             new(2, "jgf"),
         ];
-        List<AccountResponse> expected = [
+        var expected = ResultT<List<AccountResponse>>.Success([
             new(1, "fds"),
             new(2, "jgf"),
-        ];
+        ]);
 
         var mockUserAuth = new Mock<IUserAuthentication>();
         mockUserAuth.Setup(x => x.CheckValidation()).Returns(Result.Success());
@@ -31,12 +31,14 @@ public sealed class GetAccountsTest : AccountTestHelper
         _mockUserRepository.Setup(x => x.GetUserAuthFromToken(tokenToDecode))
             .ReturnsAsync(mockUserAuth.Object);
 
-        _mockAccountDatabase.Setup(x => x.GetAccounts(authedUser)).Returns(Task.FromResult(billDatabaseReturn));
-
+        _mockAccountDatabase.Setup(x => x.GetAccounts(authedUser)).ReturnsAsync(billDatabaseReturn);
 
         Assert.Multiple(async () =>
         {
-            Assert.Equal(expected, await _accountService.GetAccounts(tokenToDecode));
+            var accounts = await _accountService.GetAccounts(tokenToDecode);
+            //Assert.Equal(expected.Value, accounts.Value);
+
+            Assert.Equal(expected, accounts);
 
             _mockUserRepository.Verify(x => x.GetUserAuthFromToken(tokenToDecode), Times.Once);
             _mockAccountDatabase.Verify(x => x.GetAccounts(authedUser), Times.Once);

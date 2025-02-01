@@ -1,6 +1,9 @@
 
+using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Commands.Domain.Entities.Category;
 using MoneyTracker.Contracts.Requests.Category;
+using MoneyTracker.PlatformService.Domain;
+using MoneyTracker.PlatformService.DTOs;
 using Moq;
 
 namespace MoneyTracker.Commands.Tests.CategoryTests.Service;
@@ -26,6 +29,10 @@ public sealed class AddCategoryTest : CategoryTestHelper
             _mockCategoryDatabase.Verify(x => x.GetLastCategoryId(), Times.Once);
             _mockCategoryDatabase.Verify(x => x.AddCategory(newCategory), Times.Once);
             _mockIdGenerator.Verify(x => x.NewInt(_lastCategoryId), Times.Once);
+
+            _mockMessageBusClient.Verify(x => x.PublishEvent(
+                It.Is<EventUpdate>(x => x.Name == DataTypes.Category), It.IsAny<CancellationToken>()
+                ), Times.Once);
 
             EnsureAllMocksHadNoOtherCalls();
         });

@@ -3,6 +3,8 @@ using MoneyTracker.Commands.Domain.Entities.Account;
 using MoneyTracker.Commands.Domain.Entities.Bill;
 using MoneyTracker.Common.Result;
 using MoneyTracker.Contracts.Requests.Bill;
+using MoneyTracker.PlatformService.Domain;
+using MoneyTracker.PlatformService.DTOs;
 using Moq;
 
 namespace MoneyTracker.Commands.Tests.BillTests.Service;
@@ -73,6 +75,8 @@ public sealed class AddBillTest : BillTestHelper
             _mockMonthDayCalculator.Verify(x => x.Calculate(_nextDueDate), Times.Once);
             _mockBillDatabase.Verify(x => x.AddBill(_newBillEntity), Times.Once);
             _mockAccountService.Verify(x => x.DoesUserOwnAccount(_authedUser, _payerId), Times.Once);
+
+            _mockMessageBusClient.Verify(x => x.PublishEvent(new EventUpdate(_authedUser, DataTypes.Bill), It.IsAny<CancellationToken>()), Times.Once);
 
             EnsureAllMocksHadNoOtherCalls();
         });

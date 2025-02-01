@@ -1,6 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Mvc;
-using MoneyTracker.Contracts.Responses.Category;
 using MoneyTracker.Queries.Domain.Handlers;
 
 namespace MoneyTracker.Queries.API.Controllers;
@@ -19,10 +18,11 @@ public class CategoryController
         _categoryService = categoryService;
     }
 
-    [HttpPost]
+    [HttpGet]
     [Route("get")]
-    public Task<List<CategoryResponse>> GetAllCategories()
+    public async Task<IActionResult> GetAllCategories()
     {
-        return _categoryService.GetAllCategories();
+        var categories = await _categoryService.GetAllCategories();
+        return ControllerHelper.Convert(categories);
     }
 }

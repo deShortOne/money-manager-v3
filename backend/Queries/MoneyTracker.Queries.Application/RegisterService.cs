@@ -1,23 +1,23 @@
 using MoneyTracker.Authentication.DTOs;
-using MoneyTracker.Authentication.Interfaces;
+using MoneyTracker.Common.Result;
 using MoneyTracker.Contracts.Responses.Transaction;
 using MoneyTracker.Queries.Domain.Handlers;
-using MoneyTracker.Queries.Domain.Repositories;
+using MoneyTracker.Queries.Domain.Repositories.Service;
 
 namespace MoneyTracker.Queries.Application;
 public class RegisterService : IRegisterService
 {
-    private readonly IRegisterRepository _dbService;
-    private readonly IUserRepository _userRepository;
+    private readonly IRegisterRepositoryService _registerRepository;
+    private readonly IUserRepositoryService _userRepository;
 
-    public RegisterService(IRegisterRepository dbService,
-        IUserRepository userRepository)
+    public RegisterService(IRegisterRepositoryService registerDatabase,
+        IUserRepositoryService userRepository)
     {
-        _dbService = dbService;
+        this._registerRepository = registerDatabase;
         _userRepository = userRepository;
     }
 
-    public async Task<List<TransactionResponse>> GetAllTransactions(string token)
+    public async Task<ResultT<List<TransactionResponse>>> GetAllTransactions(string token)
     {
         var userAuth = await _userRepository.GetUserAuthFromToken(token);
         if (userAuth == null)
@@ -25,9 +25,12 @@ public class RegisterService : IRegisterService
         userAuth.CheckValidation();
 
         var user = new AuthenticatedUser(userAuth.User.Id);
-        var dtoFromDb = await _dbService.GetAllTransactions(user);
+        var transactionsResult = await _registerRepository.GetAllTransactions(user);
+        if (!transactionsResult.IsSuccess)
+            return transactionsResult.Error!;
+
         List<TransactionResponse> res = [];
-        foreach (var transaction in dtoFromDb)
+        foreach (var transaction in transactionsResult.Value)
         {
             res.Add(new(transaction.Id,
                 new(

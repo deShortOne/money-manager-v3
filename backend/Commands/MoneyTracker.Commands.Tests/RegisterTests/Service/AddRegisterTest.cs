@@ -3,6 +3,8 @@ using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Commands.Domain.Entities.Account;
 using MoneyTracker.Commands.Domain.Entities.Transaction;
 using MoneyTracker.Contracts.Requests.Transaction;
+using MoneyTracker.PlatformService.Domain;
+using MoneyTracker.PlatformService.DTOs;
 using Moq;
 
 namespace MoneyTracker.Commands.Tests.RegisterTests.Service;
@@ -47,6 +49,10 @@ public sealed class AddRegisterTest : RegisterTestHelper
             _mockRegisterDatabase.Verify(x => x.AddTransaction(newTransaction), Times.Once);
             _mockIdGenerator.Verify(x => x.NewInt(_lastTransactionId), Times.Once);
             _mockAccountDatabase.Verify(x => x.GetAccountById(_payerId), Times.Once);
+
+            _mockMessageBusClient.Verify(x => x.PublishEvent(
+                new EventUpdate(_authedUser, DataTypes.Register), It.IsAny<CancellationToken>()
+                ), Times.Once);
 
             EnsureAllMocksHadNoOtherCalls();
         });

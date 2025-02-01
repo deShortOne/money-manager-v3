@@ -1,6 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Mvc;
-using MoneyTracker.Contracts.Responses.Bill;
 using MoneyTracker.Queries.Domain.Handlers;
 
 namespace MoneyTracker.Queries.API.Controllers;
@@ -19,11 +18,12 @@ public class BillController
         _billService = billService;
     }
 
-    [HttpPost]
+    [HttpGet]
     [Route("get")]
-    public Task<List<BillResponse>> GetAllBills()
+    public async Task<IActionResult> GetAllBills()
     {
-        return _billService.GetAllBills(ControllerHelper.GetToken(_httpContextAccessor));
+        var billsResult = await _billService.GetAllBills(ControllerHelper.GetToken(_httpContextAccessor));
+        return ControllerHelper.Convert(billsResult);
     }
 
     [HttpGet]

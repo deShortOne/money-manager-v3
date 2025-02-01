@@ -1,29 +1,28 @@
 using MoneyTracker.Authentication.DTOs;
+using MoneyTracker.Common.Result;
 using MoneyTracker.Common.Utilities.CalculationUtil;
-using MoneyTracker.Contracts.Responses.Account;
 using MoneyTracker.Contracts.Responses.Bill;
-using MoneyTracker.Contracts.Responses.Category;
 using MoneyTracker.Queries.Domain.Entities.Bill;
 using MoneyTracker.Queries.Domain.Handlers;
-using MoneyTracker.Queries.Domain.Repositories;
+using MoneyTracker.Queries.Domain.Repositories.Service;
 
 namespace MoneyTracker.Queries.Application;
 public class BillService : IBillService
 {
-    private readonly IBillRepository _dbService;
+    private readonly IBillRepositoryService _billRepository;
     private readonly IFrequencyCalculation _frequencyCalculation;
-    private readonly IUserRepository _userRepository;
+    private readonly IUserRepositoryService _userRepository;
 
-    public BillService(IBillRepository dbService,
+    public BillService(IBillRepositoryService billRepository,
         IFrequencyCalculation frequencyCalculation,
-        IUserRepository userRepository)
+        IUserRepositoryService userRepository)
     {
-        _dbService = dbService;
+        _billRepository = billRepository;
         _frequencyCalculation = frequencyCalculation;
         _userRepository = userRepository;
     }
 
-    public async Task<List<BillResponse>> GetAllBills(string token)
+    public async Task<ResultT<List<BillResponse>>> GetAllBills(string token)
     {
         var userAuth = await _userRepository.GetUserAuthFromToken(token);
         if (userAuth == null)
@@ -31,7 +30,11 @@ public class BillService : IBillService
         userAuth.CheckValidation();
 
         var user = new AuthenticatedUser(userAuth.User.Id);
-        return ConvertFromRepoDTOToDTO(await _dbService.GetAllBills(user));
+        var billsResult = await _billRepository.GetAllBills(user);
+        if (!billsResult.IsSuccess)
+            return billsResult.Error!;
+
+        return ConvertFromRepoDTOToDTO(billsResult.Value);
     }
 
     public Task<List<string>> GetAllFrequencyNames()

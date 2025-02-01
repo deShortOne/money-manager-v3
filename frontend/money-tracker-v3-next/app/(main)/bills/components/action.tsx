@@ -6,7 +6,7 @@ import { convertDateToString } from "@/utils/date-converter";
 
 export async function getAllBills(authToken: string): Promise<Result<Bill[]>> {
     const response = await fetch(`http://localhost:1235/Bill/get`, {
-        method: "POST",
+        method: "GET",
         headers: {
             "Content-Type": "application/json",
             "Authorization": "Bearer " + authToken,

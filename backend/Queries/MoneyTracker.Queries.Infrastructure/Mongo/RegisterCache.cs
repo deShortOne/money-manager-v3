@@ -1,0 +1,39 @@
+using MoneyTracker.Authentication.DTOs;
+using MoneyTracker.Common.Result;
+using MoneyTracker.Queries.Domain.Entities.Transaction;
+using MoneyTracker.Queries.Domain.Repositories.Cache;
+using MoneyTracker.Queries.Infrastructure.Mongo.Entities;
+using MongoDB.Driver;
+
+namespace MoneyTracker.Queries.Infrastructure.Mongo;
+public class RegisterCache : IRegisterCache
+{
+    private IMongoCollection<MongoRegisterEntity> _registerCollection;
+
+    public RegisterCache(MongoDatabase database)
+    {
+        _registerCollection = database.GetCollection<MongoRegisterEntity>("register");
+    }
+
+    public async Task<ResultT<List<TransactionEntity>>> GetAllTransactions(AuthenticatedUser user)
+    {
+        var transactionsLisIterable = await _registerCollection.FindAsync(Builders<MongoRegisterEntity>.Filter.Eq(x => x.User, user));
+        var registersLis = await transactionsLisIterable.ToListAsync();
+        if (registersLis.Count != 1)
+        {
+            return Error.NotFound("RegisterCache.GetAllTransactions", $"Found {registersLis.Count} registers for user {user}");
+        }
+
+        return registersLis[0].Transactions;
+    }
+    public async Task<Result> SaveTransactions(AuthenticatedUser user, List<TransactionEntity> transactions)
+    {
+        await _registerCollection.InsertOneAsync(new MongoRegisterEntity()
+        {
+            User = user,
+            Transactions = transactions,
+        });
+
+        return Result.Success();
+    }
+}

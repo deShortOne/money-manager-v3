@@ -1,6 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Mvc;
-using MoneyTracker.Contracts.Responses.Transaction;
 using MoneyTracker.Queries.Domain.Handlers;
 
 namespace MoneyTracker.Queries.API.Controllers;
@@ -19,10 +18,12 @@ public class RegisterController
         _registerService = registerService;
     }
 
-    [HttpPost]
+    [HttpGet]
     [Route("get")]
-    public Task<List<TransactionResponse>> GetAllTransactions()
+    public async Task<IActionResult> GetAllTransactions()
     {
-        return _registerService.GetAllTransactions(ControllerHelper.GetToken(_httpContextAccessor));
+        var transactionsResult = await _registerService.GetAllTransactions(ControllerHelper.GetToken(_httpContextAccessor));
+
+        return ControllerHelper.Convert(transactionsResult);
     }
 }

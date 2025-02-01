@@ -1,25 +1,26 @@
 using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Authentication.Interfaces;
+using MoneyTracker.Common.Result;
 using MoneyTracker.Contracts.Responses.Budget;
 using MoneyTracker.Queries.Domain.Entities.BudgetCategory;
 using MoneyTracker.Queries.Domain.Handlers;
-using MoneyTracker.Queries.Domain.Repositories;
+using MoneyTracker.Queries.Domain.Repositories.Service;
 
 namespace MoneyTracker.Queries.Application;
 public class BudgetService : IBudgetService
 {
-    private readonly IBudgetRepository _dbService;
-    private readonly IUserRepository _userRepository;
+    private readonly IBudgetRepositoryService _budgetRepository;
+    private readonly IUserRepositoryService _userRepository;
 
     public BudgetService(
-        IBudgetRepository dbService,
-        IUserRepository userRepository)
+        IBudgetRepositoryService budgetRepository,
+        IUserRepositoryService userRepository)
     {
-        _dbService = dbService;
+        _budgetRepository = budgetRepository;
         _userRepository = userRepository;
     }
 
-    public async Task<List<BudgetGroupResponse>> GetBudget(string token)
+    public async Task<ResultT<List<BudgetGroupResponse>>> GetBudget(string token)
     {
         var userAuth = await _userRepository.GetUserAuthFromToken(token);
         if (userAuth == null)
@@ -27,7 +28,11 @@ public class BudgetService : IBudgetService
         userAuth.CheckValidation();
 
         var user = new AuthenticatedUser(userAuth.User.Id);
-        return ConvertFromRepoDTOToDTO(await _dbService.GetBudget(user));
+        var budgetResult = await _budgetRepository.GetBudget(user);
+        if (!budgetResult.IsSuccess)
+            return budgetResult.Error!;
+
+        return ConvertFromRepoDTOToDTO(budgetResult.Value);
     }
 
     private List<BudgetGroupResponse> ConvertFromRepoDTOToDTO(List<BudgetGroupEntity> billRepoDTO)

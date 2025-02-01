@@ -1,6 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Mvc;
-using MoneyTracker.Contracts.Responses.Budget;
 using MoneyTracker.Queries.Domain.Handlers;
 
 namespace MoneyTracker.Queries.API.Controllers;
@@ -19,10 +18,12 @@ public class BudgetController
         _budgetService = budgetService;
     }
 
-    [HttpPost]
+    [HttpGet]
     [Route("get")]
-    public Task<List<BudgetGroupResponse>> GetBudget()
+    public async Task<IActionResult> GetBudget()
     {
-        return _budgetService.GetBudget(ControllerHelper.GetToken(_httpContextAccessor));
+        var budget = await _budgetService.GetBudget(ControllerHelper.GetToken(_httpContextAccessor));
+
+        return ControllerHelper.Convert(budget);
     }
 }

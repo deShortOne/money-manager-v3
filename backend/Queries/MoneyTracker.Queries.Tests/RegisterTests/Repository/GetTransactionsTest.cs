@@ -34,7 +34,7 @@ public sealed class GetTransactionsTest : IAsyncLifetime
     public async void FirstLoadCheckTablesThatDataAreThereForUserId1()
     {
         var db = new PostgresDatabase(_postgres.GetConnectionString());
-        var registerDb = new RegisterRepository(db);
+        var registerDb = new RegisterDatabase(db);
 
         var actual = await registerDb.GetAllTransactions(new AuthenticatedUser(1));
 
@@ -56,7 +56,7 @@ public sealed class GetTransactionsTest : IAsyncLifetime
     public async void FirstLoadCheckTablesThatDataAreThereForUserId2()
     {
         var db = new PostgresDatabase(_postgres.GetConnectionString());
-        var registerDb = new RegisterRepository(db);
+        var registerDb = new RegisterDatabase(db);
 
         var actual = await registerDb.GetAllTransactions(new AuthenticatedUser(2));
 

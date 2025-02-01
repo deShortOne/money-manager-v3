@@ -2,6 +2,7 @@ using MoneyTracker.Commands.Application;
 using MoneyTracker.Commands.Domain.Handlers;
 using MoneyTracker.Commands.Domain.Repositories;
 using MoneyTracker.Common.Utilities.IdGeneratorUtil;
+using MoneyTracker.PlatformService.Domain;
 using Moq;
 
 namespace MoneyTracker.Commands.Tests.RegisterTests.Service;
@@ -12,6 +13,7 @@ public class RegisterTestHelper
     public readonly Mock<IIdGenerator> _mockIdGenerator = new();
     public readonly Mock<IUserService> _mockUserService = new();
     public readonly Mock<IAccountService> _accountService = new();
+    public readonly Mock<IMessageBusClient> _mockMessageBusClient = new();
 
     public readonly RegisterService _registerService;
 
@@ -22,7 +24,8 @@ public class RegisterTestHelper
             _mockAccountDatabase.Object,
             _mockIdGenerator.Object,
             _mockUserService.Object,
-            _accountService.Object
+            _accountService.Object,
+            _mockMessageBusClient.Object
             );
     }
 
@@ -33,5 +36,6 @@ public class RegisterTestHelper
         _mockIdGenerator.VerifyNoOtherCalls();
         _mockUserService.VerifyNoOtherCalls();
         _accountService.VerifyNoOtherCalls();
+        _mockMessageBusClient.VerifyNoOtherCalls();
     }
 }

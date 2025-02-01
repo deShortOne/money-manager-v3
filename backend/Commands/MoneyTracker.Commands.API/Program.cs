@@ -12,6 +12,7 @@ using MoneyTracker.Commands.Infrastructure.Postgres;
 using MoneyTracker.Common.Interfaces;
 using MoneyTracker.Common.Utilities.CalculationUtil;
 using MoneyTracker.Common.Utilities.DateTimeUtil;
+using MoneyTracker.PlatformService;
 
 [ExcludeFromCodeCoverage]
 internal class Program
@@ -59,22 +60,22 @@ internal class Program
         Migration.CheckMigration(builder.Configuration["Database:Paelagus_RO"]!, new MigrationOption(true, true));
 
         Startup.Start(builder, database);
-        builder.Services
-            .AddSingleton<IAccountCommandRepository, AccountCommandRepository>();
+        PlatformServiceStartup.StartClient(builder);
 
         builder.Services
             .AddHttpContextAccessor()
             .AddSingleton<IDatabase>(_ => database)
-            .AddSingleton<IUserService, UserService>()
-            .AddSingleton<IUserCommandRepository, UserCommandRepository>()
-            .AddSingleton<IAuthenticationService, AuthenticationService>();
+            .AddSingleton<IAuthenticationService, AuthenticationService>()
+            .AddSingleton<IDateTimeProvider, DateTimeProvider>()
+            .AddSingleton<IFrequencyCalculation, FrequencyCalculation>()
+            .AddSingleton<IMonthDayCalculator, MonthDayCalculator>();
+
+        builder.Services
+            .AddSingleton<IAccountService, AccountService>()
+            .AddSingleton<IAccountCommandRepository, AccountCommandRepository>();
 
         builder.Services
             .AddSingleton<IBillService, BillService>()
-            .AddSingleton<IBillCommandRepository, BillCommandRepository>()
-            .AddSingleton<IDateTimeProvider, DateTimeProvider>()
-            .AddSingleton<IFrequencyCalculation, FrequencyCalculation>()
-            .AddSingleton<IMonthDayCalculator, MonthDayCalculator>()
             .AddSingleton<IBillCommandRepository, BillCommandRepository>();
 
         builder.Services
@@ -88,6 +89,10 @@ internal class Program
         builder.Services
             .AddSingleton<IRegisterService, RegisterService>()
             .AddSingleton<IRegisterCommandRepository, RegisterCommandRepository>();
+
+        builder.Services
+            .AddSingleton<IUserService, UserService>()
+            .AddSingleton<IUserCommandRepository, UserCommandRepository>();
 
         var app = builder.Build();
 

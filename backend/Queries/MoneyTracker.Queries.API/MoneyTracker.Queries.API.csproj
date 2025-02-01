@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Shared\MoneyTracker.Contracts\MoneyTracker.Contracts.csproj" />
+    <ProjectReference Include="..\..\Shared\MoneyTracker.PlatformService\MoneyTracker.PlatformService.csproj" />
     <ProjectReference Include="..\MoneyTracker.Queries.Application\MoneyTracker.Queries.Application.csproj" />
     <ProjectReference Include="..\MoneyTracker.Queries.Domain\MoneyTracker.Queries.Domain.csproj" />
     <ProjectReference Include="..\MoneyTracker.Queries.Infrastructure\MoneyTracker.Queries.Infrastructure.csproj" />

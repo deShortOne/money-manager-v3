@@ -1,22 +1,26 @@
+using MoneyTracker.Common.Result;
 using MoneyTracker.Contracts.Responses.Category;
 using MoneyTracker.Queries.Domain.Handlers;
-using MoneyTracker.Queries.Domain.Repositories;
+using MoneyTracker.Queries.Domain.Repositories.Service;
 
 namespace MoneyTracker.Queries.Application;
 public class CategoryService : ICategoryService
 {
-    private readonly ICategoryRepository _dbService;
+    private readonly ICategoryRepositoryService _categoryRepository;
 
-    public CategoryService(ICategoryRepository dbService)
+    public CategoryService(ICategoryRepositoryService dbService)
     {
-        _dbService = dbService;
+        _categoryRepository = dbService;
     }
 
-    public async Task<List<CategoryResponse>> GetAllCategories()
+    public async Task<ResultT<List<CategoryResponse>>> GetAllCategories()
     {
-        var dtoLisFromDb = await _dbService.GetAllCategories();
+        var categoriesResult = await _categoryRepository.GetAllCategories();
+        if (!categoriesResult.IsSuccess)
+            return categoriesResult.Error!;
+
         List<CategoryResponse> res = [];
-        foreach (var category in dtoLisFromDb)
+        foreach (var category in categoriesResult.Value)
         {
             res.Add(new(category.Id, category.Name));
         }

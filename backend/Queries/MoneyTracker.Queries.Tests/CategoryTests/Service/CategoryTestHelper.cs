@@ -1,11 +1,11 @@
 using MoneyTracker.Queries.Application;
-using MoneyTracker.Queries.Domain.Repositories;
+using MoneyTracker.Queries.Domain.Repositories.Service;
 using Moq;
 
 namespace MoneyTracker.Queries.Tests.CategoryTests.Service;
 public class CategoryTestHelper
 {
-    public readonly Mock<ICategoryRepository> _mockCategoryDatabase = new();
+    public readonly Mock<ICategoryRepositoryService> _mockCategoryDatabase = new();
 
     public readonly CategoryService _budgetService;
 

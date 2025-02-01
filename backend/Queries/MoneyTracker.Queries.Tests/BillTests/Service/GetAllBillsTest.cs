@@ -33,7 +33,7 @@ public sealed class GetAllBillsTest : BillTestHelper
         _mockUserRepository.Setup(x => x.GetUserAuthFromToken(tokenToDecode))
             .ReturnsAsync(mockUserAuth.Object);
 
-        _mockBillDatabase.Setup(x => x.GetAllBills(authedUser)).Returns(Task.FromResult(billDatabaseReturn));
+        _mockBillDatabase.Setup(x => x.GetAllBills(authedUser)).ReturnsAsync(billDatabaseReturn);
 
         _mockFrequencyCalculation.Setup(x => x.CalculateOverDueBillInfo(8, "Daily", new DateOnly(2024, 10, 8)))
             .Returns((OverDueBillInfo?)null);

@@ -29,7 +29,7 @@ public sealed class GetAllBillsTest : BudgetTestHelper
         _mockUserRepository.Setup(x => x.GetUserAuthFromToken(tokenToDecode))
             .ReturnsAsync(mockUserAuth.Object);
 
-        _mockBudgetDatabase.Setup(x => x.GetBudget(authedUser)).Returns(Task.FromResult(budgetDatabaseReturn));
+        _mockBudgetDatabase.Setup(x => x.GetBudget(authedUser)).ReturnsAsync(budgetDatabaseReturn);
 
         Assert.Multiple(async () =>
         {

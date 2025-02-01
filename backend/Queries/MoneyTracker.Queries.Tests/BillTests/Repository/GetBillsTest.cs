@@ -34,7 +34,7 @@ public sealed class GetBillsTest : IAsyncLifetime
     public async void FirstLoadCheckTablesThatDataAreThereForUserId1()
     {
         var db = new PostgresDatabase(_postgres.GetConnectionString());
-        var billDb = new BillRepository(db);
+        var billDb = new BillDatabase(db);
 
         var actual = await billDb.GetAllBills(new AuthenticatedUser(1));
 
@@ -51,7 +51,7 @@ public sealed class GetBillsTest : IAsyncLifetime
     public async void FirstLoadCheckTablesThatDataAreThereForUserId2()
     {
         var db = new PostgresDatabase(_postgres.GetConnectionString());
-        var billDb = new BillRepository(db);
+        var billDb = new BillDatabase(db);
 
         var actual = await billDb.GetAllBills(new AuthenticatedUser(2));
 

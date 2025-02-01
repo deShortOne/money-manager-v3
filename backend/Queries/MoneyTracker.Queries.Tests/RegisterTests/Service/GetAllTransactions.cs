@@ -29,7 +29,7 @@ public sealed class GetAllTransactionsTest : RegisterTestHelper
         _mockUserRepository.Setup(x => x.GetUserAuthFromToken(tokenToDecode))
             .ReturnsAsync(mockUserAuth.Object);
 
-        _mockRegisterDatabase.Setup(x => x.GetAllTransactions(authedUser)).Returns(Task.FromResult(budgetDatabaseReturn));
+        _mockRegisterDatabase.Setup(x => x.GetAllTransactions(authedUser)).ReturnsAsync(budgetDatabaseReturn);
 
         Assert.Multiple(async () =>
         {

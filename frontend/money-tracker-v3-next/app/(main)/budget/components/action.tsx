@@ -5,7 +5,7 @@ import { ErrorResult, SuccessResult, Result } from "@/types/result";
 
 export async function getAllBudgets(authToken: string): Promise<Result<BudgetGroup[]>> {
     const response = await fetch(`http://localhost:1235/Budget/get`, {
-        method: "POST",
+        method: "GET",
         headers: {
             "Content-Type": "application/json",
             "Authorization": "Bearer " + authToken,
