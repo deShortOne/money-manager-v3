@@ -32,4 +32,10 @@ public class RegisterRepository : IRegisterRepositoryService
 
         return result;
     }
+
+    public async Task ResetTransactionsCache(AuthenticatedUser user)
+    {
+        var result = await _registerDatabase.GetAllTransactions(user);
+        await _registerCache.SaveTransactions(user, result.Value);
+    }
 }

@@ -19,4 +19,6 @@ public class RegisterRepository : IRegisterRepositoryService
     {
         return _registerDatabase.GetAllTransactions(user);
     }
+
+    public Task ResetTransactionsCache(AuthenticatedUser user) => throw new NotImplementedException();
 }

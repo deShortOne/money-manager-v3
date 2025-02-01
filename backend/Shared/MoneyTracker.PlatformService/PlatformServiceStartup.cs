@@ -20,6 +20,7 @@ public class PlatformServiceStartup
         var connectionString = builder.Configuration["Messaging:Lepus"]!;
 
         builder.Services
-            .AddHostedService(_ => new MessageBusSubscriber(connectionString, new EmptyEventProcessor()));
+            .AddSingleton<IEventProcessor, EventProcessor>()
+            .AddHostedService(provider => new MessageBusSubscriber(connectionString, provider.GetRequiredService<IEventProcessor>()));
     }
 }

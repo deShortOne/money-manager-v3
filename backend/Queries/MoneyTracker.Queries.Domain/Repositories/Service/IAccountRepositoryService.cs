@@ -6,4 +6,5 @@ namespace MoneyTracker.Queries.Domain.Repositories.Service;
 public interface IAccountRepositoryService
 {
     Task<ResultT<List<AccountEntity>>> GetAccounts(AuthenticatedUser user);
+    Task ResetAccountsCache(AuthenticatedUser user);
 }

@@ -18,4 +18,6 @@ public class CategoryRepository : ICategoryRepositoryService
     {
         return _categoryDatabase.GetAllCategories();
     }
+
+    public Task ResetCategoriesCache() => throw new NotImplementedException();
 }

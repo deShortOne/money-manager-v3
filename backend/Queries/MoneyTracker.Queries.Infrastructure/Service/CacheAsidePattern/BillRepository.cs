@@ -32,4 +32,10 @@ public class BillRepository : IBillRepositoryService
 
         return result;
     }
+
+    public async Task ResetBillsCache(AuthenticatedUser user)
+    {
+        var result = await _billDatabase.GetAllBills(user);
+        await _billCache.SaveBills(user, result.Value);
+    }
 }

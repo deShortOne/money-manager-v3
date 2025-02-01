@@ -19,4 +19,5 @@ public class UserRepository : IUserRepositoryService
         => _userDatabase.GetUserAuthFromToken(token);
     public Task<UserEntity?> GetUserByUsername(string username)
         => _userDatabase.GetUserByUsername(username);
+    public Task ResetUsersCache() => throw new NotImplementedException();
 }

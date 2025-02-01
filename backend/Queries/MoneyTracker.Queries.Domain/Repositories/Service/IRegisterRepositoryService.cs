@@ -5,5 +5,6 @@ using MoneyTracker.Queries.Domain.Entities.Transaction;
 namespace MoneyTracker.Queries.Domain.Repositories.Service;
 public interface IRegisterRepositoryService
 {
-    public Task<ResultT<List<TransactionEntity>>> GetAllTransactions(AuthenticatedUser user);
+    Task<ResultT<List<TransactionEntity>>> GetAllTransactions(AuthenticatedUser user);
+    Task ResetTransactionsCache(AuthenticatedUser user);
 }

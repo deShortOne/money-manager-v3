@@ -19,4 +19,6 @@ public class BudgetRepository : IBudgetRepositoryService
     {
         return _budgetDatabase.GetBudget(user);
     }
+
+    public Task ResetBudgetCache(AuthenticatedUser user) => throw new NotImplementedException();
 }

@@ -19,4 +19,6 @@ public class BillRepository : IBillRepositoryService
     {
         return _billDatabase.GetAllBills(user);
     }
+
+    public Task ResetBillsCache(AuthenticatedUser user) => throw new NotImplementedException();
 }

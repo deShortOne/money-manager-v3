@@ -31,4 +31,10 @@ public class CategoryRepository : ICategoryRepositoryService
 
         return result;
     }
+
+    public async Task ResetCategoriesCache()
+    {
+        var result = await _categoryDatabase.GetAllCategories();
+        await _categoryCache.SaveCategories(result.Value);
+    }
 }

@@ -18,4 +18,6 @@ public class AccountRepository : IAccountRepositoryService
     {
         return _accountDatabase.GetAccounts(user);
     }
+
+    public Task ResetAccountsCache(AuthenticatedUser user) => throw new NotImplementedException();
 }

@@ -31,4 +31,10 @@ public class AccountRepository : IAccountRepositoryService
 
         return result;
     }
+
+    public async Task ResetAccountsCache(AuthenticatedUser user)
+    {
+        ResultT<List<AccountEntity>> result = await _accountDatabase.GetAccounts(user);
+        await _accountCache.SaveAccounts(user, result.Value);
+    }
 }

@@ -32,4 +32,10 @@ public class BudgetRepository : IBudgetRepositoryService
 
         return result;
     }
+
+    public async Task ResetBudgetCache(AuthenticatedUser user)
+    {
+        var result = await _budgetDatabase.GetBudget(user);
+        await _budgetCache.SaveBudget(user, result.Value);
+    }
 }

@@ -24,4 +24,9 @@ public class UserRepository : IUserRepositoryService
 
     public Task<UserEntity?> GetUserByUsername(string username)
         => _userDatabase.GetUserByUsername(username);
+
+    public async Task ResetUsersCache()
+    {
+        await Task.CompletedTask;
+    }
 }
