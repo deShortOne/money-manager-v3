@@ -11,19 +11,21 @@ namespace MoneyTracker.Tests.PlatformService;
 public sealed class SendAndReceiveTest : IAsyncLifetime
 {
     private readonly RabbitMqContainer _rabbitMqContainer = new RabbitMqBuilder()
+#if RUN_LOCAL
         .WithDockerEndpoint("tcp://localhost:2375")
+#endif
+        .WithImage("rabbitmq:3.11")
+        .WithCleanUp(true)
         .Build();
 
     public async Task InitializeAsync()
     {
         await _rabbitMqContainer.StartAsync();
-
-        await _rabbitMqContainer.StartAsync();
     }
 
-    public Task DisposeAsync()
+    public async Task DisposeAsync()
     {
-        return _rabbitMqContainer.DisposeAsync().AsTask();
+        await _rabbitMqContainer.DisposeAsync();
     }
 
     [Fact]
