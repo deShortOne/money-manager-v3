@@ -9,16 +9,50 @@ using RabbitMQ.Client.Events;
 namespace MoneyTracker.PlatformService.RabbitMQ;
 public class MessageBusSubscriber : BackgroundService, IAsyncDisposable
 {
-    private IConnection _connection;
-    private IChannel _channel;
-    private string _queueName;
+    private readonly IConnection _connection;
+    private readonly IChannel _channel;
+    private readonly string _queueName;
     private readonly IEventProcessor _eventProcessor;
 
-    public MessageBusSubscriber(string connectionString,
+    private MessageBusSubscriber(IConnection connection,
+        IChannel channel,
+        string queueName,
         IEventProcessor eventProcessor)
     {
+        _connection = connection;
+        _channel = channel;
+        _queueName = queueName;
         _eventProcessor = eventProcessor;
-        InitializeAsync(connectionString).Wait();
+    }
+
+    public static async Task<MessageBusSubscriber> InitializeAsync(string connectionString, IEventProcessor eventProcessor)
+    {
+        try
+        {
+            var connectionFactory = new ConnectionFactory
+            {
+                Uri = new Uri(connectionString)
+            };
+
+            var connection = await connectionFactory.CreateConnectionAsync();
+            var channel = await connection.CreateChannelAsync();
+
+            await channel.ExchangeDeclareAsync("Temp", ExchangeType.Fanout);
+
+            var queueName = (await channel.QueueDeclareAsync()).QueueName;
+            await channel.QueueBindAsync(queueName, exchange: "Temp", routingKey: "");
+
+            connection.ConnectionShutdownAsync += connection_ConnectionShutdown;
+
+            Console.WriteLine("Listening to message bus");
+
+            return new MessageBusSubscriber(connection, channel, queueName, eventProcessor);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Could not connect to message bus: {ex.Message}");
+            throw;
+        }
     }
 
     public async ValueTask DisposeAsync()
@@ -63,35 +97,7 @@ public class MessageBusSubscriber : BackgroundService, IAsyncDisposable
             cancellationToken);
     }
 
-    private async Task InitializeAsync(string connectionString)
-    {
-        try
-        {
-            var connectionFactory = new ConnectionFactory
-            {
-                Uri = new Uri(connectionString)
-            };
-
-            _connection = await connectionFactory.CreateConnectionAsync();
-            _channel = await _connection.CreateChannelAsync();
-
-            await _channel.ExchangeDeclareAsync("Temp", ExchangeType.Fanout);
-
-            _queueName = (await _channel.QueueDeclareAsync()).QueueName;
-            await _channel.QueueBindAsync(_queueName, exchange: "Temp", routingKey: "");
-
-            _connection.ConnectionShutdownAsync += connection_ConnectionShutdown;
-
-            Console.WriteLine("Listening to message bus");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Could not connect to message bus: {ex.Message}");
-            throw;
-        }
-    }
-
-    private async Task connection_ConnectionShutdown(object sender, ShutdownEventArgs reason)
+    private static async Task connection_ConnectionShutdown(object sender, ShutdownEventArgs reason)
     {
         await Task.CompletedTask;
         Console.WriteLine($"Message bus is now closed due to: {reason}");

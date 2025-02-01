@@ -31,10 +31,10 @@ public sealed class SendAndReceiveTest : IAsyncLifetime
     [Fact]
     public async Task ConfirmMessageBusCanSendData()
     {
-        var client = new MessageBusClient(_rabbitMqContainer.GetConnectionString());
+        var client = await MessageBusClient.InitializeAsync(_rabbitMqContainer.GetConnectionString());
 
         var mockEventProcessor = new Mock<IEventProcessor>();
-        IHostedService subscriber = new MessageBusSubscriber(_rabbitMqContainer.GetConnectionString(), mockEventProcessor.Object);
+        IHostedService subscriber = await MessageBusSubscriber.InitializeAsync(_rabbitMqContainer.GetConnectionString(), mockEventProcessor.Object);
         await subscriber.StartAsync(CancellationToken.None);
 
         var eventToPublish = new EventUpdate(new AuthenticatedUser(1), Guid.NewGuid().ToString());
