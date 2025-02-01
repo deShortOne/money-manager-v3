@@ -21,7 +21,7 @@ public sealed class EditBillTest : BillTestHelper
     };
 
     [Theory, MemberData(nameof(OnlyOneItemNotNull))]
-    public async void SuccessfullyEditBill_OnlyChangeOneItem(int id, int? payee,
+    public async Task SuccessfullyEditBill_OnlyChangeOneItem(int id, int? payee,
         decimal? amount, DateOnly? nextDueDate, int? monthDay, string frequency, int? category, int? payerId)
     {
         var userId = 52;

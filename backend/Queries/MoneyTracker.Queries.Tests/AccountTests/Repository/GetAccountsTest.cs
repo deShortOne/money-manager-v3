@@ -29,7 +29,7 @@ public sealed class GetAccountsTest : IAsyncLifetime
     }
 
     [Fact]
-    public async void FirstLoadCheckTablesThatDataAreThere()
+    public async Task FirstLoadCheckTablesThatDataAreThere()
     {
         var db = new PostgresDatabase(_postgres.GetConnectionString());
         var accountDb = new AccountDatabase(db);

@@ -13,7 +13,7 @@ public sealed class EditCategoryTest : CategoryTestHelper
     private readonly string _newCategoryName = "Car : MOT";
 
     [Fact]
-    public async void EditCategoryName()
+    public async Task EditCategoryName()
     {
         var editCategoryRequest = new EditCategoryRequest(_categoryId, _newCategoryName);
         var editCategory = new EditCategoryEntity(_categoryId, _newCategoryName);

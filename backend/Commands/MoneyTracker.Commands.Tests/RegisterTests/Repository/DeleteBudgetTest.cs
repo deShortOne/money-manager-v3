@@ -5,7 +5,7 @@ namespace MoneyTracker.Commands.Tests.RegisterTests.Repository;
 public sealed class DeleteBudgetTest : RegisterRespositoryTestHelper
 {
     [Fact]
-    public async void DeleteBudgetCategoriesFromSeed()
+    public async Task DeleteBudgetCategoriesFromSeed()
     {
         await _registerRepo.DeleteTransaction(3);
         await _registerRepo.DeleteTransaction(8);

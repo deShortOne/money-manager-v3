@@ -38,7 +38,7 @@ public sealed class GetUserByUsernameTest : IAsyncLifetime
     }
 
     [Fact]
-    public async void GetUserByUsernameSuccessfully()
+    public async Task GetUserByUsernameSuccessfully()
     {
         var userId = 5623;
         var username = "bob";
@@ -61,7 +61,7 @@ public sealed class GetUserByUsernameTest : IAsyncLifetime
     }
 
     [Fact]
-    public async void GetUserByUsernameFailDueToNameNotBeingInDatabase()
+    public async Task GetUserByUsernameFailDueToNameNotBeingInDatabase()
     {
         var actual = await _userRepo.GetUserByUsername("asd");
         Assert.Null(actual);

@@ -35,25 +35,25 @@ public class GetAccountByIdTest : IAsyncLifetime
     }
 
     [Fact]
-    public async void GetAccountId1()
+    public async Task GetAccountId1()
     {
         Assert.Equal(new AccountEntity(1, "bank a", 1), await _accountRepo.GetAccountById(1));
     }
 
     [Fact]
-    public async void GetAccountId2()
+    public async Task GetAccountId2()
     {
         Assert.Equal(new AccountEntity(2, "bank b", 1), await _accountRepo.GetAccountById(2));
     }
 
     [Fact]
-    public async void GetAccountId3()
+    public async Task GetAccountId3()
     {
         Assert.Equal(new AccountEntity(3, "bank a", 2), await _accountRepo.GetAccountById(3));
     }
 
     [Fact]
-    public async void FailToGetInvalidAccount()
+    public async Task FailToGetInvalidAccount()
     {
         Assert.Null(await _accountRepo.GetAccountById(-1));
     }

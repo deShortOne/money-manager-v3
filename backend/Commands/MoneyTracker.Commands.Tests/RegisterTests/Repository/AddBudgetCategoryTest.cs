@@ -7,7 +7,7 @@ namespace MoneyTracker.Commands.Tests.RegisterTests.Repository;
 public sealed class AddBudgetCategoryTest : RegisterRespositoryTestHelper
 {
     [Fact]
-    public async void AddBudgetItemIntoDatabase()
+    public async Task AddBudgetItemIntoDatabase()
     {
         Migration.CheckMigration(_postgres.GetConnectionString(), new MigrationOption(true));
 

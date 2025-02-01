@@ -40,7 +40,7 @@ public sealed class StoreTokenForUserTest : IAsyncLifetime
     }
 
     [Fact]
-    public async void StoreTokenForUserSuccessfully()
+    public async Task StoreTokenForUserSuccessfully()
     {
         var userId = 5623;
         var token = Guid.NewGuid();

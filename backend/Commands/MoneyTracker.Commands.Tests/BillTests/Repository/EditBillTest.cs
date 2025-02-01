@@ -51,7 +51,7 @@ public sealed class EditBillTest : BillRespositoryTestHelper
     };
 
     [Theory, MemberData(nameof(OnlyOneItemNotNull))]
-    public async void EditBaseBillItemInDatabase(int? payee,
+    public async Task EditBaseBillItemInDatabase(int? payee,
         decimal? amount, DateOnly? nextDueDate, int? monthDay, string frequency, int? category, int? accountId)
     {
         await SetupDb();

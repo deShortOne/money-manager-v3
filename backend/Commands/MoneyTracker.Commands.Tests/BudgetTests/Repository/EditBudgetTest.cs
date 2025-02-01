@@ -37,7 +37,7 @@ public sealed class EditBudgetTest : BudgetRespositoryTestHelper
     };
 
     [Theory, MemberData(nameof(OnlyOneItemNotNull))]
-    public async void EditBaseBillItemInDatabase(int? budgetGroupId, int? planned)
+    public async Task EditBaseBillItemInDatabase(int? budgetGroupId, int? planned)
     {
         await SetupDb();
 

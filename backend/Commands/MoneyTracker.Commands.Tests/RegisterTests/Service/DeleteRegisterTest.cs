@@ -21,7 +21,7 @@ public sealed class DeleteRegisterTest : RegisterTestHelper
     }
 
     [Fact]
-    public async void SuccessfullyAddNewTransaction()
+    public async Task SuccessfullyAddNewTransaction()
     {
         var commonAccountId = 1562;
 

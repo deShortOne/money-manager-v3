@@ -19,7 +19,7 @@ public sealed class EditBudgetCategoryTest : BudgetTestHelper
     };
 
     [Theory, MemberData(nameof(OnlyOneItemNotNull))]
-    public async void EditBudget(int? budgetGroupId, decimal? planned)
+    public async Task EditBudget(int? budgetGroupId, decimal? planned)
     {
         var authedUser = new AuthenticatedUser(_userId);
         _mockUserService.Setup(x => x.GetUserFromToken(_tokenToDecode))

@@ -11,7 +11,7 @@ namespace MoneyTracker.Commands.Tests.BillTests.Service;
 public sealed class DeleteBillTest : BillTestHelper
 {
     [Fact]
-    public async void SuccessfullyDeleteBill()
+    public async Task SuccessfullyDeleteBill()
     {
         var userId = 52;
         var authedUser = new AuthenticatedUser(userId);

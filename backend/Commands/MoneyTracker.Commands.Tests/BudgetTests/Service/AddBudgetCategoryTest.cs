@@ -26,7 +26,7 @@ public sealed class AddBudgetCategoryTest : BudgetTestHelper
     }
 
     [Fact]
-    public async void SuccessfullyAddNewBudgetCategory()
+    public async Task SuccessfullyAddNewBudgetCategory()
     {
         var authedUser = new AuthenticatedUser(_userId);
         _mockUserService.Setup(x => x.GetUserFromToken(_tokenToDecode))

@@ -35,7 +35,7 @@ public sealed class AddBillTest : BillTestHelper
     }
 
     [Fact]
-    public async void SuccessfullyAddNewBill()
+    public async Task SuccessfullyAddNewBill()
     {
         _mockUserService.Setup(x => x.GetUserFromToken(_tokenToDecode))
             .ReturnsAsync(ResultT<AuthenticatedUser>.Success(_authedUser));

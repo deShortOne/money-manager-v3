@@ -31,7 +31,7 @@ public sealed class GetBudgetTest : IAsyncLifetime
     }
 
     [Fact]
-    public async void FirstLoadCheckTablesThatDataAreThereForUserId1()
+    public async Task FirstLoadCheckTablesThatDataAreThereForUserId1()
     {
         var db = new PostgresDatabase(_postgres.GetConnectionString());
         var budgetDb = new BudgetDatabase(db);
@@ -56,7 +56,7 @@ public sealed class GetBudgetTest : IAsyncLifetime
     }
 
     [Fact]
-    public async void FirstLoadCheckTablesThatDataAreThereForUserId2()
+    public async Task FirstLoadCheckTablesThatDataAreThereForUserId2()
     {
         var db = new PostgresDatabase(_postgres.GetConnectionString());
         var budgetDb = new BudgetDatabase(db);

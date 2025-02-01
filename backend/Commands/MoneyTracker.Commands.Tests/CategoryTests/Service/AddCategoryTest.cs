@@ -14,7 +14,7 @@ public sealed class AddCategoryTest : CategoryTestHelper
     private readonly string _newCategoryName = "Car : Fuel";
 
     [Fact]
-    public async void SuccessfullyAddNewCategory()
+    public async Task SuccessfullyAddNewCategory()
     {
         _mockCategoryDatabase.Setup(x => x.GetLastCategoryId()).Returns(Task.FromResult(_lastCategoryId));
         _mockIdGenerator.Setup(x => x.NewInt(_lastCategoryId)).Returns(_newCategoryId);
