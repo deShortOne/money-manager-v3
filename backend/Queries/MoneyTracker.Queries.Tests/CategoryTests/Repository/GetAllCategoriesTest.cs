@@ -30,7 +30,7 @@ public sealed class GetAllCategoriesTest : IAsyncLifetime
     }
 
     [Fact]
-    public async void FirstLoadCheckTablesThatDataAreThere()
+    public async Task FirstLoadCheckTablesThatDataAreThere()
     {
         var db = new PostgresDatabase(_postgres.GetConnectionString());
         var budgetDb = new CategoryDatabase(db);

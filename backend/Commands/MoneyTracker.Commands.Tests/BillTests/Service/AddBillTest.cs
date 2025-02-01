@@ -35,7 +35,7 @@ public sealed class AddBillTest : BillTestHelper
     }
 
     [Fact]
-    public async void SuccessfullyAddNewBill()
+    public async Task SuccessfullyAddNewBill()
     {
         _mockUserService.Setup(x => x.GetUserFromToken(_tokenToDecode))
             .ReturnsAsync(ResultT<AuthenticatedUser>.Success(_authedUser));
@@ -200,9 +200,9 @@ public sealed class AddBillTest : BillTestHelper
             .ReturnsAsync(true);
 
         var result = await _billService.AddBill(_tokenToDecode, _newBillRequest);
-        Assert.Multiple(async () =>
+        Assert.Multiple(() =>
         {
-            Assert.Equal("Invalid category", result.Error!.Description);
+            Assert.Equal("Category not found", result.Error!.Description);
 
             _mockUserService.Verify(x => x.GetUserFromToken(_tokenToDecode), Times.Once);
             _mockAccountDatabase.Verify(x => x.GetAccountById(_payerId), Times.AtMostOnce);

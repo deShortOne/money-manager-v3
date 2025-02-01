@@ -31,7 +31,7 @@ public sealed class GetBillsTest : IAsyncLifetime
     }
 
     [Fact]
-    public async void FirstLoadCheckTablesThatDataAreThereForUserId1()
+    public async Task FirstLoadCheckTablesThatDataAreThereForUserId1()
     {
         var db = new PostgresDatabase(_postgres.GetConnectionString());
         var billDb = new BillDatabase(db);
@@ -48,7 +48,7 @@ public sealed class GetBillsTest : IAsyncLifetime
     }
 
     [Fact]
-    public async void FirstLoadCheckTablesThatDataAreThereForUserId2()
+    public async Task FirstLoadCheckTablesThatDataAreThereForUserId2()
     {
         var db = new PostgresDatabase(_postgres.GetConnectionString());
         var billDb = new BillDatabase(db);

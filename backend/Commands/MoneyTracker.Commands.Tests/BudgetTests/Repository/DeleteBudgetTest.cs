@@ -5,7 +5,7 @@ namespace MoneyTracker.Commands.Tests.BudgetTests.Repository;
 public sealed class DeleteBudgetTest : BudgetRespositoryTestHelper
 {
     [Fact]
-    public async void DeleteBudgetCategoriesFromSeed()
+    public async Task DeleteBudgetCategoriesFromSeed()
     {
         await _budgetRepo.DeleteBudgetCategory(new DeleteBudgetCategoryEntity(1, 1, 1));
         await _budgetRepo.DeleteBudgetCategory(new DeleteBudgetCategoryEntity(1, 1, 2));

@@ -8,7 +8,7 @@ namespace MoneyTracker.Commands.Tests.BudgetTests.Repository;
 public sealed class AddBudgetCategoryTest : BudgetRespositoryTestHelper
 {
     [Fact]
-    public async void AddBudgetItemIntoDatabase()
+    public async Task AddBudgetItemIntoDatabase()
     {
         Migration.CheckMigration(_postgres.GetConnectionString(), new MigrationOption(true));
         var deleteAllDataFromBillTable = "DELETE FROM budgetcategory;";

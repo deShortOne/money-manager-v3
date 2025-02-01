@@ -39,7 +39,7 @@ public sealed class GetUserFromTokenTest : IAsyncLifetime
     }
 
     [Fact]
-    public async void SuccessfullyLogInUser()
+    public async Task SuccessfullyLogInUser()
     {
         var userId = 28934;
         var token = Guid.NewGuid();
@@ -78,7 +78,7 @@ public sealed class GetUserFromTokenTest : IAsyncLifetime
 
 
     [Fact]
-    public async void ReturnNullForIncorrectToken()
+    public async Task ReturnNullForIncorrectToken()
     {
         var userId = 28934;
         var token = Guid.NewGuid().ToString();

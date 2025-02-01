@@ -44,7 +44,7 @@ public sealed class EditRegisterTest : RegisterRespositoryTestHelper
     };
 
     [Theory, MemberData(nameof(OnlyOneItemNotNull))]
-    public async void EditBaseBillItemInDatabase(int? payee, int? amount, DateOnly? datePaid, int? categoryId, int? payerId)
+    public async Task EditBaseBillItemInDatabase(int? payee, int? amount, DateOnly? datePaid, int? categoryId, int? payerId)
     {
         await SetupDb();
 

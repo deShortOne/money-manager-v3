@@ -23,7 +23,7 @@ public class RegisterRespositoryTestHelper : IAsyncLifetime
     public async Task InitializeAsync()
     {
         await _postgres.StartAsync();
-        Migration.CheckMigration(_postgres.GetConnectionString(), new MigrationOption());
+        Migration.CheckMigration(_postgres.GetConnectionString(), new MigrationOption(true));
 
         var _database = new PostgresDatabase(_postgres.GetConnectionString());
         _registerRepo = new RegisterCommandRepository(_database);

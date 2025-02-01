@@ -3,7 +3,7 @@ namespace MoneyTracker.Commands.Tests.BillTests.Repository;
 public sealed class DeleteBillTest : BillRespositoryTestHelper
 {
     [Fact]
-    public async void DeleteBillsFromSeed()
+    public async Task DeleteBillsFromSeed()
     {
         await _billRepo.DeleteBill(1);
         await _billRepo.DeleteBill(2);

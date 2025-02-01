@@ -9,15 +9,16 @@ using RabbitMQ.Client.Events;
 namespace MoneyTracker.PlatformService.RabbitMQ;
 public class MessageBusClient : IMessageBusClient
 {
-    private IConnection _connection;
-    private IChannel _channel;
+    private readonly IConnection _connection;
+    private readonly IChannel _channel;
 
-    public MessageBusClient(string connectionString)
+    private MessageBusClient(IConnection connection, IChannel channel)
     {
-        InitializeAsync(connectionString).Wait();
+        _connection = connection;
+        _channel = channel;
     }
 
-    private async Task InitializeAsync(string connectionString)
+    public static async Task<MessageBusClient> InitializeAsync(string connectionString)
     {
         try
         {
@@ -26,14 +27,16 @@ public class MessageBusClient : IMessageBusClient
                 Uri = new Uri(connectionString)
             };
 
-            _connection = await connectionFactory.CreateConnectionAsync();
-            _channel = await _connection.CreateChannelAsync();
+            var connection = await connectionFactory.CreateConnectionAsync();
+            var channel = await connection.CreateChannelAsync();
 
-            await _channel.ExchangeDeclareAsync("Temp", ExchangeType.Fanout);
+            await channel.ExchangeDeclareAsync("Temp", ExchangeType.Fanout);
 
-            _connection.ConnectionShutdownAsync += connection_ConnectionShutdown;
+            connection.ConnectionShutdownAsync += connection_ConnectionShutdown;
 
             Console.WriteLine("Connected to message bus");
+
+            return new MessageBusClient(connection, channel);
         }
         catch (Exception ex)
         {
@@ -87,7 +90,7 @@ public class MessageBusClient : IMessageBusClient
         }
     }
 
-    private async Task connection_ConnectionShutdown(object sender, ShutdownEventArgs reason)
+    private static async Task connection_ConnectionShutdown(object sender, ShutdownEventArgs reason)
     {
         await Task.CompletedTask;
         Console.WriteLine($"Message bus is now closed due to: {reason}");

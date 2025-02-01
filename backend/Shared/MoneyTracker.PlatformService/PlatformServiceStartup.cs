@@ -11,8 +11,11 @@ public class PlatformServiceStartup
     {
         var connectionString = builder.Configuration["Messaging:Lepus"]!;
 
+        var messageBusClient = MessageBusClient.InitializeAsync(connectionString);
+        messageBusClient.Wait();
+
         builder.Services
-            .AddSingleton<IMessageBusClient>(_ => new MessageBusClient(connectionString));
+            .AddSingleton<IMessageBusClient>(_ => messageBusClient.Result);
     }
 
     public static void StartSubscriber(WebApplicationBuilder builder)
@@ -21,6 +24,6 @@ public class PlatformServiceStartup
 
         builder.Services
             .AddSingleton<IEventProcessor, EventProcessor>()
-            .AddHostedService(provider => new MessageBusSubscriber(connectionString, provider.GetRequiredService<IEventProcessor>()));
+            .AddHostedService(provider => MessageBusSubscriber.InitializeAsync(connectionString, provider.GetRequiredService<IEventProcessor>()).Result);
     }
 }

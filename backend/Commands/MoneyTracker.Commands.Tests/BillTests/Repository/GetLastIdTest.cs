@@ -6,13 +6,13 @@ namespace MoneyTracker.Commands.Tests.BillTests.Repository;
 public sealed class GetLastIdTest : BillRespositoryTestHelper
 {
     [Fact]
-    public async void GetLastIdWithNoDataInTables()
+    public async Task GetLastIdWithNoDataInTables()
     {
         Assert.Equal(0, await _billRepo.GetLastId());
     }
 
     [Fact]
-    public async void GetLastIdWithDataInTables()
+    public async Task GetLastIdWithDataInTables()
     {
         Migration.CheckMigration(_postgres.GetConnectionString(), new MigrationOption(true));
 

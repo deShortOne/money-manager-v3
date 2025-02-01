@@ -11,7 +11,7 @@ using Moq;
 public class DeleteBudgetCategoryTest : BudgetTestHelper
 {
     [Fact]
-    public async void SuccessfullyDeleteBudgetCategory()
+    public async Task SuccessfullyDeleteBudgetCategory()
     {
         var userId = 52;
         var authedUser = new AuthenticatedUser(userId);

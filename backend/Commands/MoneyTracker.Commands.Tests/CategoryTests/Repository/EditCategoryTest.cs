@@ -7,7 +7,7 @@ namespace MoneyTracker.Commands.Tests.CategoryTests.Repository;
 public sealed class EditCategoryTest : CategoryRespositoryTestHelper
 {
     [Fact]
-    public async void EditCategoryItemIntoDatabase()
+    public async Task EditCategoryItemIntoDatabase()
     {
         Migration.CheckMigration(_postgres.GetConnectionString(), new MigrationOption(true));
 

@@ -28,7 +28,7 @@ public sealed class AddRegisterTest : RegisterTestHelper
     }
 
     [Fact]
-    public async void SuccessfullyAddNewTransaction()
+    public async Task SuccessfullyAddNewTransaction()
     {
         _mockUserService.Setup(x => x.GetUserFromToken(_tokenToDecode))
             .ReturnsAsync(_authedUser);

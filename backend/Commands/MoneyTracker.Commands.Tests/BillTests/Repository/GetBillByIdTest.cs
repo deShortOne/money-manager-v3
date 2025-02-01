@@ -7,7 +7,7 @@ namespace MoneyTracker.Commands.Tests.BillTests.Repository;
 public sealed class GetBillByIdTest : BillRespositoryTestHelper
 {
     [Fact]
-    public async void GetBillId1()
+    public async Task GetBillId1()
     {
         Migration.CheckMigration(_postgres.GetConnectionString(), new MigrationOption(true));
         var expected = new BillEntity(1, 11, 23, new DateOnly(2024, 9, 3), 3, "Weekly", 4, 1);
@@ -16,7 +16,7 @@ public sealed class GetBillByIdTest : BillRespositoryTestHelper
     }
 
     [Fact]
-    public async void GetBillId2()
+    public async Task GetBillId2()
     {
         Migration.CheckMigration(_postgres.GetConnectionString(), new MigrationOption(true));
         var expected = new BillEntity(2, 12, 100, new DateOnly(2024, 8, 30), 30, "Monthly", 1, 2);
@@ -25,7 +25,7 @@ public sealed class GetBillByIdTest : BillRespositoryTestHelper
     }
 
     [Fact]
-    public async void GetBillId3()
+    public async Task GetBillId3()
     {
         Migration.CheckMigration(_postgres.GetConnectionString(), new MigrationOption(true));
         var expected = new BillEntity(3, 12, 100, new DateOnly(2024, 8, 30), 30, "Monthly", 1, 3);
@@ -34,7 +34,7 @@ public sealed class GetBillByIdTest : BillRespositoryTestHelper
     }
 
     [Fact]
-    public async void GetBillThatDoesntExist()
+    public async Task GetBillThatDoesntExist()
     {
         Assert.Null(await _billRepo.GetBillById(1));
     }

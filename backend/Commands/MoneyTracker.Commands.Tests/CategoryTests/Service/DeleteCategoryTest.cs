@@ -11,7 +11,7 @@ public sealed class DeleteCategoryTest : CategoryTestHelper
     private readonly int _categoryId = 2;
 
     [Fact]
-    public async void DeleteCategory()
+    public async Task DeleteCategory()
     {
         var editCategoryRequest = new DeleteCategoryRequest(_categoryId);
 

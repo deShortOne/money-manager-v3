@@ -7,7 +7,7 @@ namespace MoneyTracker.Commands.Tests.BillTests.Repository;
 public sealed class AddBillTest : BillRespositoryTestHelper
 {
     [Fact]
-    public async void AddBillItemIntoDatabase()
+    public async Task AddBillItemIntoDatabase()
     {
         Migration.CheckMigration(_postgres.GetConnectionString(), new MigrationOption(true));
         var deleteAllDataFromBillTable = "DELETE FROM bill;";

@@ -62,7 +62,7 @@ internal class Program
         var cache = new MongoDatabase(builder.Configuration["Datastore:Cache"]!);
 
         builder.Services.AddSingleton(_ => cache);
-        Startup.Start(builder, database);
+        Startup.Start(builder);
         PlatformServiceStartup.StartSubscriber(builder);
 
         builder.Services
