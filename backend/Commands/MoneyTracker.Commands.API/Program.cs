@@ -59,7 +59,7 @@ internal class Program
         var database = new PostgresDatabase(builder.Configuration["Database:Paelagus_RO"]!);
         Migration.CheckMigration(builder.Configuration["Database:Paelagus_RO"]!, new MigrationOption(true, true));
 
-        Startup.Start(builder, database);
+        Startup.Start(builder);
         PlatformServiceStartup.StartClient(builder);
 
         builder.Services

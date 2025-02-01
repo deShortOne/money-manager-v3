@@ -12,14 +12,13 @@ using MoneyTracker.Common.Utilities.IdGeneratorUtil;
 namespace MoneyTracker.Authentication;
 public class Startup
 {
-    public static void Start(WebApplicationBuilder builder, IDatabase database)
+    public static void Start(WebApplicationBuilder builder)
     {
         var issuer = builder.Configuration["Jwt:iss"]!;
         var audience = builder.Configuration["Jwt:aud"]!;
         var key = builder.Configuration["Jwt:key"]!;
 
         builder.Services
-            .AddSingleton(database)
             .AddSingleton<IJwtConfig>(_ => new JwtConfig(issuer, audience, key, 0))
             .AddSingleton<IDateTimeProvider, DateTimeProvider>()
             .AddSingleton<IPasswordHasher, PasswordHasher>()
