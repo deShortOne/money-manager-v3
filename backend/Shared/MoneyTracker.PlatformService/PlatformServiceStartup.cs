@@ -1,10 +1,11 @@
-
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using MoneyTracker.PlatformService.Domain;
 using MoneyTracker.PlatformService.RabbitMQ;
 
 namespace MoneyTracker.PlatformService;
+[ExcludeFromCodeCoverage]
 public class PlatformServiceStartup
 {
     public static void StartClient(WebApplicationBuilder builder, string connectionString)

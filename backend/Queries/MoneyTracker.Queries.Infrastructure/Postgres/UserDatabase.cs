@@ -1,4 +1,3 @@
-
 using System.Data;
 using System.Data.Common;
 using MoneyTracker.Authentication.Entities;
@@ -7,6 +6,7 @@ using MoneyTracker.Common.Utilities.DateTimeUtil;
 using MoneyTracker.Queries.Domain.Repositories.Database;
 using Npgsql;
 
+namespace MoneyTracker.Queries.Infrastructure.Postgres;
 public class UserDatabase : IUserDatabase
 {
     private readonly IDatabase _database;
@@ -70,7 +70,8 @@ public class UserDatabase : IUserDatabase
             SELECT token
             FROM user_id_to_token
             WHERE user_id = @userId
-            ORDER BY expires desc;
+            ORDER BY expires desc
+            LIMIT 1;
             """;
         var queryParams = new List<DbParameter>()
         {
@@ -86,5 +87,4 @@ public class UserDatabase : IUserDatabase
 
         return null;
     }
-
 }
