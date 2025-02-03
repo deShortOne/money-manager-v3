@@ -56,15 +56,38 @@ internal class Program
             });
         });
 
-        var database = new PostgresDatabase(builder.Configuration["Database:Paelagus_RO"]!);
-        Migration.CheckMigration(builder.Configuration["Database:Paelagus_RO"]!, new MigrationOption(true, true));
+        var databaseConnectionString = GetCliArgumentValue<string>(args, "--database") ?? builder.Configuration["Database:Paelagus_RO"]!;
+        if (databaseConnectionString == null || databaseConnectionString == "")
+        {
+            throw new Exception("Database connection string must be set under --database");
+        }
+        if (DoesCliArgumentExist(args, "--reset-database"))
+        {
+            Migration.CheckMigration(databaseConnectionString, new MigrationOption(true, true));
+        }
 
         Startup.Start(builder);
-        PlatformServiceStartup.StartClient(builder);
+
+        if (!DoesCliArgumentExist(args, "--use-messaging"))
+        {
+            PlatformServiceStartup.StartEmptyClient(builder);
+        }
+        else
+        {
+            var rabbitConnectionString = GetCliArgumentValue<string>(args, "--rabbit") ?? builder.Configuration["Messaging:Lepus"]!;
+            if (rabbitConnectionString != null && rabbitConnectionString != "")
+            {
+                PlatformServiceStartup.StartClient(builder, rabbitConnectionString);
+            }
+            else
+            {
+                throw new Exception("Messaging connection string must be set under --rabbit");
+            }
+        }
 
         builder.Services
             .AddHttpContextAccessor()
-            .AddSingleton<IDatabase>(_ => database)
+            .AddSingleton<IDatabase>(_ => new PostgresDatabase(databaseConnectionString))
             .AddSingleton<IAuthenticationService, AuthenticationService>()
             .AddSingleton<IDateTimeProvider, DateTimeProvider>()
             .AddSingleton<IFrequencyCalculation, FrequencyCalculation>()
@@ -110,5 +133,23 @@ internal class Program
         app.MapControllers();
 
         app.Run();
+    }
+
+    private static T? GetCliArgumentValue<T>(string[] args, string key) where T : class
+    {
+        for (var index = 0; index < args.Length - 1; index++)
+        {
+            if (args[index] == key)
+            {
+                return (T)Convert.ChangeType(args[index + 1], typeof(T));
+            }
+        }
+
+        return null;
+    }
+
+    private static bool DoesCliArgumentExist(string[] args, string key)
+    {
+        return args.Any(x => x == key);
     }
 }
