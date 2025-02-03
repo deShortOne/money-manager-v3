@@ -25,7 +25,7 @@ public sealed class LoginUserTest : UserTestHelper
 
         _mockUserDatabase.Setup(x => x.GetUserByUsername(_username))
             .ReturnsAsync(user);
-        _mockPasswordHasher.Setup(x => x.VerifyPassword(_passwordFromDatabase, _passwordFromLogin, ""))
+        _mockPasswordHasher.Setup(x => x.VerifyPassword(_passwordFromDatabase, _passwordFromLogin))
             .Returns(true);
         _mockAuthService.Setup(x => x.GenerateToken(userIdentity, _timeExpire)).Returns(_newToken.ToString());
         _mockDateTimeProvider.Setup(x => x.Now).Returns(_timeNow);
@@ -36,7 +36,7 @@ public sealed class LoginUserTest : UserTestHelper
             await _userService.LoginUser(new LoginWithUsernameAndPassword(_username, _passwordFromLogin));
 
             _mockUserDatabase.Verify(x => x.GetUserByUsername(_username), Times.Once);
-            _mockPasswordHasher.Verify(x => x.VerifyPassword(_passwordFromDatabase, _passwordFromLogin, ""), Times.Once);
+            _mockPasswordHasher.Verify(x => x.VerifyPassword(_passwordFromDatabase, _passwordFromLogin), Times.Once);
             _mockDateTimeProvider.Verify(x => x.Now, Times.Once);
             _mockAuthService.Verify(x => x.GenerateToken(userIdentity, _timeExpire), Times.Once);
             _mockUserDatabase.Verify(x => x.StoreTemporaryTokenToUser(userAuthentication), Times.Once);

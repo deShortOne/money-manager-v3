@@ -20,7 +20,7 @@ public class UserService : IUserService
         var user = await _userRepository.GetUserByUsername(userLogin.Username);
         if (user == null)
             throw new InvalidDataException("User does not exist");
-        if (!_passwordHasher.VerifyPassword(user.Password, userLogin.Password, ""))
+        if (!_passwordHasher.VerifyPassword(user.Password, userLogin.Password))
             throw new InvalidDataException("User does not exist");
 
         var token = await _userRepository.GetLastUserTokenForUser(user);

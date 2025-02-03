@@ -1,4 +1,3 @@
-
 using System.Data;
 using System.Data.Common;
 using MoneyTracker.Authentication.Entities;
@@ -37,18 +36,12 @@ public class UserCommandRepository : IUserCommandRepository
     public async Task<int> GetLastUserId()
     {
         var query = """
-            SELECT MAX(id) as last_id
+            SELECT COALESCE(MAX(id), 0) as last_id
             from users;
          """;
         using var reader = await _database.GetTable(query);
 
-        foreach (DataColumn column in reader.Columns)
-        {
-
-            Console.WriteLine(column.ColumnName);
-        }
-
-        return reader.Rows.Count == 0 ? reader.Rows[0].Field<int>("last_id") : 0;
+        return reader.Rows[0].Field<int>("last_id");
     }
 
     public async Task<UserAuthentication?> GetUserAuthFromToken(string token)
