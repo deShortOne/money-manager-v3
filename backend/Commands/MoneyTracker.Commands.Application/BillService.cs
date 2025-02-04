@@ -106,8 +106,8 @@ public class BillService : IBillService
             return Error.Validation("BillService.EditBill", "Must have at least one non-null value");
         }
 
-        var doesUserOwnBill = await DoesUserOwnBill(editBill.Id, user);
-        if (!doesUserOwnBill)
+        var getBillIfOwnedByUser = await GetBillIfOwnedByUser(editBill.Id, user);
+        if (getBillIfOwnedByUser == null)
         {
             return Error.Validation("BillService.EditBill", "Bill not found");
         }
@@ -165,8 +165,8 @@ public class BillService : IBillService
             return userResult;
 
         var user = userResult.Value;
-        var doesUserOwnBill = await DoesUserOwnBill(deleteBill.Id, user);
-        if (!doesUserOwnBill)
+        var doesUserOwnBill = await GetBillIfOwnedByUser(deleteBill.Id, user);
+        if (doesUserOwnBill == null)
         {
             return Error.Validation("BillService.DeleteBill", "Bill not found");
         }
@@ -185,18 +185,13 @@ public class BillService : IBillService
             return userResult;
 
         var user = userResult.Value;
-        var doesUserOwnBill = await DoesUserOwnBill(skipBillDTO.Id, user);
-        if (!doesUserOwnBill)
+        var getBillIfOwnedByUser = await GetBillIfOwnedByUser(skipBillDTO.Id, user);
+        if (getBillIfOwnedByUser == null)
         {
             return Error.Validation("BillService.SkipOccurence", "Bill not found");
         }
 
-        var bill = await _dbService.GetBillById(skipBillDTO.Id);
-        if (bill == null)
-        {
-            return Error.Failure("BillService.SkipOccurence", "Bill not found");
-        }
-        var newDueDate = _frequencyCalculation.CalculateNextDueDate(bill.Frequency, bill.MonthDay, skipBillDTO.SkipDatePastThisDate);
+        var newDueDate = _frequencyCalculation.CalculateNextDueDate(getBillIfOwnedByUser.Frequency, getBillIfOwnedByUser.MonthDay, skipBillDTO.SkipDatePastThisDate);
 
         var editBill = new EditBillEntity(skipBillDTO.Id, nextDueDate: newDueDate);
         await _dbService.EditBill(editBill);
@@ -206,22 +201,22 @@ public class BillService : IBillService
         return Result.Success();
     }
 
-    private async Task<bool> DoesUserOwnBill(int billId, AuthenticatedUser user)
+    private async Task<BillEntity?> GetBillIfOwnedByUser(int billId, AuthenticatedUser user)
     {
         var bill = await _dbService.GetBillById(billId);
         if (bill == null)
         {
-            return false;
+            return null;
         }
         var billsPayerAccount = await _accountDatabase.GetAccountById(bill.PayerId);
         if (billsPayerAccount == null)
         {
-            return false;
+            return null;
         }
         if (billsPayerAccount.UserId != user.Id)
         {
-            return false;
+            return null;
         }
-        return true;
+        return bill;
     }
 }

@@ -45,7 +45,7 @@ public sealed class SkipOccurenceTest : BillTestHelper
             Assert.True(result.IsSuccess);
 
             _mockUserService.Verify(x => x.GetUserFromToken(tokenToDecode), Times.Once);
-            _mockBillDatabase.Verify(x => x.GetBillById(billId), Times.Exactly(2));
+            _mockBillDatabase.Verify(x => x.GetBillById(billId), Times.Once);
             _mockBillDatabase.Verify(x => x.EditBill(editBillEntity), Times.Once);
             _mockAccountDatabase.Verify(x => x.GetAccountById(previousBillPayerId), Times.Once);
             _mockFrequencyCalculation.Verify(x => x.CalculateNextDueDate(frequencyToCheck, monthDay, dateToEvaluate), Times.Once);
