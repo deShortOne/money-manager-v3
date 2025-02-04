@@ -1,6 +1,5 @@
 using System.Data.Common;
 using MoneyTracker.Authentication.Entities;
-using MoneyTracker.Authentication.Interfaces;
 using MoneyTracker.Commands.DatabaseMigration;
 using MoneyTracker.Commands.DatabaseMigration.Models;
 using MoneyTracker.Commands.Infrastructure.Postgres;
@@ -10,7 +9,7 @@ using Moq;
 using Npgsql;
 using Testcontainers.PostgreSql;
 
-namespace MoneyTracker.Tests.AuthenticationTests.Repository;
+namespace MoneyTracker.Commands.Tests.UserTests.Repository;
 public sealed class GetUserFromTokenTest : IAsyncLifetime
 {
     private readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder()

@@ -9,7 +9,7 @@ using Moq;
 using Npgsql;
 using Testcontainers.PostgreSql;
 
-namespace MoneyTracker.Tests.AuthenticationTests.Repository;
+namespace MoneyTracker.Commands.Tests.UserTests.Repository;
 public sealed class GetUserByUsernameTest : IAsyncLifetime
 {
     private readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder()
