@@ -1,4 +1,5 @@
 
+namespace MoneyTracker.Authentication.DTOs;
 public class UserIdentity(string identifier)
 {
     public string Identifier { get; set; } = identifier;

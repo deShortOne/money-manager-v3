@@ -6,6 +6,7 @@ using MoneyTracker.Common.Interfaces;
 using MoneyTracker.Common.Utilities.DateTimeUtil;
 using Npgsql;
 
+namespace MoneyTracker.Commands.Infrastructure.Postgres;
 public class UserCommandRepository : IUserCommandRepository
 {
     private readonly IDatabase _database;

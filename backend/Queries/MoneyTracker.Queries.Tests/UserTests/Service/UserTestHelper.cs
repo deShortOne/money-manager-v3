@@ -1,4 +1,5 @@
 using MoneyTracker.Common.Interfaces;
+using MoneyTracker.Queries.Application;
 using MoneyTracker.Queries.Domain.Repositories.Service;
 using Moq;
 

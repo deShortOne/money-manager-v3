@@ -1,6 +1,5 @@
 using System.Data;
 using System.Data.Common;
-using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Commands.Domain.Entities.Transaction;
 using MoneyTracker.Commands.Domain.Repositories;
 using MoneyTracker.Common.Interfaces;

@@ -4,6 +4,7 @@ using MoneyTracker.Common.Interfaces;
 using MoneyTracker.Queries.Domain.Handlers;
 using MoneyTracker.Queries.Domain.Repositories.Service;
 
+namespace MoneyTracker.Queries.Application;
 public class UserService : IUserService
 {
     private readonly IUserRepositoryService _userRepository;
