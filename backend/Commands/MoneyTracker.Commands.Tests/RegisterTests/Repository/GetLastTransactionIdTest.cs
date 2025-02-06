@@ -1,19 +1,20 @@
-
-using MoneyTracker.Commands.DatabaseMigration;
-using MoneyTracker.Commands.DatabaseMigration.Models;
-using MoneyTracker.Commands.Tests.RegisterTests.Repository;
+using MoneyTracker.Commands.Infrastructure.Postgres;
+using MoneyTracker.Commands.Tests.Fixture;
 
 namespace MoneyTracker.Commands.Tests.TransactionTests.Repository;
-public sealed class GetLastTransactionIdTest : RegisterRespositoryTestHelper
+public sealed class GetLastTransactionIdTest : IClassFixture<PostgresDbFixture>
 {
-    [Fact]
-    public void GetLastTransactionId()
-    {
-        Migration.CheckMigration(_postgres.GetConnectionString(), new MigrationOption(true));
+    private RegisterCommandRepository _registerRepo;
 
-        Assert.Multiple(async () =>
-        {
-            Assert.Equal(10, await _registerRepo.GetLastTransactionId());
-        });
+    public GetLastTransactionIdTest(PostgresDbFixture postgresFixture)
+    {
+        var _database = new PostgresDatabase(postgresFixture.ConnectionString);
+        _registerRepo = new RegisterCommandRepository(_database);
+    }
+
+    [Fact]
+    public async Task GetLastTransactionId()
+    {
+        Assert.Equal(10, await _registerRepo.GetLastTransactionId());
     }
 }

@@ -1,38 +1,21 @@
-using MoneyTracker.Queries.DatabaseMigration;
-using MoneyTracker.Queries.DatabaseMigration.Models;
 using MoneyTracker.Queries.Domain.Entities.Category;
 using MoneyTracker.Queries.Infrastructure.Postgres;
-using Testcontainers.PostgreSql;
+using MoneyTracker.Queries.Tests.Fixture;
 
 namespace MoneyTracker.Queries.Tests.CategoryTests.Repository.PostgresDb;
-public sealed class GetAllCategoriesTest : IAsyncLifetime
+public sealed class GetAllCategoriesTest : IClassFixture<PostgresDbFixture>
 {
-    private readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder()
-#if RUN_LOCAL
-        .WithDockerEndpoint("tcp://localhost:2375")
-#endif
-        .WithImage("postgres:16")
-        .WithCleanUp(true)
-        .Build();
+    private readonly PostgresDbFixture _postgresFixture;
 
-    public async Task InitializeAsync()
+    public GetAllCategoriesTest(PostgresDbFixture postgresFixture)
     {
-        await _postgres.StartAsync();
-
-        Migration.CheckMigration(_postgres.GetConnectionString(), new MigrationOption(true));
-
-        return;
-    }
-
-    public Task DisposeAsync()
-    {
-        return _postgres.DisposeAsync().AsTask();
+        _postgresFixture = postgresFixture;
     }
 
     [Fact]
     public async Task FirstLoadCheckTablesThatDataAreThere()
     {
-        var db = new PostgresDatabase(_postgres.GetConnectionString());
+        var db = new PostgresDatabase(_postgresFixture.ConnectionString);
         var budgetDb = new CategoryDatabase(db);
 
         var actual = await budgetDb.GetAllCategories();

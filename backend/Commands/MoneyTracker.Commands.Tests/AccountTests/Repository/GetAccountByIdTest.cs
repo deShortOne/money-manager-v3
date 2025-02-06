@@ -1,35 +1,17 @@
-using MoneyTracker.Commands.DatabaseMigration;
-using MoneyTracker.Commands.DatabaseMigration.Models;
 using MoneyTracker.Commands.Domain.Entities.Account;
 using MoneyTracker.Commands.Domain.Repositories;
 using MoneyTracker.Commands.Infrastructure.Postgres;
-using Testcontainers.PostgreSql;
+using MoneyTracker.Commands.Tests.Fixture;
 
 namespace MoneyTracker.Commands.Tests.AccountTests.Repository;
-public class GetAccountByIdTest : IAsyncLifetime
+public class GetAccountByIdTest : IClassFixture<PostgresDbFixture>
 {
-    public readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder()
-#if RUN_LOCAL
-        .WithDockerEndpoint("tcp://localhost:2375")
-#endif
-        .WithImage("postgres:16")
-        .WithCleanUp(true)
-        .Build();
-
     public IAccountCommandRepository _accountRepo;
 
-    public async Task InitializeAsync()
+    public GetAccountByIdTest(PostgresDbFixture postgresDbFixture)
     {
-        await _postgres.StartAsync();
-        Migration.CheckMigration(_postgres.GetConnectionString(), new MigrationOption(true));
-
-        var _database = new PostgresDatabase(_postgres.GetConnectionString());
+        var _database = new PostgresDatabase(postgresDbFixture.ConnectionString);
         _accountRepo = new AccountCommandRepository(_database);
-    }
-
-    public Task DisposeAsync()
-    {
-        return _postgres.DisposeAsync().AsTask();
     }
 
     [Fact]

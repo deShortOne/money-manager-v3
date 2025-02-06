@@ -40,6 +40,7 @@ public sealed class StoreTokenForUserTest : IAsyncLifetime
     [Fact]
     public async Task StoreTokenForUserSuccessfully()
     {
+        // arrange
         var userId = 5623;
         var token = Guid.NewGuid();
         var expiration = new DateTime(2024, 10, 6, 15, 0, 0, DateTimeKind.Utc);
@@ -57,9 +58,12 @@ public sealed class StoreTokenForUserTest : IAsyncLifetime
 
         var dateTimeProvider = new Mock<IDateTimeProvider>();
         dateTimeProvider.Setup(x => x.Now).Returns(new DateTime(2024, 6, 5, 0, 0, 0));
+
+        // act
         await _userAuthRepo.StoreTemporaryTokenToUser(new UserAuthentication(new UserEntity(userId, "", ""), token.ToString(),
             expiration, dateTimeProvider.Object));
 
+        // assert
         var query = """
             SELECT 1
             FROM user_id_to_token

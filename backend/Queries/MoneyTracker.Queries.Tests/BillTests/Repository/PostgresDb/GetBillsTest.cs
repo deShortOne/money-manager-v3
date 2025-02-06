@@ -1,39 +1,22 @@
 using MoneyTracker.Authentication.DTOs;
-using MoneyTracker.Queries.DatabaseMigration;
-using MoneyTracker.Queries.DatabaseMigration.Models;
 using MoneyTracker.Queries.Domain.Entities.Bill;
 using MoneyTracker.Queries.Infrastructure.Postgres;
-using Testcontainers.PostgreSql;
+using MoneyTracker.Queries.Tests.Fixture;
 
 namespace MoneyTracker.Queries.Tests.BillTests.Repository.PostgresDb;
-public sealed class GetBillsTest : IAsyncLifetime
+public sealed class GetBillsTest : IClassFixture<PostgresDbFixture>
 {
-    private readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder()
-#if RUN_LOCAL
-        .WithDockerEndpoint("tcp://localhost:2375")
-#endif
-        .WithImage("postgres:16")
-        .WithCleanUp(true)
-        .Build();
+    private readonly PostgresDbFixture _postgresFixture;
 
-    public async Task InitializeAsync()
+    public GetBillsTest(PostgresDbFixture postgresFixture)
     {
-        await _postgres.StartAsync();
-
-        Migration.CheckMigration(_postgres.GetConnectionString(), new MigrationOption(true));
-
-        return;
-    }
-
-    public Task DisposeAsync()
-    {
-        return _postgres.DisposeAsync().AsTask();
+        _postgresFixture = postgresFixture;
     }
 
     [Fact]
     public async Task FirstLoadCheckTablesThatDataAreThereForUserId1()
     {
-        var db = new PostgresDatabase(_postgres.GetConnectionString());
+        var db = new PostgresDatabase(_postgresFixture.ConnectionString);
         var billDb = new BillDatabase(db);
 
         var actual = await billDb.GetAllBills(new AuthenticatedUser(1));
@@ -50,7 +33,7 @@ public sealed class GetBillsTest : IAsyncLifetime
     [Fact]
     public async Task FirstLoadCheckTablesThatDataAreThereForUserId2()
     {
-        var db = new PostgresDatabase(_postgres.GetConnectionString());
+        var db = new PostgresDatabase(_postgresFixture.ConnectionString);
         var billDb = new BillDatabase(db);
 
         var actual = await billDb.GetAllBills(new AuthenticatedUser(2));

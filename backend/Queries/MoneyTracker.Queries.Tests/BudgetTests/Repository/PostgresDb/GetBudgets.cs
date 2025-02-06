@@ -1,39 +1,22 @@
 using MoneyTracker.Authentication.DTOs;
-using MoneyTracker.Queries.DatabaseMigration;
-using MoneyTracker.Queries.DatabaseMigration.Models;
 using MoneyTracker.Queries.Domain.Entities.BudgetCategory;
 using MoneyTracker.Queries.Infrastructure.Postgres;
-using Testcontainers.PostgreSql;
+using MoneyTracker.Queries.Tests.Fixture;
 
 namespace MoneyTracker.Queries.Tests.BudgetTests.Repository.PostgresDb;
-public sealed class GetBudgetTest : IAsyncLifetime
+public sealed class GetBudgetTest : IClassFixture<PostgresDbFixture>
 {
-    private readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder()
-#if RUN_LOCAL
-        .WithDockerEndpoint("tcp://localhost:2375")
-#endif
-        .WithImage("postgres:16")
-        .WithCleanUp(true)
-        .Build();
+    private readonly PostgresDbFixture _postgresFixture;
 
-    public async Task InitializeAsync()
+    public GetBudgetTest(PostgresDbFixture postgresFixture)
     {
-        await _postgres.StartAsync();
-
-        Migration.CheckMigration(_postgres.GetConnectionString(), new MigrationOption(true));
-
-        return;
-    }
-
-    public Task DisposeAsync()
-    {
-        return _postgres.DisposeAsync().AsTask();
+        _postgresFixture = postgresFixture;
     }
 
     [Fact]
     public async Task FirstLoadCheckTablesThatDataAreThereForUserId1()
     {
-        var db = new PostgresDatabase(_postgres.GetConnectionString());
+        var db = new PostgresDatabase(_postgresFixture.ConnectionString);
         var budgetDb = new BudgetDatabase(db);
 
         var actual = await budgetDb.GetBudget(new AuthenticatedUser(1));
@@ -58,7 +41,7 @@ public sealed class GetBudgetTest : IAsyncLifetime
     [Fact]
     public async Task FirstLoadCheckTablesThatDataAreThereForUserId2()
     {
-        var db = new PostgresDatabase(_postgres.GetConnectionString());
+        var db = new PostgresDatabase(_postgresFixture.ConnectionString);
         var budgetDb = new BudgetDatabase(db);
 
         var actual = await budgetDb.GetBudget(new AuthenticatedUser(2));

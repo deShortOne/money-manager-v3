@@ -1,35 +1,21 @@
-using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Queries.Domain.Entities.Category;
-using MoneyTracker.Queries.Domain.Entities.Transaction;
 using MoneyTracker.Queries.Infrastructure.Mongo;
-using Testcontainers.MongoDb;
+using MoneyTracker.Queries.Tests.Fixture;
 
 namespace MoneyTracker.Queries.Tests.CategoryTests.Repository.MongoDb;
-public sealed class SaveAndGetCategoriesTest : IAsyncLifetime
+public sealed class SaveAndGetCategoriesTest : IClassFixture<MongoDbFixture>
 {
-    private readonly MongoDbContainer _mongo = new MongoDbBuilder()
-#if RUN_LOCAL
-       .WithDockerEndpoint("tcp://localhost:2375")
-#endif
-       .WithImage("mongo:8")
-       .WithCleanUp(true)
-       .Build();
+    private readonly MongoDbFixture _mongoDbFixture;
 
-    public async Task InitializeAsync()
+    public SaveAndGetCategoriesTest(MongoDbFixture mongoDbFixture)
     {
-        await _mongo.StartAsync();
-
-    }
-
-    public Task DisposeAsync()
-    {
-        return _mongo.DisposeAsync().AsTask();
+        _mongoDbFixture = mongoDbFixture;
     }
 
     [Fact]
     public async Task Test()
     {
-        var mongoDb = new MongoDatabase(_mongo.GetConnectionString());
+        var mongoDb = new MongoDatabase(_mongoDbFixture.ConnectionString);
         var categoriesCache = new CategoryCache(mongoDb);
 
         var categories = new List<CategoryEntity>
@@ -49,7 +35,7 @@ public sealed class SaveAndGetCategoriesTest : IAsyncLifetime
     [Fact]
     public async Task EmptyAsDifferentUserAttemptsToAccessInformation()
     {
-        var mongoDb = new MongoDatabase(_mongo.GetConnectionString());
+        var mongoDb = new MongoDatabase(_mongoDbFixture.ConnectionString);
         var categoriesCache = new CategoryCache(mongoDb);
 
         var result = await categoriesCache.GetAllCategories();

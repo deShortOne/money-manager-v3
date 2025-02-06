@@ -29,9 +29,9 @@ public class BillRespositoryTestHelper : IAsyncLifetime
         _billRepo = new BillCommandRepository(_database);
     }
 
-    public Task DisposeAsync()
+    public async Task DisposeAsync()
     {
-        return _postgres.DisposeAsync().AsTask();
+        await _postgres.DisposeAsync();
     }
 
     protected async Task<List<BillEntity>> GetAllBillEntity()

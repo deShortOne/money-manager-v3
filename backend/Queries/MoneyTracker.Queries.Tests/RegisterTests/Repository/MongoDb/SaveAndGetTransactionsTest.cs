@@ -1,34 +1,23 @@
 using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Queries.Domain.Entities.Transaction;
 using MoneyTracker.Queries.Infrastructure.Mongo;
+using MoneyTracker.Queries.Tests.Fixture;
 using Testcontainers.MongoDb;
 
 namespace MoneyTracker.Queries.Tests.RegisterTests.Repository.MongoDb;
-public sealed class SaveAndGetCategoriesTest : IAsyncLifetime
+public sealed class SaveAndGetCategoriesTest : IClassFixture<MongoDbFixture>
 {
-    private readonly MongoDbContainer _mongo = new MongoDbBuilder()
-#if RUN_LOCAL
-       .WithDockerEndpoint("tcp://localhost:2375")
-#endif
-       .WithImage("mongo:8")
-       .WithCleanUp(true)
-       .Build();
+    private readonly MongoDbFixture _mongoDbFixture;
 
-    public async Task InitializeAsync()
+    public SaveAndGetCategoriesTest(MongoDbFixture mongoDbFixture)
     {
-        await _mongo.StartAsync();
-
-    }
-
-    public Task DisposeAsync()
-    {
-        return _mongo.DisposeAsync().AsTask();
+        _mongoDbFixture = mongoDbFixture;
     }
 
     [Fact]
     public async Task Test()
     {
-        var mongoDb = new MongoDatabase(_mongo.GetConnectionString());
+        var mongoDb = new MongoDatabase(_mongoDbFixture.ConnectionString);
         var registerCache = new RegisterCache(mongoDb);
 
         var authedUser = new AuthenticatedUser(523);
@@ -49,7 +38,7 @@ public sealed class SaveAndGetCategoriesTest : IAsyncLifetime
     [Fact]
     public async Task EmptyAsDifferentUserAttemptsToAccessInformation()
     {
-        var mongoDb = new MongoDatabase(_mongo.GetConnectionString());
+        var mongoDb = new MongoDatabase(_mongoDbFixture.ConnectionString);
         var registerCache = new RegisterCache(mongoDb);
 
         var authedUser1 = new AuthenticatedUser(523);
