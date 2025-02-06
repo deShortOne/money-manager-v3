@@ -1,5 +1,3 @@
-
-using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Commands.DatabaseMigration;
 using MoneyTracker.Commands.DatabaseMigration.Models;
 using MoneyTracker.Commands.Domain.Entities.Account;
@@ -7,7 +5,7 @@ using MoneyTracker.Commands.Domain.Repositories;
 using MoneyTracker.Commands.Infrastructure.Postgres;
 using Testcontainers.PostgreSql;
 
-namespace MoneyTracker.Commands.Tests.AccountTests;
+namespace MoneyTracker.Commands.Tests.AccountTests.Repository;
 public class GetAccountByIdTest : IAsyncLifetime
 {
     public readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder()
