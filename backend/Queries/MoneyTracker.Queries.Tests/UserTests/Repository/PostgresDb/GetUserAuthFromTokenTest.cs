@@ -1,5 +1,4 @@
-
-namespace MoneyTracker.Queries.Tests.UserTests.Repository.Postgres;
+namespace MoneyTracker.Queries.Tests.UserTests.Repository.PostgresDb;
 public sealed class GetUserAuthFromTokenTest : UserDatabaseTestHelper
 {
     [Fact]

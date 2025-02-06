@@ -5,7 +5,7 @@ using MoneyTracker.Queries.Domain.Entities.Transaction;
 using MoneyTracker.Queries.Infrastructure.Postgres;
 using Testcontainers.PostgreSql;
 
-namespace MoneyTracker.Tests.RegisterTests.Repository;
+namespace MoneyTracker.Queries.Tests.RegisterTests.Repository.PostgresDb;
 public sealed class GetTransactionsTest : IAsyncLifetime
 {
     private readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder()

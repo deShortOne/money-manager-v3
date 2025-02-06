@@ -4,7 +4,7 @@ using MoneyTracker.Queries.Domain.Entities.BudgetCategory;
 using MoneyTracker.Queries.Infrastructure.Mongo;
 using Testcontainers.MongoDb;
 
-namespace MoneyTracker.Queries.Tests.BudgetTests.Repository.Cache;
+namespace MoneyTracker.Queries.Tests.BudgetTests.Repository.MongoDb;
 public sealed class SaveAndGetBudgetTest : IAsyncLifetime
 {
     private readonly MongoDbContainer _mongo = new MongoDbBuilder()

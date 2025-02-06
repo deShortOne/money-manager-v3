@@ -3,7 +3,7 @@ using MoneyTracker.Queries.Domain.Entities.Bill;
 using MoneyTracker.Queries.Infrastructure.Mongo;
 using Testcontainers.MongoDb;
 
-namespace MoneyTracker.Queries.Tests.BillTests.Repository.Cache;
+namespace MoneyTracker.Queries.Tests.BillTests.Repository.MongoDb;
 public sealed class SaveAndGetBillsTest : IAsyncLifetime
 {
     private readonly MongoDbContainer _mongo = new MongoDbBuilder()

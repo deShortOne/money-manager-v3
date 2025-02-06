@@ -7,7 +7,7 @@ using MoneyTracker.Queries.Infrastructure.Postgres;
 using Moq;
 using Testcontainers.PostgreSql;
 
-namespace MoneyTracker.Queries.Tests.UserTests.Repository.Postgres;
+namespace MoneyTracker.Queries.Tests.UserTests.Repository.PostgresDb;
 public sealed class GetLastUserTokenForUserTest : IAsyncLifetime
 {
     public readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder()

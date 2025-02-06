@@ -4,7 +4,7 @@ using MoneyTracker.Queries.Domain.Entities.Category;
 using MoneyTracker.Queries.Infrastructure.Postgres;
 using Testcontainers.PostgreSql;
 
-namespace MoneyTracker.Tests.CategoryTests.Repository;
+namespace MoneyTracker.Queries.Tests.CategoryTests.Repository.PostgresDb;
 public sealed class GetAllCategoriesTest : IAsyncLifetime
 {
     private readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder()
