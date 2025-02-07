@@ -1,18 +1,20 @@
-
-using MoneyTracker.Commands.DatabaseMigration;
-using MoneyTracker.Commands.DatabaseMigration.Models;
+using MoneyTracker.Commands.Infrastructure.Postgres;
+using MoneyTracker.Commands.Tests.Fixture;
 
 namespace MoneyTracker.Commands.Tests.CategoryTests.Repository;
-public sealed class GetLastCategoryIdTest : CategoryRespositoryTestHelper
+public sealed class GetLastCategoryIdTest : IClassFixture<PostgresDbFixture>
 {
-    [Fact]
-    public void GetLastCategoryId()
-    {
-        Migration.CheckMigration(_postgres.GetConnectionString(), new MigrationOption(true));
+    private CategoryCommandRepository _categoryRepo;
 
-        Assert.Multiple(async () =>
-        {
-            Assert.Equal(6, await _categoryRepo.GetLastCategoryId());
-        });
+    public GetLastCategoryIdTest(PostgresDbFixture postgresFixture)
+    {
+        var _database = new PostgresDatabase(postgresFixture.ConnectionString);
+        _categoryRepo = new CategoryCommandRepository(_database);
+    }
+
+    [Fact]
+    public async Task GetLastCategoryId()
+    {
+        Assert.Equal(6, await _categoryRepo.GetLastCategoryId());
     }
 }

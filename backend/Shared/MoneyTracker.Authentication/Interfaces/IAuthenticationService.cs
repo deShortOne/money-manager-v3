@@ -1,3 +1,4 @@
+using MoneyTracker.Authentication.DTOs;
 
 namespace MoneyTracker.Authentication.Interfaces;
 public interface IAuthenticationService

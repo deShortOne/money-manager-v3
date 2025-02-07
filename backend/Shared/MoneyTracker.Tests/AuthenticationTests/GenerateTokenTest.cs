@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq.Expressions;
+using MoneyTracker.Authentication.DTOs;
 using Moq;
 
 namespace MoneyTracker.Tests.AuthenticationTests.Service;

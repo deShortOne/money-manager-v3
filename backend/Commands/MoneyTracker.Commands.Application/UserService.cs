@@ -1,5 +1,3 @@
-
-using Microsoft.AspNetCore.Http.HttpResults;
 using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Authentication.Entities;
 using MoneyTracker.Authentication.Interfaces;
@@ -44,7 +42,8 @@ public class UserService : IUserService
     {
         var lastUserId = await _userRepository.GetLastUserId();
         var newUserId = _idGenerator.NewInt(lastUserId);
-        await _userRepository.AddUser(new UserEntity(newUserId, usernameAndPassword.Username, usernameAndPassword.Password));
+        var hashedPassword = _passwordHasher.HashPassword(usernameAndPassword.Password);
+        await _userRepository.AddUser(new UserEntity(newUserId, usernameAndPassword.Username, hashedPassword));
 
         await _messageBus.PublishEvent(new EventUpdate(new AuthenticatedUser(newUserId), DataTypes.User), CancellationToken.None);
 
@@ -56,7 +55,7 @@ public class UserService : IUserService
         var user = await _userRepository.GetUserByUsername(usernameAndPassword.Username);
         if (user == null)
             return Error.NotFound("UserService.LoginUser", "User does not exist");
-        if (!_passwordHasher.VerifyPassword(user.Password, usernameAndPassword.Password, ""))
+        if (!_passwordHasher.VerifyPassword(user.Password, usernameAndPassword.Password))
             return Error.NotFound("UserService.LoginUser", "User does not exist");
 
         var expiration = _dateTimeProvider.Now.AddMinutes(ExpirationTimeInMinutesForAll);

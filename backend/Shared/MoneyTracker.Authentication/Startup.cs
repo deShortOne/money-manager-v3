@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,6 +11,7 @@ using MoneyTracker.Common.Utilities.DateTimeUtil;
 using MoneyTracker.Common.Utilities.IdGeneratorUtil;
 
 namespace MoneyTracker.Authentication;
+[ExcludeFromCodeCoverage]
 public class Startup
 {
     public static void Start(WebApplicationBuilder builder)

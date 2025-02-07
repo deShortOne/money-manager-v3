@@ -1,7 +1,8 @@
-
 using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Commands.Domain.Handlers;
 using MoneyTracker.Commands.Domain.Repositories;
+
+namespace MoneyTracker.Commands.Application;
 public class AccountService : IAccountService
 {
     private readonly IAccountCommandRepository _accountDb;

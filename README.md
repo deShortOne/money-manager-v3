@@ -53,5 +53,9 @@ sudo dockerd
 ## Code coverage
 Run this in root directory
 ```bash
-rm -rf coverage/ && dotnet build && dotnet test --no-build --verbosity normal --collect:"XPlat Code Coverage" --results-directory coverage && dotnet-coverage merge coverage/**/coverage.cobertura.xml -f cobertura -o coverage/coverage.xml && pycobertura show coverage/coverage.xml
+rm -r coverage --force \
+&& dotnet test --verbosity q --collect:"XPlat Code Coverage" --results-directory coverage \
+&& dotnet-coverage merge coverage/**/coverage.cobertura.xml -f cobertura -o coverage/coverage.xml \
+&& reportgenerator -reports:"coverage/coverage.xml" -targetdir:"coverage/coveragereport" -reporttypes:Html \
+&& firefox ~/projects/money-manager-v3/backend/coverage/coveragereport/index.htm
 ```

@@ -4,6 +4,7 @@ using MoneyTracker.Common.Interfaces;
 using MoneyTracker.Queries.Domain.Handlers;
 using MoneyTracker.Queries.Domain.Repositories.Service;
 
+namespace MoneyTracker.Queries.Application;
 public class UserService : IUserService
 {
     private readonly IUserRepositoryService _userRepository;
@@ -20,7 +21,7 @@ public class UserService : IUserService
         var user = await _userRepository.GetUserByUsername(userLogin.Username);
         if (user == null)
             throw new InvalidDataException("User does not exist");
-        if (!_passwordHasher.VerifyPassword(user.Password, userLogin.Password, ""))
+        if (!_passwordHasher.VerifyPassword(user.Password, userLogin.Password))
             throw new InvalidDataException("User does not exist");
 
         var token = await _userRepository.GetLastUserTokenForUser(user);

@@ -19,7 +19,7 @@ public class AuthenticateUserTest : UserTestHelper
         _mockUserDatabase.Setup(x => x.GetUserByUsername("root"))
             .Returns(Task.FromResult(userFromDb));
 
-        _mockPasswordHasher.Setup(x => x.VerifyPassword("root-pass", "root-pass", ""))
+        _mockPasswordHasher.Setup(x => x.VerifyPassword("root-pass", "root-pass"))
             .Returns(true);
 
         _mockDateTimeProvider.Setup(x => x.Now).Returns(dateTimeNow);
@@ -31,7 +31,7 @@ public class AuthenticateUserTest : UserTestHelper
             await _userService.LoginUser(userToAuthenticate);
 
             _mockUserDatabase.Verify(x => x.GetUserByUsername("root"), Times.Once);
-            _mockPasswordHasher.Verify(x => x.VerifyPassword("root-pass", "root-pass", ""), Times.Once);
+            _mockPasswordHasher.Verify(x => x.VerifyPassword("root-pass", "root-pass"), Times.Once);
             _mockUserDatabase.Verify(x => x.StoreTemporaryTokenToUser(new UserAuthentication(userFromDb, "ASDF",
                 dateTimeExp, _mockDateTimeProvider.Object)));
             _mockAuthService.Verify(x => x.GenerateToken(new UserIdentity("1"), dateTimeExp), Times.Once);
@@ -57,7 +57,7 @@ public class AuthenticateUserTest : UserTestHelper
         _mockUserDatabase.Setup(x => x.GetUserByUsername(It.Is<string>(y => y == "secondary root")))
             .Returns(Task.FromResult(userFromDb));
 
-        _mockPasswordHasher.Setup(x => x.VerifyPassword("secondary root-pass", "secondary root-pass", ""))
+        _mockPasswordHasher.Setup(x => x.VerifyPassword("secondary root-pass", "secondary root-pass"))
             .Returns(true);
 
         _mockDateTimeProvider.Setup(x => x.Now).Returns(dateTimeNow);
@@ -69,7 +69,7 @@ public class AuthenticateUserTest : UserTestHelper
             await _userService.LoginUser(userToAuthenticate);
 
             _mockUserDatabase.Verify(x => x.GetUserByUsername("secondary root"), Times.Once);
-            _mockPasswordHasher.Verify(x => x.VerifyPassword("secondary root-pass", "secondary root-pass", ""), Times.Once);
+            _mockPasswordHasher.Verify(x => x.VerifyPassword("secondary root-pass", "secondary root-pass"), Times.Once);
             _mockUserDatabase.Verify(x => x.StoreTemporaryTokenToUser(new UserAuthentication(userFromDb, "ASDFAA",
                 dateTimeExp, _mockDateTimeProvider.Object)));
             _mockAuthService.Verify(x => x.GenerateToken(new UserIdentity("2"), dateTimeExp), Times.Once);
@@ -91,7 +91,7 @@ public class AuthenticateUserTest : UserTestHelper
         _mockUserDatabase.Setup(x => x.GetUserByUsername("root"))
             .Returns(Task.FromResult(new UserEntity(1, "root", "root-pass")));
 
-        _mockPasswordHasher.Setup(x => x.VerifyPassword("root-pass", "root-", ""))
+        _mockPasswordHasher.Setup(x => x.VerifyPassword("root-pass", "root-"))
             .Returns(false);
 
         var result = await _userService.LoginUser(userToAuthenticate);
@@ -100,7 +100,7 @@ public class AuthenticateUserTest : UserTestHelper
             Assert.Equal("User does not exist", result.Error.Description);
 
             _mockUserDatabase.Verify(x => x.GetUserByUsername("root"), Times.Once);
-            _mockPasswordHasher.Verify(x => x.VerifyPassword("root-pass", "root-", ""), Times.Once);
+            _mockPasswordHasher.Verify(x => x.VerifyPassword("root-pass", "root-"), Times.Once);
             EnsureAllMocksHadNoOtherCalls();
         });
     }

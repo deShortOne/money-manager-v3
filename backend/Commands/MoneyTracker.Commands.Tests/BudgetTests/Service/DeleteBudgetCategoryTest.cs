@@ -1,13 +1,11 @@
-
-
 using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Commands.Domain.Entities.BudgetCategory;
-using MoneyTracker.Commands.Tests.BudgetTests.Service;
 using MoneyTracker.Contracts.Requests.Budget;
 using MoneyTracker.PlatformService.Domain;
 using MoneyTracker.PlatformService.DTOs;
 using Moq;
 
+namespace MoneyTracker.Commands.Tests.BudgetTests.Service;
 public class DeleteBudgetCategoryTest : BudgetTestHelper
 {
     [Fact]

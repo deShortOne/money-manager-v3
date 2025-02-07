@@ -1,16 +1,21 @@
-
-using MoneyTracker.Commands.DatabaseMigration;
-using MoneyTracker.Commands.DatabaseMigration.Models;
 using MoneyTracker.Commands.Domain.Entities.Transaction;
+using MoneyTracker.Commands.Infrastructure.Postgres;
+using MoneyTracker.Commands.Tests.Fixture;
 
 namespace MoneyTracker.Commands.Tests.RegisterTests.Repository;
-public sealed class GetTransactionTest : RegisterRespositoryTestHelper
+public sealed class GetTransactionTest : IClassFixture<PostgresDbFixture>
 {
+    private RegisterCommandRepository _registerRepo;
+
+    public GetTransactionTest(PostgresDbFixture postgresFixture)
+    {
+        var _database = new PostgresDatabase(postgresFixture.ConnectionString);
+        _registerRepo = new RegisterCommandRepository(_database);
+    }
+
     [Fact]
     public async Task SuccessfullyGetTransaction()
     {
-        Migration.CheckMigration(_postgres.GetConnectionString(), new MigrationOption(true));
-
         Assert.Equal(new TransactionEntity(1, 4, 1800, new DateOnly(2024, 08, 28), 1, 1), await _registerRepo.GetTransaction(1));
         Assert.Equal(new TransactionEntity(2, 5, 10, new DateOnly(2024, 08, 01), 2, 1), await _registerRepo.GetTransaction(2));
         Assert.Equal(new TransactionEntity(3, 6, 500, new DateOnly(2024, 08, 01), 3, 1), await _registerRepo.GetTransaction(3));
@@ -26,9 +31,7 @@ public sealed class GetTransactionTest : RegisterRespositoryTestHelper
     [Fact]
     public async Task SuccessfullyGetNoTransaction()
     {
-        Migration.CheckMigration(_postgres.GetConnectionString(), new MigrationOption(dropAllTables: true));
-
-        Assert.Null(await _registerRepo.GetTransaction(1));
-        Assert.Null(await _registerRepo.GetTransaction(2));
+        Assert.Null(await _registerRepo.GetTransaction(-1));
+        Assert.Null(await _registerRepo.GetTransaction(-2));
     }
 }

@@ -6,4 +6,4 @@ WORKDIR /App
 COPY --from=be-base-image /App/out .
 EXPOSE 8080
 
-ENTRYPOINT ["dotnet", "MoneyTracker.Commands.API.dll"]
+ENTRYPOINT ["dotnet", "MoneyTracker.Commands.API.dll", "--reset-database"]

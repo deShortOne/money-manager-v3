@@ -1,7 +1,5 @@
 using System.Data.Common;
-using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Authentication.Entities;
-using MoneyTracker.Authentication.Interfaces;
 using MoneyTracker.Commands.DatabaseMigration;
 using MoneyTracker.Commands.DatabaseMigration.Models;
 using MoneyTracker.Commands.Infrastructure.Postgres;
@@ -11,7 +9,7 @@ using Moq;
 using Npgsql;
 using Testcontainers.PostgreSql;
 
-namespace MoneyTracker.Tests.AuthenticationTests.Repository;
+namespace MoneyTracker.Commands.Tests.UserTests.Repository;
 public sealed class StoreTokenForUserTest : IAsyncLifetime
 {
     private readonly PostgreSqlContainer _postgres = new PostgreSqlBuilder()
@@ -42,6 +40,7 @@ public sealed class StoreTokenForUserTest : IAsyncLifetime
     [Fact]
     public async Task StoreTokenForUserSuccessfully()
     {
+        // arrange
         var userId = 5623;
         var token = Guid.NewGuid();
         var expiration = new DateTime(2024, 10, 6, 15, 0, 0, DateTimeKind.Utc);
@@ -59,9 +58,12 @@ public sealed class StoreTokenForUserTest : IAsyncLifetime
 
         var dateTimeProvider = new Mock<IDateTimeProvider>();
         dateTimeProvider.Setup(x => x.Now).Returns(new DateTime(2024, 6, 5, 0, 0, 0));
+
+        // act
         await _userAuthRepo.StoreTemporaryTokenToUser(new UserAuthentication(new UserEntity(userId, "", ""), token.ToString(),
             expiration, dateTimeProvider.Object));
 
+        // assert
         var query = """
             SELECT 1
             FROM user_id_to_token

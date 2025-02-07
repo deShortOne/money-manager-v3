@@ -18,8 +18,8 @@ INSERT INTO BudgetGroup (name) VALUES
 	('Retirement');
 
 INSERT INTO users(name, password) VALUES
-    ('root', 'root-pass'),
-    ('secondary root', 'secondary root-pass');
+    ('root', 'IfC1pbsUdKwcX68HPvPybQ==.bfXuHix96vvlXfGqLpY+/kRgBnCbXCU/Kqu2uIY8M60='),
+    ('secondary root', 'lH0GmZnlH6TAwD+2wQx1UA==.C4UPD8P66L/A4AKv77WTsN6CSl6Wobgyy0psL3OkO+s=');
 INSERT INTO users VALUES
 	(-1, 'external company do not use', 'workshop.conversation.projection');
 
@@ -60,3 +60,8 @@ INSERT INTO BudgetCategory VALUES
 	(1, 2, 3, 500),
 	(1, 2, 4, 100),
 	(1, 4, 5, 50);
+
+INSERT INTO user_id_to_token VALUES
+    (1, 'token 1', '2025-02-03 23:24:13.126961+00'),
+    (1, 'token 2', '2025-02-04 23:24:13.126961+00'),
+    (1, 'token 3', '2025-02-02 23:24:13.126961+00');

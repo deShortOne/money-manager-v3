@@ -17,7 +17,7 @@ public sealed class GetLastUserTokenForUserTest : UserTestHelper
         _mockUserDatabase.Setup(x => x.GetUserByUsername(_username))
             .ReturnsAsync(user);
 
-        _mockPasswordHasher.Setup(x => x.VerifyPassword(_passwordFromDb, _passwordFromUser, "")).Returns(true);
+        _mockPasswordHasher.Setup(x => x.VerifyPassword(_passwordFromDb, _passwordFromUser)).Returns(true);
 
         _mockUserDatabase.Setup(x => x.GetLastUserTokenForUser(user)).ReturnsAsync("a new token");
 
@@ -26,7 +26,7 @@ public sealed class GetLastUserTokenForUserTest : UserTestHelper
             await _userService.GetUserToken(new Authentication.DTOs.LoginWithUsernameAndPassword(_username, _passwordFromUser));
 
             _mockUserDatabase.Verify(x => x.GetUserByUsername(_username), Times.Once);
-            _mockPasswordHasher.Verify(x => x.VerifyPassword(_passwordFromDb, _passwordFromUser, ""), Times.Once);
+            _mockPasswordHasher.Verify(x => x.VerifyPassword(_passwordFromDb, _passwordFromUser), Times.Once);
             _mockUserDatabase.Verify(x => x.GetLastUserTokenForUser(user), Times.Once);
             EnsureAllMocksHadNoOtherCalls();
         });
