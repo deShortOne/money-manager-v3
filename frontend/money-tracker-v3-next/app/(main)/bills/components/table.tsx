@@ -20,7 +20,7 @@ export default function BillsDisplay() {
 
     const [transactions, setTransactions] = useState<Bill[]>([]);
 
-    const { status, data, error, isFetching } = useQuery<Result<Bill[]>>({
+    const { data } = useQuery<Result<Bill[]>>({
         queryKey: [queryKeyBills],
         queryFn: () => getAllBills(cookies.token),
     });

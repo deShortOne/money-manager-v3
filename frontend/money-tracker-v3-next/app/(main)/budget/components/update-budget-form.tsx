@@ -51,7 +51,7 @@ export function UpdateBudgetForm() {
 
     const [budgetGroups, setBudgetGroups] = useState<BudgetGroup[]>([]);
 
-    const { status, data, error, isFetching } = useQuery<Result<BudgetGroup[]>>({
+    const { data } = useQuery<Result<BudgetGroup[]>>({
         queryKey: [queryKeyBudget],
         queryFn: () => getAllBudgets(cookies.token),
     });
@@ -145,6 +145,7 @@ export function UpdateBudgetForm() {
             categoryId: defaultValues.categoryId,
             planned: defaultValues.planned,
         });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [open]);
 
     return (

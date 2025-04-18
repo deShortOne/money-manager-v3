@@ -1,8 +1,6 @@
-
 import {
     Table,
     TableBody,
-    TableCell,
     TableHead,
     TableHeader,
     TableRow,
@@ -21,7 +19,7 @@ export default function TransactionsDisplay() {
 
     const [transactions, setTransactions] = useState<Transaction[]>([]);
 
-    const { status, data, error, isFetching } = useQuery<Result<Transaction[]>>({
+    const { data } = useQuery<Result<Transaction[]>>({
         queryKey: [queryKeyTransactions],
         queryFn: () => {
             return getAllTransactions(cookies.token)

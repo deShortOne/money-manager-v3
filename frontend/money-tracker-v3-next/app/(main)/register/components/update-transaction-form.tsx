@@ -171,6 +171,7 @@ export function UpdateTransactionForm() {
             datePaid: defaultValues.datePaid,
             category: defaultValues.categoryId,
         });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [open]);
 
     return (
@@ -181,7 +182,7 @@ export function UpdateTransactionForm() {
                         <DialogHeader>
                             <DialogTitle>Save transaction</DialogTitle>
                             <DialogDescription>
-                                Transaction that you've made or will make
+                                Transaction that you&apos;ve made or will make
                             </DialogDescription>
                         </DialogHeader>
 

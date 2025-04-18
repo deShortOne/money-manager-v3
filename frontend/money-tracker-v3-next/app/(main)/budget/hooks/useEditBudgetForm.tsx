@@ -28,7 +28,7 @@ type BudgetModalSetting = {
 export const useBudgetModalSetting = create<BudgetModalSetting>((set) => ({
     isOpen: false,
     defaultValues: defaultDefaultValues,
-    updateBudgetAction: (authToken: string, budgetCategory: UpdateBudgetCategory) => {
+    updateBudgetAction: () => {
         return new Promise(() => new ErrorResult<BudgetGroup[]>("error budget action not updated", true));
     },
     onOpen: (
