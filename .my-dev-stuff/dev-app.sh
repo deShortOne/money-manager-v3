@@ -17,7 +17,7 @@ then
 	
 	tmux new-window -t $SESH -n "frontend"
 	tmux send-keys -t $SESH:frontend "cd ~/projects/money-manager-v3/frontend/money-tracker-v3-next" C-m
-	tmux send-keys -t $SESH:frontend "yarn run dev" C-m
+	tmux send-keys -t $SESH:frontend "docker compose up --build" C-m
 	
 	tmux new-window -t $SESH -n "psql_db"
 	tmux send-keys -t $SESH:psql_db "docker exec -it postgres-master bash" 

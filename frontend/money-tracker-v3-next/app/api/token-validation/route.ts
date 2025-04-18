@@ -3,7 +3,7 @@ import { NextRequest } from "next/server";
 export async function POST(request: NextRequest) {
     const token = request.cookies.get('token');
 
-    const response = await fetch(`http://localhost:1235/User/is-token-valid`, {
+    const response = await fetch(process.env.QUERY_SERVER_URL + `/User/is-token-valid`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

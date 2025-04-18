@@ -65,11 +65,11 @@ export default function SignInPage() {
     }
     if (dataTokenCheck) {
         router.replace(redirectUrl);
-        return (<div suppressHydrationWarning>You've logged in, navigating to {redirectUrl}</div>);
+        return (<div suppressHydrationWarning>You&apos;ve logged in, navigating to {redirectUrl}</div>);
     }
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        var cookie: Result<string> = await loginUser(values.username, values.password);
+        const cookie: Result<string> = await loginUser(values.username, values.password);
         if (cookie.hasError) {
             setSignInButtonErrorMsg(cookie.errorMessage);
         } else {

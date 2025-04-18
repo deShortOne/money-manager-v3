@@ -187,6 +187,7 @@ export function UpdateBillForm() {
             frequency: defaultValues.frequency,
             category: defaultValues.category,
         });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [open]);
 
     return (

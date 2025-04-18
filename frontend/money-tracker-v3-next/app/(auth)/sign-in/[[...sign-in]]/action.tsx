@@ -3,12 +3,12 @@
 import { ErrorResult, SuccessResult, Result } from "@/types/result";
 
 export async function loginUser(username: string, password: string): Promise<Result<string>> {
-    const response = await fetch(`http://localhost:1234/User/login`, {
+    const response = await fetch(process.env.COMMAND_SERVER_URL + `/User/login`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
             username: username,
             password: password,
         }),
@@ -20,13 +20,13 @@ export async function loginUser(username: string, password: string): Promise<Res
     return JSON.parse(JSON.stringify(new ErrorResult("Username and password not found", false)));
 }
 
-async function getUserToken(username: string, password: string) : Promise<Result<string>> {
-    const response = await fetch(`http://localhost:1235/User/get-token`, {
+async function getUserToken(username: string, password: string): Promise<Result<string>> {
+    const response = await fetch(process.env.QUERY_SERVER_URL + `/User/get-token`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
             username: username,
             password: password,
         }),

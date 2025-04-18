@@ -10,7 +10,9 @@ enum WhatToShow {
 }
 
 function decideWhatContentToShow(): WhatToShow {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const pathname = usePathname();
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     const [token] = useCookies(["token"]);
     const pathIsSignInOrSignUpPage = ["/sign-in", "/sign-up"];
 
@@ -24,7 +26,7 @@ function decideWhatContentToShow(): WhatToShow {
 }
 
 export default function TopNavBar() {
-    let contentToShowIs: WhatToShow = decideWhatContentToShow();
+    const contentToShowIs: WhatToShow = decideWhatContentToShow();
 
     return (
         <div className="flex justify-between">

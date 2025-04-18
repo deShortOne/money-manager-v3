@@ -47,7 +47,7 @@ export default function SignUpPage() {
     })
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
-        var cookie: Result<string> = await addUserAndLogin(values.username, values.password);
+        const cookie: Result<string> = await addUserAndLogin(values.username, values.password);
         if (cookie.hasError) {
             setSignInButtonErrorMsg(cookie.errorMessage);
         } else {

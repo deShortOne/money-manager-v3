@@ -4,7 +4,7 @@ import { BudgetGroup, UpdateBudgetCategory } from "@/interface/budgetGroup";
 import { ErrorResult, SuccessResult, Result } from "@/types/result";
 
 export async function getAllBudgets(authToken: string): Promise<Result<BudgetGroup[]>> {
-    const response = await fetch(`http://localhost:1235/Budget/get`, {
+    const response = await fetch(process.env.QUERY_SERVER_URL + `/Budget/get`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -19,7 +19,7 @@ export async function getAllBudgets(authToken: string): Promise<Result<BudgetGro
 }
 
 export async function addNewBudgetCategory(authToken: string, budgetCategory: UpdateBudgetCategory): Promise<Result<BudgetGroup[]>> {
-    const response = await fetch(`http://localhost:1234/Budget/add`, {
+    const response = await fetch(process.env.COMMAND_SERVER_URL + `/Budget/add`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -44,7 +44,7 @@ export async function editBudgetCategory(authToken: string, budgetCategory: Upda
         "budgetCategoryId": budgetCategory.categoryId,
         "budgetCategoryPlanned": budgetCategory.planned,
     })
-    const response = await fetch(`http://localhost:1234/Budget/edit`, {
+    const response = await fetch(process.env.COMMAND_SERVER_URL + `/Budget/edit`, {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json",
@@ -66,7 +66,7 @@ export async function editBudgetCategory(authToken: string, budgetCategory: Upda
 }
 
 export async function deleteBudgetCategory(authToken: string, budgetGroupId: number, budgetCategoryId: number): Promise<Result<BudgetGroup[]>> {
-    const response = await fetch(`http://localhost:1234/Budget/delete`, {
+    const response = await fetch(process.env.COMMAND_SERVER_URL + `/Budget/delete`, {
         method: "DELETE",
         headers: {
             "Content-Type": "application/json",

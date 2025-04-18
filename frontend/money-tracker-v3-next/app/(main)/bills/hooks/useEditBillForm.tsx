@@ -1,5 +1,6 @@
 import { ErrorResult, Result } from "@/types/result";
 import { create } from "zustand";
+import { Bill, NewBillDto } from "@/interface/bill";
 
 interface defaultValuesProp {
     payee: number | undefined,
@@ -33,7 +34,7 @@ type BillModalSetting = {
 export const useBillModalSetting = create<BillModalSetting>((set) => ({
     isOpen: false,
     defaultValues: defaultDefaultValues,
-    updateBillAction: (authToken: string, newBill: NewBillDto) => {
+    updateBillAction: () => {
         return new Promise(() => new ErrorResult<Bill>("error bill action not updated", true));
     },
     onOpen: (

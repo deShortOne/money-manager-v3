@@ -11,11 +11,11 @@ interface defaultValuesProp {
 }
 
 const defaultDefaultValues = {
-    payee: undefined,
+    payeeId: undefined,
     amount: 0,
     datePaid: undefined,
-    category: undefined,
-    accountId: undefined,
+    categoryId: undefined,
+    payerId: undefined,
 }
 
 type RegisterModalSetting = {
@@ -32,7 +32,7 @@ type RegisterModalSetting = {
 export const useRegisterModalSetting = create<RegisterModalSetting>((set) => ({
     isOpen: false,
     defaultValues: defaultDefaultValues,
-    updateRegisterAction: (authToken: string, transaction: Newtransaction) => {
+    updateRegisterAction: () => {
         return new Promise(() => new ErrorResult<Transaction[]>("error transaction action not updated", true));
     },
     onOpen: (

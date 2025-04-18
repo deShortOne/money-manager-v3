@@ -30,7 +30,7 @@ export default function BudgetsDisplay() {
 
     const [cookies] = useCookies(['token']);
     const [budgetGroups, setBudgetGroups] = useState<BudgetGroup[]>([]);
-    const { status, data, error, isFetching } = useQuery<Result<BudgetGroup[]>>({
+    const { data } = useQuery<Result<BudgetGroup[]>>({
         queryKey: [queryKeyBudget],
         queryFn: () => {
             return getAllBudgets(cookies.token)
