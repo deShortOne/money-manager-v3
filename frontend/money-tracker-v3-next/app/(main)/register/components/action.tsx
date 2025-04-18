@@ -5,7 +5,7 @@ import { ErrorResult, SuccessResult, Result } from "@/types/result";
 import { convertDateToString } from "@/utils/date-converter";
 
 export async function getAllTransactions(authToken: string): Promise<Result<Transaction[]>> {
-    const response = await fetch(`http://localhost:1235/Register/get`, {
+    const response = await fetch(process.env.QUERY_SERVER_URL + `/Register/get`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -20,7 +20,7 @@ export async function getAllTransactions(authToken: string): Promise<Result<Tran
 }
 
 export async function addNewTransactions(authToken: string, transaction: Newtransaction): Promise<Result<Transaction[]>> {
-    const response = await fetch(`http://localhost:1234/Register/add`, {
+    const response = await fetch(process.env.COMMAND_SERVER_URL + `/Register/add`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -42,7 +42,7 @@ export async function addNewTransactions(authToken: string, transaction: Newtran
 }
 
 export async function editTransaction(authToken: string, transaction: UpdateTransaction): Promise<Result<Transaction[]>> {
-    const response = await fetch(`http://localhost:1234/Register/edit`, {
+    const response = await fetch(process.env.COMMAND_SERVER_URL + `/Register/edit`, {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json",
@@ -65,7 +65,7 @@ export async function editTransaction(authToken: string, transaction: UpdateTran
 }
 
 export async function deleteTransaction(authToken: string, transactionId: number): Promise<Result<Transaction>> {
-    const response = await fetch(`http://localhost:1234/Register/delete`, {
+    const response = await fetch(process.env.COMMAND_SERVER_URL + `/Register/delete`, {
         method: "DELETE",
         headers: {
             "Content-Type": "application/json",

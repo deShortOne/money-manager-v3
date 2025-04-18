@@ -1,6 +1,6 @@
 
 export async function GET() {
-    const response = await fetch(`http://localhost:1235/Bill/get-all-frequency-names`, {
+    const response = await fetch(process.env.QUERY_SERVER_URL + `/Bill/get-all-frequency-names`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",

@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  web:
+    container_name: web
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - COMMAND_SERVER_URL=${DOCKER_COMMAND_SERVER_URL}
+      - QUERY_SERVER_URL=${DOCKER_QUERY_SERVER_URL}
+    ports: 
+      - 3000:3000
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

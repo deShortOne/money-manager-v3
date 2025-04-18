@@ -5,7 +5,7 @@ import { ErrorResult, SuccessResult, Result } from "@/types/result";
 import { convertDateToString } from "@/utils/date-converter";
 
 export async function getAllBills(authToken: string): Promise<Result<Bill[]>> {
-    const response = await fetch(`http://localhost:1235/Bill/get`, {
+    const response = await fetch(process.env.QUERY_SERVER_URL + `/Bill/get`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -20,7 +20,7 @@ export async function getAllBills(authToken: string): Promise<Result<Bill[]>> {
 }
 
 export async function addNewBill(authToken: string, newBill: NewBillDto): Promise<Result<Bill>> {
-    const response = await fetch(`http://localhost:1234/Bill/add`, {
+    const response = await fetch(process.env.COMMAND_SERVER_URL + `/Bill/add`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -44,7 +44,7 @@ export async function addNewBill(authToken: string, newBill: NewBillDto): Promis
 }
 
 export async function editBill(authToken: string, editBill: EditBillDto): Promise<Result<Bill>> {
-    const response = await fetch(`http://localhost:1234/Bill/edit`, {
+    const response = await fetch(process.env.COMMAND_SERVER_URL + `/Bill/edit`, {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json",
@@ -69,7 +69,7 @@ export async function editBill(authToken: string, editBill: EditBillDto): Promis
 }
 
 export async function deleteBill(authToken: string, billId: number): Promise<Result<Bill>> {
-    const response = await fetch(`http://localhost:1234/Bill/delete`, {
+    const response = await fetch(process.env.COMMAND_SERVER_URL + `/Bill/delete`, {
         method: "DELETE",
         headers: {
             "Content-Type": "application/json",

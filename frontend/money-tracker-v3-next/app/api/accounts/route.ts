@@ -3,7 +3,7 @@ import { NextRequest } from "next/server";
 export async function GET(request: NextRequest) {
     const token = request.cookies.get('token');
 
-    const response = await fetch(`http://localhost:1235/Account/get`, {
+    const response = await fetch(process.env.QUERY_SERVER_URL + `/Account/get`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
