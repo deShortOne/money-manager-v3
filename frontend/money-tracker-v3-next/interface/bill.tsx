@@ -5,16 +5,16 @@ export interface Bill {
     id: number,
     payee: Account,
     amount: number,
-    nextDueDate: string,
+    nextduedate: string,
     frequency: string,
     category: Category,
-    overDueBill: OverdueBillInfo,
+    overduebill: OverdueBillInfo,
     payer: Account
 }
 
 export interface OverdueBillInfo {
     daysOverDue: number,
-    pastOccurences: string[],
+    PastOccurences: string[],
 }
 
 export interface NewBillDto {

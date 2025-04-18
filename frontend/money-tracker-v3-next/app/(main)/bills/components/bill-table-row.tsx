@@ -18,6 +18,7 @@ export default function BillTableRow({ bill }: prop) {
     const [cookies] = useCookies(['token']);
     const onOpen = useBillModalSetting(state => state.onOpen);
     const [msg, setMsg] = useState("");
+    console.log(bill);
 
     const queryClient = useQueryClient();
 
@@ -38,7 +39,7 @@ export default function BillTableRow({ bill }: prop) {
                 amount: bill.amount,
                 category: bill.category.id,
                 frequency: bill.frequency,
-                nextDueDate: new Date(bill.nextDueDate),
+                nextDueDate: new Date(bill.nextduedate),
                 payee: bill.payee.id,
                 payer: bill.payer.id,
             });
@@ -60,10 +61,10 @@ export default function BillTableRow({ bill }: prop) {
             <TableCell>{bill.payee.name}</TableCell>
             <TableCell className="textright">{bill.amount}</TableCell>
             <TableCell className="flex">
-                {bill.nextDueDate}
-                {bill.overDueBill &&
+                {bill.nextduedate}
+                {bill.overduebill &&
                     <OverflowBill
-                        overdueBillInfo={bill.overDueBill}
+                        overdueBillInfo={bill.overduebill}
                     />
                 }
             </TableCell>

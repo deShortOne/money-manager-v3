@@ -18,9 +18,9 @@ export default function OverflowBill({ overdueBillInfo }: { overdueBillInfo: Ove
             <HoverCardContent className="w-80">
                 You are {overdueBillInfo.daysOverDue} days overdue, on these days
                 {
-                    overdueBillInfo.pastOccurences.length <= 5 &&
+                    overdueBillInfo.PastOccurences.length <= 5 &&
                     <ul>
-                        {overdueBillInfo.pastOccurences.map(previousDueDate => (
+                        {overdueBillInfo.PastOccurences.map(previousDueDate => (
                             <li key={previousDueDate}>
                                 {previousDueDate}
                             </li>
@@ -28,14 +28,14 @@ export default function OverflowBill({ overdueBillInfo }: { overdueBillInfo: Ove
                     </ul>
                 }
                 {
-                    overdueBillInfo.pastOccurences.length > 5 &&
+                    overdueBillInfo.PastOccurences.length > 5 &&
                     <ul>
-                        {overdueBillInfo.pastOccurences.slice(0, 4).map(previousDueDate => (
+                        {overdueBillInfo.PastOccurences.slice(0, 4).map(previousDueDate => (
                             <li key={previousDueDate}>
                                 {previousDueDate}
                             </li>
                         ))}
-                        <li>...and {overdueBillInfo.pastOccurences.length - 4} more</li>
+                        <li>...and {overdueBillInfo.PastOccurences.length - 4} more</li>
                     </ul>
                 }
             </HoverCardContent>
