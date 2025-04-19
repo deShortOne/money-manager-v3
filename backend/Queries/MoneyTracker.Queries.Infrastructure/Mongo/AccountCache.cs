@@ -15,7 +15,7 @@ public class AccountCache : IAccountCache
         _accountsCollection = database.GetCollection<MongoAccountEntity>("account");
     }
 
-    public async Task<ResultT<List<AccountEntity>>> GetAccounts(AuthenticatedUser user)
+    public async Task<ResultT<List<AccountEntity>>> GetAccountsOwnedByUser(AuthenticatedUser user)
     {
         var accountsLisIterable = await _accountsCollection.FindAsync(Builders<MongoAccountEntity>.Filter.Eq(x => x.User, user));
         var accountsLis = await accountsLisIterable.ToListAsync();

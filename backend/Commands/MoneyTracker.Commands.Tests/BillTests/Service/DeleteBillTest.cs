@@ -26,7 +26,7 @@ public sealed class DeleteBillTest : BillTestHelper
             .ReturnsAsync(authedUser);
 
         _mockBillDatabase.Setup(x => x.GetBillById(billId)).ReturnsAsync(new BillEntity(billId, -1, -1, new DateOnly(), -1, "", 1, payerId));
-        _mockAccountDatabase.Setup(x => x.GetAccountById(payerId)).ReturnsAsync(new AccountEntity(1, "", userId));
+        _mockAccountDatabase.Setup(x => x.GetAccountUserEntity(payerId, userId)).ReturnsAsync(new AccountUserEntity(1, userId, true));
         _mockBillDatabase.Setup(x => x.DeleteBill(billId));
 
         await _billService.DeleteBill(tokenToDecode, deleteBillRequest);
@@ -36,7 +36,7 @@ public sealed class DeleteBillTest : BillTestHelper
             _mockUserService.Verify(x => x.GetUserFromToken(tokenToDecode), Times.Once);
             _mockBillDatabase.Verify(x => x.GetBillById(billId), Times.Once);
             _mockBillDatabase.Verify(x => x.DeleteBill(billId), Times.Once);
-            _mockAccountDatabase.Verify(x => x.GetAccountById(payerId), Times.Once);
+            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(payerId, userId), Times.Once);
 
             _mockMessageBusClient.Verify(x => x.PublishEvent(new EventUpdate(authedUser, DataTypes.Bill), It.IsAny<CancellationToken>()), Times.Once);
 
@@ -60,7 +60,7 @@ public sealed class DeleteBillTest : BillTestHelper
             .ReturnsAsync(authedUser);
 
         _mockBillDatabase.Setup(x => x.GetBillById(billId)).ReturnsAsync(new BillEntity(billId, -1, -1, new DateOnly(), -1, "", 1, payerId));
-        _mockAccountDatabase.Setup(x => x.GetAccountById(payerId)).ReturnsAsync((AccountEntity)null);
+        _mockAccountDatabase.Setup(x => x.GetAccountUserEntity(payerId, userId)).ReturnsAsync((AccountUserEntity)null);
 
         var result = await _billService.DeleteBill(tokenToDecode, editBillRequest);
         Assert.Multiple(() =>
@@ -69,7 +69,7 @@ public sealed class DeleteBillTest : BillTestHelper
 
             _mockUserService.Verify(x => x.GetUserFromToken(tokenToDecode), Times.Once);
             _mockBillDatabase.Verify(x => x.GetBillById(billId), Times.Once);
-            _mockAccountDatabase.Verify(x => x.GetAccountById(payerId), Times.Once);
+            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(payerId, userId), Times.Once);
 
             EnsureAllMocksHadNoOtherCalls();
         });

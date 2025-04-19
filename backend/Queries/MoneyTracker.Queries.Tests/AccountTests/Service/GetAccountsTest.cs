@@ -31,7 +31,7 @@ public sealed class GetAccountsTest : AccountTestHelper
         _mockUserRepository.Setup(x => x.GetUserAuthFromToken(tokenToDecode))
             .ReturnsAsync(mockUserAuth.Object);
 
-        _mockAccountDatabase.Setup(x => x.GetAccounts(authedUser)).ReturnsAsync(billDatabaseReturn);
+        _mockAccountDatabase.Setup(x => x.GetAccountsOwnedByUser(authedUser)).ReturnsAsync(billDatabaseReturn);
 
         Assert.Multiple(async () =>
         {
@@ -41,7 +41,7 @@ public sealed class GetAccountsTest : AccountTestHelper
             Assert.Equal(expected, accounts);
 
             _mockUserRepository.Verify(x => x.GetUserAuthFromToken(tokenToDecode), Times.Once);
-            _mockAccountDatabase.Verify(x => x.GetAccounts(authedUser), Times.Once);
+            _mockAccountDatabase.Verify(x => x.GetAccountsOwnedByUser(authedUser), Times.Once);
 
             EnsureAllMocksHadNoOtherCalls();
         });

@@ -20,26 +20,43 @@ public class RegisterDatabase : IRegisterDatabase
     public async Task<ResultT<List<TransactionEntity>>> GetAllTransactions(AuthenticatedUser user)
     {
         var query = """
-			SELECT register.id,
-			    accPayee.id payee_id,
-				accPayee.name payee_name,
-				amount,
-				datePaid,
-				c.id category_id,
-				c.name category_name,
-				accAcc.id payer_id,
-				accAcc.name payer_name
-			FROM register
-			INNER JOIN category c
-				ON register.category_id = c.id
-			INNER JOIN account accAcc
-				ON accAcc.id = register.account_id
-			INNER JOIN account accPayee
-				ON accPayee.id = register.payee
-			WHERE accAcc.users_id = @user_id
-			ORDER BY datePaid DESC,
-				c.id ASC;
-			""";
+            SELECT register.id,
+                accPayee.id payee_id,
+                accPayee.name payee_name,
+                amount,
+                datePaid,
+                c.id category_id,
+                c.name category_name,
+                accPayer.id payer_id,
+                accPayer.name payer_name
+            FROM register
+            INNER JOIN category c
+                ON register.category_id = c.id
+            INNER JOIN (
+                SELECT account_user.id,
+                    name,
+                    users_id
+                FROM account
+                INNER JOIN account_user
+                    ON account.id = account_user.account_id
+                WHERE users_id = @user_id
+                    AND user_owns_account
+            ) accPayer
+                ON accPayer.id = register.payer_user_id
+            INNER JOIN (
+                SELECT account_user.id,
+                    name,
+                    users_id
+                FROM account
+                INNER JOIN account_user
+                    ON account.id = account_user.account_id
+                WHERE users_id = @user_id
+            ) accPayee
+                ON accPayee.id = register.payee_user_id
+            WHERE accPayer.users_id = @user_id
+            ORDER BY datePaid DESC,
+                c.id ASC;
+            """;
         var queryParams = new List<DbParameter>()
         {
             new NpgsqlParameter("user_id", user.Id),

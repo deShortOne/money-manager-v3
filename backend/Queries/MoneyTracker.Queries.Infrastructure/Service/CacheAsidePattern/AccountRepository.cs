@@ -22,10 +22,10 @@ public class AccountRepository : IAccountRepositoryService
     }
     public async Task<ResultT<List<AccountEntity>>> GetAccounts(AuthenticatedUser user)
     {
-        ResultT<List<AccountEntity>> result = await _accountCache.GetAccounts(user);
+        ResultT<List<AccountEntity>> result = await _accountCache.GetAccountsOwnedByUser(user);
         if (!result.IsSuccess)
         {
-            result = await _accountDatabase.GetAccounts(user);
+            result = await _accountDatabase.GetAccountsOwnedByUser(user);
             await _accountCache.SaveAccounts(user, result.Value);
         }
 
@@ -34,7 +34,7 @@ public class AccountRepository : IAccountRepositoryService
 
     public async Task ResetAccountsCache(AuthenticatedUser user)
     {
-        ResultT<List<AccountEntity>> result = await _accountDatabase.GetAccounts(user);
+        ResultT<List<AccountEntity>> result = await _accountDatabase.GetAccountsOwnedByUser(user);
         await _accountCache.SaveAccounts(user, result.Value);
     }
 }

@@ -38,7 +38,7 @@ public sealed class EditRegisterTest : RegisterTestHelper
             .ReturnsAsync(_authedUser);
 
         if (payerId != null)
-            _mockAccountDatabase.Setup(x => x.GetAccountById((int)payerId)).ReturnsAsync(new AccountEntity(1, "", _userId));
+            _mockAccountDatabase.Setup(x => x.GetAccountUserEntity((int)payerId, _userId)).ReturnsAsync(new AccountUserEntity(1, _userId, true));
 
         var editTransactionRequest = new EditTransactionRequest(_transactionId, payee, amount, datePaid, categoryId, payerId);
         var editTransaction = new EditTransactionEntity(_transactionId, payee, amount, datePaid, categoryId, payerId);
@@ -58,7 +58,7 @@ public sealed class EditRegisterTest : RegisterTestHelper
             _accountService.Verify(x => x.DoesUserOwnAccount(_authedUser, commonTransactionId), Times.Once);
 
             if (payerId != null)
-                _mockAccountDatabase.Verify(x => x.GetAccountById((int)payerId), Times.Once);
+                _mockAccountDatabase.Verify(x => x.GetAccountUserEntity((int)payerId, _userId), Times.Once);
 
             _mockMessageBusClient.Verify(x => x.PublishEvent(
                 new EventUpdate(_authedUser, DataTypes.Register), It.IsAny<CancellationToken>()

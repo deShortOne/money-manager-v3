@@ -20,8 +20,8 @@ public sealed class DoesUserOwnAccountTest
     {
         var accountId = 2;
         var userId = 4;
-        _mockAccountDb.Setup(x => x.GetAccountById(accountId))
-            .ReturnsAsync(new AccountEntity(accountId, "", userId));
+        _mockAccountDb.Setup(x => x.GetAccountUserEntity(accountId, userId))
+            .ReturnsAsync(new AccountUserEntity(accountId, userId, true));
 
         Assert.True(await _accountService.DoesUserOwnAccount(new(userId), accountId));
     }
@@ -31,11 +31,10 @@ public sealed class DoesUserOwnAccountTest
     {
         var accountId = 2;
         var userId1 = 4;
-        var userId2 = 5;
-        _mockAccountDb.Setup(x => x.GetAccountById(accountId))
-            .ReturnsAsync(new AccountEntity(accountId, "", userId1));
+        _mockAccountDb.Setup(x => x.GetAccountUserEntity(accountId, 1))
+            .ReturnsAsync(new AccountUserEntity(accountId, userId1, false));
 
-        Assert.False(await _accountService.DoesUserOwnAccount(new(userId2), accountId));
+        Assert.False(await _accountService.DoesUserOwnAccount(new(userId1), accountId));
     }
 
     [Fact]
@@ -43,8 +42,8 @@ public sealed class DoesUserOwnAccountTest
     {
         var accountId = 2;
         var userId = 4;
-        _mockAccountDb.Setup(x => x.GetAccountById(accountId))
-            .ReturnsAsync((AccountEntity)null);
+        _mockAccountDb.Setup(x => x.GetAccountUserEntity(accountId, 1))
+            .ReturnsAsync((AccountUserEntity)null);
 
         Assert.False(await _accountService.DoesUserOwnAccount(new(userId), accountId));
     }

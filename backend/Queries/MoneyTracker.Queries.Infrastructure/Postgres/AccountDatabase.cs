@@ -16,11 +16,13 @@ public class AccountDatabase : IAccountDatabase
         _database = db;
     }
 
-    public async Task<ResultT<List<AccountEntity>>> GetAccounts(AuthenticatedUser user)
+    public async Task<ResultT<List<AccountEntity>>> GetAccountsOwnedByUser(AuthenticatedUser user)
     {
         var query = """
-            SELECT id, name
+            SELECT account_user.id, name
             FROM account
+            INNER JOIN account_user
+                ON account.id = account_user.account_id
             WHERE users_id = @userid
             ORDER BY name;
          """;

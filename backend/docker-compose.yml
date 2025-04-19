@@ -91,7 +91,7 @@ services:
     ports:
       - "1234:8080"
     environment:
-      Database:Paelagus_RO: "User ID=${DOCKER_DB_USERNAME};Password=${DOCKER_DB_PASSWORD};Host=postgres-master;Port=5432;Database=${DOCKER_DB_DATABASE}"
+      Database:Paelagus_RO: "User ID=${DOCKER_DB_USERNAME};Password=${DOCKER_DB_PASSWORD};Host=postgres-master;Port=5432;Database=${DOCKER_DB_DATABASE};Include Error Detail=true;"
       Messaging:Lepus: amqp://guest:guest@rabbitmq:5672
       ASPNETCORE_ENVIRONMENT: "Development"
       Jwt:iss: ${jwt_iss}

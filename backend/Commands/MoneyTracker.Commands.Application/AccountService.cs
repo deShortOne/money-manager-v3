@@ -14,10 +14,10 @@ public class AccountService : IAccountService
 
     public async Task<bool> DoesUserOwnAccount(AuthenticatedUser user, int accountId)
     {
-        var account = await _accountDb.GetAccountById(accountId);
+        var account = await _accountDb.GetAccountUserEntity(accountId, user.Id);
         if (account == null)
             return false;
 
-        return account.UserId == user.Id;
+        return account.UserOwnsAccount;
     }
 }

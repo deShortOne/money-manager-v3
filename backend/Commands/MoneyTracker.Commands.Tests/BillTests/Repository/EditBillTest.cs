@@ -25,18 +25,18 @@ public sealed class EditBillTest : BillRespositoryTestHelper
         await commandDeleteAllBillData.ExecuteNonQueryAsync();
 
         var addBaseBillData = """
-            INSERT INTO bill (id, payee, amount, nextduedate, frequency, category_id, monthday, account_id) VALUES
-            (@id, @payee, @amount, @nextDueDate, @frequency, @categoryId, @monthDay, @accountId);
+            INSERT INTO bill (id, payee_user_id, amount, nextduedate, frequency, category_id, monthday, payer_user_id) VALUES
+            (@id, @payee_user_id, @amount, @nextDueDate, @frequency, @categoryId, @monthDay, @payer_user_id);
             """;
         await using var commandAddBaseBillData = new NpgsqlCommand(addBaseBillData, conn);
         commandAddBaseBillData.Parameters.Add(new NpgsqlParameter("@id", _id));
-        commandAddBaseBillData.Parameters.Add(new NpgsqlParameter("@payee", _payeeId));
+        commandAddBaseBillData.Parameters.Add(new NpgsqlParameter("@payee_user_id", _payeeId));
         commandAddBaseBillData.Parameters.Add(new NpgsqlParameter("@amount", _amount));
         commandAddBaseBillData.Parameters.Add(new NpgsqlParameter("@nextDueDate", _nextDueDate));
         commandAddBaseBillData.Parameters.Add(new NpgsqlParameter("@frequency", _frequency));
         commandAddBaseBillData.Parameters.Add(new NpgsqlParameter("@categoryId", _categoryId));
         commandAddBaseBillData.Parameters.Add(new NpgsqlParameter("@monthDay", _monthDay));
-        commandAddBaseBillData.Parameters.Add(new NpgsqlParameter("@accountId", _payerId));
+        commandAddBaseBillData.Parameters.Add(new NpgsqlParameter("@payer_user_id", _payerId));
         await commandAddBaseBillData.ExecuteNonQueryAsync();
     }
 

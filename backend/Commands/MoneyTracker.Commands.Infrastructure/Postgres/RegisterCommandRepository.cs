@@ -19,11 +19,11 @@ public class RegisterCommandRepository : IRegisterCommandRepository
     {
         var query = """
             SELECT id,
-                payee,
+                payee_user_id,
                 amount,
                 datepaid,
                 category_id,
-                account_id
+                payer_user_id
             FROM register
             WHERE id = @transaction_id;
          """;
@@ -37,28 +37,28 @@ public class RegisterCommandRepository : IRegisterCommandRepository
         if (reader.Rows.Count != 0)
             return new TransactionEntity(
                 reader.Rows[0].Field<int>("id"),
-                reader.Rows[0].Field<int>("payee"),
+                reader.Rows[0].Field<int>("payee_user_id"),
                 reader.Rows[0].Field<decimal>("amount"),
                 DateOnly.FromDateTime(reader.Rows[0].Field<DateTime>("datepaid")),
                 reader.Rows[0].Field<int>("category_id"),
-                reader.Rows[0].Field<int>("account_id"));
+                reader.Rows[0].Field<int>("payer_user_id"));
         return null;
     }
 
     public async Task AddTransaction(TransactionEntity transaction)
     {
         var query = """
-            INSERT INTO register (id, payee, amount, datePaid, category_id, account_id) VALUES
-                (@id, @payee, @amount, @datePaid, @category_id, @account_id);
+            INSERT INTO register (id, payee_user_id, amount, datePaid, category_id, payer_user_id) VALUES
+                (@id, @payee_user_id, @amount, @datePaid, @category_id, @payer_user_id);
             """;
         var queryParams = new List<DbParameter>()
         {
             new NpgsqlParameter("id", transaction.Id),
-            new NpgsqlParameter("payee", transaction.PayeeId),
+            new NpgsqlParameter("payee_user_id", transaction.PayeeId),
             new NpgsqlParameter("amount", transaction.Amount),
             new NpgsqlParameter("datePaid", transaction.DatePaid),
             new NpgsqlParameter("category_id", transaction.CategoryId),
-            new NpgsqlParameter("account_id", transaction.PayerId),
+            new NpgsqlParameter("payer_user_id", transaction.PayerId),
         };
 
         await _database.GetTable(query, queryParams);
@@ -73,8 +73,8 @@ public class RegisterCommandRepository : IRegisterCommandRepository
         };
         if (tramsaction.PayeeId != null)
         {
-            setParamsLis.Add("payee = @payee");
-            queryParams.Add(new NpgsqlParameter("payee", tramsaction.PayeeId));
+            setParamsLis.Add("payee_user_id = @payee_user_id");
+            queryParams.Add(new NpgsqlParameter("payee_user_id", tramsaction.PayeeId));
         }
         if (tramsaction.Amount != null)
         {
@@ -93,8 +93,8 @@ public class RegisterCommandRepository : IRegisterCommandRepository
         }
         if (tramsaction.PayerId != null)
         {
-            setParamsLis.Add("account_id = @account_id");
-            queryParams.Add(new NpgsqlParameter("account_id", tramsaction.PayerId));
+            setParamsLis.Add("payer_user_id = @payer_user_id");
+            queryParams.Add(new NpgsqlParameter("payer_user_id", tramsaction.PayerId));
         }
 
         if (setParamsLis.Count == 0)

@@ -17,12 +17,12 @@ public class GetAccountsTest : DatabaseOnlyTestHelper
             new(1, "iukhm"),
         };
 
-        _mockAccountDatabase.Setup(x => x.GetAccounts(_authedUser))
+        _mockAccountDatabase.Setup(x => x.GetAccountsOwnedByUser(_authedUser))
             .ReturnsAsync(accounts);
 
         await _accountRepositoryService.GetAccounts(_authedUser);
 
-        _mockAccountDatabase.Verify(x => x.GetAccounts(_authedUser), Times.Once);
+        _mockAccountDatabase.Verify(x => x.GetAccountsOwnedByUser(_authedUser), Times.Once);
         VerifyNoOtherCalls();
     }
 }

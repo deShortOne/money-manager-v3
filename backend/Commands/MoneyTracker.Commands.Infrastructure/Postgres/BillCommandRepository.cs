@@ -17,19 +17,19 @@ public class BillCommandRepository : IBillCommandRepository
     public async Task AddBill(BillEntity newBillDTO)
     {
         string query = """
-            INSERT INTO bill (id, payee, amount, nextduedate, frequency, category_id, monthday, account_id)
-            VALUES (@id, @payee, @amount, @nextduedate, @frequency, @category_id, @monthday, @account_id);
+            INSERT INTO bill (id, payee_user_id, amount, nextduedate, frequency, category_id, monthday, payer_user_id)
+            VALUES (@id, @payee_user_id, @amount, @nextduedate, @frequency, @category_id, @monthday, @payer_user_id);
             """;
         var queryParams = new List<DbParameter>()
             {
                 new NpgsqlParameter("id", newBillDTO.Id),
-                new NpgsqlParameter("payee", newBillDTO.PayeeId),
+                new NpgsqlParameter("payee_user_id", newBillDTO.PayeeId),
                 new NpgsqlParameter("amount", newBillDTO.Amount),
                 new NpgsqlParameter("nextduedate", newBillDTO.NextDueDate),
                 new NpgsqlParameter("frequency", newBillDTO.Frequency),
                 new NpgsqlParameter("category_id", newBillDTO.CategoryId),
                 new NpgsqlParameter("monthday", newBillDTO.MonthDay),
-                new NpgsqlParameter("account_id", newBillDTO.PayerId),
+                new NpgsqlParameter("payer_user_id", newBillDTO.PayerId),
             };
 
         await _database.UpdateTable(query, queryParams);
@@ -45,8 +45,8 @@ public class BillCommandRepository : IBillCommandRepository
 
         if (editBillDTO.PayeeId != null)
         {
-            setParamsLis.Add("payee = @payee");
-            queryParams.Add(new NpgsqlParameter("payee", editBillDTO.PayeeId));
+            setParamsLis.Add("payee_user_id = @payee_user_id");
+            queryParams.Add(new NpgsqlParameter("payee_user_id", editBillDTO.PayeeId));
         }
         if (editBillDTO.Amount != null)
         {
@@ -75,8 +75,8 @@ public class BillCommandRepository : IBillCommandRepository
         }
         if (editBillDTO.PayerId != null)
         {
-            setParamsLis.Add("account_id = @account_id");
-            queryParams.Add(new NpgsqlParameter("account_id", editBillDTO.PayerId));
+            setParamsLis.Add("payer_user_id = @payer_user_id");
+            queryParams.Add(new NpgsqlParameter("payer_user_id", editBillDTO.PayerId));
         }
 
         string query = $"""
@@ -106,13 +106,13 @@ public class BillCommandRepository : IBillCommandRepository
     {
         string query = """
             SELECT id,
-            	payee,
+            	payee_user_id,
             	amount,
             	nextduedate,
             	frequency,
             	category_id,
                 monthday,
-                account_id
+                payer_user_id
             FROM bill b
             WHERE id = @id;
             """;
@@ -128,13 +128,13 @@ public class BillCommandRepository : IBillCommandRepository
 
             return new BillEntity(
                 currRow.Field<int>("id"),
-                currRow.Field<int>("payee"),
+                currRow.Field<int>("payee_user_id"),
                 currRow.Field<decimal>("amount"),
                 DateOnly.FromDateTime(currRow.Field<DateTime>("nextduedate")),
                 currRow.Field<int>("monthday"),
                 currRow.Field<string>("frequency")!,
                 currRow.Field<int>("category_id"),
-                currRow.Field<int>("account_id")
+                currRow.Field<int>("payer_user_id")
             );
         }
 

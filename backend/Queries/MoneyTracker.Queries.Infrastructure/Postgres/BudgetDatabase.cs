@@ -36,9 +36,9 @@ public class BudgetDatabase : IBudgetDatabase
             	SELECT category_id,
             		SUM(amount) AS amount
             	FROM register
-            	WHERE account_id IN (
-            			SELECT id
-            			FROM account
+            	WHERE payer_user_id IN (
+            			SELECT account_id id
+            			FROM account_user
             			WHERE users_id = @userId
             			)
             	GROUP BY category_id

@@ -4,4 +4,5 @@ namespace MoneyTracker.Commands.Domain.Repositories;
 public interface IAccountCommandRepository
 {
     Task<AccountEntity?> GetAccountById(int accountId);
+    Task<AccountUserEntity?> GetAccountUserEntity(int accountId, int userId);
 }
