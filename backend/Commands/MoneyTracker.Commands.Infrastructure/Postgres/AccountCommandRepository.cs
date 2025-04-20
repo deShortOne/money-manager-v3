@@ -118,6 +118,27 @@ public class AccountCommandRepository : IAccountCommandRepository
         return null;
     }
 
-    public Task<int> GetLastAccountId() => throw new NotImplementedException();
-    public Task<int> GetLastAccountUserId() => throw new NotImplementedException();
+    public async Task<int> GetLastAccountId()
+    {
+        string query = """
+            SELECT max(id) as last_id
+            FROM account;
+        """;
+        using var reader = await _database.GetTable(query);
+
+        var returnDefaultValue = reader.Rows.Count == 0 || reader.Rows[0].ItemArray[0] == DBNull.Value;
+        return returnDefaultValue ? 0 : reader.Rows[0].Field<int>(0);
+    }
+
+    public async Task<int> GetLastAccountUserId()
+    {
+        string query = """
+            SELECT max(id) as last_id
+            FROM account_user;
+        """;
+        using var reader = await _database.GetTable(query);
+
+        var returnDefaultValue = reader.Rows.Count == 0 || reader.Rows[0].ItemArray[0] == DBNull.Value;
+        return returnDefaultValue ? 0 : reader.Rows[0].Field<int>(0);
+    }
 }
