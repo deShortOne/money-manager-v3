@@ -41,7 +41,7 @@ public sealed class AddBillTest : BillTestHelper
             .ReturnsAsync(ResultT<AuthenticatedUser>.Success(_authedUser));
 
         _mockAccountDatabase.Setup(x => x.GetAccountUserEntity(_payeeId, _userId))
-            .ReturnsAsync(new AccountUserEntity(1, _userId, false));
+            .ReturnsAsync(new AccountUserEntity(35, 1, _userId, false));
 
         _mockFrequencyCalculation.Setup(x => x.DoesFrequencyExist(_frequency)).Returns(true);
 
@@ -89,7 +89,7 @@ public sealed class AddBillTest : BillTestHelper
             .ReturnsAsync(ResultT<AuthenticatedUser>.Success(_authedUser));
 
         _mockAccountDatabase.Setup(x => x.GetAccountUserEntity(_payeeId, _userId))
-            .ReturnsAsync(new AccountUserEntity(1, _userId, false));
+            .ReturnsAsync(new AccountUserEntity(35, 1, _userId, false));
 
         _mockFrequencyCalculation.Setup(x => x.DoesFrequencyExist(_frequency)).Returns(true);
 
@@ -131,7 +131,7 @@ public sealed class AddBillTest : BillTestHelper
             .ReturnsAsync(ResultT<AuthenticatedUser>.Success(_authedUser));
 
         _mockAccountDatabase.Setup(x => x.GetAccountUserEntity(_payeeId, _userId))
-            .ReturnsAsync(new AccountUserEntity(1, _userId, false));
+            .ReturnsAsync(new AccountUserEntity(35, 1, _userId, false));
 
         _mockFrequencyCalculation.Setup(x => x.DoesFrequencyExist(_frequency)).Returns(false);
 
@@ -173,7 +173,7 @@ public sealed class AddBillTest : BillTestHelper
             .ReturnsAsync(ResultT<AuthenticatedUser>.Success(_authedUser));
 
         _mockAccountDatabase.Setup(x => x.GetAccountUserEntity(_payeeId, _userId))
-            .ReturnsAsync(new AccountUserEntity(1, _userId, false));
+            .ReturnsAsync(new AccountUserEntity(35, 1, _userId, false));
 
         _mockFrequencyCalculation.Setup(x => x.DoesFrequencyExist(_frequency)).Returns(true);
 

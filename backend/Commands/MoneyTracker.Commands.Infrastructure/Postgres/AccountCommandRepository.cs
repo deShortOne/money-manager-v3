@@ -29,7 +29,22 @@ public class AccountCommandRepository : IAccountCommandRepository
         await _database.UpdateTable(query, queryParams);
     }
 
-    public Task AddAccountToUser(AccountUserEntity newAccountUserEntity) => throw new NotImplementedException();
+    public async Task AddAccountToUser(AccountUserEntity newAccountUserEntity)
+    {
+        string query = """
+            INSERT INTO account_user (id, account_id, users_id, user_owns_account)
+            VALUES (@id, @account_id, @users_id, @user_owns_account);
+            """;
+        var queryParams = new List<DbParameter>()
+        {
+                new NpgsqlParameter("id", newAccountUserEntity.Id),
+                new NpgsqlParameter("account_id", newAccountUserEntity.AccountId),
+                new NpgsqlParameter("users_id", newAccountUserEntity.UserId),
+                new NpgsqlParameter("user_owns_account", newAccountUserEntity.UserOwnsAccount),
+            };
+
+        await _database.UpdateTable(query, queryParams);
+    }
 
     public async Task<AccountEntity?> GetAccountById(int accountId)
     {
@@ -58,7 +73,8 @@ public class AccountCommandRepository : IAccountCommandRepository
     public async Task<AccountUserEntity?> GetAccountUserEntity(int accountId, int userId)
     {
         var query = """
-            SELECT users_id,
+            SELECT id,
+                users_id,
                 account_id,
                 user_owns_account
             FROM account_user
@@ -75,11 +91,13 @@ public class AccountCommandRepository : IAccountCommandRepository
 
         if (reader.Rows.Count != 0)
             return new AccountUserEntity(
+                reader.Rows[0].Field<int>("id"),
                 reader.Rows[0].Field<int>("account_id"),
                 reader.Rows[0].Field<int>("users_id")!,
                 reader.Rows[0].Field<bool>("user_owns_account"));
         return null;
     }
 
-    public Task<int> GetLastId() => throw new NotImplementedException();
+    public Task<int> GetLastAccountId() => throw new NotImplementedException();
+    public Task<int> GetLastAccountUserId() => throw new NotImplementedException();
 }

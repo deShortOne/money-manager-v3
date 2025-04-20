@@ -26,7 +26,7 @@ public sealed class DeleteBillTest : BillTestHelper
             .ReturnsAsync(authedUser);
 
         _mockBillDatabase.Setup(x => x.GetBillById(billId)).ReturnsAsync(new BillEntity(billId, -1, -1, new DateOnly(), -1, "", 1, payerId));
-        _mockAccountDatabase.Setup(x => x.GetAccountUserEntity(payerId, userId)).ReturnsAsync(new AccountUserEntity(1, userId, true));
+        _mockAccountDatabase.Setup(x => x.GetAccountUserEntity(payerId, userId)).ReturnsAsync(new AccountUserEntity(35, 1, userId, true));
         _mockBillDatabase.Setup(x => x.DeleteBill(billId));
 
         await _billService.DeleteBill(tokenToDecode, deleteBillRequest);

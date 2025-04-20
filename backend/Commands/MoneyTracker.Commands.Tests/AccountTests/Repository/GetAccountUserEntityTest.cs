@@ -14,16 +14,16 @@ public class GetAccountUserEntityTest : IClassFixture<PostgresDbFixture>
         _accountRepo = new AccountCommandRepository(_database);
     }
 
-    public static TheoryData<int, int, bool> SeedData = new() {
-        { 1, 1, true },
-        { 2, 1, true },
-        { 1, 2, true },
+    public static TheoryData<int, int, int, bool> SeedData = new() {
+        { 1, 1, 1, true },
+        { 2, 1, 2, true },
+        { 3, 2, 1, true },
     };
 
     [Theory, MemberData(nameof(SeedData))]
-    public async Task GetUserAccountEntity(int accountId, int userId, bool expectedUserOwnsAccount)
+    public async Task GetUserAccountEntity(int id, int accountId, int userId, bool expectedUserOwnsAccount)
     {
-        Assert.Equal(new AccountUserEntity(accountId, userId, expectedUserOwnsAccount),
+        Assert.Equal(new AccountUserEntity(id, accountId, userId, expectedUserOwnsAccount),
             await _accountRepo.GetAccountUserEntity(accountId, userId));
     }
 }

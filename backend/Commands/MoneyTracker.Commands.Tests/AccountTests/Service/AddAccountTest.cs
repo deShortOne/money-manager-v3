@@ -17,6 +17,8 @@ public class AddAccountTest : AccountTestHelper
         var accountId = 52;
         var accountName = "Savings";
         var doesAccountBelongToUser = true;
+        var previousAccountUserId = 99;
+        var accountUserId = 24;
 
         _mockUserService
             .Setup(x => x.GetUserFromToken(token))
@@ -28,6 +30,13 @@ public class AddAccountTest : AccountTestHelper
         _mockAccountDatabase
             .Setup(x => x.GetAccountUserEntity(accountId, userId))
             .ReturnsAsync((AccountUserEntity)null);
+        _mockAccountDatabase
+            .Setup(x => x.GetLastAccountUserId())
+            .ReturnsAsync(previousAccountUserId);
+
+        _mockIdGenerator
+            .Setup(x => x.NewInt(previousAccountUserId))
+            .Returns(accountUserId);
 
         await _accountService.AddAccount(token, new AddAccountToUserRequest(accountName, doesAccountBelongToUser));
 
@@ -41,7 +50,12 @@ public class AddAccountTest : AccountTestHelper
             _mockAccountDatabase
                 .Verify(x => x.GetAccountUserEntity(accountId, userId), Times.Once);
             _mockAccountDatabase
-                .Verify(x => x.AddAccountToUser(new AccountUserEntity(accountId, userId, doesAccountBelongToUser)), Times.Once);
+                .Verify(x => x.AddAccountToUser(new AccountUserEntity(accountUserId, accountId, userId, doesAccountBelongToUser)), Times.Once);
+            _mockAccountDatabase
+                .Verify(x => x.GetLastAccountUserId(), Times.Once);
+
+            _mockIdGenerator
+                .Verify(x => x.NewInt(previousAccountUserId), Times.Once);
 
             _mockMessageBusClient
                 .Verify(x => x.PublishEvent(new EventUpdate(new AuthenticatedUser(userId), DataTypes.Account), It.IsAny<CancellationToken>()), Times.Once);
@@ -58,6 +72,8 @@ public class AddAccountTest : AccountTestHelper
         var accountId = 52;
         var accountName = "Savings";
         var doesAccountBelongToUser = false;
+        var previousAccountUserId = 99;
+        var accountUserId = 24;
 
         _mockUserService
             .Setup(x => x.GetUserFromToken(token))
@@ -69,6 +85,13 @@ public class AddAccountTest : AccountTestHelper
         _mockAccountDatabase
             .Setup(x => x.GetAccountUserEntity(accountId, userId))
             .ReturnsAsync((AccountUserEntity)null);
+        _mockAccountDatabase
+            .Setup(x => x.GetLastAccountUserId())
+            .ReturnsAsync(previousAccountUserId);
+
+        _mockIdGenerator
+            .Setup(x => x.NewInt(previousAccountUserId))
+            .Returns(accountUserId);
 
         await _accountService.AddAccount(token, new AddAccountToUserRequest(accountName, doesAccountBelongToUser));
 
@@ -78,11 +101,16 @@ public class AddAccountTest : AccountTestHelper
                 .Verify(x => x.GetUserFromToken(token), Times.Once);
 
             _mockAccountDatabase
-                .Verify(x => x.AddAccountToUser(new AccountUserEntity(accountId, userId, doesAccountBelongToUser)), Times.Once);
+                .Verify(x => x.AddAccountToUser(new AccountUserEntity(accountUserId, accountId, userId, doesAccountBelongToUser)), Times.Once);
             _mockAccountDatabase
                 .Verify(x => x.GetAccountUserEntity(accountId, userId), Times.Once);
             _mockAccountDatabase
                 .Verify(x => x.GetAccountByName(accountName), Times.Once);
+            _mockAccountDatabase
+                .Verify(x => x.GetLastAccountUserId(), Times.Once);
+
+            _mockIdGenerator
+                .Verify(x => x.NewInt(previousAccountUserId), Times.Once);
 
             _mockMessageBusClient
                 .Verify(x => x.PublishEvent(new EventUpdate(new AuthenticatedUser(userId), DataTypes.Account), It.IsAny<CancellationToken>()), Times.Once);
@@ -100,6 +128,8 @@ public class AddAccountTest : AccountTestHelper
         var accountId = 52;
         var accountName = "Savings";
         var doesAccountBelongToUser = true;
+        var previousAccountUserId = 99;
+        var accountUserId = 24;
 
         _mockUserService
             .Setup(x => x.GetUserFromToken(token))
@@ -112,12 +142,18 @@ public class AddAccountTest : AccountTestHelper
             .Setup(x => x.GetAccountUserEntity(accountId, userId))
             .ReturnsAsync((AccountUserEntity)null);
         _mockAccountDatabase
-            .Setup(x => x.GetLastId())
+            .Setup(x => x.GetLastAccountId())
             .ReturnsAsync(previousAccountId);
+        _mockAccountDatabase
+            .Setup(x => x.GetLastAccountUserId())
+            .ReturnsAsync(previousAccountUserId);
 
         _mockIdGenerator
             .Setup(x => x.NewInt(previousAccountId))
             .Returns(accountId);
+        _mockIdGenerator
+            .Setup(x => x.NewInt(previousAccountUserId))
+            .Returns(accountUserId);
 
         await _accountService.AddAccount(token, new AddAccountToUserRequest(accountName, doesAccountBelongToUser));
 
@@ -131,14 +167,18 @@ public class AddAccountTest : AccountTestHelper
             _mockAccountDatabase
                 .Verify(x => x.GetAccountUserEntity(accountId, userId), Times.Once);
             _mockAccountDatabase
-                .Verify(x => x.GetLastId(), Times.Once);
+                .Verify(x => x.GetLastAccountId(), Times.Once);
             _mockAccountDatabase
                 .Verify(x => x.AddAccount(new AccountEntity(accountId, accountName)), Times.Once);
             _mockAccountDatabase
-                .Verify(x => x.AddAccountToUser(new AccountUserEntity(accountId, userId, doesAccountBelongToUser)), Times.Once);
+                .Verify(x => x.AddAccountToUser(new AccountUserEntity(accountUserId, accountId, userId, doesAccountBelongToUser)), Times.Once);
+            _mockAccountDatabase
+                .Verify(x => x.GetLastAccountUserId(), Times.Once);
 
             _mockIdGenerator
                 .Verify(x => x.NewInt(previousAccountId), Times.Once);
+            _mockIdGenerator
+                .Verify(x => x.NewInt(previousAccountUserId), Times.Once);
 
             _mockMessageBusClient
                 .Verify(x => x.PublishEvent(new EventUpdate(new AuthenticatedUser(userId), DataTypes.Account), It.IsAny<CancellationToken>()), Times.Once);
@@ -187,7 +227,7 @@ public class AddAccountTest : AccountTestHelper
             .ReturnsAsync(new AccountEntity(accountId, accountName));
         _mockAccountDatabase
             .Setup(x => x.GetAccountUserEntity(accountId, userId))
-            .ReturnsAsync(new AccountUserEntity(accountId, userId, false));
+            .ReturnsAsync(new AccountUserEntity(35, accountId, userId, false));
 
         var error = await _accountService.AddAccount(token, new AddAccountToUserRequest(accountName, doesAccountBelongToUser));
 

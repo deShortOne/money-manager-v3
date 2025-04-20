@@ -34,7 +34,7 @@ public sealed class SkipOccurenceTest : BillTestHelper
             .Returns(Task.FromResult(new BillEntity(billId, 0, 0, new DateOnly(), monthDay, frequencyToCheck, -1, previousBillPayerId)));
         _mockBillDatabase.Setup(x => x.EditBill(editBillEntity));
 
-        _mockAccountDatabase.Setup(x => x.GetAccountUserEntity(previousBillPayerId, userId)).ReturnsAsync(new AccountUserEntity(-1, userId, true));
+        _mockAccountDatabase.Setup(x => x.GetAccountUserEntity(previousBillPayerId, userId)).ReturnsAsync(new AccountUserEntity(35, -1, userId, true));
 
         _mockFrequencyCalculation.Setup(x => x.CalculateNextDueDate(frequencyToCheck, monthDay, dateToEvaluate))
             .Returns(dateToBecome);
@@ -76,7 +76,7 @@ public sealed class SkipOccurenceTest : BillTestHelper
         _mockBillDatabase.Setup(x => x.GetBillById(billId))
             .Returns(Task.FromResult(new BillEntity(-1, 0, 0, new DateOnly(), -1, "", -1, previousBillPayerId)));
 
-        _mockAccountDatabase.Setup(x => x.GetAccountUserEntity(previousBillPayerId, userId)).ReturnsAsync(new AccountUserEntity(billId, userId, false));
+        _mockAccountDatabase.Setup(x => x.GetAccountUserEntity(previousBillPayerId, userId)).ReturnsAsync(new AccountUserEntity(35, billId, userId, false));
 
         var result = await _billService.SkipOccurence(tokenToDecode, skipBillOccurence);
         Assert.Multiple(() =>

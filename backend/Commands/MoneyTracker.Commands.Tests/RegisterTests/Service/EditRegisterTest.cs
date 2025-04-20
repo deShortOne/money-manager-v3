@@ -38,7 +38,7 @@ public sealed class EditRegisterTest : RegisterTestHelper
             .ReturnsAsync(_authedUser);
 
         if (payerId != null)
-            _mockAccountDatabase.Setup(x => x.GetAccountUserEntity((int)payerId, _userId)).ReturnsAsync(new AccountUserEntity(1, _userId, true));
+            _mockAccountDatabase.Setup(x => x.GetAccountUserEntity((int)payerId, _userId)).ReturnsAsync(new AccountUserEntity(35, 1, _userId, true));
 
         var editTransactionRequest = new EditTransactionRequest(_transactionId, payee, amount, datePaid, categoryId, payerId);
         var editTransaction = new EditTransactionEntity(_transactionId, payee, amount, datePaid, categoryId, payerId);

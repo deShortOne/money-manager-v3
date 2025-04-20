@@ -38,7 +38,7 @@ public class AccountService : IAccountService
         var accountToAdd = await _accountDb.GetAccountByName(newAccountRequest.AccountName);
         if (accountToAdd == null)
         {
-            accountToAdd = new AccountEntity(_idGenerator.NewInt(await _accountDb.GetLastId()), newAccountRequest.AccountName);
+            accountToAdd = new AccountEntity(_idGenerator.NewInt(await _accountDb.GetLastAccountId()), newAccountRequest.AccountName);
             await _accountDb.AddAccount(accountToAdd);
         }
         if (await _accountDb.GetAccountUserEntity(accountToAdd.Id, user.Id) != null)
@@ -46,7 +46,13 @@ public class AccountService : IAccountService
             return Error.Validation("", "Account is already associated with user");
         }
 
-        var newAccountToUse = new AccountUserEntity(accountToAdd.Id, user.Id, newAccountRequest.DoesUserOwnAccount);
+        var newAccountUserId = _idGenerator.NewInt(await _accountDb.GetLastAccountUserId());
+        var newAccountToUse = new AccountUserEntity(
+            newAccountUserId,
+            accountToAdd.Id,
+            user.Id,
+            newAccountRequest.DoesUserOwnAccount
+        );
         await _accountDb.AddAccountToUser(newAccountToUse);
 
         await _messageBus.PublishEvent(new EventUpdate(user, DataTypes.Account), CancellationToken.None);

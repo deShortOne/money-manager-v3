@@ -54,4 +54,30 @@ public class AccountRespositoryTestHelper : IAsyncLifetime
         }
         return results;
     }
+
+    protected async Task<List<AccountUserEntity>> GetAllAccountUserEntity()
+    {
+        var getBillQuery = @"
+                            SELECT id,
+                                users_id,
+                                account_id,
+                                user_owns_account
+                            FROM account_user;
+                            ";
+        await using var conn = new NpgsqlConnection(_postgres.GetConnectionString());
+        await using var commandGetBillInfo = new NpgsqlCommand(getBillQuery, conn);
+        await conn.OpenAsync();
+        using var reader = commandGetBillInfo.ExecuteReader();
+        List<AccountUserEntity> results = [];
+        while (reader.Read())
+        {
+            results.Add(new AccountUserEntity(
+                id: reader.GetInt32("id"),
+                accountId: reader.GetInt32("account_id"),
+                userId: reader.GetInt32("users_id"),
+                userOwnsAccount: reader.GetBoolean("user_owns_account")
+            ));
+        }
+        return results;
+    }
 }
