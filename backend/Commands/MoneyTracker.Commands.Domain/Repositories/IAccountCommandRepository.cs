@@ -5,4 +5,5 @@ public interface IAccountCommandRepository
 {
     Task<AccountEntity?> GetAccountById(int accountId);
     Task<AccountUserEntity?> GetAccountUserEntity(int accountId, int userId);
+    Task AddAccountToUser(AccountUserEntity newAccountUserEntity);
 }

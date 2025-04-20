@@ -14,6 +14,8 @@ public class AccountCommandRepository : IAccountCommandRepository
         _database = db;
     }
 
+    public Task AddAccountToUser(AccountUserEntity newAccountUserEntity) => throw new NotImplementedException();
+
     public async Task<AccountEntity?> GetAccountById(int accountId)
     {
         var query = """
