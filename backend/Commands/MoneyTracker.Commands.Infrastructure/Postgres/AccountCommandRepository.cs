@@ -68,7 +68,27 @@ public class AccountCommandRepository : IAccountCommandRepository
         return null;
     }
 
-    public Task<AccountEntity?> GetAccountByName(string accountName) => throw new NotImplementedException();
+    public async Task<AccountEntity?> GetAccountByName(string accountName)
+    {
+        var query = """
+            SELECT id,
+                name
+            FROM account
+            WHERE name = @account_name;
+         """;
+        var queryParams = new List<DbParameter>()
+        {
+            new NpgsqlParameter("account_name", accountName),
+        };
+
+        using var reader = await _database.GetTable(query, queryParams);
+
+        if (reader.Rows.Count != 0)
+            return new AccountEntity(
+                reader.Rows[0].Field<int>("id"),
+                reader.Rows[0].Field<string>("name")!);
+        return null;
+    }
 
     public async Task<AccountUserEntity?> GetAccountUserEntity(int accountId, int userId)
     {
