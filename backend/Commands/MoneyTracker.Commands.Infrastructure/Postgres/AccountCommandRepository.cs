@@ -38,6 +38,8 @@ public class AccountCommandRepository : IAccountCommandRepository
         return null;
     }
 
+    public Task<AccountEntity?> GetAccountByName(string accountName) => throw new NotImplementedException();
+
     public async Task<AccountUserEntity?> GetAccountUserEntity(int accountId, int userId)
     {
         var query = """

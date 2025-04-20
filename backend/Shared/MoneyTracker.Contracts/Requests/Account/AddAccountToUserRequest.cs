@@ -1,6 +1,6 @@
 namespace MoneyTracker.Contracts.Requests.Account;
-public class AddAccountToUserRequest(int accountId, bool doesUserOwnAccount)
+public class AddAccountToUserRequest(string accountname, bool doesUserOwnAccount)
 {
-    public int AccountId { get; } = accountId;
+    public string AccountName { get; } = accountname;
     public bool DoesUserOwnAccount { get; } = doesUserOwnAccount;
 }

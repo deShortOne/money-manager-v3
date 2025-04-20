@@ -31,16 +31,17 @@ public class AccountService : IAccountService
             return userResult;
 
         var user = userResult.Value;
-        if (await _accountDb.GetAccountById(newAccountRequest.AccountId) == null)
+        var accountToAdd = await _accountDb.GetAccountByName(newAccountRequest.AccountName);
+        if (accountToAdd == null)
         {
-            return Error.NotFound("", "Account does not exist");
+            return Error.NotFound("ASdf", "garbage");
         }
-        if (await _accountDb.GetAccountUserEntity(newAccountRequest.AccountId, user.Id) != null)
+        if (await _accountDb.GetAccountUserEntity(accountToAdd.Id, user.Id) != null)
         {
             return Error.Validation("", "Account is already associated with user");
         }
 
-        var newAccountToUse = new AccountUserEntity(newAccountRequest.AccountId, user.Id, newAccountRequest.DoesUserOwnAccount);
+        var newAccountToUse = new AccountUserEntity(accountToAdd.Id, user.Id, newAccountRequest.DoesUserOwnAccount);
         await _accountDb.AddAccountToUser(newAccountToUse);
 
         await _messageBus.PublishEvent(new EventUpdate(user, DataTypes.Account), CancellationToken.None);
