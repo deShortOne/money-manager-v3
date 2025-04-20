@@ -21,12 +21,19 @@ public class AddAccountTest : AccountTestHelper
             .Setup(x => x.GetUserFromToken(token))
             .ReturnsAsync(new AuthenticatedUser(userId));
 
+        _mockAccountDatabase
+            .Setup(x => x.GetAccountById(accountId))
+            .ReturnsAsync(new AccountEntity(accountId, "Savings"));
+
         await _accountService.AddAccount(token, new AddAccountToUserRequest(accountId, doesAccountBelongToUser));
 
         Assert.Multiple(() =>
         {
             _mockUserService
                 .Verify(x => x.GetUserFromToken(token), Times.Once);
+
+            _mockAccountDatabase
+                .Verify(x => x.GetAccountById(accountId), Times.Once);
 
             _mockAccountDatabase
                 .Verify(x => x.AddAccountToUser(new AccountUserEntity(accountId, userId, doesAccountBelongToUser)), Times.Once);
@@ -50,6 +57,10 @@ public class AddAccountTest : AccountTestHelper
             .Setup(x => x.GetUserFromToken(token))
             .ReturnsAsync(new AuthenticatedUser(userId));
 
+        _mockAccountDatabase
+            .Setup(x => x.GetAccountById(accountId))
+            .ReturnsAsync(new AccountEntity(accountId, "Savings"));
+
         await _accountService.AddAccount(token, new AddAccountToUserRequest(accountId, doesAccountBelongToUser));
 
         Assert.Multiple(() =>
@@ -59,6 +70,9 @@ public class AddAccountTest : AccountTestHelper
 
             _mockAccountDatabase
                 .Verify(x => x.AddAccountToUser(new AccountUserEntity(accountId, userId, doesAccountBelongToUser)), Times.Once);
+
+            _mockAccountDatabase
+                .Verify(x => x.GetAccountById(accountId), Times.Once);
 
             _mockMessageBusClient
                 .Verify(x => x.PublishEvent(new EventUpdate(new AuthenticatedUser(userId), DataTypes.Account), It.IsAny<CancellationToken>()), Times.Once);
@@ -84,6 +98,38 @@ public class AddAccountTest : AccountTestHelper
         {
             _mockUserService
                 .Verify(x => x.GetUserFromToken(token), Times.Once);
+
+            EnsureAllMocksHadNoOtherCalls();
+        });
+    }
+
+    [Fact]
+    public async Task FailsToAddAccountAsAccountIsNotFound()
+    {
+        var token = "agdsa";
+        var userId = 4;
+        var accountId = 52;
+        var doesAccountBelongToUser = true;
+
+        _mockUserService
+            .Setup(x => x.GetUserFromToken(token))
+            .ReturnsAsync(new AuthenticatedUser(userId));
+
+        _mockAccountDatabase
+            .Setup(x => x.GetAccountById(accountId))
+            .ReturnsAsync((AccountEntity)null);
+
+        var error = await _accountService.AddAccount(token, new AddAccountToUserRequest(accountId, doesAccountBelongToUser));
+
+        Assert.Multiple(() =>
+        {
+            Assert.Equal("Account does not exist", error.Error.Description);
+
+            _mockUserService
+                .Verify(x => x.GetUserFromToken(token), Times.Once);
+
+            _mockAccountDatabase
+                .Verify(x => x.GetAccountById(accountId), Times.Once);
 
             EnsureAllMocksHadNoOtherCalls();
         });

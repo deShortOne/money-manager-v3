@@ -31,6 +31,10 @@ public class AccountService : IAccountService
             return userResult;
 
         var user = userResult.Value;
+        if (await _accountDb.GetAccountById(newAccountRequest.AccountId) == null)
+        {
+            return Error.NotFound("", "Account does not exist");
+        }
 
         var newAccountToUse = new AccountUserEntity(newAccountRequest.AccountId, user.Id, newAccountRequest.DoesUserOwnAccount);
         await _accountDb.AddAccountToUser(newAccountToUse);
