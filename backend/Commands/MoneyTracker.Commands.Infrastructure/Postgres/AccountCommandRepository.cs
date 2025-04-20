@@ -14,6 +14,7 @@ public class AccountCommandRepository : IAccountCommandRepository
         _database = db;
     }
 
+    public Task AddAccount(AccountEntity newAccount) => throw new NotImplementedException();
     public Task AddAccountToUser(AccountUserEntity newAccountUserEntity) => throw new NotImplementedException();
 
     public async Task<AccountEntity?> GetAccountById(int accountId)
@@ -65,4 +66,6 @@ public class AccountCommandRepository : IAccountCommandRepository
                 reader.Rows[0].Field<bool>("user_owns_account"));
         return null;
     }
+
+    public Task<int> GetLastId() => throw new NotImplementedException();
 }

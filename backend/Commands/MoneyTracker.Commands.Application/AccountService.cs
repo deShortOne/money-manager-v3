@@ -3,6 +3,7 @@ using MoneyTracker.Commands.Domain.Entities.Account;
 using MoneyTracker.Commands.Domain.Handlers;
 using MoneyTracker.Commands.Domain.Repositories;
 using MoneyTracker.Common.Result;
+using MoneyTracker.Common.Utilities.IdGeneratorUtil;
 using MoneyTracker.Contracts.Requests.Account;
 using MoneyTracker.PlatformService.Domain;
 using MoneyTracker.PlatformService.DTOs;
@@ -11,15 +12,18 @@ namespace MoneyTracker.Commands.Application;
 public class AccountService : IAccountService
 {
     private readonly IAccountCommandRepository _accountDb;
+    private readonly IIdGenerator _idGenerator;
     private readonly IUserService _userService;
     private readonly IMessageBusClient _messageBus;
 
     public AccountService(IAccountCommandRepository accountDb,
+        IIdGenerator idGenerator,
         IUserService userService,
         IMessageBusClient messageBus
         )
     {
         _accountDb = accountDb;
+        _idGenerator = idGenerator;
         _userService = userService;
         _messageBus = messageBus;
     }
@@ -34,7 +38,8 @@ public class AccountService : IAccountService
         var accountToAdd = await _accountDb.GetAccountByName(newAccountRequest.AccountName);
         if (accountToAdd == null)
         {
-            return Error.NotFound("ASdf", "garbage");
+            accountToAdd = new AccountEntity(_idGenerator.NewInt(await _accountDb.GetLastId()), newAccountRequest.AccountName);
+            await _accountDb.AddAccount(accountToAdd);
         }
         if (await _accountDb.GetAccountUserEntity(accountToAdd.Id, user.Id) != null)
         {

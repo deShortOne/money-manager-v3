@@ -92,6 +92,62 @@ public class AddAccountTest : AccountTestHelper
     }
 
     [Fact]
+    public async Task SuccessfullyAddAccountThatDidntExistToUser()
+    {
+        var token = "agdsa";
+        var userId = 4;
+        var previousAccountId = 50;
+        var accountId = 52;
+        var accountName = "Savings";
+        var doesAccountBelongToUser = true;
+
+        _mockUserService
+            .Setup(x => x.GetUserFromToken(token))
+            .ReturnsAsync(new AuthenticatedUser(userId));
+
+        _mockAccountDatabase
+            .Setup(x => x.GetAccountByName(accountName))
+            .ReturnsAsync((AccountEntity)null);
+        _mockAccountDatabase
+            .Setup(x => x.GetAccountUserEntity(accountId, userId))
+            .ReturnsAsync((AccountUserEntity)null);
+        _mockAccountDatabase
+            .Setup(x => x.GetLastId())
+            .ReturnsAsync(previousAccountId);
+
+        _mockIdGenerator
+            .Setup(x => x.NewInt(previousAccountId))
+            .Returns(accountId);
+
+        await _accountService.AddAccount(token, new AddAccountToUserRequest(accountName, doesAccountBelongToUser));
+
+        Assert.Multiple(() =>
+        {
+            _mockUserService
+                .Verify(x => x.GetUserFromToken(token), Times.Once);
+
+            _mockAccountDatabase
+                .Verify(x => x.GetAccountByName(accountName), Times.Once);
+            _mockAccountDatabase
+                .Verify(x => x.GetAccountUserEntity(accountId, userId), Times.Once);
+            _mockAccountDatabase
+                .Verify(x => x.GetLastId(), Times.Once);
+            _mockAccountDatabase
+                .Verify(x => x.AddAccount(new AccountEntity(accountId, accountName)), Times.Once);
+            _mockAccountDatabase
+                .Verify(x => x.AddAccountToUser(new AccountUserEntity(accountId, userId, doesAccountBelongToUser)), Times.Once);
+
+            _mockIdGenerator
+                .Verify(x => x.NewInt(previousAccountId), Times.Once);
+
+            _mockMessageBusClient
+                .Verify(x => x.PublishEvent(new EventUpdate(new AuthenticatedUser(userId), DataTypes.Account), It.IsAny<CancellationToken>()), Times.Once);
+
+            EnsureAllMocksHadNoOtherCalls();
+        });
+    }
+
+    [Fact]
     public async Task FailsToAddAccountAsTokenIsInvalid()
     {
         var token = "agdsa";
