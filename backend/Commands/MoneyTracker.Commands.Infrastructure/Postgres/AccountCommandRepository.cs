@@ -14,7 +14,21 @@ public class AccountCommandRepository : IAccountCommandRepository
         _database = db;
     }
 
-    public Task AddAccount(AccountEntity newAccount) => throw new NotImplementedException();
+    public async Task AddAccount(AccountEntity newAccount)
+    {
+        string query = """
+            INSERT INTO account (id, name)
+            VALUES (@id, @name);
+            """;
+        var queryParams = new List<DbParameter>()
+            {
+                new NpgsqlParameter("id", newAccount.Id),
+                new NpgsqlParameter("name", newAccount.Name),
+            };
+
+        await _database.UpdateTable(query, queryParams);
+    }
+
     public Task AddAccountToUser(AccountUserEntity newAccountUserEntity) => throw new NotImplementedException();
 
     public async Task<AccountEntity?> GetAccountById(int accountId)
