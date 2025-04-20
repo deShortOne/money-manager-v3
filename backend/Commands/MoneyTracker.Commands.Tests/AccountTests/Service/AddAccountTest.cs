@@ -24,6 +24,9 @@ public class AddAccountTest : AccountTestHelper
         _mockAccountDatabase
             .Setup(x => x.GetAccountById(accountId))
             .ReturnsAsync(new AccountEntity(accountId, "Savings"));
+        _mockAccountDatabase
+            .Setup(x => x.GetAccountUserEntity(accountId, userId))
+            .ReturnsAsync((AccountUserEntity)null);
 
         await _accountService.AddAccount(token, new AddAccountToUserRequest(accountId, doesAccountBelongToUser));
 
@@ -34,7 +37,8 @@ public class AddAccountTest : AccountTestHelper
 
             _mockAccountDatabase
                 .Verify(x => x.GetAccountById(accountId), Times.Once);
-
+            _mockAccountDatabase
+                .Verify(x => x.GetAccountUserEntity(accountId, userId), Times.Once);
             _mockAccountDatabase
                 .Verify(x => x.AddAccountToUser(new AccountUserEntity(accountId, userId, doesAccountBelongToUser)), Times.Once);
 
@@ -60,6 +64,9 @@ public class AddAccountTest : AccountTestHelper
         _mockAccountDatabase
             .Setup(x => x.GetAccountById(accountId))
             .ReturnsAsync(new AccountEntity(accountId, "Savings"));
+        _mockAccountDatabase
+            .Setup(x => x.GetAccountUserEntity(accountId, userId))
+            .ReturnsAsync((AccountUserEntity)null);
 
         await _accountService.AddAccount(token, new AddAccountToUserRequest(accountId, doesAccountBelongToUser));
 
@@ -70,7 +77,8 @@ public class AddAccountTest : AccountTestHelper
 
             _mockAccountDatabase
                 .Verify(x => x.AddAccountToUser(new AccountUserEntity(accountId, userId, doesAccountBelongToUser)), Times.Once);
-
+            _mockAccountDatabase
+                .Verify(x => x.GetAccountUserEntity(accountId, userId), Times.Once);
             _mockAccountDatabase
                 .Verify(x => x.GetAccountById(accountId), Times.Once);
 
@@ -130,6 +138,43 @@ public class AddAccountTest : AccountTestHelper
 
             _mockAccountDatabase
                 .Verify(x => x.GetAccountById(accountId), Times.Once);
+
+            EnsureAllMocksHadNoOtherCalls();
+        });
+    }
+
+    [Fact]
+    public async Task FailsToAddAccountThatIsAlreadyAssociatedUser()
+    {
+        var token = "agdsa";
+        var userId = 4;
+        var accountId = 52;
+        var doesAccountBelongToUser = true;
+
+        _mockUserService
+            .Setup(x => x.GetUserFromToken(token))
+            .ReturnsAsync(new AuthenticatedUser(userId));
+
+        _mockAccountDatabase
+            .Setup(x => x.GetAccountById(accountId))
+            .ReturnsAsync(new AccountEntity(accountId, "Savings"));
+        _mockAccountDatabase
+            .Setup(x => x.GetAccountUserEntity(accountId, userId))
+            .ReturnsAsync(new AccountUserEntity(accountId, userId, false));
+
+        var error = await _accountService.AddAccount(token, new AddAccountToUserRequest(accountId, doesAccountBelongToUser));
+
+        Assert.Multiple(() =>
+        {
+            Assert.Equal("Account is already associated with user", error.Error.Description);
+
+            _mockUserService
+                .Verify(x => x.GetUserFromToken(token), Times.Once);
+
+            _mockAccountDatabase
+                .Verify(x => x.GetAccountById(accountId), Times.Once);
+            _mockAccountDatabase
+                .Verify(x => x.GetAccountUserEntity(accountId, userId), Times.Once);
 
             EnsureAllMocksHadNoOtherCalls();
         });
