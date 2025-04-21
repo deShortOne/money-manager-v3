@@ -51,6 +51,17 @@ public class RegisterService : IRegisterService
         {
             return Error.Validation("RegisterService.AddTransaction", "Payer account not found");
         }
+
+        var payeeAccount = await _accountDb.GetAccountUserEntity(newTransaction.PayeeId);
+        if (payeeAccount == null) // to be logged differently
+        {
+            return Error.Validation("RegisterService.AddTransaction", "Payee account not found");
+        }
+        if (payeeAccount.UserId != user.Id)
+        {
+            return Error.Validation("RegisterService.AddTransaction", "Payee account not found");
+        }
+
         var newTransactionId = _idGenerator.NewInt(await _registerDb.GetLastTransactionId());
 
         var dtoToDb = new TransactionEntity(newTransactionId,
