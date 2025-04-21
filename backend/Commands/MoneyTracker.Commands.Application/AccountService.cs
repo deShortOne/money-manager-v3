@@ -62,8 +62,8 @@ public class AccountService : IAccountService
 
     public async Task<bool> DoesUserOwnAccount(AuthenticatedUser user, int accountId)
     {
-        var account = await _accountDb.GetAccountUserEntity(accountId, user.Id);
-        if (account == null)
+        var account = await _accountDb.GetAccountUserEntity(accountId);
+        if (account == null || account.UserId != user.Id)
             return false;
 
         return account.UserOwnsAccount;
