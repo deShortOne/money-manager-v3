@@ -13,6 +13,7 @@ public class RegisterTestHelper
     public readonly Mock<IIdGenerator> _mockIdGenerator = new();
     public readonly Mock<IUserService> _mockUserService = new();
     public readonly Mock<IAccountService> _accountService = new();
+    public readonly Mock<ICategoryService> _mockCategoryService = new();
     public readonly Mock<IMessageBusClient> _mockMessageBusClient = new();
 
     public readonly RegisterService _registerService;
@@ -25,6 +26,7 @@ public class RegisterTestHelper
             _mockIdGenerator.Object,
             _mockUserService.Object,
             _accountService.Object,
+            _mockCategoryService.Object,
             _mockMessageBusClient.Object
             );
     }
@@ -36,6 +38,7 @@ public class RegisterTestHelper
         _mockIdGenerator.VerifyNoOtherCalls();
         _mockUserService.VerifyNoOtherCalls();
         _accountService.VerifyNoOtherCalls();
+        _mockCategoryService.VerifyNoOtherCalls();
         _mockMessageBusClient.VerifyNoOtherCalls();
     }
 }

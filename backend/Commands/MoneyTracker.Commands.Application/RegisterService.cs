@@ -16,6 +16,7 @@ public class RegisterService : IRegisterService
     private readonly IIdGenerator _idGenerator;
     private readonly IUserService _userService;
     private readonly IAccountService _accountService;
+    private readonly ICategoryService _categoryService;
     private readonly IMessageBusClient _messageBus;
 
     public RegisterService(IRegisterCommandRepository registerDb,
@@ -23,6 +24,7 @@ public class RegisterService : IRegisterService
         IIdGenerator idGenerator,
         IUserService userService,
         IAccountService accountService,
+        ICategoryService categoryService,
         IMessageBusClient messageBus
         )
     {
@@ -31,6 +33,7 @@ public class RegisterService : IRegisterService
         _idGenerator = idGenerator;
         _userService = userService;
         _accountService = accountService;
+        _categoryService = categoryService;
         _messageBus = messageBus;
     }
 
@@ -60,6 +63,11 @@ public class RegisterService : IRegisterService
         if (payeeAccount.UserId != user.Id)
         {
             return Error.Validation("RegisterService.AddTransaction", "Payee account not found");
+        }
+
+        if (!await _categoryService.DoesCategoryExist(newTransaction.CategoryId))
+        {
+            return Error.Validation("RegisterService.AddTransaction", "Category not found");
         }
 
         var newTransactionId = _idGenerator.NewInt(await _registerDb.GetLastTransactionId());
