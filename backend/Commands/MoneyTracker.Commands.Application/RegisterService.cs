@@ -42,12 +42,12 @@ public class RegisterService : IRegisterService
 
         var user = userResult.Value;
 
-        var payerAccount = await _accountDb.GetAccountUserEntity(newTransaction.PayerId, user.Id);
+        var payerAccount = await _accountDb.GetAccountUserEntity(newTransaction.PayerId);
         if (payerAccount == null) // to be logged differently
         {
             return Error.Validation("RegisterService.AddTransaction", "Payer account not found");
         }
-        if (!payerAccount.UserOwnsAccount)
+        if (!payerAccount.UserOwnsAccount || payerAccount.UserId != user.Id)
         {
             return Error.Validation("RegisterService.AddTransaction", "Payer account not found");
         }
