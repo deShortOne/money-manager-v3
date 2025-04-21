@@ -60,8 +60,8 @@ public class BillService : IBillService
         {
             return Error.Validation("BillService.AddBill", "Payer account not found");
         }
-        var payeeAccount = await _accountDatabase.GetAccountUserEntity(newBill.PayeeId, user.Id);
-        if (payeeAccount == null)
+        var payeeAccount = await _accountDatabase.GetAccountUserEntity(newBill.PayeeId);
+        if (payeeAccount == null || payeeAccount.UserId != user.Id)
         {
             return Error.Validation("BillService.AddBill", "Payee account not found");
         }

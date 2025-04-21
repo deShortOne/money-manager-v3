@@ -40,8 +40,8 @@ public sealed class AddBillTest : BillTestHelper
         _mockUserService.Setup(x => x.GetUserFromToken(_tokenToDecode))
             .ReturnsAsync(ResultT<AuthenticatedUser>.Success(_authedUser));
 
-        _mockAccountDatabase.Setup(x => x.GetAccountUserEntity(_payeeId, _userId))
-            .ReturnsAsync(new AccountUserEntity(35, 1, _userId, false));
+        _mockAccountDatabase.Setup(x => x.GetAccountUserEntity(_payeeId))
+            .ReturnsAsync(new AccountUserEntity(_payeeId, 1, _userId, false));
 
         _mockFrequencyCalculation.Setup(x => x.DoesFrequencyExist(_frequency)).Returns(true);
 
@@ -66,7 +66,7 @@ public sealed class AddBillTest : BillTestHelper
         Assert.Multiple(() =>
         {
             _mockUserService.Verify(x => x.GetUserFromToken(_tokenToDecode), Times.Once);
-            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(_payeeId, _userId), Times.Once);
+            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(_payeeId), Times.Once);
             _mockFrequencyCalculation.Verify(x => x.DoesFrequencyExist(_frequency), Times.Once);
             _mockCategoryService.Verify(x => x.DoesCategoryExist(_category), Times.Once);
             _mockBillDatabase.Verify(x => x.GetLastId(), Times.Once);
@@ -83,13 +83,13 @@ public sealed class AddBillTest : BillTestHelper
     }
 
     [Fact]
-    public async Task FailToAddNewBillDueToAccountNotBelongingToUser()
+    public async Task FailToAddNewBillDueToPayerAccountNotBelongingToUser()
     {
         _mockUserService.Setup(x => x.GetUserFromToken(_tokenToDecode))
             .ReturnsAsync(ResultT<AuthenticatedUser>.Success(_authedUser));
 
-        _mockAccountDatabase.Setup(x => x.GetAccountUserEntity(_payeeId, _userId))
-            .ReturnsAsync(new AccountUserEntity(35, 1, _userId, false));
+        _mockAccountDatabase.Setup(x => x.GetAccountUserEntity(_payeeId))
+            .ReturnsAsync(new AccountUserEntity(_payeeId, 1, _userId, false));
 
         _mockFrequencyCalculation.Setup(x => x.DoesFrequencyExist(_frequency)).Returns(true);
 
@@ -113,7 +113,7 @@ public sealed class AddBillTest : BillTestHelper
             Assert.Equal("Payer account not found", result.Error!.Description);
 
             _mockUserService.Verify(x => x.GetUserFromToken(_tokenToDecode), Times.Once);
-            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(_payeeId, _userId), Times.AtMostOnce);
+            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(_payeeId), Times.AtMostOnce);
             _mockFrequencyCalculation.Verify(x => x.DoesFrequencyExist(_frequency), Times.AtMostOnce);
             _mockCategoryService.Verify(x => x.DoesCategoryExist(_category), Times.AtMostOnce);
             _mockBillDatabase.Verify(x => x.GetLastId(), Times.AtMostOnce);
@@ -130,8 +130,8 @@ public sealed class AddBillTest : BillTestHelper
         _mockUserService.Setup(x => x.GetUserFromToken(_tokenToDecode))
             .ReturnsAsync(ResultT<AuthenticatedUser>.Success(_authedUser));
 
-        _mockAccountDatabase.Setup(x => x.GetAccountUserEntity(_payeeId, _userId))
-            .ReturnsAsync(new AccountUserEntity(35, 1, _userId, false));
+        _mockAccountDatabase.Setup(x => x.GetAccountUserEntity(_payeeId))
+            .ReturnsAsync(new AccountUserEntity(_payeeId, 1, _userId, false));
 
         _mockFrequencyCalculation.Setup(x => x.DoesFrequencyExist(_frequency)).Returns(false);
 
@@ -155,7 +155,7 @@ public sealed class AddBillTest : BillTestHelper
             Assert.Equal("Frequency type not found", result.Error!.Description);
 
             _mockUserService.Verify(x => x.GetUserFromToken(_tokenToDecode), Times.Once);
-            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(_payeeId, _userId), Times.AtMostOnce);
+            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(_payeeId), Times.AtMostOnce);
             _mockFrequencyCalculation.Verify(x => x.DoesFrequencyExist(_frequency), Times.AtMostOnce);
             _mockCategoryService.Verify(x => x.DoesCategoryExist(_category), Times.AtMostOnce);
             _mockBillDatabase.Verify(x => x.GetLastId(), Times.AtMostOnce);
@@ -172,8 +172,8 @@ public sealed class AddBillTest : BillTestHelper
         _mockUserService.Setup(x => x.GetUserFromToken(_tokenToDecode))
             .ReturnsAsync(ResultT<AuthenticatedUser>.Success(_authedUser));
 
-        _mockAccountDatabase.Setup(x => x.GetAccountUserEntity(_payeeId, _userId))
-            .ReturnsAsync(new AccountUserEntity(35, 1, _userId, false));
+        _mockAccountDatabase.Setup(x => x.GetAccountUserEntity(_payeeId))
+            .ReturnsAsync(new AccountUserEntity(_payeeId, 1, _userId, false));
 
         _mockFrequencyCalculation.Setup(x => x.DoesFrequencyExist(_frequency)).Returns(true);
 
@@ -197,7 +197,7 @@ public sealed class AddBillTest : BillTestHelper
             Assert.Equal("Category not found", result.Error!.Description);
 
             _mockUserService.Verify(x => x.GetUserFromToken(_tokenToDecode), Times.Once);
-            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(_payeeId, _userId), Times.AtMostOnce);
+            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(_payeeId), Times.AtMostOnce);
             _mockFrequencyCalculation.Verify(x => x.DoesFrequencyExist(_frequency), Times.AtMostOnce);
             _mockCategoryService.Verify(x => x.DoesCategoryExist(_category), Times.AtMostOnce);
             _mockBillDatabase.Verify(x => x.GetLastId(), Times.AtMostOnce);
@@ -214,7 +214,7 @@ public sealed class AddBillTest : BillTestHelper
         _mockUserService.Setup(x => x.GetUserFromToken(_tokenToDecode))
             .ReturnsAsync(ResultT<AuthenticatedUser>.Success(_authedUser));
 
-        _mockAccountDatabase.Setup(x => x.GetAccountUserEntity(_payeeId, _userId))
+        _mockAccountDatabase.Setup(x => x.GetAccountUserEntity(_payeeId))
             .ReturnsAsync((AccountUserEntity)null);
 
         _mockFrequencyCalculation.Setup(x => x.DoesFrequencyExist(_frequency)).Returns(true);
@@ -239,7 +239,7 @@ public sealed class AddBillTest : BillTestHelper
             Assert.Equal("Payee account not found", result.Error!.Description);
 
             _mockUserService.Verify(x => x.GetUserFromToken(_tokenToDecode), Times.Once);
-            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(_payeeId, _userId), Times.Once);
+            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(_payeeId), Times.Once);
             _mockFrequencyCalculation.Verify(x => x.DoesFrequencyExist(_frequency), Times.AtMostOnce);
             _mockCategoryService.Verify(x => x.DoesCategoryExist(_category), Times.AtMostOnce);
             _mockBillDatabase.Verify(x => x.GetLastId(), Times.AtMostOnce);
@@ -264,6 +264,57 @@ public sealed class AddBillTest : BillTestHelper
             Assert.Equal("Amount must be a positive number", result.Error!.Description);
 
             _mockUserService.Verify(x => x.GetUserFromToken(_tokenToDecode), Times.Once);
+
+            EnsureAllMocksHadNoOtherCalls();
+        });
+    }
+
+    [Fact]
+    public async Task ValidPayeeAccountButDoesNotBelongToUser_Fails()
+    {
+        _mockUserService.Setup(x => x.GetUserFromToken(_tokenToDecode))
+            .ReturnsAsync(ResultT<AuthenticatedUser>.Success(_authedUser));
+
+        _mockAccountDatabase.Setup(x => x.GetAccountUserEntity(_payeeId))
+            .ReturnsAsync(new AccountUserEntity(_payeeId, 1, _userId + 1, false));
+
+        _mockFrequencyCalculation.Setup(x => x.DoesFrequencyExist(_frequency)).Returns(true);
+
+        _mockCategoryService.Setup(x => x.DoesCategoryExist(_category))
+            .Returns(Task.FromResult(true));
+
+        _mockBillDatabase.Setup(x => x.GetLastId())
+            .Returns(Task.FromResult(_prevBillId));
+
+        _mockIdGenerator.Setup(x => x.NewInt(_prevBillId))
+            .Returns(_nextBillId);
+
+        _mockMonthDayCalculator.Setup(x => x.Calculate(_nextDueDate)).Returns(_monthDay);
+
+        _mockBillDatabase.Setup(x => x.AddBill(_newBillEntity));
+
+        _mockAccountService.Setup(x => x.DoesUserOwnAccount(_authedUser, _payerId))
+            .ReturnsAsync(true);
+
+        var result = await _billService.AddBill(_tokenToDecode, _newBillRequest);
+
+        Assert.Multiple(() =>
+        {
+            Assert.Equal("Payee account not found", result.Error.Description);
+
+            _mockUserService.Verify(x => x.GetUserFromToken(_tokenToDecode), Times.Once);
+            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(_payeeId), Times.Once);
+            _mockFrequencyCalculation.Verify(x => x.DoesFrequencyExist(_frequency), Times.AtMostOnce);
+            _mockCategoryService.Verify(x => x.DoesCategoryExist(_category), Times.AtMostOnce);
+            _mockBillDatabase.Verify(x => x.GetLastId(), Times.AtMostOnce);
+            _mockIdGenerator.Verify(x => x.NewInt(_prevBillId), Times.AtMostOnce);
+            _mockFrequencyCalculation.Verify(x => x.DoesFrequencyExist(_frequency), Times.AtMostOnce);
+            _mockMonthDayCalculator.Verify(x => x.Calculate(_nextDueDate), Times.AtMostOnce);
+            _mockAccountService.Verify(x => x.DoesUserOwnAccount(_authedUser, _payerId), Times.AtMostOnce);
+
+            _mockBillDatabase.Verify(x => x.AddBill(_newBillEntity), Times.Never);
+
+            _mockMessageBusClient.Verify(x => x.PublishEvent(new EventUpdate(_authedUser, DataTypes.Bill), It.IsAny<CancellationToken>()), Times.Never);
 
             EnsureAllMocksHadNoOtherCalls();
         });

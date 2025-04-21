@@ -118,6 +118,32 @@ public class AccountCommandRepository : IAccountCommandRepository
         return null;
     }
 
+    public async Task<AccountUserEntity?> GetAccountUserEntity(int accountUserId)
+    {
+        var query = """
+            SELECT id,
+                users_id,
+                account_id,
+                user_owns_account
+            FROM account_user
+            WHERE  id = @account_users_id;
+         """;
+        var queryParams = new List<DbParameter>()
+        {
+            new NpgsqlParameter("account_users_id", accountUserId),
+        };
+
+        using var reader = await _database.GetTable(query, queryParams);
+
+        if (reader.Rows.Count != 0)
+            return new AccountUserEntity(
+                reader.Rows[0].Field<int>("id"),
+                reader.Rows[0].Field<int>("account_id"),
+                reader.Rows[0].Field<int>("users_id")!,
+                reader.Rows[0].Field<bool>("user_owns_account"));
+        return null;
+    }
+
     public async Task<int> GetLastAccountId()
     {
         string query = """
