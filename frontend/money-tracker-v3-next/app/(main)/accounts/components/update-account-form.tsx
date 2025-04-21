@@ -111,16 +111,20 @@ export function UpdateAccountsForm() {
                             name="doesUserOwnAccount"
                             render={({ field }) => (
                                 <FormItem className="mr-2 my-2">
-                                    <FormLabel>Is this account yours?</FormLabel>
-                                    <FormControl>
-                                        <Checkbox
-                                            checked={field.value}
-                                            onCheckedChange={field.onChange}
-                                        />
-                                    </FormControl>
-                                    <FormDescription>
-                                        This is the new account you want to keep a record of.
-                                    </FormDescription>
+                                    <div className="flex items-center space-x-2">
+                                        <FormControl>
+                                            <Checkbox
+                                                checked={field.value}
+                                                onCheckedChange={field.onChange}
+                                            />
+                                        </FormControl>
+                                        <div>
+                                            <FormLabel>Is this account yours?</FormLabel>
+                                            <FormDescription>
+                                                Your accounts will be listed at the top.
+                                            </FormDescription>
+                                        </div>
+                                    </div>
                                     <FormMessage />
                                 </FormItem>
                             )}
