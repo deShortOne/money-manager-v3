@@ -119,8 +119,8 @@ public class BillService : IBillService
         }
         if (editBill.PayeeId != null)
         {
-            var payeeAccount = await _accountDatabase.GetAccountUserEntity((int)editBill.PayeeId, user.Id);
-            if (payeeAccount == null)
+            var payeeAccount = await _accountDatabase.GetAccountUserEntity((int)editBill.PayeeId);
+            if (payeeAccount == null || payeeAccount.UserId != user.Id)
             {
                 return Error.Validation("BillService.EditBill", "Payee account not found");
             }
@@ -208,8 +208,8 @@ public class BillService : IBillService
         {
             return null;
         }
-        var billsPayerAccount = await _accountDatabase.GetAccountUserEntity(bill.PayerId, user.Id);
-        if (billsPayerAccount == null || !billsPayerAccount.UserOwnsAccount)
+        var billsPayerAccount = await _accountDatabase.GetAccountUserEntity(bill.PayerId);
+        if (billsPayerAccount == null || billsPayerAccount.UserId != user.Id || !billsPayerAccount.UserOwnsAccount)
         {
             return null;
         }
