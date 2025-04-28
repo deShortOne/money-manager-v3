@@ -34,15 +34,23 @@ public class BillDatabase : IBillDatabase
             INNER JOIN category c
                	ON b.category_id = c.id
             INNER JOIN (
-            	SELECT a.id, a.name
-            	FROM account a
-            	INNER JOIN users u
-            		ON a.users_id = u.id 
-            	WHERE u.id = @user_id
+            	SELECT account_user.id,
+                    account.name name
+                FROM account
+                INNER JOIN account_user
+                    ON account.id = account_user.account_id
+                WHERE account_user.users_id = @user_id
             ) accounts_owned_by_user
-            	ON b.account_id = accounts_owned_by_user.id
-            INNER JOIN account payee_accounts
-                ON payee = payee_accounts.id
+            	ON b.payer_user_id = accounts_owned_by_user.id
+            INNER JOIN (
+            	SELECT account_user.id,
+                    account.name name
+                FROM account
+                INNER JOIN account_user
+                    ON account.id = account_user.account_id
+                WHERE account_user.users_id = @user_id
+            ) payee_accounts
+                ON b.payee_user_id = payee_accounts.id
             ORDER BY nextduedate ASC;
             """;
         var queryParams = new List<DbParameter>()

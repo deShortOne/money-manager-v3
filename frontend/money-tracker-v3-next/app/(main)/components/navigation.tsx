@@ -10,6 +10,10 @@ import {
 
 const components: { title: string; href: string; }[] = [
     {
+        title: "Accounts",
+        href: "/accounts",
+    },
+    {
         title: "Register",
         href: "/register",
     },

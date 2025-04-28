@@ -1,4 +1,3 @@
-using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Commands.Domain.Entities.Bill;
 
 namespace MoneyTracker.Commands.Domain.Repositories;

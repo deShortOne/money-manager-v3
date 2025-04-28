@@ -16,6 +16,7 @@ public class RegisterService : IRegisterService
     private readonly IIdGenerator _idGenerator;
     private readonly IUserService _userService;
     private readonly IAccountService _accountService;
+    private readonly ICategoryService _categoryService;
     private readonly IMessageBusClient _messageBus;
 
     public RegisterService(IRegisterCommandRepository registerDb,
@@ -23,6 +24,7 @@ public class RegisterService : IRegisterService
         IIdGenerator idGenerator,
         IUserService userService,
         IAccountService accountService,
+        ICategoryService categoryService,
         IMessageBusClient messageBus
         )
     {
@@ -31,6 +33,7 @@ public class RegisterService : IRegisterService
         _idGenerator = idGenerator;
         _userService = userService;
         _accountService = accountService;
+        _categoryService = categoryService;
         _messageBus = messageBus;
     }
 
@@ -42,15 +45,31 @@ public class RegisterService : IRegisterService
 
         var user = userResult.Value;
 
-        var payerAccount = await _accountDb.GetAccountById(newTransaction.PayerId);
+        var payerAccount = await _accountDb.GetAccountUserEntity(newTransaction.PayerId);
         if (payerAccount == null) // to be logged differently
         {
             return Error.Validation("RegisterService.AddTransaction", "Payer account not found");
         }
-        if (payerAccount.UserId != user.Id)
+        if (!payerAccount.UserOwnsAccount || payerAccount.UserId != user.Id)
         {
             return Error.Validation("RegisterService.AddTransaction", "Payer account not found");
         }
+
+        var payeeAccount = await _accountDb.GetAccountUserEntity(newTransaction.PayeeId);
+        if (payeeAccount == null) // to be logged differently
+        {
+            return Error.Validation("RegisterService.AddTransaction", "Payee account not found");
+        }
+        if (payeeAccount.UserId != user.Id)
+        {
+            return Error.Validation("RegisterService.AddTransaction", "Payee account not found");
+        }
+
+        if (!await _categoryService.DoesCategoryExist(newTransaction.CategoryId))
+        {
+            return Error.Validation("RegisterService.AddTransaction", "Category not found");
+        }
+
         var newTransactionId = _idGenerator.NewInt(await _registerDb.GetLastTransactionId());
 
         var dtoToDb = new TransactionEntity(newTransactionId,
@@ -80,12 +99,12 @@ public class RegisterService : IRegisterService
         }
         if (editTransaction.PayerId != null)
         {
-            var payerAccount = await _accountDb.GetAccountById((int)editTransaction.PayerId);
+            var payerAccount = await _accountDb.GetAccountUserEntity((int)editTransaction.PayerId, user.Id);
             if (payerAccount == null)
             {
                 return Error.Validation("RegisterService.EditTransaction", "Payer account not found");
             }
-            if (payerAccount.UserId != user.Id)
+            if (!payerAccount.UserOwnsAccount)
                 return Error.Validation("RegisterService.EditTransaction", "Payer account not found");
         }
 

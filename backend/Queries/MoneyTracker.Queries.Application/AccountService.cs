@@ -26,7 +26,7 @@ public class AccountService : IAccountService
         userAuth.CheckValidation();
 
         var user = new AuthenticatedUser(userAuth.User.Id);
-        var dtoFromDbResult = await _dbService.GetAccounts(user);
+        var dtoFromDbResult = await _dbService.GetAccountsOwnedByUser(user);
         if (!dtoFromDbResult.IsSuccess)
             return dtoFromDbResult.Error!;
 

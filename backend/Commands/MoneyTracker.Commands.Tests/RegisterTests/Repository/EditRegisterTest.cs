@@ -23,15 +23,16 @@ public sealed class EditRegisterTest : RegisterRespositoryTestHelper
         await commandDeleteAllBudgetData.ExecuteNonQueryAsync();
 
         var addBaseTransactionData = """
-            INSERT INTO register (id, payee, amount, datePaid, category_id, account_id) VALUES (@id, @payee, @amount, @datePaid, @category_id, @account_id);
+            INSERT INTO register (id, payee_user_id, amount, datePaid, category_id, payer_user_id)
+            VALUES (@id, @payee_user_id, @amount, @datePaid, @category_id, @payer_user_id);
             """;
         await using var commandAddBaseBillData = new NpgsqlCommand(addBaseTransactionData, conn);
         commandAddBaseBillData.Parameters.Add(new NpgsqlParameter("@id", _id));
-        commandAddBaseBillData.Parameters.Add(new NpgsqlParameter("@payee", _payeeId));
+        commandAddBaseBillData.Parameters.Add(new NpgsqlParameter("@payee_user_id", _payeeId));
         commandAddBaseBillData.Parameters.Add(new NpgsqlParameter("@amount", _amount));
         commandAddBaseBillData.Parameters.Add(new NpgsqlParameter("@datePaid", _datePaid));
         commandAddBaseBillData.Parameters.Add(new NpgsqlParameter("@category_id", _categoryId));
-        commandAddBaseBillData.Parameters.Add(new NpgsqlParameter("@account_id", _payerId));
+        commandAddBaseBillData.Parameters.Add(new NpgsqlParameter("@payer_user_id", _payerId));
         await commandAddBaseBillData.ExecuteNonQueryAsync();
     }
 

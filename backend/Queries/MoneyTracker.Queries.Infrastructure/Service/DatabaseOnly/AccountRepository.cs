@@ -16,7 +16,7 @@ public class AccountRepository : IAccountRepositoryService
     }
     public Task<ResultT<List<AccountEntity>>> GetAccounts(AuthenticatedUser user)
     {
-        return _accountDatabase.GetAccounts(user);
+        return _accountDatabase.GetAccountsOwnedByUser(user);
     }
 
     public Task ResetAccountsCache(AuthenticatedUser user) => throw new NotImplementedException();

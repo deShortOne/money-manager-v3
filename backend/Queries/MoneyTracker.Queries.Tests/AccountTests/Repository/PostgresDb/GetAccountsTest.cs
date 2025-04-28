@@ -19,7 +19,7 @@ public sealed class GetAccountsTest : IClassFixture<PostgresDbFixture>
         var db = new PostgresDatabase(_postgresFixture.ConnectionString);
         var accountDb = new AccountDatabase(db);
 
-        var actual = await accountDb.GetAccounts(new AuthenticatedUser(1));
+        var actual = await accountDb.GetAccountsOwnedByUser(new AuthenticatedUser(1));
 
         var expected = new List<AccountEntity>()
         {

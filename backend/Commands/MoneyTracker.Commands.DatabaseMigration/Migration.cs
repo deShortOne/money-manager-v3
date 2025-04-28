@@ -22,6 +22,7 @@ public class Migration
                 .WithScriptsEmbeddedInAssembly(Assembly.GetExecutingAssembly(), CreateFilter(migrationOption))
                 .WithFilter(new MyScriptFilter()) // orders the scripts
                 .LogToConsole()
+                .LogScriptOutput()
                 .Build();
 
         return upgrader.PerformUpgrade();

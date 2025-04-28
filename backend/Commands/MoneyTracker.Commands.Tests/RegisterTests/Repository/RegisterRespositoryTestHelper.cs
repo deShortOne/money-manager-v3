@@ -37,7 +37,7 @@ public class RegisterRespositoryTestHelper : IAsyncLifetime
     protected async Task<List<TransactionEntity>> GetAllTransactionEntities()
     {
         var getBudgetQuery = @"
-                            SELECT id, payee, amount, datepaid, category_id, account_id
+                            SELECT id, payee_user_id, amount, datepaid, category_id, payer_user_id
                             FROM register
                             ORDER BY id desc;
                             ";
@@ -49,11 +49,11 @@ public class RegisterRespositoryTestHelper : IAsyncLifetime
         while (reader.Read())
         {
             results.Add(new TransactionEntity(id: reader.GetInt32("id"),
-                payeeId: reader.GetInt32("payee"),
+                payeeId: reader.GetInt32("payee_user_id"),
                 amount: reader.GetDecimal("amount"),
                 datePaid: DateOnly.FromDateTime(reader.GetDateTime("datepaid")),
                 categoryId: reader.GetInt32("category_id"),
-                payerId: reader.GetInt32("account_id")
+                payerId: reader.GetInt32("payer_user_id")
             ));
         }
         return results;

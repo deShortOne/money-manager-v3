@@ -37,7 +37,7 @@ public class BillRespositoryTestHelper : IAsyncLifetime
     protected async Task<List<BillEntity>> GetAllBillEntity()
     {
         var getBillQuery = @"
-                            SELECT id, payee, amount, nextduedate, frequency, category_id, monthday, account_id
+                            SELECT id, payee_user_id, amount, nextduedate, frequency, category_id, monthday, payer_user_id
                             FROM bill;
                             ";
         await using var conn = new NpgsqlConnection(_postgres.GetConnectionString());
@@ -48,13 +48,13 @@ public class BillRespositoryTestHelper : IAsyncLifetime
         while (reader.Read())
         {
             results.Add(new BillEntity(id: reader.GetInt32("id"),
-                payeeId: reader.GetInt32("payee"),
+                payeeId: reader.GetInt32("payee_user_id"),
                 amount: reader.GetDecimal("amount"),
                 nextDueDate: DateOnly.FromDateTime(reader.GetDateTime("nextduedate")),
                 monthDay: reader.GetInt32("monthday"),
                 frequency: reader.GetString("frequency"),
                 categoryId: reader.GetInt32("category_id"),
-                payerId: reader.GetInt32("account_id"))
+                payerId: reader.GetInt32("payer_user_id"))
             );
         }
         return results;
