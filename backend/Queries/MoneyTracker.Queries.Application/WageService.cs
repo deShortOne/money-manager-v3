@@ -16,11 +16,13 @@ public class WageService : IWageService
         }
         var grossYearlyWage = CalculateGrossYearlyWage(request.GrossIncome, incomeFrequency);
 
-        var response = new CalculateWageResponse();
-        response.GrossYearlyIncome = grossYearlyWage;
-        var monthlyIncome = Money.From((decimal)(int)(grossYearlyWage.Amount / 12 * 100) / 100);
+        var response = new CalculateWageResponse
+        {
+            GrossYearlyIncome = grossYearlyWage
+        };
+        var monthlyIncome = grossYearlyWage / 12;
         response.Wages = Enumerable.Repeat(monthlyIncome, 11).ToList();
-        response.Wages.Add(Money.From(grossYearlyWage.Amount - (monthlyIncome.Amount * 11)));
+        response.Wages.Add(grossYearlyWage - monthlyIncome * 11);
 
         return response;
     }
