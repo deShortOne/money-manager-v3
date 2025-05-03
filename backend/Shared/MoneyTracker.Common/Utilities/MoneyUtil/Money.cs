@@ -14,6 +14,10 @@ public sealed class Money
         {
             throw new InvalidDataException($"Money value has too many decimal places: {amount}");
         }
+        if (amount < 0)
+        {
+            throw new InvalidDataException($"Money value cannot be negative: {amount}");
+        }
 
         return new Money(amount);
     }

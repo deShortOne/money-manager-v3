@@ -38,4 +38,16 @@ public sealed class GivenADecimalAmountIsPassedIn
         // Then
         Assert.Equal($"Money value has too many decimal places: {invalidIncome}", errorMessage.Message);
     }
+
+    [Fact]
+    public void WhenANegativeAmountIsPassedIn()
+    {
+        // Given
+        var errorMessage = Assert.Throws<InvalidDataException>(() =>
+        {
+            Money.From(-25);
+        });
+        // Then
+        Assert.Equal($"Money value cannot be negative: -25", errorMessage.Message);
+    }
 }

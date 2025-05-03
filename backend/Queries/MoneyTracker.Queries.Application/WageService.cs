@@ -48,6 +48,8 @@ public class WageService : IWageService
             _ => throw new NotImplementedException(),
         };
     }
+
+
 }
 
 public enum IncomeFrequency
