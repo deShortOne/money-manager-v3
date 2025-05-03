@@ -1,4 +1,5 @@
 using MoneyTracker.Common.Result;
+using MoneyTracker.Common.Utilities.MoneyUtil;
 using MoneyTracker.Contracts.Requests.Wage;
 using MoneyTracker.Contracts.Responses.Wage;
 using MoneyTracker.Queries.Domain.Handlers;
@@ -17,9 +18,9 @@ public class WageService : IWageService
 
         var response = new CalculateWageResponse();
         response.GrossYearlyIncome = grossYearlyWage;
-        var monthlyIncome = (decimal)(int)(grossYearlyWage / 12 * 100) / 100;
+        var monthlyIncome = Money.From((decimal)(int)(grossYearlyWage.Amount / 12 * 100) / 100);
         response.Wages = Enumerable.Repeat(monthlyIncome, 11).ToList();
-        response.Wages.Add(grossYearlyWage - monthlyIncome * 11);
+        response.Wages.Add(Money.From(grossYearlyWage.Amount - (monthlyIncome.Amount * 11)));
 
         return response;
     }
@@ -30,14 +31,14 @@ public class WageService : IWageService
         return incomeFrequencyEnum;
     }
 
-    private static decimal CalculateGrossYearlyWage(decimal grossIncome, IncomeFrequency frequencyOfIncome)
+    private static Money CalculateGrossYearlyWage(decimal grossIncome, IncomeFrequency frequencyOfIncome)
     {
         return frequencyOfIncome switch
         {
-            IncomeFrequency.Yearly => grossIncome,
-            IncomeFrequency.Monthly => grossIncome * 12,
-            IncomeFrequency.Every4Weeks => grossIncome * 13,
-            IncomeFrequency.Weekly => grossIncome * 52,
+            IncomeFrequency.Yearly => Money.From(grossIncome),
+            IncomeFrequency.Monthly => Money.From(grossIncome * 12),
+            IncomeFrequency.Every4Weeks => Money.From(grossIncome * 13),
+            IncomeFrequency.Weekly => Money.From(grossIncome * 52),
             IncomeFrequency.Daily => throw new NotImplementedException(),
             // Implement number of days of week, grossIncome * numWorkDaysPerWeek * 52
             IncomeFrequency.Hourly => throw new NotImplementedException(),

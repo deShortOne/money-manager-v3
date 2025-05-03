@@ -1,10 +1,10 @@
 namespace MoneyTracker.Common.Utilities.MoneyUtil;
 public sealed class Money
 {
-    private decimal _amount;
+    public decimal Amount { get; }
     private Money(decimal amount)
     {
-        _amount = amount;
+        Amount = amount;
     }
 
     public static Money From(decimal amount)
@@ -33,11 +33,11 @@ public sealed class Money
         var other = obj as Money;
         if (other == null)
             return false;
-        return _amount == other._amount;
+        return Amount == other.Amount;
     }
 
     public override int GetHashCode()
     {
-        return HashCode.Combine(_amount);
+        return HashCode.Combine(Amount);
     }
 }

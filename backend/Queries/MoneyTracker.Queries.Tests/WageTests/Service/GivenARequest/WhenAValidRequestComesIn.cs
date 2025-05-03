@@ -1,3 +1,4 @@
+using MoneyTracker.Common.Utilities.MoneyUtil;
 using MoneyTracker.Contracts.Requests.Wage;
 using MoneyTracker.Contracts.Responses.Wage;
 using MoneyTracker.Queries.Application;
@@ -18,9 +19,11 @@ public sealed class WhenAValidRequestComesIn
     {
         var calculateWageService = new WageService();
         var request = new CalculateWageRequest(grossIncome, incomeFrequency);
-        var expected = new CalculateWageResponse();
-        expected.GrossYearlyIncome = expectedGrossYearlyIncome;
-        expected.Wages = expectedMonthlyIncome;
+        var expected = new CalculateWageResponse
+        {
+            GrossYearlyIncome = Money.From(expectedGrossYearlyIncome),
+            Wages = expectedMonthlyIncome.Select(Money.From).ToList()
+        };
 
         var actual = calculateWageService.CalculateWage(request);
 
