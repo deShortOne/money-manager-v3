@@ -20,4 +20,9 @@ public class CalculateWageResponse
 
         return GrossYearlyIncome.Equals(other.GrossYearlyIncome);
     }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(GrossYearlyIncome, Wages);
+    }
 }

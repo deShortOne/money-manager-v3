@@ -28,6 +28,26 @@ public sealed class Money
         return From(tmpAmount);
     }
 
+    public static Money operator /(Money money1, decimal divisor)
+    {
+        return new Money(decimal.Round(money1.Amount / divisor, 2, MidpointRounding.ToNegativeInfinity));
+    }
+
+    public static Money operator *(Money money1, decimal multiplier)
+    {
+        return new Money(money1.Amount * multiplier);
+    }
+
+    public static Money operator +(Money money1, Money money2)
+    {
+        return new Money(money1.Amount + money2.Amount);
+    }
+
+    public static Money operator -(Money money1, Money money2)
+    {
+        return new Money(money1.Amount - money2.Amount);
+    }
+
     public override bool Equals(object? obj)
     {
         var other = obj as Money;
