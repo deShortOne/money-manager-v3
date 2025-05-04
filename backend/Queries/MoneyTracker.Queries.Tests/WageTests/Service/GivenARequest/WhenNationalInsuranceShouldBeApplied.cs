@@ -5,13 +5,13 @@ using MoneyTracker.Contracts.Responses.Wage;
 using MoneyTracker.Queries.Application;
 
 namespace MoneyTracker.Queries.Tests.WageTests.Service.GivenARequest;
-public sealed class WhenTheYearlyWageIsAboveTheHigherRate
+public sealed class WhenNationalInsuranceShouldBeApplied
 {
     private ResultT<CalculateWageResponse> _subject;
 
-    public WhenTheYearlyWageIsAboveTheHigherRate()
+    public WhenNationalInsuranceShouldBeApplied()
     {
-        var request = new CalculateWageRequest(50271, "Yearly", "1257L", false);
+        var request = new CalculateWageRequest(19000, "Yearly", "1257L", true);
         var service = new WageService();
         _subject = service.CalculateWage(request);
     }
@@ -28,18 +28,18 @@ public sealed class WhenTheYearlyWageIsAboveTheHigherRate
         var wages = _subject.Value.Wages;
         var expectedWages = new List<Money>
         {
-            Money.From(3560.88m),
-            Money.From(3560.88m),
-            Money.From(3560.88m),
-            Money.From(3560.88m),
-            Money.From(3560.88m),
-            Money.From(3560.88m),
-            Money.From(3560.88m),
-            Money.From(3560.88m),
-            Money.From(3560.88m),
-            Money.From(3560.88m),
-            Money.From(3560.88m),
-            Money.From(3560.92m),
+            Money.From(1433.3m),
+            Money.From(1433.3m),
+            Money.From(1433.3m),
+            Money.From(1433.3m),
+            Money.From(1433.3m),
+            Money.From(1433.3m),
+            Money.From(1433.3m),
+            Money.From(1433.3m),
+            Money.From(1433.3m),
+            Money.From(1433.3m),
+            Money.From(1433.3m),
+            Money.From(1433.3m),
         };
 
         Assert.Equal(expectedWages, wages);

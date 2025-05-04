@@ -11,7 +11,7 @@ public sealed class WhenTheYearlyWageIsOnTheHigherRate
 
     public WhenTheYearlyWageIsOnTheHigherRate()
     {
-        var request = new CalculateWageRequest(50270, "Yearly", "1257L");
+        var request = new CalculateWageRequest(50270, "Yearly", "1257L", false);
         var service = new WageService();
         _subject = service.CalculateWage(request);
     }

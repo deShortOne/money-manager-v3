@@ -11,7 +11,7 @@ public sealed class WhenARequestComesInWithATaxCodeGreaterThanTheYearlyWage
 
     public WhenARequestComesInWithATaxCodeGreaterThanTheYearlyWage()
     {
-        var request = new CalculateWageRequest(19000, "Yearly", "1257L");
+        var request = new CalculateWageRequest(19000, "Yearly", "1257L", false);
         var service = new WageService();
         _subject = service.CalculateWage(request);
     }

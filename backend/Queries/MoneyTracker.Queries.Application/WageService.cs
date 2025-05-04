@@ -20,7 +20,7 @@ public class WageService : IWageService
         var response = new CalculateWageResponse
         {
             GrossYearlyIncome = grossYearlyWage,
-            Wages = GetWageReducedByTax(grossYearlyWage, request.TaxCode),
+            Wages = GetWageReducedByTax(grossYearlyWage, request),
         };
 
         return response;
@@ -48,9 +48,9 @@ public class WageService : IWageService
         };
     }
 
-    private static List<Money> GetWageReducedByTax(Money grossYearlyWage, string taxCode)
+    private static List<Money> GetWageReducedByTax(Money grossYearlyWage, CalculateWageRequest request)
     {
-        var taxCodeElements = Regex.Match(taxCode, @"^(\d+)(\w+)$");
+        var taxCodeElements = Regex.Match(request.TaxCode, @"^(\d+)(\w+)$");
         var personalAllowanceAmount = Money.From(int.Parse(taxCodeElements.Groups[1].Value) * 10);
         var taxLetter = taxCodeElements.Groups[2].Value.ToUpper();
 
@@ -61,23 +61,26 @@ public class WageService : IWageService
 
         var totalTaxPayable = Money.Zero;
         var taxableIncome = Money.From(grossYearlyWage) - personalAllowanceAmount;
-        if (taxableIncome > Money.Zero)
+        var taxableIncomeRemaining = Money.From(taxableIncome);
+        if (taxableIncomeRemaining > Money.Zero)
         {
             foreach (var taxRatesAndbands in EnglandNorthernIrelandAndWalesTaxBands.TaxRatesAndBands.Skip(1))
             {
                 var amountToRate = taxRatesAndbands.MaxTaxableIncome - taxRatesAndbands.MinTaxableIncome + Money.From(1);
-                if (taxableIncome <= amountToRate)
+                if (taxableIncomeRemaining <= amountToRate)
                 {
-                    totalTaxPayable += taxableIncome * taxRatesAndbands.Rate / 100;
+                    totalTaxPayable += taxableIncomeRemaining * taxRatesAndbands.Rate / 100;
                     break;
                 }
 
                 totalTaxPayable += amountToRate * taxRatesAndbands.Rate / 100;
-                taxableIncome -= amountToRate;
+                taxableIncomeRemaining -= amountToRate;
             }
         }
 
         var netIncomeYearly = grossYearlyWage - totalTaxPayable;
+        if (request.PayNationalInsurance)
+            netIncomeYearly -= (taxableIncome * 0.08m);
         var netIncomeMonthly = netIncomeYearly / 12;
 
         var wagesPostTax = Enumerable.Repeat(netIncomeMonthly, 11).ToList();
