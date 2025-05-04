@@ -7,6 +7,8 @@ public sealed class Money
         Amount = amount;
     }
 
+    public static Money Zero { get; } = new Money(0);
+
     public static Money From(decimal amount)
     {
         int numberOfDecimalPlaces = BitConverter.GetBytes(decimal.GetBits(amount)[3])[2];
@@ -30,6 +32,11 @@ public sealed class Money
         }
 
         return From(tmpAmount);
+    }
+
+    public static Money From(Money money)
+    {
+        return new Money(money.Amount);
     }
 
     public static Money operator /(Money money1, decimal divisor)
@@ -60,6 +67,16 @@ public sealed class Money
     public static bool operator >(Money money1, Money money2)
     {
         return money1.Amount > money2.Amount;
+    }
+
+    public static bool operator <=(Money money1, Money money2)
+    {
+        return money1.Amount <= money2.Amount;
+    }
+
+    public static bool operator >=(Money money1, Money money2)
+    {
+        return money1.Amount >= money2.Amount;
     }
 
     public override bool Equals(object? obj)

@@ -51,7 +51,7 @@ public class WageService : IWageService
     private static List<Money> GetWageReducedByTax(Money grossYearlyWage, string taxCode)
     {
         var taxCodeElements = Regex.Match(taxCode, @"^(\d+)(\w+)$");
-        var taxAmount = taxCodeElements.Groups[1].Value;
+        var personalAllowanceAmount = Money.From(int.Parse(taxCodeElements.Groups[1].Value) * 10);
         var taxLetter = taxCodeElements.Groups[2].Value.ToUpper();
 
         if (taxLetter != "L")
@@ -59,38 +59,29 @@ public class WageService : IWageService
             throw new NotImplementedException("Only tax letter L is accepted");
         }
 
-        var taxFreePersonalAllowanceYearly = Money.From(int.Parse(taxAmount) * 10);
-        Money netIncomeYearly;
-        Money monthlyIncome;
-        if (grossYearlyWage < taxFreePersonalAllowanceYearly)
+        var totalTaxPayable = Money.Zero;
+        var taxableIncome = Money.From(grossYearlyWage) - personalAllowanceAmount;
+        if (taxableIncome > Money.Zero)
         {
-            netIncomeYearly = grossYearlyWage;
-            monthlyIncome = grossYearlyWage / 12;
-        }
-        else
-        {
-            var taxableIncome = grossYearlyWage - taxFreePersonalAllowanceYearly;
-
-            var taxableIncomeTmp = Money.From(taxableIncome.Amount);
-            var totalTaxPayable = Money.From(0);
             foreach (var taxRatesAndbands in EnglandNorthernIrelandAndWalesTaxBands.TaxRatesAndBands.Skip(1))
             {
                 var amountToRate = taxRatesAndbands.MaxTaxableIncome - taxRatesAndbands.MinTaxableIncome + Money.From(1);
-                if (taxableIncomeTmp < amountToRate)
+                if (taxableIncome <= amountToRate)
                 {
-                    totalTaxPayable += taxableIncomeTmp * taxRatesAndbands.Rate / 100;
+                    totalTaxPayable += taxableIncome * taxRatesAndbands.Rate / 100;
                     break;
                 }
 
                 totalTaxPayable += amountToRate * taxRatesAndbands.Rate / 100;
-                taxableIncomeTmp -= amountToRate;
+                taxableIncome -= amountToRate;
             }
-
-            netIncomeYearly = grossYearlyWage - totalTaxPayable;
-            monthlyIncome = netIncomeYearly / 12;
         }
-        var wagesPostTax = Enumerable.Repeat(monthlyIncome, 11).ToList();
-        wagesPostTax.Add(netIncomeYearly - monthlyIncome * 11);
+
+        var netIncomeYearly = grossYearlyWage - totalTaxPayable;
+        var netIncomeMonthly = netIncomeYearly / 12;
+
+        var wagesPostTax = Enumerable.Repeat(netIncomeMonthly, 11).ToList();
+        wagesPostTax.Add(netIncomeYearly - netIncomeMonthly * 11);
 
         return wagesPostTax;
     }
