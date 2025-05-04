@@ -16,7 +16,7 @@ public sealed class WhenTheIncomeFrequencyIsInvalid
     public void ThenAValidResponseIsReturned(string incomeFrequency)
     {
         var calculateWageService = new WageService();
-        var request = new CalculateWageRequest(12345, incomeFrequency);
+        var request = new CalculateWageRequest(12345, incomeFrequency, "9999L");
 
         var actual = calculateWageService.CalculateWage(request);
 

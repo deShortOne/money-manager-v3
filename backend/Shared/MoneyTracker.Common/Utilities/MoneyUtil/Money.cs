@@ -39,7 +39,7 @@ public sealed class Money
 
     public static Money operator *(Money money1, decimal multiplier)
     {
-        return new Money(money1.Amount * multiplier);
+        return new Money(decimal.Round(money1.Amount * multiplier, 2, MidpointRounding.ToNegativeInfinity));
     }
 
     public static Money operator +(Money money1, Money money2)
@@ -50,6 +50,16 @@ public sealed class Money
     public static Money operator -(Money money1, Money money2)
     {
         return new Money(money1.Amount - money2.Amount);
+    }
+
+    public static bool operator <(Money money1, Money money2)
+    {
+        return money1.Amount < money2.Amount;
+    }
+
+    public static bool operator >(Money money1, Money money2)
+    {
+        return money1.Amount > money2.Amount;
     }
 
     public override bool Equals(object? obj)

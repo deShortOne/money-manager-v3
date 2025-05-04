@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using MoneyTracker.Common.Result;
 using MoneyTracker.Common.Utilities.MoneyUtil;
 using MoneyTracker.Contracts.Requests.Wage;
@@ -14,15 +15,13 @@ public class WageService : IWageService
         {
             return Error.Validation("", "Invalid frequency");
         }
-        var grossYearlyWage = CalculateGrossYearlyWage(request.GrossIncome, incomeFrequency);
 
+        var grossYearlyWage = CalculateGrossYearlyWage(request.GrossIncome, incomeFrequency);
         var response = new CalculateWageResponse
         {
-            GrossYearlyIncome = grossYearlyWage
+            GrossYearlyIncome = grossYearlyWage,
+            Wages = GetWageReducedByTax(grossYearlyWage, request.TaxCode),
         };
-        var monthlyIncome = grossYearlyWage / 12;
-        response.Wages = Enumerable.Repeat(monthlyIncome, 11).ToList();
-        response.Wages.Add(grossYearlyWage - monthlyIncome * 11);
 
         return response;
     }
@@ -49,7 +48,36 @@ public class WageService : IWageService
         };
     }
 
+    private static List<Money> GetWageReducedByTax(Money grossYearlyWage, string taxCode)
+    {
+        var taxCodeElements = Regex.Match(taxCode, @"^(\d+)(\w+)$");
+        var taxAmount = taxCodeElements.Groups[1].Value;
+        var taxLetter = taxCodeElements.Groups[2].Value.ToUpper();
 
+        if (taxLetter != "L")
+        {
+            throw new NotImplementedException("Only tax letter L is accepted");
+        }
+
+        var taxFreePersonalAllowanceYearly = Money.From(int.Parse(taxAmount) * 10);
+        Money netIncomeYearly;
+        Money monthlyIncome;
+        if (grossYearlyWage < taxFreePersonalAllowanceYearly)
+        {
+            netIncomeYearly = grossYearlyWage;
+            monthlyIncome = grossYearlyWage / 12;
+        }
+        else
+        {
+            var taxableIncome = grossYearlyWage - taxFreePersonalAllowanceYearly;
+            netIncomeYearly = grossYearlyWage - taxableIncome * 0.2m;
+            monthlyIncome = netIncomeYearly / 12;
+        }
+        var wagesPostTax = Enumerable.Repeat(monthlyIncome, 11).ToList();
+        wagesPostTax.Add(netIncomeYearly - monthlyIncome * 11);
+
+        return wagesPostTax;
+    }
 }
 
 public enum IncomeFrequency
