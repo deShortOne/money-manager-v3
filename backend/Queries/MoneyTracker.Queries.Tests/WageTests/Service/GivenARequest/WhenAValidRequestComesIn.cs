@@ -12,6 +12,7 @@ public sealed class WhenAValidRequestComesIn
         { 2000, "Monthly", 24000, new List<decimal> { 2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000, 2000, } },
         { 3000, "Every4Weeks", 39000, new List<decimal> { 3250, 3250, 3250, 3250, 3250, 3250, 3250, 3250, 3250, 3250, 3250, 3250, } },
         { 600, "Weekly", 31200, new List<decimal> { 2600, 2600, 2600, 2600, 2600, 2600, 2600, 2600, 2600, 2600, 2600, 2600, } },
+        { 19000, "Yearly", 19000, new List<decimal> { 1583.33m, 1583.33m, 1583.33m, 1583.33m, 1583.33m, 1583.33m, 1583.33m, 1583.33m, 1583.33m, 1583.33m, 1583.33m, 1583.37m, } },
     };
 
     [Theory, MemberData(nameof(ValidRequests))]
