@@ -70,7 +70,23 @@ public class WageService : IWageService
         else
         {
             var taxableIncome = grossYearlyWage - taxFreePersonalAllowanceYearly;
-            netIncomeYearly = grossYearlyWage - taxableIncome * 0.2m;
+
+            var taxableIncomeTmp = Money.From(taxableIncome.Amount);
+            var totalTaxPayable = Money.From(0);
+            foreach (var taxRatesAndbands in EnglandNorthernIrelandAndWalesTaxBands.TaxRatesAndBands.Skip(1))
+            {
+                var amountToRate = taxRatesAndbands.MaxTaxableIncome - taxRatesAndbands.MinTaxableIncome + Money.From(1);
+                if (taxableIncomeTmp < amountToRate)
+                {
+                    totalTaxPayable += taxableIncomeTmp * taxRatesAndbands.Rate / 100;
+                    break;
+                }
+
+                totalTaxPayable += amountToRate * taxRatesAndbands.Rate / 100;
+                taxableIncomeTmp -= amountToRate;
+            }
+
+            netIncomeYearly = grossYearlyWage - totalTaxPayable;
             monthlyIncome = netIncomeYearly / 12;
         }
         var wagesPostTax = Enumerable.Repeat(monthlyIncome, 11).ToList();
@@ -89,4 +105,23 @@ public enum IncomeFrequency
     Weekly = 4,
     Daily = 5,
     Hourly = 6,
+}
+
+public class TaxRatesAndBands(string bandName, Money minTaxableIncome, Money maxTaxableIncome, decimal rate)
+{
+    public string BandName { get; } = bandName;
+    public Money MinTaxableIncome { get; } = minTaxableIncome;
+    public Money MaxTaxableIncome { get; } = maxTaxableIncome;
+    public decimal Rate { get; } = rate;
+}
+
+public static class EnglandNorthernIrelandAndWalesTaxBands
+{
+    public static List<TaxRatesAndBands> TaxRatesAndBands =
+    [
+        new TaxRatesAndBands("Personal Allowance", Money.From(1), Money.From(12570), 0), // ewww 1 as min??
+        new TaxRatesAndBands("Basic Rate", Money.From(12571), Money.From(50270), 20),
+        new TaxRatesAndBands("Higher Rate", Money.From(50271), Money.From(125140), 40),
+        new TaxRatesAndBands("Additional Rate", Money.From(125141), Money.From(9999999999), 45),
+    ];
 }
