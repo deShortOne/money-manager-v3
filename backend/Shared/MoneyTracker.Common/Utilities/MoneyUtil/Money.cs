@@ -1,5 +1,5 @@
 namespace MoneyTracker.Common.Utilities.MoneyUtil;
-public sealed class Money
+public class Money
 {
     public decimal Amount { get; }
     private Money(decimal amount)
@@ -57,6 +57,16 @@ public sealed class Money
     public static Money operator -(Money money1, Money money2)
     {
         return new Money(money1.Amount - money2.Amount);
+    }
+
+    public static Money operator /(Money money1, Percentage divisor)
+    {
+        return new Money(decimal.Round(money1.Amount / divisor.Value, 2, MidpointRounding.ToNegativeInfinity));
+    }
+
+    public static Money operator *(Money money1, Percentage multiplier)
+    {
+        return new Money(decimal.Round(money1.Amount * multiplier.Value, 2, MidpointRounding.ToNegativeInfinity));
     }
 
     public static bool operator <(Money money1, Money money2)
