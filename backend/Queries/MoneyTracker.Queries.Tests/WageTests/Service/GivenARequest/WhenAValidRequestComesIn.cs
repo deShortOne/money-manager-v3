@@ -19,7 +19,12 @@ public sealed class WhenAValidRequestComesIn
     public void ThenAValidResponseIsReturned(decimal grossIncome, string incomeFrequency, string taxCode, decimal expectedGrossYearlyIncome, List<decimal> expectedMonthlyIncome)
     {
         var calculateWageService = new WageService();
-        var request = new CalculateWageRequest(grossIncome, incomeFrequency, taxCode, false);
+        var request = new CalculateWageRequest(
+            grossIncome,
+            incomeFrequency,
+            taxCode,
+            false,
+            new StudentLoanOptions(false, false, false, false, false));
         var expected = new CalculateWageResponse
         {
             GrossYearlyIncome = Money.From(expectedGrossYearlyIncome),

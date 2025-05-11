@@ -11,7 +11,11 @@ public sealed class WhenTheYearlyWageIsAboveTheHigherRate
 
     public WhenTheYearlyWageIsAboveTheHigherRate()
     {
-        var request = new CalculateWageRequest(50271, "Yearly", "1257L", false);
+        var request = new CalculateWageRequest(50271,
+            "Yearly",
+            "1257L",
+            false,
+            new StudentLoanOptions(false, false, false, false, false));
         var service = new WageService();
         _subject = service.CalculateWage(request);
     }

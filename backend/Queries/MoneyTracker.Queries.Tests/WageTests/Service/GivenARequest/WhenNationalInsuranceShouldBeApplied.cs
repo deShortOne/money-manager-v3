@@ -11,7 +11,11 @@ public sealed class WhenNationalInsuranceShouldBeApplied
 
     public WhenNationalInsuranceShouldBeApplied()
     {
-        var request = new CalculateWageRequest(19000, "Yearly", "1257L", true);
+        var request = new CalculateWageRequest(19000,
+            "Yearly",
+            "1257L",
+            true,
+            new StudentLoanOptions(false, false, false, false, false));
         var service = new WageService();
         _subject = service.CalculateWage(request);
     }

@@ -88,6 +88,50 @@ public class WageService : IWageService
 
         return wagesPostTax;
     }
+
+    public static Money CalculateStudentLoan(Money grossYearlyWage, StudentLoanOptions studentLoanOptions)
+    {
+        grossYearlyWage /= 12;
+        var result = Money.Zero;
+        if (studentLoanOptions.Plan1)
+        {
+            var remainingWage = grossYearlyWage - UkStudentLoanRepayment.StudentLoanBands[0].MonthlyIncomeThreshold;
+            if (remainingWage > Money.Zero)
+            {
+                var remainingWageWithPercentageTakeOff = remainingWage * 0.09m;
+                result = Money.From(decimal.Round(remainingWageWithPercentageTakeOff.Amount, 0, MidpointRounding.ToZero));
+            }
+        }
+        if (studentLoanOptions.Plan2)
+        {
+            var remainingWage = grossYearlyWage - UkStudentLoanRepayment.StudentLoanBands[1].MonthlyIncomeThreshold;
+            if (remainingWage > Money.Zero)
+            {
+                var remainingWageWithPercentageTakeOff = remainingWage * 0.09m;
+                result = Money.From(decimal.Round(remainingWageWithPercentageTakeOff.Amount, 0, MidpointRounding.ToZero));
+            }
+        }
+        if (studentLoanOptions.Plan4)
+        {
+            var remainingWage = grossYearlyWage - UkStudentLoanRepayment.StudentLoanBands[2].MonthlyIncomeThreshold;
+            if (remainingWage > Money.Zero)
+            {
+                var remainingWageWithPercentageTakeOff = remainingWage * 0.09m;
+                result = Money.From(decimal.Round(remainingWageWithPercentageTakeOff.Amount, 0, MidpointRounding.ToZero));
+            }
+        }
+        if (studentLoanOptions.Plan5)
+        {
+            var remainingWage = grossYearlyWage - UkStudentLoanRepayment.StudentLoanBands[3].MonthlyIncomeThreshold;
+            if (remainingWage > Money.Zero)
+            {
+                var remainingWageWithPercentageTakeOff = remainingWage * 0.09m;
+                result = Money.From(decimal.Round(remainingWageWithPercentageTakeOff.Amount, 0, MidpointRounding.ToZero));
+            }
+        }
+
+        return result;
+    }
 }
 
 public enum IncomeFrequency
@@ -117,5 +161,36 @@ public static class EnglandNorthernIrelandAndWalesTaxBands
         new TaxRatesAndBands("Basic Rate", Money.From(12571), Money.From(50270), 20),
         new TaxRatesAndBands("Higher Rate", Money.From(50271), Money.From(125140), 40),
         new TaxRatesAndBands("Additional Rate", Money.From(125141), Money.From(9999999999), 45),
+    ];
+}
+
+public enum StudentLoanPlan
+{
+    Unknown = 0,
+    Plan1 = 1,
+    Plan2 = 2,
+    Plan4 = 3,
+    Plan5 = 4,
+    PostgraduateLoan = 5,
+}
+
+public class StudentLoanBand(StudentLoanPlan plan, Money yearlyIncomeThreshold, Money monthlyIncomeThreshold,
+    Money weeklyIncomeThreshold)
+{
+    public StudentLoanPlan StudentLoanPlan { get; } = plan;
+    public Money YearlyIncomeThreshold { get; } = yearlyIncomeThreshold;
+    public Money MonthlyIncomeThreshold { get; } = monthlyIncomeThreshold;
+    public Money WeeklyIncomeThreshold { get; } = weeklyIncomeThreshold;
+}
+
+public static class UkStudentLoanRepayment
+{
+    public static List<StudentLoanBand> StudentLoanBands =
+    [
+        new StudentLoanBand(StudentLoanPlan.Plan1, Money.From(26065), Money.From(2172), Money.From(501)),
+        new StudentLoanBand(StudentLoanPlan.Plan2, Money.From(28470), Money.From(2372), Money.From(547)),
+        new StudentLoanBand(StudentLoanPlan.Plan4, Money.From(32745), Money.From(2728), Money.From(629)),
+        new StudentLoanBand(StudentLoanPlan.Plan5, Money.From(25000), Money.From(2083), Money.From(480)),
+        new StudentLoanBand(StudentLoanPlan.PostgraduateLoan, Money.From(21000), Money.From(1750), Money.From(403)),
     ];
 }
