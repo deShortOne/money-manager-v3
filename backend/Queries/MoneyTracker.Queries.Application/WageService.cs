@@ -131,6 +131,15 @@ public class WageService : IWageService
                 result = Money.From(decimal.Round(remainingWageWithPercentageTakeOff.Amount, 0, MidpointRounding.ToZero));
             }
         }
+        if (studentLoanOptions.PostGraduate)
+        {
+            var remainingWage = grossYearlyWage - UkStudentLoanRepayment.StudentLoanBands[4].MonthlyIncomeThreshold;
+            if (remainingWage > Money.Zero)
+            {
+                var remainingWageWithPercentageTakeOff = remainingWage * UkStudentLoanRepayment.StudentLoanBands[4].Rate;
+                result = Money.From(decimal.Round(remainingWageWithPercentageTakeOff.Amount, 0, MidpointRounding.ToZero));
+            }
+        }
 
         return result;
     }

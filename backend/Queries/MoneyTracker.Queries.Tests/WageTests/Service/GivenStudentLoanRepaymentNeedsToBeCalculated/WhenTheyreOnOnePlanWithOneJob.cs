@@ -19,6 +19,9 @@ public sealed class WhenTheyreOnOnePlanWithOneJob
 
         // Plan 5
         { new StudentLoanOptions(false, false, false, true, false), Money.From(30000), Money.From(37) },
+
+        // Post gradudate
+        { new StudentLoanOptions(false, false, false, false, true), Money.From(30000), Money.From(45) },
     };
 
 
