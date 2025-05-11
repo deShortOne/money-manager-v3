@@ -95,33 +95,6 @@ public class WageService : IWageService
     {
         grossYearlyWage /= 12;
         var result = Money.Zero;
-        if (studentLoanOptions.Plan1)
-        {
-            var remainingWage = grossYearlyWage - UkStudentLoanRepayment.StudentLoanBands[0].MonthlyIncomeThreshold;
-            if (remainingWage > Money.Zero)
-            {
-                var remainingWageWithPercentageTakeOff = remainingWage * UkStudentLoanRepayment.StudentLoanBands[0].Rate;
-                result = Money.From(decimal.Round(remainingWageWithPercentageTakeOff.Amount, 0, MidpointRounding.ToZero));
-            }
-        }
-        if (studentLoanOptions.Plan2)
-        {
-            var remainingWage = grossYearlyWage - UkStudentLoanRepayment.StudentLoanBands[1].MonthlyIncomeThreshold;
-            if (remainingWage > Money.Zero)
-            {
-                var remainingWageWithPercentageTakeOff = remainingWage * UkStudentLoanRepayment.StudentLoanBands[1].Rate;
-                result = Money.From(decimal.Round(remainingWageWithPercentageTakeOff.Amount, 0, MidpointRounding.ToZero));
-            }
-        }
-        if (studentLoanOptions.Plan4)
-        {
-            var remainingWage = grossYearlyWage - UkStudentLoanRepayment.StudentLoanBands[2].MonthlyIncomeThreshold;
-            if (remainingWage > Money.Zero)
-            {
-                var remainingWageWithPercentageTakeOff = remainingWage * UkStudentLoanRepayment.StudentLoanBands[2].Rate;
-                result = Money.From(decimal.Round(remainingWageWithPercentageTakeOff.Amount, 0, MidpointRounding.ToZero));
-            }
-        }
         if (studentLoanOptions.Plan5)
         {
             var remainingWage = grossYearlyWage - UkStudentLoanRepayment.StudentLoanBands[3].MonthlyIncomeThreshold;
@@ -131,13 +104,40 @@ public class WageService : IWageService
                 result = Money.From(decimal.Round(remainingWageWithPercentageTakeOff.Amount, 0, MidpointRounding.ToZero));
             }
         }
+        else if (studentLoanOptions.Plan1)
+        {
+            var remainingWage = grossYearlyWage - UkStudentLoanRepayment.StudentLoanBands[0].MonthlyIncomeThreshold;
+            if (remainingWage > Money.Zero)
+            {
+                var remainingWageWithPercentageTakeOff = remainingWage * UkStudentLoanRepayment.StudentLoanBands[0].Rate;
+                result = Money.From(decimal.Round(remainingWageWithPercentageTakeOff.Amount, 0, MidpointRounding.ToZero));
+            }
+        }
+        else if (studentLoanOptions.Plan2)
+        {
+            var remainingWage = grossYearlyWage - UkStudentLoanRepayment.StudentLoanBands[1].MonthlyIncomeThreshold;
+            if (remainingWage > Money.Zero)
+            {
+                var remainingWageWithPercentageTakeOff = remainingWage * UkStudentLoanRepayment.StudentLoanBands[1].Rate;
+                result = Money.From(decimal.Round(remainingWageWithPercentageTakeOff.Amount, 0, MidpointRounding.ToZero));
+            }
+        }
+        else if (studentLoanOptions.Plan4)
+        {
+            var remainingWage = grossYearlyWage - UkStudentLoanRepayment.StudentLoanBands[2].MonthlyIncomeThreshold;
+            if (remainingWage > Money.Zero)
+            {
+                var remainingWageWithPercentageTakeOff = remainingWage * UkStudentLoanRepayment.StudentLoanBands[2].Rate;
+                result = Money.From(decimal.Round(remainingWageWithPercentageTakeOff.Amount, 0, MidpointRounding.ToZero));
+            }
+        }
         if (studentLoanOptions.PostGraduate)
         {
             var remainingWage = grossYearlyWage - UkStudentLoanRepayment.StudentLoanBands[4].MonthlyIncomeThreshold;
             if (remainingWage > Money.Zero)
             {
                 var remainingWageWithPercentageTakeOff = remainingWage * UkStudentLoanRepayment.StudentLoanBands[4].Rate;
-                result = Money.From(decimal.Round(remainingWageWithPercentageTakeOff.Amount, 0, MidpointRounding.ToZero));
+                result += Money.From(decimal.Round(remainingWageWithPercentageTakeOff.Amount, 0, MidpointRounding.ToZero));
             }
         }
 

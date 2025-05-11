@@ -2,8 +2,8 @@ using MoneyTracker.Common.Utilities.MoneyUtil;
 using MoneyTracker.Contracts.Requests.Wage;
 using MoneyTracker.Queries.Application;
 
-namespace MoneyTracker.Queries.Tests.WageTests.Service.GivenStudentLoanRepaymentNeedsToBeCalculated;
-public sealed class WhenTheyreOnOnePlanWithOneJob
+namespace MoneyTracker.Queries.Tests.WageTests.Service.GivenStudentLoanRepaymentNeedsToBeCalculated.GivenTheyHaveOneJob;
+public sealed class WhenTheyreOnOnePlan
 {
     public static TheoryData<StudentLoanOptions, Money, Money> GrossYearlyWages = new()
     {
