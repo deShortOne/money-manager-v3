@@ -69,24 +69,8 @@ public class WageService : IWageService
             pensionYearly = request.Pension.CalculatePension(grossYearlyWage / 12) * 12;
         }
 
-        var totalTaxPayable = Money.Zero;
         var taxableIncome = Money.From(grossYearlyWage) - personalAllowanceAmount;
-        var taxableIncomeRemaining = Money.From(taxableIncome);
-        if (taxableIncomeRemaining > Money.Zero)
-        {
-            foreach (var taxRatesAndbands in EnglandNorthernIrelandAndWalesTaxBands.TaxRatesAndBands.Skip(1))
-            {
-                var amountToRate = taxRatesAndbands.MaxTaxableIncome - taxRatesAndbands.MinTaxableIncome + Money.From(1);
-                if (taxableIncomeRemaining <= amountToRate)
-                {
-                    totalTaxPayable += taxableIncomeRemaining * taxRatesAndbands.Rate;
-                    break;
-                }
-
-                totalTaxPayable += amountToRate * taxRatesAndbands.Rate;
-                taxableIncomeRemaining -= amountToRate;
-            }
-        }
+        var totalTaxPayable = CalculateTotalTaxPayable(taxableIncome);
 
         var netIncomeYearly = grossYearlyWage - totalTaxPayable - studentLoanAmountYearly - pensionYearly;
         if (request.PayNationalInsurance)
@@ -97,6 +81,29 @@ public class WageService : IWageService
         wagesPostTax.Add(netIncomeYearly - netIncomeMonthly * 11);
 
         return wagesPostTax;
+    }
+
+    private static Money CalculateTotalTaxPayable(Money taxableIncomeRemaining)
+    {
+        if (taxableIncomeRemaining > Money.Zero)
+        {
+            return Money.Zero;
+        }
+
+        var totalTaxPayable = Money.Zero;
+        foreach (var taxRatesAndbands in EnglandNorthernIrelandAndWalesTaxBands.TaxRatesAndBands.Skip(1))
+        {
+            var amountToRate = taxRatesAndbands.MaxTaxableIncome - taxRatesAndbands.MinTaxableIncome + Money.From(1);
+            if (taxableIncomeRemaining <= amountToRate)
+            {
+                totalTaxPayable += taxableIncomeRemaining * taxRatesAndbands.Rate;
+                break;
+            }
+
+            totalTaxPayable += amountToRate * taxRatesAndbands.Rate;
+            taxableIncomeRemaining -= amountToRate;
+        }
+        return totalTaxPayable;
     }
 
     public static Money CalculateStudentLoan(Money grossYearlyWage, StudentLoanOptions studentLoanOptions)
@@ -170,16 +177,6 @@ public static class EnglandNorthernIrelandAndWalesTaxBands
         new TaxRatesAndBands("Higher Rate", Money.From(50271), Money.From(125140), Percentage.From(40)),
         new TaxRatesAndBands("Additional Rate", Money.From(125141), Money.From(9999999999), Percentage.From(45)),
     ];
-}
-
-public enum StudentLoanPlan
-{
-    Unknown = 0,
-    Plan1 = 1,
-    Plan2 = 2,
-    Plan4 = 3,
-    Plan5 = 4,
-    PostgraduateLoan = 5,
 }
 
 public class StudentLoanBand(StudentLoanPlan plan, Money yearlyIncomeThreshold, Money monthlyIncomeThreshold,
