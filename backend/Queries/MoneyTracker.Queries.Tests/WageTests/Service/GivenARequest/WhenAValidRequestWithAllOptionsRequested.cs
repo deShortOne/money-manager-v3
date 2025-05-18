@@ -15,6 +15,7 @@ public sealed class WhenAValidRequestWithAllOptionsRequested
             "Yearly",
             "1257L",
             true,
+            null,
             new StudentLoanOptions(false, true, false, false, true));
         var expected = new CalculateWageResponse
         {

@@ -15,6 +15,7 @@ public sealed class WhenNationalInsuranceShouldBeApplied
             "Yearly",
             "1257L",
             true,
+            null,
             new StudentLoanOptions(false, false, false, false, false));
         var service = new WageService();
         _subject = service.CalculateWage(request);

@@ -20,6 +20,7 @@ public sealed class WhenTheIncomeFrequencyIsInvalid
             incomeFrequency,
             "9999L",
             false,
+            null,
             new StudentLoanOptions(false, false, false, false, false));
 
         var actual = calculateWageService.CalculateWage(request);

@@ -5,20 +5,21 @@ using MoneyTracker.Contracts.Responses.Wage;
 using MoneyTracker.Queries.Application;
 
 namespace MoneyTracker.Queries.Tests.WageTests.Service.GivenARequest;
-public sealed class WhenARequestWithATaxCodeLessThanTheYearlyWage
+public sealed class WhenOnlyThePensionPecentageIsRequested
 {
     private ResultT<CalculateWageResponse> _subject;
 
-    public WhenARequestWithATaxCodeLessThanTheYearlyWage()
+    public WhenOnlyThePensionPecentageIsRequested()
     {
-        var request = new CalculateWageRequest(12000,
-            "Yearly",
-            "1257L",
+        var calculateWageService = new WageService();
+        var request = new CalculateWageRequest(1000,
+            "Monthly",
+            "9999L",
             false,
-            null,
+            new Pension(10, PensionType.Percentage),
             new StudentLoanOptions(false, false, false, false, false));
-        var service = new WageService();
-        _subject = service.CalculateWage(request);
+
+        _subject = calculateWageService.CalculateWage(request);
     }
 
     [Fact]
@@ -28,9 +29,8 @@ public sealed class WhenARequestWithATaxCodeLessThanTheYearlyWage
     }
 
     [Fact]
-    public void ThenTheWagesAreCorrect()
+    public void ThenThePensionAmountIsTakenOff()
     {
-        var wages = _subject.Value.Wages;
-        Assert.Equal(Enumerable.Repeat(Money.From(1000), 12), wages);
+        Assert.Equal(Enumerable.Repeat(Money.From(900), 12).ToList(), _subject.Value.Wages);
     }
 }

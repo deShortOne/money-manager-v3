@@ -24,6 +24,7 @@ public sealed class WhenAValidRequestComesIn
             incomeFrequency,
             taxCode,
             false,
+            null,
             new StudentLoanOptions(false, false, false, false, false));
         var expected = new CalculateWageResponse
         {

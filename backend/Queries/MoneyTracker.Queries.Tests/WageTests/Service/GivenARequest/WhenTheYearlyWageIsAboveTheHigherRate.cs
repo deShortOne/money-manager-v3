@@ -15,6 +15,7 @@ public sealed class WhenTheYearlyWageIsAboveTheHigherRate
             "Yearly",
             "1257L",
             false,
+            null,
             new StudentLoanOptions(false, false, false, false, false));
         var service = new WageService();
         _subject = service.CalculateWage(request);
