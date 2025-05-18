@@ -61,6 +61,8 @@ public class WageService : IWageService
             throw new NotImplementedException("Only tax letter L is accepted");
         }
 
+        var studentLoanAmountYearly = CalculateStudentLoan(grossYearlyWage, request.StudentLoanOptions) * 12;
+
         var totalTaxPayable = Money.Zero;
         var taxableIncome = Money.From(grossYearlyWage) - personalAllowanceAmount;
         var taxableIncomeRemaining = Money.From(taxableIncome);
@@ -80,7 +82,7 @@ public class WageService : IWageService
             }
         }
 
-        var netIncomeYearly = grossYearlyWage - totalTaxPayable;
+        var netIncomeYearly = grossYearlyWage - totalTaxPayable - studentLoanAmountYearly;
         if (request.PayNationalInsurance)
             netIncomeYearly -= taxableIncome * UkNationalInsuranceTax;
         var netIncomeMonthly = netIncomeYearly / 12;
