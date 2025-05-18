@@ -1,5 +1,6 @@
 using MoneyTracker.Common.Utilities.MoneyUtil;
 using MoneyTracker.Contracts.Requests.Wage;
+using MoneyTracker.Contracts.Requests.Wage.Pension;
 using MoneyTracker.Contracts.Responses.Wage;
 using MoneyTracker.Queries.Application;
 
@@ -15,12 +16,12 @@ public sealed class WhenAValidRequestWithAllOptionsRequested
             "Yearly",
             "1257L",
             true,
-            null,
+            new FixedPensionAmount(Money.From(100)),
             new StudentLoanOptions(false, true, false, false, true));
         var expected = new CalculateWageResponse
         {
             GrossYearlyIncome = Money.From(30000),
-            Wages = Enumerable.Repeat(Money.From(2037.3m), 12).ToList(),
+            Wages = Enumerable.Repeat(Money.From(1937.3m), 12).ToList(),
         };
 
         var actual = calculateWageService.CalculateWage(request);
