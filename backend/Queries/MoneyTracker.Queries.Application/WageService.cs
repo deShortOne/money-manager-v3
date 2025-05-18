@@ -1,5 +1,6 @@
 using System.Text.RegularExpressions;
 using MoneyTracker.Common.Result;
+using MoneyTracker.Common.Utilities;
 using MoneyTracker.Common.Utilities.MoneyUtil;
 using MoneyTracker.Contracts.Requests.Wage;
 using MoneyTracker.Contracts.Responses.Wage;
@@ -13,7 +14,7 @@ public class WageService : IWageService
     public ResultT<CalculateWageResponse> CalculateWage(CalculateWageRequest request)
     {
         var incomeFrequency = Convert(request.FrequencyOfIncome);
-        if (incomeFrequency is IncomeFrequency.Unknown)
+        if (incomeFrequency is Frequency.Unknown)
         {
             return Error.Validation("", "Invalid frequency");
         }
@@ -28,23 +29,23 @@ public class WageService : IWageService
         return response;
     }
 
-    private static IncomeFrequency Convert(string incomeFrequency)
+    private static Frequency Convert(string incomeFrequency)
     {
-        Enum.TryParse(incomeFrequency, out IncomeFrequency incomeFrequencyEnum);
-        return incomeFrequencyEnum;
+        Enum.TryParse(incomeFrequency, out Frequency frequencyEnum);
+        return frequencyEnum;
     }
 
-    private static Money CalculateGrossYearlyWage(decimal grossIncome, IncomeFrequency frequencyOfIncome)
+    private static Money CalculateGrossYearlyWage(decimal grossIncome, Frequency frequencyOfIncome)
     {
         return frequencyOfIncome switch
         {
-            IncomeFrequency.Yearly => Money.From(grossIncome),
-            IncomeFrequency.Monthly => Money.From(grossIncome * 12),
-            IncomeFrequency.Every4Weeks => Money.From(grossIncome * 13),
-            IncomeFrequency.Weekly => Money.From(grossIncome * 52),
-            IncomeFrequency.Daily => throw new NotImplementedException(),
+            Frequency.Yearly => Money.From(grossIncome),
+            Frequency.Monthly => Money.From(grossIncome * 12),
+            Frequency.Every4Weeks => Money.From(grossIncome * 13),
+            Frequency.Weekly => Money.From(grossIncome * 52),
+            Frequency.Daily => throw new NotImplementedException(),
             // Implement number of days of week, grossIncome * numWorkDaysPerWeek * 52
-            IncomeFrequency.Hourly => throw new NotImplementedException(),
+            Frequency.Hourly => throw new NotImplementedException(),
             // Implement number of hours of week, grossIncome * numWorkHoursPerWeek * 52
             _ => throw new NotImplementedException(),
         };
@@ -150,17 +151,6 @@ public class WageService : IWageService
 
         return result;
     }
-}
-
-public enum IncomeFrequency
-{
-    Unknown = 0,
-    Yearly = 1,
-    Monthly = 2,
-    Every4Weeks = 3,
-    Weekly = 4,
-    Daily = 5,
-    Hourly = 6,
 }
 
 public class TaxRatesAndBands(string bandName, Money minTaxableIncome, Money maxTaxableIncome, Percentage rate)
