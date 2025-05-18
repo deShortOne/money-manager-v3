@@ -62,7 +62,11 @@ public class WageService : IWageService
         }
 
         var studentLoanAmountYearly = CalculateStudentLoan(grossYearlyWage, request.StudentLoanOptions) * 12;
-        var pensionYearly = CalculatePension(grossYearlyWage, request.Pension) * 12;
+        var pensionYearly = Money.Zero;
+        if (request.Pension != null)
+        {
+            pensionYearly = request.Pension.CalculatePension(grossYearlyWage / 12) * 12;
+        }
 
         var totalTaxPayable = Money.Zero;
         var taxableIncome = Money.From(grossYearlyWage) - personalAllowanceAmount;
@@ -145,19 +149,6 @@ public class WageService : IWageService
         }
 
         return result;
-    }
-
-    private static Money CalculatePension(Money grossYearlyWage, Pension pension)
-    {
-        if (pension == null || pension.Type == PensionType.Unknown) // unknown should prolly throw instead
-            return Money.Zero;
-        if (pension.Type == PensionType.Amount)
-            return Money.From(pension.Value);
-
-        var monthlyWage = grossYearlyWage / 12;
-        var pensionAmount = monthlyWage * Percentage.From(pension.Value);
-
-        return pensionAmount;
     }
 }
 

@@ -1,6 +1,7 @@
 using MoneyTracker.Common.Result;
 using MoneyTracker.Common.Utilities.MoneyUtil;
 using MoneyTracker.Contracts.Requests.Wage;
+using MoneyTracker.Contracts.Requests.Wage.Pension;
 using MoneyTracker.Contracts.Responses.Wage;
 using MoneyTracker.Queries.Application;
 
@@ -16,7 +17,7 @@ public sealed class WhenOnlyThePensionPecentageIsRequested
             "Monthly",
             "9999L",
             false,
-            new Pension(10, PensionType.Percentage),
+            new PercentagePensionAmount(Percentage.From(10)),
             new StudentLoanOptions(false, false, false, false, false));
 
         _subject = calculateWageService.CalculateWage(request);
