@@ -6,13 +6,13 @@ public class TaxCodeSelector
 {
     public static WageInterface SelectTaxCodeImplementorFrom(string taxCode)
     {
-        if (taxCode.Trim().ToUpper() == "BR")
+        if (taxCode.Trim().Equals("BR", StringComparison.OrdinalIgnoreCase))
             return new CalculateTaxCodeBR();
-        if (taxCode.Trim().ToUpper() == "D0")
+        if (taxCode.Trim().Equals("D0", StringComparison.OrdinalIgnoreCase))
             return new CalculateTaxCodeD0();
-        if (taxCode.Trim().ToUpper() == "D1")
+        if (taxCode.Trim().Equals("D1", StringComparison.OrdinalIgnoreCase))
             return new CalculateTaxCodeD1();
-        if (taxCode.Trim().ToUpper() == "NT")
+        if (taxCode.Trim().Equals("NT", StringComparison.OrdinalIgnoreCase))
             return new CalculateTaxCodeNT();
 
         var taxCodeElements = Regex.Match(taxCode, @"^(\d+)(\w+)$");
