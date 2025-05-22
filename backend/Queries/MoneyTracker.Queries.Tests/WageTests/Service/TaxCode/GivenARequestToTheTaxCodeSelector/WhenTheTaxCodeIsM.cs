@@ -2,13 +2,13 @@ using MoneyTracker.Queries.Application.Wage;
 using MoneyTracker.Queries.Application.Wage.TaxCode;
 
 namespace MoneyTracker.Queries.Tests.WageTests.Service.TaxCode.GivenARequestToTheTaxCodeSelector;
-public sealed class WhenTheTaxCodeIsL
+public sealed class WhenTheTaxCodeIsM
 {
     private readonly WageInterface _subject;
 
-    public WhenTheTaxCodeIsL()
+    public WhenTheTaxCodeIsM()
     {
-        _subject = TaxCodeSelector.SelectTaxCodeImplementorFrom("1L");
+        _subject = TaxCodeSelector.SelectTaxCodeImplementorFrom("1M");
     }
 
     [Fact]

@@ -10,11 +10,11 @@ public class TaxCodeSelector
         var personalAllowanceAmount = Money.From(int.Parse(taxCodeElements.Groups[1].Value) * 10);
         var taxLetter = taxCodeElements.Groups[2].Value.ToUpper();
 
-        if (taxLetter != "L")
+        if (taxLetter is "L" or "M" or "N")
         {
-            throw new NotImplementedException($"Invalid tax code: {taxCode}");
+            return new CalculateProgressiveTaxAfterPersonalAllowance(personalAllowanceAmount);
         }
 
-        return new TaxCodeL(personalAllowanceAmount);
+        throw new NotImplementedException($"Invalid tax code: {taxCode}");
     }
 }

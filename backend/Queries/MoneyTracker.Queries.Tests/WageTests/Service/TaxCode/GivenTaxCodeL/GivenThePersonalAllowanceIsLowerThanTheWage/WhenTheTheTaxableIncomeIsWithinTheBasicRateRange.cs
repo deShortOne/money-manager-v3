@@ -11,7 +11,7 @@ public sealed class WhenTheTheTaxableIncomeIsWithinTheBasicRateRange
     {
         var personalAllowance = Money.From(10000);
 
-        var subject = new TaxCodeL(personalAllowance);
+        var subject = new CalculateProgressiveTaxAfterPersonalAllowance(personalAllowance);
 
         _subject = subject.CalculateYearlyWage(Money.From(30000));
     }

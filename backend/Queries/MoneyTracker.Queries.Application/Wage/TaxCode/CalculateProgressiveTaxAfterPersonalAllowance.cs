@@ -1,11 +1,11 @@
 using MoneyTracker.Common.Utilities.MoneyUtil;
 
 namespace MoneyTracker.Queries.Application.Wage.TaxCode;
-public sealed class TaxCodeL : WageInterface
+public sealed class CalculateProgressiveTaxAfterPersonalAllowance : WageInterface
 {
     private readonly Money _personalAllowance;
 
-    public TaxCodeL(Money personalAllowance)
+    public CalculateProgressiveTaxAfterPersonalAllowance(Money personalAllowance)
     {
         _personalAllowance = personalAllowance;
     }

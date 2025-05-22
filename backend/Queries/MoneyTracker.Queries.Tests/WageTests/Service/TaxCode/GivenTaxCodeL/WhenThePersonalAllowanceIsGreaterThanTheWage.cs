@@ -11,7 +11,7 @@ public sealed class WhenThePersonalAllowanceIsGreaterThanTheWage
     {
         var personalAllowance = Money.From(13000);
 
-        var subject = new TaxCodeL(personalAllowance);
+        var subject = new CalculateProgressiveTaxAfterPersonalAllowance(personalAllowance);
 
         _subject = subject.CalculateYearlyWage(Money.From(12000));
     }
