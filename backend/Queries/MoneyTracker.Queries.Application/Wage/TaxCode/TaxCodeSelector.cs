@@ -12,6 +12,8 @@ public class TaxCodeSelector
             return new CalculateTaxCodeD0();
         if (taxCode.Trim().ToUpper() == "D1")
             return new CalculateTaxCodeD1();
+        if (taxCode.Trim().ToUpper() == "NT")
+            return new CalculateTaxCodeNT();
 
         var taxCodeElements = Regex.Match(taxCode, @"^(\d+)(\w+)$");
         var personalAllowanceAmount = Money.From(int.Parse(taxCodeElements.Groups[1].Value) * 10);
