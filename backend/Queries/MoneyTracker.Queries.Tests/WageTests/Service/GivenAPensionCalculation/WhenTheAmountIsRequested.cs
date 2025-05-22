@@ -10,7 +10,7 @@ public sealed class WhenTheAmountIsRequested
 
     public WhenTheAmountIsRequested()
     {
-        var next = new Mock<WageInterface>();
+        var next = new Mock<IWageCalculator>();
         next
             .Setup(x => x.CalculateYearlyWage(It.IsAny<Money>()))
             .Returns(new WageResult());

@@ -29,7 +29,7 @@ public sealed class WhenTheyreOnOnePlan
     [Theory, MemberData(nameof(GrossYearlyWages))]
     public void ThenTheCorrectMonthlyDeductionsAreMade(StudentLoanOptions studentLoanOptions, Money grossYearlyWage, Money expectedStudentLoanRepaymentAmount)
     {
-        var next = new Mock<WageInterface>();
+        var next = new Mock<IWageCalculator>();
         next
             .Setup(x => x.CalculateYearlyWage(It.IsAny<Money>()))
             .Returns(new WageResult());

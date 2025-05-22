@@ -1,11 +1,18 @@
+using MoneyTracker.Common.Utilities.MoneyUtil;
 using MoneyTracker.Contracts.Requests.Wage;
 
 namespace MoneyTracker.Queries.Application.Wage.TaxCode;
 public class SalaryCalculatorBuilder
 {
-    public static WageInterface CreateBuilder(CalculateWageRequest request)
+    private readonly IWageCalculator _wageCalculatorBuilder;
+    public SalaryCalculatorBuilder(CalculateWageRequest request)
     {
-        WageInterface wageCalculatorBuilder = TaxCodeSelector.SelectTaxCodeImplementorFrom(request.TaxCode);
+        _wageCalculatorBuilder = CreateBuilder(request);
+    }
+
+    private IWageCalculator CreateBuilder(CalculateWageRequest request)
+    {
+        var wageCalculatorBuilder = TaxCodeSelector.SelectTaxCodeImplementorFrom(request.TaxCode);
 
         wageCalculatorBuilder = new CalculateStudentLoan(wageCalculatorBuilder, request.StudentLoanOptions);
 
@@ -16,5 +23,10 @@ public class SalaryCalculatorBuilder
             wageCalculatorBuilder = new CalculateNationalInsurance(wageCalculatorBuilder);
 
         return wageCalculatorBuilder;
+    }
+
+    public WageResult CalculateYearlyWage(Money grossYearlyWage)
+    {
+        return _wageCalculatorBuilder.CalculateYearlyWage(grossYearlyWage);
     }
 }

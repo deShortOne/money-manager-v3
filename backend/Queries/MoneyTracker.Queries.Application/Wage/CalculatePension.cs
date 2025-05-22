@@ -3,12 +3,12 @@ using MoneyTracker.Common.Utilities.MoneyUtil;
 using MoneyTracker.Contracts.Requests.Wage.Pension;
 
 namespace MoneyTracker.Queries.Application.Wage;
-public class CalculatePension : WageInterface
+public class CalculatePension : IWageCalculator
 {
-    private readonly WageInterface _next;
+    private readonly IWageCalculator _next;
     private readonly IPension _pension;
 
-    public CalculatePension(WageInterface next, IPension pension)
+    public CalculatePension(IWageCalculator next, IPension pension)
     {
         _next = next;
         _pension = pension;

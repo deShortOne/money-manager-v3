@@ -1,12 +1,12 @@
 using MoneyTracker.Common.Utilities.MoneyUtil;
 
 namespace MoneyTracker.Queries.Application.Wage;
-public class CalculateNationalInsurance : WageInterface
+public class CalculateNationalInsurance : IWageCalculator
 {
-    private readonly WageInterface _next;
+    private readonly IWageCalculator _next;
     public static readonly Percentage UkNationalInsuranceTax = Percentage.From(8);
 
-    public CalculateNationalInsurance(WageInterface next)
+    public CalculateNationalInsurance(IWageCalculator next)
     {
         _next = next;
     }

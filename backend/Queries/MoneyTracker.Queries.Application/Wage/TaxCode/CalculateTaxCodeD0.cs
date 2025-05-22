@@ -1,7 +1,7 @@
 using MoneyTracker.Common.Utilities.MoneyUtil;
 
 namespace MoneyTracker.Queries.Application.Wage.TaxCode;
-public sealed class CalculateTaxCodeD0 : WageInterface
+public sealed class CalculateTaxCodeD0 : IWageCalculator
 {
     public static readonly Percentage TaxRate = Percentage.From(40);
 

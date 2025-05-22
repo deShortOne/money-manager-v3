@@ -4,7 +4,7 @@ using MoneyTracker.Common.Utilities.MoneyUtil;
 namespace MoneyTracker.Queries.Application.Wage.TaxCode;
 public class TaxCodeSelector
 {
-    public static WageInterface SelectTaxCodeImplementorFrom(string taxCode)
+    public static IWageCalculator SelectTaxCodeImplementorFrom(string taxCode)
     {
         if (taxCode.Trim().Equals("BR", StringComparison.OrdinalIgnoreCase))
             return new CalculateTaxCodeBR();

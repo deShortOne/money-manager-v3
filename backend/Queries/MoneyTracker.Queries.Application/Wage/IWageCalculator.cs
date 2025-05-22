@@ -1,7 +1,7 @@
 using MoneyTracker.Common.Utilities.MoneyUtil;
 
 namespace MoneyTracker.Queries.Application.Wage;
-public interface WageInterface
+public interface IWageCalculator
 {
     public WageResult CalculateYearlyWage(Money grossYearlyWage);
 }

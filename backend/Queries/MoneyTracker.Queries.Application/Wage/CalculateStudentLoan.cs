@@ -3,12 +3,12 @@ using MoneyTracker.Common.Utilities.MoneyUtil;
 using MoneyTracker.Contracts.Requests.Wage;
 
 namespace MoneyTracker.Queries.Application.Wage;
-public class CalculateStudentLoan : WageInterface
+public class CalculateStudentLoan : IWageCalculator
 {
-    private readonly WageInterface _next;
+    private readonly IWageCalculator _next;
     private readonly StudentLoanOptions _studentLoanOptions;
 
-    public CalculateStudentLoan(WageInterface next, StudentLoanOptions studentLoanOptions)
+    public CalculateStudentLoan(IWageCalculator next, StudentLoanOptions studentLoanOptions)
     {
         _next = next;
         _studentLoanOptions = studentLoanOptions;

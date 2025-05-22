@@ -1,7 +1,7 @@
 using MoneyTracker.Common.Utilities.MoneyUtil;
 
 namespace MoneyTracker.Queries.Application.Wage.TaxCode;
-public sealed class CalculateProgressiveTaxAfterPersonalAllowance : WageInterface
+public sealed class CalculateProgressiveTaxAfterPersonalAllowance : IWageCalculator
 {
     private readonly Money _personalAllowance;
 

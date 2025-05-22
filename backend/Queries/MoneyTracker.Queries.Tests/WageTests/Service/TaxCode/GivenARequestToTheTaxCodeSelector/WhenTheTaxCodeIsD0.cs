@@ -4,7 +4,7 @@ using MoneyTracker.Queries.Application.Wage.TaxCode;
 namespace MoneyTracker.Queries.Tests.WageTests.Service.TaxCode.GivenARequestToTheTaxCodeSelector;
 public sealed class WhenTheTaxCodeIsD0
 {
-    private readonly WageInterface _subject;
+    private readonly IWageCalculator _subject;
 
     public WhenTheTaxCodeIsD0()
     {

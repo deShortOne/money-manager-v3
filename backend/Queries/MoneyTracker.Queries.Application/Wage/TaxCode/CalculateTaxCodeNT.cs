@@ -1,7 +1,7 @@
 using MoneyTracker.Common.Utilities.MoneyUtil;
 
 namespace MoneyTracker.Queries.Application.Wage.TaxCode;
-public sealed class CalculateTaxCodeNT : WageInterface
+public sealed class CalculateTaxCodeNT : IWageCalculator
 {
     public WageResult CalculateYearlyWage(Money grossYearlyWage)
     {

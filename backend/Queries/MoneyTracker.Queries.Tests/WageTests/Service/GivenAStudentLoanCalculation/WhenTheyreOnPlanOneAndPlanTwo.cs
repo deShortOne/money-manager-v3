@@ -11,7 +11,7 @@ public sealed class WhenTheyreOnPlanOneAndPlanTwo
 
     public WhenTheyreOnPlanOneAndPlanTwo()
     {
-        var next = new Mock<WageInterface>();
+        var next = new Mock<IWageCalculator>();
         next
             .Setup(x => x.CalculateYearlyWage(It.IsAny<Money>()))
             .Returns(new WageResult());
