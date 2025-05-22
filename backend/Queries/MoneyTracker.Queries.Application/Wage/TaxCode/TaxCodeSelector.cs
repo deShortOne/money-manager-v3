@@ -6,6 +6,9 @@ public class TaxCodeSelector
 {
     public static WageInterface SelectTaxCodeImplementorFrom(string taxCode)
     {
+        if (taxCode.Trim().ToUpper() == "BR")
+            return new CalculateTaxCodeBR();
+
         var taxCodeElements = Regex.Match(taxCode, @"^(\d+)(\w+)$");
         var personalAllowanceAmount = Money.From(int.Parse(taxCodeElements.Groups[1].Value) * 10);
         var taxLetter = taxCodeElements.Groups[2].Value.ToUpper();
