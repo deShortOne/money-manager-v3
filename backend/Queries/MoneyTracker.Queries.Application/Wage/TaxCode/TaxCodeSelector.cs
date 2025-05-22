@@ -8,6 +8,8 @@ public class TaxCodeSelector
     {
         if (taxCode.Trim().ToUpper() == "BR")
             return new CalculateTaxCodeBR();
+        if (taxCode.Trim().ToUpper() == "D0")
+            return new CalculateTaxCodeD0();
 
         var taxCodeElements = Regex.Match(taxCode, @"^(\d+)(\w+)$");
         var personalAllowanceAmount = Money.From(int.Parse(taxCodeElements.Groups[1].Value) * 10);
