@@ -5,7 +5,7 @@ public sealed class CalculateTaxCodeD0 : WageInterface
 {
     public static readonly Percentage TaxRate = Percentage.From(40);
 
-    private CalculateTaxAsAllIncomeAtRate _actual;
+    private readonly CalculateTaxAsAllIncomeAtRate _actual;
 
     public CalculateTaxCodeD0()
     {

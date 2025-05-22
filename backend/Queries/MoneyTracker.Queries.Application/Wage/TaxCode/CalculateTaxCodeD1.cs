@@ -1,13 +1,13 @@
 using MoneyTracker.Common.Utilities.MoneyUtil;
 
 namespace MoneyTracker.Queries.Application.Wage.TaxCode;
-public sealed class CalculateTaxCodeBR : WageInterface
+public sealed class CalculateTaxCodeD1 : WageInterface
 {
-    public static readonly Percentage TaxRate = Percentage.From(20);
+    public static readonly Percentage TaxRate = Percentage.From(45);
 
     private readonly CalculateTaxAsAllIncomeAtRate _actual;
 
-    public CalculateTaxCodeBR()
+    public CalculateTaxCodeD1()
     {
         _actual = new CalculateTaxAsAllIncomeAtRate(TaxRate);
     }
