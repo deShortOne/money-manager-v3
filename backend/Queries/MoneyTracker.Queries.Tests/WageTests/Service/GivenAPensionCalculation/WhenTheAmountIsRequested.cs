@@ -1,5 +1,6 @@
 using MoneyTracker.Common.Utilities.MoneyUtil;
-using MoneyTracker.Contracts.Requests.Wage.Pension;
+using MoneyTracker.Contracts.Requests.Wage;
+using MoneyTracker.Contracts.Requests.Wage.PensionCalculator;
 using MoneyTracker.Queries.Application.Wage;
 using Moq;
 
@@ -16,8 +17,9 @@ public sealed class WhenTheAmountIsRequested
             .Returns(new WageResult());
 
         var pensionRequested = new FixedPensionAmount(Money.From(200));
+        var pension = new Pension(pensionRequested, PensionType.AutoEnrolment);
 
-        var subject = new CalculatePension(next.Object, pensionRequested);
+        var subject = new CalculatePension(next.Object, pension);
 
         _actual = subject.CalculateYearlyWage(Money.From(12000)).Pension;
     }

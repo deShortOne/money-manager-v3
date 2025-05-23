@@ -1,6 +1,6 @@
 using MoneyTracker.Common.Utilities.MoneyUtil;
 using MoneyTracker.Contracts.Requests.Wage;
-using MoneyTracker.Contracts.Requests.Wage.Pension;
+using MoneyTracker.Contracts.Requests.Wage.PensionCalculator;
 using MoneyTracker.Contracts.Responses.Wage;
 using MoneyTracker.Queries.Application;
 
@@ -10,13 +10,14 @@ public sealed class WhenAValidRequestWithAllOptionsRequested
     [Fact]
     public void ThenAValidResponseIsReturned()
     {
-        var calculateWageService = new WageService();
+        var pension = new Pension(new FixedPensionAmount(Money.From(100)), PensionType.AutoEnrolment);
+
         var request = new CalculateWageRequest(
             30000,
             "Yearly",
             "1257L",
             true,
-            new FixedPensionAmount(Money.From(100)),
+            pension,
             new StudentLoanOptions(false, true, false, false, true));
         var expected = new CalculateWageResponse
         {
@@ -24,6 +25,7 @@ public sealed class WhenAValidRequestWithAllOptionsRequested
             Wages = Enumerable.Repeat(Money.From(1937.3m), 12).ToList(),
         };
 
+        var calculateWageService = new WageService();
         var actual = calculateWageService.CalculateWage(request);
 
         Assert.True(actual.IsSuccess);
