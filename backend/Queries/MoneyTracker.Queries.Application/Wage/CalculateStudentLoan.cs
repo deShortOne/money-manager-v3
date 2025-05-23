@@ -63,30 +63,29 @@ public class CalculateStudentLoan : IWageCalculator
     private StudentLoanBand GetStudentLoanBand()
     {
         if (_studentLoanOptions.Plan5)
-            return UkStudentLoanRepayment.StudentLoanBands[3];
+            return UkStudentLoanRepayment.StudentLoanBands[StudentLoanPlan.Plan5];
 
         if (_studentLoanOptions.Plan1)
-            return UkStudentLoanRepayment.StudentLoanBands[0];
+            return UkStudentLoanRepayment.StudentLoanBands[StudentLoanPlan.Plan1];
 
         if (_studentLoanOptions.Plan2)
-            return UkStudentLoanRepayment.StudentLoanBands[1];
+            return UkStudentLoanRepayment.StudentLoanBands[StudentLoanPlan.Plan2];
 
         if (_studentLoanOptions.Plan4)
-            return UkStudentLoanRepayment.StudentLoanBands[2];
+            return UkStudentLoanRepayment.StudentLoanBands[StudentLoanPlan.Plan4];
 
         return null;
     }
 
     private StudentLoanBand GetPostGraduateLoanBand()
     {
-        return UkStudentLoanRepayment.StudentLoanBands[4];
+        return UkStudentLoanRepayment.StudentLoanBands[StudentLoanPlan.PostgraduateLoan];
     }
 }
 
-public class StudentLoanBand(StudentLoanPlan plan, Money yearlyIncomeThreshold, Money monthlyIncomeThreshold,
-    Money weeklyIncomeThreshold, Percentage rate)
+public class StudentLoanBand(Money yearlyIncomeThreshold, Money monthlyIncomeThreshold, Money weeklyIncomeThreshold,
+    Percentage rate)
 {
-    public StudentLoanPlan StudentLoanPlan { get; } = plan;
     public Money YearlyIncomeThreshold { get; } = yearlyIncomeThreshold;
     public Money MonthlyIncomeThreshold { get; } = monthlyIncomeThreshold;
     public Money WeeklyIncomeThreshold { get; } = weeklyIncomeThreshold;
@@ -95,12 +94,12 @@ public class StudentLoanBand(StudentLoanPlan plan, Money yearlyIncomeThreshold, 
 
 public static class UkStudentLoanRepayment
 {
-    public static readonly List<StudentLoanBand> StudentLoanBands =
-    [
-        new StudentLoanBand(StudentLoanPlan.Plan1, Money.From(26065), Money.From(2172), Money.From(501), Percentage.From(9)),
-        new StudentLoanBand(StudentLoanPlan.Plan2, Money.From(28470), Money.From(2372), Money.From(547), Percentage.From(9)),
-        new StudentLoanBand(StudentLoanPlan.Plan4, Money.From(32745), Money.From(2728), Money.From(629), Percentage.From(9)),
-        new StudentLoanBand(StudentLoanPlan.Plan5, Money.From(25000), Money.From(2083), Money.From(480), Percentage.From(9)),
-        new StudentLoanBand(StudentLoanPlan.PostgraduateLoan, Money.From(21000), Money.From(1750), Money.From(403), Percentage.From(6)),
-    ];
+    public static readonly Dictionary<StudentLoanPlan, StudentLoanBand> StudentLoanBands = new Dictionary<StudentLoanPlan, StudentLoanBand>
+    {
+        { StudentLoanPlan.Plan1, new StudentLoanBand(Money.From(26065), Money.From(2172), Money.From(501), Percentage.From(9)) },
+        { StudentLoanPlan.Plan2, new StudentLoanBand(Money.From(28470), Money.From(2372), Money.From(547), Percentage.From(9)) },
+        { StudentLoanPlan.Plan4, new StudentLoanBand(Money.From(32745), Money.From(2728), Money.From(629), Percentage.From(9)) },
+        { StudentLoanPlan.Plan5, new StudentLoanBand(Money.From(25000), Money.From(2083), Money.From(480), Percentage.From(9)) },
+        { StudentLoanPlan.PostgraduateLoan, new StudentLoanBand(Money.From(21000), Money.From(1750), Money.From(403), Percentage.From(6)) },
+    };
 }
