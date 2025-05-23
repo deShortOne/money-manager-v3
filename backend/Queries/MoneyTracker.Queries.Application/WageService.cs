@@ -52,9 +52,8 @@ public class WageService : IWageService
     private static List<Money> GetWageReducedbyTax(Money grossYearlyWage, CalculateWageRequest request)
     {
         var builder = new SalaryCalculatorBuilder(request);
-        var result = builder.CalculateYearlyWage(grossYearlyWage);
+        var yearlyWage = builder.CalculateYearlyWage(grossYearlyWage);
 
-        var yearlyWage = grossYearlyWage - result.TotalDeduction;
         var netIncomeMonthly = yearlyWage / 12;
         var wagesPostTax = Enumerable.Repeat(netIncomeMonthly, 11).ToList();
         wagesPostTax.Add(yearlyWage - netIncomeMonthly * 11);

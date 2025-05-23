@@ -25,11 +25,13 @@ public class SalaryCalculatorBuilder
         return wageCalculatorBuilder;
     }
 
-    public WageResult CalculateYearlyWage(Money grossYearlyWage)
+    public Money CalculateYearlyWage(Money grossYearlyWage)
     {
         var preTaxResult = _wageCalculatorBuilder.CalculatePreTaxGrossIncome(grossYearlyWage);
         var preTaxGrossYearlyWage = grossYearlyWage - preTaxResult.TotalDeduction;
 
-        return _wageCalculatorBuilder.CalculateYearlyWage(preTaxGrossYearlyWage);
+        var taxOnYearlyWage = _wageCalculatorBuilder.CalculateYearlyWage(preTaxGrossYearlyWage);
+
+        return preTaxGrossYearlyWage - taxOnYearlyWage.TotalDeduction;
     }
 }
