@@ -23,50 +23,16 @@ public class CalculateStudentLoan : IWageCalculator
     {
         var result = _next.CalculateYearlyWage(grossYearlyWage);
 
-        grossYearlyWage /= 12;
-        var totalStudentLoan = Money.Zero;
-        if (_studentLoanOptions.Plan5)
-        {
-            var remainingWage = grossYearlyWage - UkStudentLoanRepayment.StudentLoanBands[3].MonthlyIncomeThreshold;
-            if (remainingWage > Money.Zero)
-            {
-                var remainingWageWithPercentageTakeOff = remainingWage * UkStudentLoanRepayment.StudentLoanBands[3].Rate;
-                totalStudentLoan = Money.From(decimal.Round(remainingWageWithPercentageTakeOff.Amount, 0, MidpointRounding.ToZero));
-            }
-        }
-        else if (_studentLoanOptions.Plan1)
-        {
-            var remainingWage = grossYearlyWage - UkStudentLoanRepayment.StudentLoanBands[0].MonthlyIncomeThreshold;
-            if (remainingWage > Money.Zero)
-            {
-                var remainingWageWithPercentageTakeOff = remainingWage * UkStudentLoanRepayment.StudentLoanBands[0].Rate;
-                totalStudentLoan = Money.From(decimal.Round(remainingWageWithPercentageTakeOff.Amount, 0, MidpointRounding.ToZero));
-            }
-        }
-        else if (_studentLoanOptions.Plan2)
-        {
-            var remainingWage = grossYearlyWage - UkStudentLoanRepayment.StudentLoanBands[1].MonthlyIncomeThreshold;
-            if (remainingWage > Money.Zero)
-            {
-                var remainingWageWithPercentageTakeOff = remainingWage * UkStudentLoanRepayment.StudentLoanBands[1].Rate;
-                totalStudentLoan = Money.From(decimal.Round(remainingWageWithPercentageTakeOff.Amount, 0, MidpointRounding.ToZero));
-            }
-        }
-        else if (_studentLoanOptions.Plan4)
-        {
-            var remainingWage = grossYearlyWage - UkStudentLoanRepayment.StudentLoanBands[2].MonthlyIncomeThreshold;
-            if (remainingWage > Money.Zero)
-            {
-                var remainingWageWithPercentageTakeOff = remainingWage * UkStudentLoanRepayment.StudentLoanBands[2].Rate;
-                totalStudentLoan = Money.From(decimal.Round(remainingWageWithPercentageTakeOff.Amount, 0, MidpointRounding.ToZero));
-            }
-        }
+        var grossMonthlyWage = grossYearlyWage / 12;
+        var totalStudentLoan = CalculateStudentLoanForPlans1_2_4_5(grossMonthlyWage);
+
         if (_studentLoanOptions.PostGraduate)
         {
-            var remainingWage = grossYearlyWage - UkStudentLoanRepayment.StudentLoanBands[4].MonthlyIncomeThreshold;
+            var postGraduateLoanBand = GetPostGraduateLoanBand();
+            var remainingWage = grossMonthlyWage - postGraduateLoanBand.MonthlyIncomeThreshold;
             if (remainingWage > Money.Zero)
             {
-                var remainingWageWithPercentageTakeOff = remainingWage * UkStudentLoanRepayment.StudentLoanBands[4].Rate;
+                var remainingWageWithPercentageTakeOff = remainingWage * postGraduateLoanBand.Rate;
                 totalStudentLoan += Money.From(decimal.Round(remainingWageWithPercentageTakeOff.Amount, 0, MidpointRounding.ToZero));
             }
         }
@@ -75,6 +41,45 @@ public class CalculateStudentLoan : IWageCalculator
         {
             StudentLoanAmount = totalStudentLoan * 12,
         };
+    }
+
+    private Money CalculateStudentLoanForPlans1_2_4_5(Money grossYearlyWage)
+    {
+        var studentLoanBandPosition = GetStudentLoanBand();
+        if (studentLoanBandPosition is null)
+            return Money.Zero;
+
+        var totalStudentLoan = Money.Zero;
+        var remainingWage = grossYearlyWage - studentLoanBandPosition.MonthlyIncomeThreshold;
+        if (remainingWage > Money.Zero)
+        {
+            var remainingWageWithPercentageTakeOff = remainingWage * studentLoanBandPosition.Rate;
+            totalStudentLoan = Money.From(decimal.Round(remainingWageWithPercentageTakeOff.Amount, 0, MidpointRounding.ToZero));
+        }
+
+        return totalStudentLoan;
+    }
+
+    private StudentLoanBand GetStudentLoanBand()
+    {
+        if (_studentLoanOptions.Plan5)
+            return UkStudentLoanRepayment.StudentLoanBands[3];
+
+        if (_studentLoanOptions.Plan1)
+            return UkStudentLoanRepayment.StudentLoanBands[0];
+
+        if (_studentLoanOptions.Plan2)
+            return UkStudentLoanRepayment.StudentLoanBands[1];
+
+        if (_studentLoanOptions.Plan4)
+            return UkStudentLoanRepayment.StudentLoanBands[2];
+
+        return null;
+    }
+
+    private StudentLoanBand GetPostGraduateLoanBand()
+    {
+        return UkStudentLoanRepayment.StudentLoanBands[4];
     }
 }
 
@@ -90,7 +95,7 @@ public class StudentLoanBand(StudentLoanPlan plan, Money yearlyIncomeThreshold, 
 
 public static class UkStudentLoanRepayment
 {
-    public static List<StudentLoanBand> StudentLoanBands =
+    public static readonly List<StudentLoanBand> StudentLoanBands =
     [
         new StudentLoanBand(StudentLoanPlan.Plan1, Money.From(26065), Money.From(2172), Money.From(501), Percentage.From(9)),
         new StudentLoanBand(StudentLoanPlan.Plan2, Money.From(28470), Money.From(2372), Money.From(547), Percentage.From(9)),
