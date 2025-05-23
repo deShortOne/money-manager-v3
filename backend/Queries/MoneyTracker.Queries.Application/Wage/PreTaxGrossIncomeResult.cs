@@ -1,7 +1,7 @@
 using MoneyTracker.Common.Utilities.MoneyUtil;
 
 namespace MoneyTracker.Queries.Application.Wage;
-public sealed class PreTaxGrossIncomeResult
+public sealed record PreTaxGrossIncomeResult
 {
     public Money Pension { get; set; }
     public Money TotalDeduction

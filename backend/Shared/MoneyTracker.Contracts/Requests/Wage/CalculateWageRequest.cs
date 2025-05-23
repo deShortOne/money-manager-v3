@@ -37,4 +37,5 @@ public enum PensionType
 {
     Unknown = 0,
     AutoEnrolment = 1,
+    Personal = 2,
 }

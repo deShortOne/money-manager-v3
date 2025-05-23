@@ -7,26 +7,41 @@ public class CalculatePension : IWageCalculator
 {
     private readonly IWageCalculator _next;
     private readonly IPensionCalculator _pensionCalculator;
+    private readonly bool _calculateInPreTaxOnly;
 
     public CalculatePension(IWageCalculator next, Pension pension)
     {
         _next = next;
         _pensionCalculator = pension.Calculator;
+        _calculateInPreTaxOnly = pension.Type == PensionType.Personal;
     }
 
     public PreTaxGrossIncomeResult CalculatePreTaxGrossIncome(Money grossYearlyWage)
     {
-        return _next.CalculatePreTaxGrossIncome(grossYearlyWage);
+        var result = _next.CalculatePreTaxGrossIncome(grossYearlyWage);
+        if (_calculateInPreTaxOnly)
+        {
+            var pension = _pensionCalculator.CalculatePension(grossYearlyWage / 12) * 12;
+            result = result with
+            {
+                Pension = pension,
+            };
+        }
+        return result;
     }
 
     public WageResult CalculateYearlyWage(Money grossYearlyWage)
     {
-        var pension = _pensionCalculator.CalculatePension(grossYearlyWage / 12) * 12;
         var result = _next.CalculateYearlyWage(grossYearlyWage);
-
-        return result with
+        if (!_calculateInPreTaxOnly)
         {
-            Pension = pension,
-        };
+            var pension = _pensionCalculator.CalculatePension(grossYearlyWage / 12) * 12;
+            result = result with
+            {
+                Pension = pension,
+            };
+        }
+
+        return result;
     }
 }
