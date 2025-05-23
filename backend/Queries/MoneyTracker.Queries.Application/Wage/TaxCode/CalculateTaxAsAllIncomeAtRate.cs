@@ -10,6 +10,11 @@ public sealed class CalculateTaxAsAllIncomeAtRate : IWageCalculator
         _taxRate = taxRate;
     }
 
+    public PreTaxGrossIncomeResult CalculatePreTaxGrossIncome(Money grossYearlyWage)
+    {
+        return new PreTaxGrossIncomeResult();
+    }
+
     public WageResult CalculateYearlyWage(Money grossYearlyWage)
     {
         return new WageResult

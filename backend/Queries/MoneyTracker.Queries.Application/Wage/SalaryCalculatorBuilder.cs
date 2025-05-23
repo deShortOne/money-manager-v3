@@ -27,6 +27,9 @@ public class SalaryCalculatorBuilder
 
     public WageResult CalculateYearlyWage(Money grossYearlyWage)
     {
-        return _wageCalculatorBuilder.CalculateYearlyWage(grossYearlyWage);
+        var preTaxResult = _wageCalculatorBuilder.CalculatePreTaxGrossIncome(grossYearlyWage);
+        var preTaxGrossYearlyWage = grossYearlyWage - preTaxResult.TotalDeduction;
+
+        return _wageCalculatorBuilder.CalculateYearlyWage(preTaxGrossYearlyWage);
     }
 }

@@ -9,6 +9,10 @@ public sealed class CalculateProgressiveTaxAfterPersonalAllowance : IWageCalcula
     {
         _personalAllowance = personalAllowance;
     }
+    public PreTaxGrossIncomeResult CalculatePreTaxGrossIncome(Money grossYearlyWage)
+    {
+        return new PreTaxGrossIncomeResult();
+    }
 
     public WageResult CalculateYearlyWage(Money grossYearlyWage)
     {

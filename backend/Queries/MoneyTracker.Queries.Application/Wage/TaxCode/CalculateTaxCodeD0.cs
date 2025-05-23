@@ -11,6 +11,10 @@ public sealed class CalculateTaxCodeD0 : IWageCalculator
     {
         _actual = new CalculateTaxAsAllIncomeAtRate(TaxRate);
     }
+    public PreTaxGrossIncomeResult CalculatePreTaxGrossIncome(Money grossYearlyWage)
+    {
+        return new PreTaxGrossIncomeResult();
+    }
 
     public WageResult CalculateYearlyWage(Money grossYearlyWage)
     {

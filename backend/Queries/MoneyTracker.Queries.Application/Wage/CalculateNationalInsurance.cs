@@ -11,6 +11,11 @@ public class CalculateNationalInsurance : IWageCalculator
         _next = next;
     }
 
+    public PreTaxGrossIncomeResult CalculatePreTaxGrossIncome(Money grossYearlyWage)
+    {
+        return _next.CalculatePreTaxGrossIncome(grossYearlyWage);
+    }
+
     public WageResult CalculateYearlyWage(Money grossYearlyWage)
     {
         var result = _next.CalculateYearlyWage(grossYearlyWage);

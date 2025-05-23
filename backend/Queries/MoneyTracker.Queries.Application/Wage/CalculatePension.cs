@@ -14,6 +14,11 @@ public class CalculatePension : IWageCalculator
         _pensionCalculator = pension.Calculator;
     }
 
+    public PreTaxGrossIncomeResult CalculatePreTaxGrossIncome(Money grossYearlyWage)
+    {
+        return _next.CalculatePreTaxGrossIncome(grossYearlyWage);
+    }
+
     public WageResult CalculateYearlyWage(Money grossYearlyWage)
     {
         var pension = _pensionCalculator.CalculatePension(grossYearlyWage / 12) * 12;
