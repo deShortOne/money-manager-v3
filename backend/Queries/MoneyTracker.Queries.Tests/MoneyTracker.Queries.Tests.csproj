@@ -26,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MoneyTracker.Queries.API\MoneyTracker.Queries.API.csproj" />
     <ProjectReference Include="..\MoneyTracker.Queries.Application\MoneyTracker.Queries.Application.csproj" />
     <ProjectReference Include="..\MoneyTracker.Queries.DataMigration\MoneyTracker.Queries.DataMigration.csproj" />
     <ProjectReference Include="..\MoneyTracker.Queries.Infrastructure\MoneyTracker.Queries.Infrastructure.csproj" />
