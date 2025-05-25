@@ -14,15 +14,15 @@ public class CalculateWageRequest(
     public string FrequencyOfIncome { get; } = frequencyOfIncome;
     public string TaxCode { get; } = taxCode;
     public bool PayNationalInsurance { get; } = payNationalInsurance;
-    public Pension Pension { get; } = pension;
-    public StudentLoanOptions StudentLoanOptions { get; } = studentLoanOptions;
+    public Pension? Pension { get; } = pension;
+    public StudentLoanOptions? StudentLoanOptions { get; } = studentLoanOptions;
 }
 
-public class Pension(string pensionType, decimal value, string pensionCalculationType)
+public class Pension(string type, decimal value, string rate)
 {
-    public string PensionType { get; } = pensionType;
+    public string Type { get; } = type;
     public decimal Value { get; } = value;
-    public string PensionCalculationType { get; } = pensionCalculationType;
+    public string Rate { get; } = rate;
 }
 
 public enum PensionCalculationType

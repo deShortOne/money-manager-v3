@@ -41,6 +41,11 @@ export function WageCalculatorForm() {
         },
     ];
 
+    const pensionSchema = z.object({
+        type: z.string(),
+        value: z.coerce.number().gt(0),
+        rate: z.string(),
+    });
     const formSchema = z.object({
         grossIncome: z.coerce.number({
             required_error: "You must enter your income before taxes",
@@ -50,11 +55,26 @@ export function WageCalculatorForm() {
         }),
         taxCode: z.string(),
         paysNationalInsurance: z.boolean(),
-        pension: z.object({
-            pensionType: z.string(),
-            value: z.coerce.number(),
-            pensionCalculationType: z.string(),
-        }),
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        pension: z.preprocess((input: any) => {
+            if (input == null)
+                return null;
+
+            if (input.type === "")
+                input.type = null;
+            if (input.value === "")
+                input.value = null;
+            if (input.rate === "")
+                input.rate = null;
+
+            if (input.type === null &&
+                input.value === null &&
+                input.rate === null) return null;
+            return input;
+        }, z.union([
+            z.null(),
+            pensionSchema,
+        ])),
         studentLoanOptions: z.object({
             plan1: z.boolean(),
             plan2: z.boolean(),
@@ -66,15 +86,11 @@ export function WageCalculatorForm() {
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            grossIncome: undefined,
-            frequencyOfIncome: undefined,
+            grossIncome: 30000,
+            frequencyOfIncome: "Yearly",
             taxCode: "1257L",
             paysNationalInsurance: true,
-            pension: {
-                pensionType: undefined,
-                value: undefined,
-                pensionCalculationType: undefined,
-            },
+            pension: null,
             studentLoanOptions: {
                 plan1: false,
                 plan2: false,
@@ -129,7 +145,7 @@ export function WageCalculatorForm() {
                                 <Input placeholder="" {...field} />
                             </FormControl>
                             <FormDescription>
-                                This is the how often you earn the income you&aposve mentioned.
+                                This is the how often you earn the income you&apos;ve mentioned.
                             </FormDescription>
                             <FormMessage />
                         </FormItem>
@@ -178,7 +194,7 @@ export function WageCalculatorForm() {
 
                 <FormField
                     control={form.control}
-                    name="pension.pensionType"
+                    name="pension.type"
                     render={({ field }) => (
                         <FormItem className="mr-2 my-2">
                             <FormLabel>Pension Type</FormLabel>
@@ -210,7 +226,7 @@ export function WageCalculatorForm() {
                 />
                 <FormField
                     control={form.control}
-                    name="pension.pensionCalculationType"
+                    name="pension.rate"
                     render={({ field }) => (
                         <FormItem className="mr-2 my-2">
                             <FormLabel>Pension Type</FormLabel>
@@ -254,6 +270,6 @@ export function WageCalculatorForm() {
                     Calculate
                 </Button>
             </form>
-        </Form>
+        </Form >
     )
 }

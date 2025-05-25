@@ -23,7 +23,8 @@ public class WageController
     public async Task<IActionResult> CalculateWage(Public.CalculateWageRequest wageRequest)
     {
         await Task.CompletedTask;
-        if (!TryGeneratePensionRequest(wageRequest, out var pension))
+        Pension? pension = null;
+        if (wageRequest.Pension is not null && !TryGeneratePensionRequest(wageRequest.Pension, out pension))
         {
             return new ContentResult
             {
@@ -45,15 +46,15 @@ public class WageController
         return ControllerHelper.Convert(_wageService.CalculateWage(request));
     }
 
-    private static bool TryGeneratePensionRequest(Public.CalculateWageRequest wageRequest, out Pension? pensionObject)
+    private static bool TryGeneratePensionRequest(Public.Pension pension, out Pension? pensionObject)
     {
-        if (!TryGeneratePensionCalculator(wageRequest, out var pensionCalculator))
+        if (!TryGeneratePensionCalculator(pension, out var pensionCalculator))
         {
             pensionObject = null;
             return false;
         }
 
-        if (!Enum.TryParse<PensionType>(wageRequest.Pension.PensionType, out var pensionType))
+        if (!Enum.TryParse<PensionType>(pension.Type, out var pensionType))
         {
             pensionObject = null;
             return false;
@@ -63,21 +64,26 @@ public class WageController
         return true;
     }
 
-    private static bool TryGeneratePensionCalculator(Public.CalculateWageRequest wageRequest, out IPensionCalculator? pensionCalculator)
+    private static bool TryGeneratePensionCalculator(Public.Pension pension, out IPensionCalculator? pensionCalculator)
     {
-        if (!Enum.TryParse<Public.PensionCalculationType>(wageRequest.Pension.PensionCalculationType, out var requestedPensionCalculatedType))
+        if (pension is null)
+        {
+            pensionCalculator = null;
+            return true;
+        }
+
+        if (!Enum.TryParse<Public.PensionCalculationType>(pension.Rate, out var requestedPensionCalculatedType))
         {
             pensionCalculator = null;
             return false;
         }
-
         if (requestedPensionCalculatedType == Public.PensionCalculationType.Percentage)
         {
-            pensionCalculator = new PercentagePensionAmount(Percentage.From(wageRequest.Pension.Value));
+            pensionCalculator = new PercentagePensionAmount(Percentage.From(pension.Value));
         }
         else if (requestedPensionCalculatedType == Public.PensionCalculationType.Amount)
         {
-            pensionCalculator = new FixedPensionAmount(Money.From(wageRequest.Pension.Value));
+            pensionCalculator = new FixedPensionAmount(Money.From(pension.Value));
         }
         else
         {

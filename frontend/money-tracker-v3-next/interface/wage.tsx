@@ -4,17 +4,17 @@ export interface WageRequest {
     taxCode: string,
     payNationalInsurance: boolean,
     pension: {
-        pensionType: string | undefined,
-        value: number | undefined,
-        pensionCalculationType: string | undefined,
-    } | undefined,
+        type: string,
+        value: number,
+        rate: string,
+    } | null,
     studentLoanOptions: {
-        plan1: boolean | undefined,
-        plan2: boolean | undefined,
-        plan4: boolean | undefined,
-        plan5: boolean | undefined,
-        postgraduate: boolean | undefined,
-    } | undefined
+        plan1: boolean,
+        plan2: boolean,
+        plan4: boolean,
+        plan5: boolean,
+        postgraduate: boolean,
+    }
 }
 
 export interface WageResponse {
