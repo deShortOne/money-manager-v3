@@ -1,5 +1,5 @@
-using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Mvc;
+using MoneyTracker.Common.Result;
 using MoneyTracker.Common.Utilities.MoneyUtil;
 using MoneyTracker.Contracts.Requests.Wage;
 using MoneyTracker.Contracts.Requests.Wage.PensionCalculator;
@@ -8,7 +8,6 @@ using MoneyTracker.Queries.Domain.Handlers;
 namespace MoneyTracker.Queries.API.Controllers;
 [ApiController]
 [Route("[controller]")]
-[ExcludeFromCodeCoverage]
 public class WageController
 {
     private readonly IWageService _wageService;
@@ -24,14 +23,19 @@ public class WageController
     {
         await Task.CompletedTask;
         Pension? pension = null;
-        if (wageRequest.Pension is not null && !TryGeneratePensionRequest(wageRequest.Pension, out pension))
+        if (wageRequest.Pension is not null)
         {
-            return new ContentResult
+            var pensionResult = TryGeneratePensionRequest(wageRequest.Pension);
+            if (!pensionResult.IsSuccess)
             {
-                Content = $"Invalid Pension object: {wageRequest.Pension}",
-                ContentType = "text/plain",
-                StatusCode = StatusCodes.Status400BadRequest,
-            };
+                return new ContentResult
+                {
+                    Content = pensionResult.Error?.Description,
+                    ContentType = "text/plain",
+                    StatusCode = StatusCodes.Status400BadRequest,
+                };
+            }
+            pension = pensionResult.Value;
         }
 
         var request = new CalculateWageRequest(
@@ -46,50 +50,41 @@ public class WageController
         return ControllerHelper.Convert(_wageService.CalculateWage(request));
     }
 
-    private static bool TryGeneratePensionRequest(Public.Pension pension, out Pension? pensionObject)
+    private static ResultT<Pension> TryGeneratePensionRequest(Public.Pension pension)
     {
-        if (!TryGeneratePensionCalculator(pension, out var pensionCalculator))
+        var pensionCalculatorResult = TryGeneratePensionCalculator(pension);
+        if (!pensionCalculatorResult.IsSuccess)
         {
-            pensionObject = null;
-            return false;
+            return pensionCalculatorResult.Error!;
         }
 
         if (!Enum.TryParse<PensionType>(pension.Type, out var pensionType))
         {
-            pensionObject = null;
-            return false;
+            var pensionTypes = new List<PensionType>(Enum.GetValues<PensionType>())
+                .Where(x => x != PensionType.Unknown);
+            return Error.Validation("", $"Invalid pension type \"{pension.Type}\", valid pension types are: {string.Join(", ", pensionTypes)}");
         }
 
-        pensionObject = new Pension(pensionCalculator, pensionType);
-        return true;
+        return new Pension(pensionCalculatorResult.Value, pensionType);
     }
 
-    private static bool TryGeneratePensionCalculator(Public.Pension pension, out IPensionCalculator? pensionCalculator)
+    private static ResultT<IPensionCalculator> TryGeneratePensionCalculator(Public.Pension pension)
     {
-        if (pension is null)
-        {
-            pensionCalculator = null;
-            return true;
-        }
-
         if (!Enum.TryParse<Public.PensionCalculationType>(pension.Rate, out var requestedPensionCalculatedType))
         {
-            pensionCalculator = null;
-            return false;
+            var pensionTypes = new List<Public.PensionCalculationType>(Enum.GetValues<Public.PensionCalculationType>())
+                .Where(x => x != Public.PensionCalculationType.Unknown);
+            return Error.Validation("", $"Invalid pension rate \"{pension.Rate}\", valid rates are: {string.Join(", ", pensionTypes)}");
         }
         if (requestedPensionCalculatedType == Public.PensionCalculationType.Percentage)
         {
-            pensionCalculator = new PercentagePensionAmount(Percentage.From(pension.Value));
+            return new PercentagePensionAmount(Percentage.From(pension.Value));
         }
-        else if (requestedPensionCalculatedType == Public.PensionCalculationType.Amount)
+        if (requestedPensionCalculatedType == Public.PensionCalculationType.Amount)
         {
-            pensionCalculator = new FixedPensionAmount(Money.From(pension.Value));
+            return new FixedPensionAmount(Money.From(pension.Value));
         }
-        else
-        {
-            pensionCalculator = null;
-            return false;
-        }
-        return true;
+
+        return Error.NotFound("", "Pension calculation type found but no implementation has been found.");
     }
 }
