@@ -1,16 +1,16 @@
-using System;
+using MoneyTracker.Common.Utilities.MoneyUtil;
 using MoneyTracker.Contracts.Requests.Wage.PensionCalculator;
 
 namespace MoneyTracker.Contracts.Requests.Wage;
 public class CalculateWageRequest(
-    decimal grossIncome,
+    Money grossIncome,
     string frequencyOfIncome,
     string taxCode,
     bool payNationalInsurance,
     Pension pension,
     StudentLoanOptions studentLoanOptions)
 {
-    public decimal GrossIncome { get; } = grossIncome;
+    public Money GrossIncome { get; } = grossIncome;
     public string FrequencyOfIncome { get; } = frequencyOfIncome;
     public string TaxCode { get; } = taxCode;
     public bool PayNationalInsurance { get; } = payNationalInsurance;

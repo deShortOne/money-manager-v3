@@ -13,7 +13,7 @@ public sealed class WhenAValidRequestWithAllOptionsRequested
         var pension = new Pension(new FixedPensionAmount(Money.From(100)), PensionType.AutoEnrolment);
 
         var request = new CalculateWageRequest(
-            30000,
+            Money.From(30000),
             "Yearly",
             "1257L",
             true,

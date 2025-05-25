@@ -1,3 +1,4 @@
+using MoneyTracker.Common.Utilities.MoneyUtil;
 using MoneyTracker.Contracts.Requests.Wage;
 using MoneyTracker.Queries.Application;
 
@@ -16,7 +17,8 @@ public sealed class WhenTheIncomeFrequencyIsInvalid
     public void ThenAValidResponseIsReturned(string incomeFrequency)
     {
         var calculateWageService = new WageService();
-        var request = new CalculateWageRequest(12345,
+        var request = new CalculateWageRequest(
+            Money.From(12345),
             incomeFrequency,
             "9999L",
             false,

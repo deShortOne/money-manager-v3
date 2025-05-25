@@ -33,14 +33,14 @@ public class WageService : IWageService
         return frequencyEnum;
     }
 
-    private static Money CalculateGrossYearlyWage(decimal grossIncome, Frequency frequencyOfIncome)
+    private static Money CalculateGrossYearlyWage(Money grossIncome, Frequency frequencyOfIncome)
     {
         return frequencyOfIncome switch
         {
-            Frequency.Yearly => Money.From(grossIncome),
-            Frequency.Monthly => Money.From(grossIncome * 12),
-            Frequency.Every4Weeks => Money.From(grossIncome * 13),
-            Frequency.Weekly => Money.From(grossIncome * 52),
+            Frequency.Yearly => grossIncome,
+            Frequency.Monthly => grossIncome * 12,
+            Frequency.Every4Weeks => grossIncome * 13,
+            Frequency.Weekly => grossIncome * 52,
             Frequency.Daily => throw new NotImplementedException(),
             // Implement number of days of week, grossIncome * numWorkDaysPerWeek * 52
             Frequency.Hourly => throw new NotImplementedException(),

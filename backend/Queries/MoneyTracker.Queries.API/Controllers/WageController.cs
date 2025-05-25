@@ -39,7 +39,7 @@ public class WageController
         }
 
         var request = new CalculateWageRequest(
-            wageRequest.GrossIncome,
+            Money.From(wageRequest.GrossIncome),
             wageRequest.FrequencyOfIncome,
             wageRequest.TaxCode,
             wageRequest.PayNationalInsurance,

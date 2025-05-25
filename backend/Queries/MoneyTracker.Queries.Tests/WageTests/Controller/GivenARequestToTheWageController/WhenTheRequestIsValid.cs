@@ -48,7 +48,7 @@ public sealed class WhenTheRequestIsValid : IAsyncLifetime
     [Fact]
     public void ThenTheGrossIncomeIsMappedCorrectly()
     {
-        Assert.Equal(1000, _requestsPassedIntoService[0].GrossIncome);
+        Assert.Equal(Money.From(1000), _requestsPassedIntoService[0].GrossIncome);
     }
 
     [Fact]
