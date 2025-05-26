@@ -1,0 +1,33 @@
+using MoneyTracker.Common.Utilities.MoneyUtil;
+using MoneyTracker.Contracts.Requests.Wage;
+using MoneyTracker.Queries.Application;
+
+namespace MoneyTracker.Queries.Tests.WageTests.Service.GivenARequest;
+public sealed class WhenTheIncomeFrequencyIsInvalid
+{
+    public static TheoryData<string> InvalidRequests = new()
+    {
+        { "YearLY" },
+        { "Monthy" },
+        { "Every_4_Weeks" },
+        { "Weeklyasdf" },
+    };
+
+    [Theory, MemberData(nameof(InvalidRequests))]
+    public void ThenAValidResponseIsReturned(string incomeFrequency)
+    {
+        var calculateWageService = new WageService();
+        var request = new CalculateWageRequest(
+            Money.From(12345),
+            incomeFrequency,
+            "9999L",
+            false,
+            null,
+            new StudentLoanOptions(false, false, false, false, false));
+
+        var actual = calculateWageService.CalculateWage(request);
+
+        Assert.False(actual.IsSuccess);
+        Assert.Equal("Invalid frequency", actual.Error?.Description);
+    }
+}

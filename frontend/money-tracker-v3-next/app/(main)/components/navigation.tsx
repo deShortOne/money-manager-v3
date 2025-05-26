@@ -25,6 +25,10 @@ const components: { title: string; href: string; }[] = [
         title: "Budget",
         href: "/budget",
     },
+    {
+        title: "Wage calculator",
+        href: "/wage-calculator",
+    },
 ]
 
 export function NavigationMenuForMain() {

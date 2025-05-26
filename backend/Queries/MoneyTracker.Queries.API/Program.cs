@@ -8,6 +8,7 @@ using MoneyTracker.Common.Utilities.CalculationUtil;
 using MoneyTracker.Common.Utilities.DateTimeUtil;
 using MoneyTracker.PlatformService;
 using MoneyTracker.Queries.Application;
+using MoneyTracker.Queries.Application.Wage;
 using MoneyTracker.Queries.Domain.Handlers;
 using MoneyTracker.Queries.Domain.Repositories.Cache;
 using MoneyTracker.Queries.Domain.Repositories.Database;
@@ -148,6 +149,9 @@ internal class Program
         builder.Services
             .AddSingleton<IRegisterService, RegisterService>()
             .AddSingleton<IRegisterDatabase, RegisterDatabase>();
+
+        builder.Services
+            .AddSingleton<IWageService, WageService>();
     }
 
     private static void SetupCacheAside(WebApplicationBuilder builder)
