@@ -32,7 +32,10 @@ services:
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     logging:
-        driver: none
+        driver: "json-file"  # Use the json-file logging driver (default)
+        options:
+            max-size: "10m"
+            max-file: "3"
 
   mongo:
     image: mongo:8
