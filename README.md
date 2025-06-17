@@ -2,6 +2,13 @@
 
 A budget tracker for tracking your bills and how much you've spent in different categories
 
+## Purpose of this repo
+This repo is overengineered as heck but this is my fun repo to implement a bunch of patterns
+
+CQRS as the architecture (currently it's a distributed monolith, but there are plans to convert it into a true microservice).
+Controller-Service-Repository as the architecture to keep logic separated.
+Chain of responsibility in wage calculator. This pattern was used because not all factors are needed for all people and by separating out the classes, it makes it easier to test and to mix and match. 
+
 ## How to run
 ### Backend
 #### Running Command and Query together using docker
