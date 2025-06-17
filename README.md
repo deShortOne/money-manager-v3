@@ -37,7 +37,7 @@ docker build -f ./Queries/Dockerfile -t be-queries-image:latest .
 docker run -e Database:Paelagus_RO="User ID=${username};Password=asdf;Host=172.17.0.1;Port=5432;Database=deshortone" -e ASPNETCORE_ENVIRONMENT="Development" -p 1235:8080 be-queries-image
 ```
 ## How to test
-Either use [act](https://github.com/nektos/act), run dotnet test or run in visual studio(but ensure dockerd is running)
+Either use [act](https://github.com/nektos/act), run dotnet test, run in visual studio(but ensure dockerd is running) or in github actions
 Will need docker
 
 ### Tests not running due to connection being refused?
@@ -64,5 +64,5 @@ rm -r coverage --force \
 && dotnet test --verbosity q --collect:"XPlat Code Coverage" --results-directory coverage \
 && dotnet-coverage merge coverage/**/coverage.cobertura.xml -f cobertura -o coverage/coverage.xml \
 && reportgenerator -reports:"coverage/coverage.xml" -targetdir:"coverage/coveragereport" -reporttypes:Html \
-&& firefox ~/projects/money-manager-v3/backend/coverage/coveragereport/index.htm
+&& firefox ./coverage/coveragereport/index.htm
 ```
