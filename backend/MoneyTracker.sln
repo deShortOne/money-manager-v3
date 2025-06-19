@@ -43,6 +43,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoneyTracker.Commands.API",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoneyTracker.PlatformService", "Shared\MoneyTracker.PlatformService\MoneyTracker.PlatformService.csproj", "{1B1B9BCD-DC7B-475E-8F6A-FFF50B8C713B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MoneyTracker.Analysers", "MoneyTracker.Analysers", "{4F3E14FB-D886-479C-A716-F7A933933064}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InterceptDoubleNegativeResult", "Shared\MoneyTracker.Analysers\InterceptDoubleNegativeResult\InterceptDoubleNegativeResult\InterceptDoubleNegativeResult.csproj", "{E228B9B6-D904-4962-A503-2AAC48164C90}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InterceptDoubleNegativeResult.Sample", "Shared\MoneyTracker.Analysers\InterceptDoubleNegativeResult\InterceptDoubleNegativeResult.Sample\InterceptDoubleNegativeResult.Sample.csproj", "{27235B53-AAEB-49F1-BECD-37147C813609}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InterceptDoubleNegativeResult.Tests", "Shared\MoneyTracker.Analysers\InterceptDoubleNegativeResult\InterceptDoubleNegativeResult.Tests\InterceptDoubleNegativeResult.Tests.csproj", "{E8E88166-DFA9-40AD-BA9F-37995769CF19}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -117,6 +125,18 @@ Global
 		{1B1B9BCD-DC7B-475E-8F6A-FFF50B8C713B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1B1B9BCD-DC7B-475E-8F6A-FFF50B8C713B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1B1B9BCD-DC7B-475E-8F6A-FFF50B8C713B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E228B9B6-D904-4962-A503-2AAC48164C90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E228B9B6-D904-4962-A503-2AAC48164C90}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E228B9B6-D904-4962-A503-2AAC48164C90}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E228B9B6-D904-4962-A503-2AAC48164C90}.Release|Any CPU.Build.0 = Release|Any CPU
+		{27235B53-AAEB-49F1-BECD-37147C813609}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{27235B53-AAEB-49F1-BECD-37147C813609}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{27235B53-AAEB-49F1-BECD-37147C813609}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{27235B53-AAEB-49F1-BECD-37147C813609}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8E88166-DFA9-40AD-BA9F-37995769CF19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8E88166-DFA9-40AD-BA9F-37995769CF19}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8E88166-DFA9-40AD-BA9F-37995769CF19}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8E88166-DFA9-40AD-BA9F-37995769CF19}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -139,6 +159,10 @@ Global
 		{3B6A0A34-5DF3-45C0-A404-C725E22079D2} = {8A3E641C-AC44-4217-A765-9CAD289AC7E6}
 		{3632B02F-8BD1-44FC-AE5F-AFA17E24B4FD} = {E4564A5D-9FB8-4034-B587-DF72F1CE7298}
 		{1B1B9BCD-DC7B-475E-8F6A-FFF50B8C713B} = {73D7E682-5743-413C-BC9D-04F2BC2B5044}
+		{4F3E14FB-D886-479C-A716-F7A933933064} = {73D7E682-5743-413C-BC9D-04F2BC2B5044}
+		{E228B9B6-D904-4962-A503-2AAC48164C90} = {4F3E14FB-D886-479C-A716-F7A933933064}
+		{27235B53-AAEB-49F1-BECD-37147C813609} = {4F3E14FB-D886-479C-A716-F7A933933064}
+		{E8E88166-DFA9-40AD-BA9F-37995769CF19} = {4F3E14FB-D886-479C-A716-F7A933933064}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C05BF204-356E-4503-B959-74ED22AB7CB0}
