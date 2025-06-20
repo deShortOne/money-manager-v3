@@ -8,23 +8,23 @@ namespace InterceptDoubleNegativeResult.Tests.GivenTheAnalyserIsGivenSomeCode;
 
 public class WhenResultHasErrorIsCalled
 {
-    private const string SampleCode = $@"
+    private const string SampleCode = @"
 public class Program
-{{
+{
     public void Main()
-    {{
+    {
         var res = new Result();
         if (res.HasError)
-        {{
+        {
 
-        }}
-    }}
-}}
+        }
+    }
+}
 
 public class Result
-{{
+{
     public bool HasError => true;
-}}
+}
 ";
 
     [Fact]
