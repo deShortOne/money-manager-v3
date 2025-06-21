@@ -37,11 +37,16 @@ docker build -f ./Queries/Dockerfile -t be-queries-image:latest .
 docker run -e Database:Paelagus_RO="User ID=${username};Password=asdf;Host=172.17.0.1;Port=5432;Database=deshortone" -e ASPNETCORE_ENVIRONMENT="Development" -p 1235:8080 be-queries-image
 ```
 ## How to test
-Either use [act](https://github.com/nektos/act), run dotnet test, run in visual studio(but ensure dockerd is running) or in github actions
-Will need docker
 
-### Tests not running due to connection being refused?
-Might need to enable dockerd
+### In the cloud
+Simply run in github actions
+
+### Docker engine (in WSL) on windows
+Ensure dockerd is running
+Then run dotnet test, run tests in an ide or run in [act](https://github.com/nektos/act).
+This is how I run my tests so here it is first
+
+#### Tests not running due to connection being refused?
 In ubuntu, create a file
 ```
 /etc/docker/daemon.json
@@ -52,10 +57,9 @@ And put the following in it
     "hosts": ["tcp://0.0.0.0:2375","unix:///var/run/docker.sock"]
 } 
 ```
-The run
-```bash
-sudo dockerd
-```
+
+### Docker desktop on windows
+In each of the test .csproj, remove the property group so that RUN_LOCAL is not set
 
 ## Code coverage
 Run this in root directory
