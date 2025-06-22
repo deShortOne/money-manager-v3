@@ -62,7 +62,7 @@ services:
   be-queries:
     build:
       context: .
-      dockerfile: ./Queries/Dockerfile
+      dockerfile: ./src/Queries/Dockerfile
     ports:
       - "1235:8080"
     environment:
@@ -90,7 +90,7 @@ services:
   be-commands:
     build:
       context: .
-      dockerfile: ./Commands/Dockerfile
+      dockerfile: ./src/Commands/Dockerfile
     ports:
       - "1234:8080"
     environment:
