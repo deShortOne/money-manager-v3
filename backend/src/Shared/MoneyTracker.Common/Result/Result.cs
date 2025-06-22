@@ -17,6 +17,7 @@ public class Result
     }
 
     public bool IsSuccess { get; }
+    public bool HasError => !IsSuccess;
 
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
     public Error? Error { get; }
