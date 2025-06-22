@@ -49,7 +49,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "analysers", "analysers", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "InterceptDoubleNegativeResult", "InterceptDoubleNegativeResult", "{80BF5742-A2B2-4017-9DAF-FD3847D37694}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoneyTracker.InterceptDoubleNegativeResultAnalyser", "analysers\InterceptDoubleNegativeResult\MoneyTracker.InterceptDoubleNegativeResultAnalyser\MoneyTracker.InterceptDoubleNegativeResultAnalyser.csproj", "{74995A39-E58F-4448-9345-7F6E1C9242F7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoneyTracker.InterceptDoubleNegativeResult.Sample", "analysers\InterceptDoubleNegativeResult\MoneyTracker.InterceptDoubleNegativeResult.Sample\MoneyTracker.InterceptDoubleNegativeResult.Sample.csproj", "{4BBCC8D3-914C-442B-B595-387A694825BB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoneyTracker.InterceptDoubleNegativeResult.Test", "analysers\InterceptDoubleNegativeResult\MoneyTracker.InterceptDoubleNegativeResult.Test\MoneyTracker.InterceptDoubleNegativeResult.Test.csproj", "{0E1B3408-9134-4976-A457-15FCEC38AA1F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoneyTracker.InterceptDoubleNegativeResult", "analysers\InterceptDoubleNegativeResult\MoneyTracker.InterceptDoubleNegativeResult\MoneyTracker.InterceptDoubleNegativeResult.csproj", "{FDB9C06D-72D1-4360-A9D3-0A80FFA16344}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -125,10 +129,18 @@ Global
 		{A8806617-A0FD-4319-93C6-B62D945F8508}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A8806617-A0FD-4319-93C6-B62D945F8508}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A8806617-A0FD-4319-93C6-B62D945F8508}.Release|Any CPU.Build.0 = Release|Any CPU
-		{74995A39-E58F-4448-9345-7F6E1C9242F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{74995A39-E58F-4448-9345-7F6E1C9242F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{74995A39-E58F-4448-9345-7F6E1C9242F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{74995A39-E58F-4448-9345-7F6E1C9242F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4BBCC8D3-914C-442B-B595-387A694825BB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4BBCC8D3-914C-442B-B595-387A694825BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4BBCC8D3-914C-442B-B595-387A694825BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4BBCC8D3-914C-442B-B595-387A694825BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E1B3408-9134-4976-A457-15FCEC38AA1F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E1B3408-9134-4976-A457-15FCEC38AA1F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E1B3408-9134-4976-A457-15FCEC38AA1F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E1B3408-9134-4976-A457-15FCEC38AA1F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FDB9C06D-72D1-4360-A9D3-0A80FFA16344}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDB9C06D-72D1-4360-A9D3-0A80FFA16344}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDB9C06D-72D1-4360-A9D3-0A80FFA16344}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDB9C06D-72D1-4360-A9D3-0A80FFA16344}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -155,7 +167,9 @@ Global
 		{739CB57A-91C6-4D73-8FA2-7D3557852FB7} = {5E47817F-A263-45E2-852D-C794413F2F06}
 		{A8806617-A0FD-4319-93C6-B62D945F8508} = {5E47817F-A263-45E2-852D-C794413F2F06}
 		{80BF5742-A2B2-4017-9DAF-FD3847D37694} = {34D9FCAF-878F-4376-A0E7-2EF23ED4C619}
-		{74995A39-E58F-4448-9345-7F6E1C9242F7} = {80BF5742-A2B2-4017-9DAF-FD3847D37694}
+		{4BBCC8D3-914C-442B-B595-387A694825BB} = {80BF5742-A2B2-4017-9DAF-FD3847D37694}
+		{0E1B3408-9134-4976-A457-15FCEC38AA1F} = {80BF5742-A2B2-4017-9DAF-FD3847D37694}
+		{FDB9C06D-72D1-4360-A9D3-0A80FFA16344} = {80BF5742-A2B2-4017-9DAF-FD3847D37694}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C05BF204-356E-4503-B959-74ED22AB7CB0}

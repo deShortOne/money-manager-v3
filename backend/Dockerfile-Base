@@ -4,8 +4,8 @@ WORKDIR /App
 COPY ./*.sln .
 # Copy and move packages to their directories
 ## Analysers
-RUN mkdir -p ./analysers/InterceptDoubleNegativeResult/MoneyTracker.InterceptDoubleNegativeResultAnalyser/
-COPY ./analysers/InterceptDoubleNegativeResult/MoneyTracker.InterceptDoubleNegativeResultAnalyser/MoneyTracker.InterceptDoubleNegativeResultAnalyser.csproj ./analysers/InterceptDoubleNegativeResult/MoneyTracker.InterceptDoubleNegativeResultAnalyser/
+COPY ./analysers/InterceptDoubleNegativeResult/*/*.csproj .
+RUN for file in $(ls *.csproj); do mkdir -p analysers/InterceptDoubleNegativeResult/${file%.*}/ && mv $file analysers/InterceptDoubleNegativeResult/${file%.*}/; done
 
 ## Code
 COPY ./src/Commands/*/*.csproj .
