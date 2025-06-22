@@ -3,15 +3,23 @@ WORKDIR /App
 
 COPY ./*.sln .
 # Copy and move packages to their directories
+## Analysers
+RUN mkdir -p ./analysers/InterceptDoubleNegativeResult/MoneyTracker.InterceptDoubleNegativeResultAnalyser/
+COPY ./analysers/InterceptDoubleNegativeResult/MoneyTracker.InterceptDoubleNegativeResultAnalyser/MoneyTracker.InterceptDoubleNegativeResultAnalyser.csproj ./analysers/InterceptDoubleNegativeResult/MoneyTracker.InterceptDoubleNegativeResultAnalyser/
+
+## Code
 COPY ./src/Commands/*/*.csproj .
 RUN for file in $(ls *.csproj); do mkdir -p src/Commands/${file%.*}/ && mv $file src/Commands/${file%.*}/; done
 COPY ./src/Shared/*/*.csproj .
 RUN for file in $(ls *.csproj); do mkdir -p src/Shared/${file%.*}/ && mv $file src/Shared/${file%.*}/; done
 COPY ./src/Queries/*/*.csproj .
 RUN for file in $(ls *.csproj); do mkdir -p src/Queries/${file%.*}/ && mv $file src/Queries/${file%.*}/; done
+
 # Restore as distinct layers
 RUN dotnet restore 
+
 # Copy everything else
 COPY . .
+
 # Build and publish a release
 RUN dotnet publish -c Release -o out --no-restore
