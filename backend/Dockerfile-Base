@@ -3,15 +3,23 @@ WORKDIR /App
 
 COPY ./*.sln .
 # Copy and move packages to their directories
-COPY ./Commands/*/*.csproj .
-RUN for file in $(ls *.csproj); do mkdir -p Commands/${file%.*}/ && mv $file Commands/${file%.*}/; done
-COPY ./Shared/*/*.csproj .
-RUN for file in $(ls *.csproj); do mkdir -p Shared/${file%.*}/ && mv $file Shared/${file%.*}/; done
-COPY ./Queries/*/*.csproj .
-RUN for file in $(ls *.csproj); do mkdir -p Queries/${file%.*}/ && mv $file Queries/${file%.*}/; done
+## Analysers
+COPY ./analysers/InterceptDoubleNegativeResult/*/*.csproj .
+RUN for file in $(ls *.csproj); do mkdir -p analysers/InterceptDoubleNegativeResult/${file%.*}/ && mv $file analysers/InterceptDoubleNegativeResult/${file%.*}/; done
+
+## Code
+COPY ./src/Commands/*/*.csproj .
+RUN for file in $(ls *.csproj); do mkdir -p src/Commands/${file%.*}/ && mv $file src/Commands/${file%.*}/; done
+COPY ./src/Shared/*/*.csproj .
+RUN for file in $(ls *.csproj); do mkdir -p src/Shared/${file%.*}/ && mv $file src/Shared/${file%.*}/; done
+COPY ./src/Queries/*/*.csproj .
+RUN for file in $(ls *.csproj); do mkdir -p src/Queries/${file%.*}/ && mv $file src/Queries/${file%.*}/; done
+
 # Restore as distinct layers
 RUN dotnet restore 
+
 # Copy everything else
 COPY . .
+
 # Build and publish a release
 RUN dotnet publish -c Release -o out --no-restore
