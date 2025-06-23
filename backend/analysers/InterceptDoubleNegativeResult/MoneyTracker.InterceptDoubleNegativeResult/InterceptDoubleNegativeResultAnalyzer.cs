@@ -38,11 +38,13 @@ namespace MoneyTracker.InterceptDoubleNegativeResult
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
             context.EnableConcurrentExecution();
-            context.RegisterSyntaxNodeAction(AnalyzeInvocation, SyntaxKind.LogicalNotExpression);
-            context.RegisterSyntaxNodeAction(AnalyzeInvocationGeneric, SyntaxKind.LogicalNotExpression);
+            context.RegisterSyntaxNodeAction((syntaxNodeAnalysisContext) => ForClassXInvertNotMethodYToMethodZ(syntaxNodeAnalysisContext, "Result", "IsSuccess", "HasError"), SyntaxKind.LogicalNotExpression);
+            context.RegisterSyntaxNodeAction((syntaxNodeAnalysisContext) => ForClassXInvertNotMethodYToMethodZ(syntaxNodeAnalysisContext, "Result", "HasError", "IsSuccess"), SyntaxKind.LogicalNotExpression);
+            context.RegisterSyntaxNodeAction((syntaxNodeAnalysisContext) => ForClassXInvertNotMethodYToMethodZ(syntaxNodeAnalysisContext, "ResultT", "IsSuccess", "HasError"), SyntaxKind.LogicalNotExpression);
+            context.RegisterSyntaxNodeAction((syntaxNodeAnalysisContext) => ForClassXInvertNotMethodYToMethodZ(syntaxNodeAnalysisContext, "ResultT", "HasError", "IsSuccess"), SyntaxKind.LogicalNotExpression);
         }
 
-        private void AnalyzeInvocation(SyntaxNodeAnalysisContext context)
+        private void ForClassXInvertNotMethodYToMethodZ(SyntaxNodeAnalysisContext context, string className, string methodY, string methodZ)
         {
             context.CancellationToken.ThrowIfCancellationRequested();
 
@@ -55,64 +57,20 @@ namespace MoneyTracker.InterceptDoubleNegativeResult
                 return;
 
             // Check that the member name is IsSuccess or HasError
-            var isIsSuccessField = memberAccess.Name.Identifier.Text == "IsSuccess";
-            var isHasErrorField = memberAccess.Name.Identifier.Text == "HasError";
-            if (!isIsSuccessField && !isHasErrorField)
+            if (memberAccess.Name.Identifier.Text != methodY)
                 return;
 
             var symbolInfo = context.SemanticModel.GetSymbolInfo(memberAccess.Expression, context.CancellationToken);
             if (symbolInfo.Symbol == null)
                 return;
 
-            if (symbolInfo.Symbol is ILocalSymbol localSymbol && localSymbol.Type.Name == "Result" ||
-                symbolInfo.Symbol is IFieldSymbol fieldSymbol && fieldSymbol.Type.Name == "Result" ||
-                symbolInfo.Symbol is IPropertySymbol propertySymbol && propertySymbol.Type.Name == "Result")
+            if (symbolInfo.Symbol is ILocalSymbol localSymbol && localSymbol.Type.Name == className ||
+                symbolInfo.Symbol is IFieldSymbol fieldSymbol && fieldSymbol.Type.Name == className ||
+                symbolInfo.Symbol is IPropertySymbol propertySymbol && propertySymbol.Type.Name == className)
             {
-                var diagnostic = isIsSuccessField
-                    ? Diagnostic.Create(Rule,
+                var diagnostic = Diagnostic.Create(Rule,
                         unaryExpression.GetLocation(),
-                        "IsSuccess", "HasError")
-                    : Diagnostic.Create(Rule,
-                        unaryExpression.GetLocation(),
-                        "HasError", "IsSuccess");
-
-                context.ReportDiagnostic(diagnostic);
-            }
-        }
-
-        private void AnalyzeInvocationGeneric(SyntaxNodeAnalysisContext context)
-        {
-            context.CancellationToken.ThrowIfCancellationRequested();
-
-            // Ensure it's unary expression // might need to check for Result.IsSuccess == false
-            if (!(context.Node is PrefixUnaryExpressionSyntax unaryExpression))
-                return;
-
-            // Ensure it's !<operand>
-            if (!(unaryExpression.Operand is MemberAccessExpressionSyntax memberAccess))
-                return;
-
-            // Check that the member name is IsSuccess or HasError
-            var isIsSuccessField = memberAccess.Name.Identifier.Text == "IsSuccess";
-            var isHasErrorField = memberAccess.Name.Identifier.Text == "HasError";
-            if (!isIsSuccessField && !isHasErrorField)
-                return;
-
-            var symbolInfo = context.SemanticModel.GetSymbolInfo(memberAccess.Expression, context.CancellationToken);
-            if (symbolInfo.Symbol == null)
-                return;
-
-            if (symbolInfo.Symbol is ILocalSymbol localSymbol && localSymbol.Type.Name == "ResultT" ||
-                symbolInfo.Symbol is IFieldSymbol fieldSymbol && fieldSymbol.Type.Name == "ResultT" ||
-                symbolInfo.Symbol is IPropertySymbol propertySymbol && propertySymbol.Type.Name == "ResultT")
-            {
-                var diagnostic = isIsSuccessField
-                    ? Diagnostic.Create(Rule,
-                        unaryExpression.GetLocation(),
-                        "IsSuccess", "HasError")
-                    : Diagnostic.Create(Rule,
-                        unaryExpression.GetLocation(),
-                        "HasError", "IsSuccess");
+                        methodY, methodZ);
 
                 context.ReportDiagnostic(diagnostic);
             }
