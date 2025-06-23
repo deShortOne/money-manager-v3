@@ -31,7 +31,7 @@ public class BudgetService : IBudgetService
     public async Task<Result> AddBudgetCategory(string token, NewBudgetCategoryRequest newBudget)
     {
         var userResult = await _userService.GetUserFromToken(token);
-        if (!userResult.IsSuccess)
+        if (userResult.HasError)
             return userResult;
 
         var user = userResult.Value;
@@ -47,7 +47,7 @@ public class BudgetService : IBudgetService
     public async Task<Result> EditBudgetCategory(string token, EditBudgetCategoryRequest editBudgetCategory)
     {
         var userResult = await _userService.GetUserFromToken(token);
-        if (!userResult.IsSuccess)
+        if (userResult.HasError)
             return userResult;
 
         var user = userResult.Value;
@@ -63,7 +63,7 @@ public class BudgetService : IBudgetService
     public async Task<Result> DeleteBudgetCategory(string token, DeleteBudgetCategoryRequest deleteBudgetCategory)
     {
         var userResult = await _userService.GetUserFromToken(token);
-        if (!userResult.IsSuccess)
+        if (userResult.HasError)
             return userResult;
 
         var user = userResult.Value;

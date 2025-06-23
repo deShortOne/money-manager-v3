@@ -16,7 +16,7 @@ public class CategoryService : ICategoryService
     public async Task<ResultT<List<CategoryResponse>>> GetAllCategories()
     {
         var categoriesResult = await _categoryRepository.GetAllCategories();
-        if (!categoriesResult.IsSuccess)
+        if (categoriesResult.HasError)
             return categoriesResult.Error!;
 
         List<CategoryResponse> res = [];

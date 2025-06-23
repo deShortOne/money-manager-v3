@@ -24,7 +24,7 @@ public class BillRepository : IBillRepositoryService
     public async Task<ResultT<List<BillEntity>>> GetAllBills(AuthenticatedUser user)
     {
         var result = await _billCache.GetAllBills(user);
-        if (!result.IsSuccess)
+        if (result.HasError)
         {
             result = await _billDatabase.GetAllBills(user);
             await _billCache.SaveBills(user, result.Value);

@@ -2,27 +2,28 @@ using Verifier = Microsoft.CodeAnalysis.CSharp.Testing.XUnit.CodeFixVerifier<
     MoneyTracker.InterceptDoubleNegativeResult.InterceptDoubleNegativeResultAnalyzer,
     MoneyTracker.InterceptDoubleNegativeResult.InterceptDoubleNegativeResultCodeFixProvider>;
 
-namespace MoneyTracker.InterceptDoubleNegativeResult.Test.GivenTheCodeFixerIsGivenSomeCode;
+namespace MoneyTracker.InterceptDoubleNegativeResult.Test.GivenTheCodeFixerIsGivenSomeCode.ResultT;
 
-public class WhenNotResultHasErrorIsCalled
+public class WhenNotResultTIsSuccessIsCalled
 {
     private const string InputText = @"
 public class MyCompanyClass
 {
     public void Main()
     {
-        var res = new Result();
-        if (!res.HasError)
+        var res = new ResultT<decimal>(297437);
+        if (!res.IsSuccess)
         {
 
         }
     }
 }
 
-public class Result
+public class ResultT<TValue>(TValue value)
 {
     public bool IsSuccess => false;
     public bool HasError => true;
+    public TValue Value = value;
 }
 ";
 
@@ -31,18 +32,19 @@ public class MyCompanyClass
 {
     public void Main()
     {
-        var res = new Result();
-        if (res.IsSuccess)
+        var res = new ResultT<decimal>(297437);
+        if (res.HasError)
         {
 
         }
     }
 }
 
-public class Result
+public class ResultT<TValue>(TValue value)
 {
     public bool IsSuccess => false;
     public bool HasError => true;
+    public TValue Value = value;
 }
 ";
 
@@ -51,7 +53,8 @@ public class Result
     {
         var expected = Verifier.Diagnostic()
             .WithLocation(7, 13)
-            .WithArguments("HasError", "IsSuccess");
+            .WithArguments("IsSuccess", "HasError");
+
         await Verifier.VerifyCodeFixAsync(InputText, expected, OutputText);
     }
 }

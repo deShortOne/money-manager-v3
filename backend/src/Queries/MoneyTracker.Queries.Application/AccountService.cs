@@ -27,7 +27,7 @@ public class AccountService : IAccountService
 
         var user = new AuthenticatedUser(userAuth.User.Id);
         var dtoFromDbResult = await _dbService.GetAccountsOwnedByUser(user);
-        if (!dtoFromDbResult.IsSuccess)
+        if (dtoFromDbResult.HasError)
             return dtoFromDbResult.Error!;
 
         List<AccountResponse> res = [];

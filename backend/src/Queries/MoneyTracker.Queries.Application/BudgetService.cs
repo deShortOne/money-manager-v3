@@ -29,7 +29,7 @@ public class BudgetService : IBudgetService
 
         var user = new AuthenticatedUser(userAuth.User.Id);
         var budgetResult = await _budgetRepository.GetBudget(user);
-        if (!budgetResult.IsSuccess)
+        if (budgetResult.HasError)
             return budgetResult.Error!;
 
         return ConvertFromRepoDTOToDTO(budgetResult.Value);

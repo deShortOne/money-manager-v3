@@ -24,7 +24,7 @@ public class BudgetRepository : IBudgetRepositoryService
     public async Task<ResultT<List<BudgetGroupEntity>>> GetBudget(AuthenticatedUser user)
     {
         var result = await _budgetCache.GetBudget(user);
-        if (!result.IsSuccess)
+        if (result.HasError)
         {
             result = await _budgetDatabase.GetBudget(user);
             await _budgetCache.SaveBudget(user, result.Value);

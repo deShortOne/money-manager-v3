@@ -40,7 +40,7 @@ public class RegisterService : IRegisterService
     public async Task<Result> AddTransaction(string token, NewTransactionRequest newTransaction)
     {
         var userResult = await _userService.GetUserFromToken(token);
-        if (!userResult.IsSuccess)
+        if (userResult.HasError)
             return userResult;
 
         var user = userResult.Value;
@@ -89,7 +89,7 @@ public class RegisterService : IRegisterService
     public async Task<Result> EditTransaction(string token, EditTransactionRequest editTransaction)
     {
         var userResult = await _userService.GetUserFromToken(token);
-        if (!userResult.IsSuccess)
+        if (userResult.HasError)
             return userResult;
 
         var user = userResult.Value;
@@ -121,7 +121,7 @@ public class RegisterService : IRegisterService
     public async Task<Result> DeleteTransaction(string token, DeleteTransactionRequest deleteTransaction)
     {
         var userResult = await _userService.GetUserFromToken(token);
-        if (!userResult.IsSuccess)
+        if (userResult.HasError)
             return userResult;
 
         var user = userResult.Value;

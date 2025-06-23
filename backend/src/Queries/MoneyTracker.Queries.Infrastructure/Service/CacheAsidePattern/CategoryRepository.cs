@@ -23,7 +23,7 @@ public class CategoryRepository : ICategoryRepositoryService
     public async Task<ResultT<List<CategoryEntity>>> GetAllCategories()
     {
         var result = await _categoryCache.GetAllCategories();
-        if (!result.IsSuccess)
+        if (result.HasError)
         {
             result = await _categoryDatabase.GetAllCategories();
             await _categoryCache.SaveCategories(result.Value);

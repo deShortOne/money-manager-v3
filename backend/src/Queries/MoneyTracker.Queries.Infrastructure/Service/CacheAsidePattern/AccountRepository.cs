@@ -23,7 +23,7 @@ public class AccountRepository : IAccountRepositoryService
     public async Task<ResultT<List<AccountEntity>>> GetAccounts(AuthenticatedUser user)
     {
         ResultT<List<AccountEntity>> result = await _accountCache.GetAccountsOwnedByUser(user);
-        if (!result.IsSuccess)
+        if (result.HasError)
         {
             result = await _accountDatabase.GetAccountsOwnedByUser(user);
             await _accountCache.SaveAccounts(user, result.Value);

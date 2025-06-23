@@ -31,7 +31,7 @@ public class AccountService : IAccountService
     public async Task<Result> AddAccount(string token, AddAccountToUserRequest newAccountRequest)
     {
         var userResult = await _userService.GetUserFromToken(token);
-        if (!userResult.IsSuccess)
+        if (userResult.HasError)
             return userResult;
 
         var user = userResult.Value;

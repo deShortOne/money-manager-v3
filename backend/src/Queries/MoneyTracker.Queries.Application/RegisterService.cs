@@ -26,7 +26,7 @@ public class RegisterService : IRegisterService
 
         var user = new AuthenticatedUser(userAuth.User.Id);
         var transactionsResult = await _registerRepository.GetAllTransactions(user);
-        if (!transactionsResult.IsSuccess)
+        if (transactionsResult.HasError)
             return transactionsResult.Error!;
 
         List<TransactionResponse> res = [];

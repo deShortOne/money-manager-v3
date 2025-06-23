@@ -24,7 +24,7 @@ public class RegisterRepository : IRegisterRepositoryService
     public async Task<ResultT<List<TransactionEntity>>> GetAllTransactions(AuthenticatedUser user)
     {
         var result = await _registerCache.GetAllTransactions(user);
-        if (!result.IsSuccess)
+        if (result.HasError)
         {
             result = await _registerDatabase.GetAllTransactions(user);
             await _registerCache.SaveTransactions(user, result.Value);

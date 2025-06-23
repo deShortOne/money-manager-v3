@@ -47,7 +47,7 @@ public class BillService : IBillService
     public async Task<Result> AddBill(string token, NewBillRequest newBill)
     {
         var userResult = await _userService.GetUserFromToken(token);
-        if (!userResult.IsSuccess)
+        if (userResult.HasError)
             return userResult;
 
         var user = userResult.Value;
@@ -94,7 +94,7 @@ public class BillService : IBillService
     public async Task<Result> EditBill(string token, EditBillRequest editBill)
     {
         var userResult = await _userService.GetUserFromToken(token);
-        if (!userResult.IsSuccess)
+        if (userResult.HasError)
             return userResult;
 
         var user = userResult.Value;
@@ -161,7 +161,7 @@ public class BillService : IBillService
     public async Task<Result> DeleteBill(string token, DeleteBillRequest deleteBill)
     {
         var userResult = await _userService.GetUserFromToken(token);
-        if (!userResult.IsSuccess)
+        if (userResult.HasError)
             return userResult;
 
         var user = userResult.Value;
@@ -181,7 +181,7 @@ public class BillService : IBillService
     public async Task<Result> SkipOccurence(string token, SkipBillOccurrenceRequest skipBillDTO)
     {
         var userResult = await _userService.GetUserFromToken(token);
-        if (!userResult.IsSuccess)
+        if (userResult.HasError)
             return userResult;
 
         var user = userResult.Value;

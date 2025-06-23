@@ -31,7 +31,7 @@ public class BillService : IBillService
 
         var user = new AuthenticatedUser(userAuth.User.Id);
         var billsResult = await _billRepository.GetAllBills(user);
-        if (!billsResult.IsSuccess)
+        if (billsResult.HasError)
             return billsResult.Error!;
 
         return ConvertFromRepoDTOToDTO(billsResult.Value);
