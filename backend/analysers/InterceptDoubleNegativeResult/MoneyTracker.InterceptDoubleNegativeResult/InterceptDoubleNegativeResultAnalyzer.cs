@@ -68,9 +68,12 @@ namespace MoneyTracker.InterceptDoubleNegativeResult
                 symbolInfo.Symbol is IFieldSymbol fieldSymbol && fieldSymbol.Type.Name == className ||
                 symbolInfo.Symbol is IPropertySymbol propertySymbol && propertySymbol.Type.Name == className)
             {
+                var fromCode = $"!{symbolInfo.Symbol.Name}.{methodY}";
+                var toCode = $"{symbolInfo.Symbol.Name}.{methodZ}";
+
                 var diagnostic = Diagnostic.Create(Rule,
                         unaryExpression.GetLocation(),
-                        methodY, methodZ);
+                        fromCode, toCode);
 
                 context.ReportDiagnostic(diagnostic);
             }

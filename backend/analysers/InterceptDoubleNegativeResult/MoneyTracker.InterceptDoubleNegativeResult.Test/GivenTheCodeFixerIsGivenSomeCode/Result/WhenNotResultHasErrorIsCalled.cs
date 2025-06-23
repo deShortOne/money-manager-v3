@@ -51,7 +51,7 @@ public class Result
     {
         var expected = Verifier.Diagnostic()
             .WithLocation(7, 13)
-            .WithArguments("HasError", "IsSuccess");
+            .WithArguments("!res.HasError", "res.IsSuccess");
         await Verifier.VerifyCodeFixAsync(InputText, expected, OutputText);
     }
 }

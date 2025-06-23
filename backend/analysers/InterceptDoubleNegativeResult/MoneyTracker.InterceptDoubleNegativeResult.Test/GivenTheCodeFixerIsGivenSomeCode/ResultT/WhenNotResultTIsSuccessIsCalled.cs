@@ -53,7 +53,7 @@ public class ResultT<TValue>(TValue value)
     {
         var expected = Verifier.Diagnostic()
             .WithLocation(7, 13)
-            .WithArguments("IsSuccess", "HasError");
+            .WithArguments("!res.IsSuccess", "res.HasError");
 
         await Verifier.VerifyCodeFixAsync(InputText, expected, OutputText);
     }
