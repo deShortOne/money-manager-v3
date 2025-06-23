@@ -74,7 +74,7 @@ public class UserService : IUserService
             return Error.AccessUnAuthorised("UserService.GetUserFromToken", "Token not found");
 
         var userValidationResult = userAuth.CheckValidation();
-        if (!userValidationResult.IsSuccess)
+        if (userValidationResult.HasError)
             return userValidationResult.Error!;
 
         return new AuthenticatedUser(userAuth.User.Id);

@@ -11,6 +11,7 @@ namespace MoneyTracker.InterceptDoubleNegativeResult
     /// i.e. !Result.IsSuccess => Result.HasError
     /// i.e. !Result.HasError => Result.IsSuccess
     /// </summary>
+
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
     public class InterceptDoubleNegativeResultAnalyzer : DiagnosticAnalyzer
     {
