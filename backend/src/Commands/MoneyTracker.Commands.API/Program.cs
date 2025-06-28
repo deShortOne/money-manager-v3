@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using Amazon.S3;
 using Microsoft.OpenApi.Models;
 using MoneyTracker.Authentication;
 using MoneyTracker.Authentication.Authentication;
@@ -8,6 +9,7 @@ using MoneyTracker.Commands.DatabaseMigration;
 using MoneyTracker.Commands.DatabaseMigration.Models;
 using MoneyTracker.Commands.Domain.Handlers;
 using MoneyTracker.Commands.Domain.Repositories;
+using MoneyTracker.Commands.Infrastructure.AWS;
 using MoneyTracker.Commands.Infrastructure.Postgres;
 using MoneyTracker.Common.Interfaces;
 using MoneyTracker.Common.Utilities.CalculationUtil;
@@ -85,6 +87,9 @@ internal class Program
             }
         }
 
+        builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
+        builder.Services.AddAWSService<IAmazonS3>();
+
         builder.Services
             .AddHttpContextAccessor()
             .AddSingleton<IDatabase>(_ => new PostgresDatabase(databaseConnectionString))
@@ -110,6 +115,9 @@ internal class Program
             .AddSingleton<ICategoryCommandRepository, CategoryCommandRepository>();
 
         builder.Services
+            .AddSingleton<IFileUploadRepository>(provider => new S3Repository(provider.GetRequiredService<IAmazonS3>(),
+                GetCliArgumentValue<string>(args, "--aws-preprocess-bucket") ?? builder.Configuration["AWS:PreprocessBucket"]!))
+            .AddSingleton<IReceiptCommandRepository, ReceiptCommandRepository>()
             .AddSingleton<IRegisterService, RegisterService>()
             .AddSingleton<IRegisterCommandRepository, RegisterCommandRepository>();
 

@@ -82,3 +82,20 @@ export async function deleteTransaction(authToken: string, transactionId: number
     console.log("error returned delete transaction");
     return JSON.parse(JSON.stringify(new ErrorResult(await response.text(), false)));
 }
+
+export async function uploadReceipt(authToken: string, formData: FormData): Promise<Result<Transaction>> {
+    const response = await fetch(process.env.COMMAND_SERVER_URL + `/Register/upload-receipt`, {
+        method: "POST",
+        headers: {
+            "Authorization": "Bearer " + authToken,
+        },
+        body: formData,
+    });
+
+    if (response.ok) {
+        return JSON.parse(JSON.stringify(new SuccessResult(await response.text())));
+    }
+
+    console.log("error returned uploading receipt");
+    return JSON.parse(JSON.stringify(new ErrorResult(await response.text(), false)));
+}

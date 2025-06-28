@@ -100,6 +100,7 @@ services:
       Jwt:iss: ${jwt_iss}
       Jwt:aud: ${jwt_aud}
       Jwt:key: ${jwt_key}
+      AWS:PreprocessBucket: ${AWS_PREPROCESS_BUCKET_NAME}
     links:
       - postgres-master
       - rabbitmq
@@ -110,6 +111,8 @@ services:
         condition: service_healthy
       be-base:
         condition: service_completed_successfully
+    volumes:
+      - $HOME/.aws/credentials:/root/.aws/credentials:ro
 
 volumes:
   master-database:

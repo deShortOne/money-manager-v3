@@ -1,8 +1,11 @@
+using Microsoft.AspNetCore.Http;
 using MoneyTracker.Authentication.DTOs;
+using MoneyTracker.Commands.Domain.Entities.Receipt;
 using MoneyTracker.Commands.Domain.Entities.Transaction;
 using MoneyTracker.Commands.Domain.Handlers;
 using MoneyTracker.Commands.Domain.Repositories;
 using MoneyTracker.Common.Result;
+using MoneyTracker.Common.Utilities.DateTimeUtil;
 using MoneyTracker.Common.Utilities.IdGeneratorUtil;
 using MoneyTracker.Contracts.Requests.Transaction;
 using MoneyTracker.PlatformService.Domain;
@@ -18,6 +21,9 @@ public class RegisterService : IRegisterService
     private readonly IAccountService _accountService;
     private readonly ICategoryService _categoryService;
     private readonly IMessageBusClient _messageBus;
+    private readonly IFileUploadRepository _fileUploadRepository;
+    private readonly IDateTimeProvider _dateTimeProvider;
+    private readonly IReceiptCommandRepository _receiptCommandRepository;
 
     public RegisterService(IRegisterCommandRepository registerDb,
         IAccountCommandRepository accountDb,
@@ -25,7 +31,10 @@ public class RegisterService : IRegisterService
         IUserService userService,
         IAccountService accountService,
         ICategoryService categoryService,
-        IMessageBusClient messageBus
+        IMessageBusClient messageBus,
+        IFileUploadRepository fileUploadRepository,
+        IDateTimeProvider dateTimeProvider,
+        IReceiptCommandRepository receiptCommandRepository
         )
     {
         _registerDb = registerDb;
@@ -35,6 +44,9 @@ public class RegisterService : IRegisterService
         _accountService = accountService;
         _categoryService = categoryService;
         _messageBus = messageBus;
+        _fileUploadRepository = fileUploadRepository;
+        _dateTimeProvider = dateTimeProvider;
+        _receiptCommandRepository = receiptCommandRepository;
     }
 
     public async Task<Result> AddTransaction(string token, NewTransactionRequest newTransaction)
@@ -144,5 +156,20 @@ public class RegisterService : IRegisterService
             return false;
 
         return await _accountService.DoesUserOwnAccount(user, transaction.PayerId);
+    }
+
+    public async Task<Result> CreateTransactionFromReceipt(string token, IFormFile createTransactionFromReceipt)
+    {
+        var userResult = await _userService.GetUserFromToken(token);
+        if (userResult.HasError)
+            return userResult;
+
+        var id = $"{createTransactionFromReceipt.FileName}-{_dateTimeProvider.Now.ToString("yyyyMMdd-HHmmss")}";
+
+        var fileUploadUrl = await _fileUploadRepository.UploadAsync(createTransactionFromReceipt, id);
+
+        await _receiptCommandRepository.AddReceipt(new ReceiptEntity(id, userResult.Value.Id, createTransactionFromReceipt.FileName, fileUploadUrl, (int)ReceiptState.Uploaded));
+
+        return Result.Success();
     }
 }

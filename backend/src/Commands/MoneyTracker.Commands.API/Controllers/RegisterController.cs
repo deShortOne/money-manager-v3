@@ -42,4 +42,12 @@ public class RegisterController
         var result = await _registerService.DeleteTransaction(ControllerHelper.GetToken(_httpContextAccessor), deleteTransaction);
         return ControllerHelper.Convert(result);
     }
+
+    [HttpPost]
+    [Route("upload-receipt")]
+    public async Task<IActionResult> UploadReceipt(IFormFile uploadReceipt)
+    {
+        var result = await _registerService.CreateTransactionFromReceipt(ControllerHelper.GetToken(_httpContextAccessor), uploadReceipt);
+        return ControllerHelper.Convert(result);
+    }
 }
