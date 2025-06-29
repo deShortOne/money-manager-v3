@@ -1,4 +1,5 @@
 using MoneyTracker.Commands.Application;
+using MoneyTracker.Commands.Domain.Entities.MessageQueuePolling;
 using MoneyTracker.Commands.Domain.Handlers;
 using MoneyTracker.Commands.Domain.Repositories;
 using MoneyTracker.Common.Utilities.DateTimeUtil;
@@ -19,6 +20,7 @@ public class RegisterTestHelper
     public readonly Mock<IFileUploadRepository> _mockFileUploadRepository = new();
     public readonly Mock<IDateTimeProvider> _mockDateTimeProvider = new();
     public readonly Mock<IReceiptCommandRepository> _mockReceiptCommandRepository = new();
+    public readonly Mock<IPollingController> _mockPollingController = new();
 
 
     public readonly RegisterService _registerService;
@@ -35,7 +37,8 @@ public class RegisterTestHelper
             _mockMessageBusClient.Object,
             _mockFileUploadRepository.Object,
             _mockDateTimeProvider.Object,
-            _mockReceiptCommandRepository.Object
+            _mockReceiptCommandRepository.Object,
+            _mockPollingController.Object
             );
     }
 
@@ -51,5 +54,6 @@ public class RegisterTestHelper
         _mockFileUploadRepository.VerifyNoOtherCalls();
         _mockDateTimeProvider.VerifyNoOtherCalls();
         _mockReceiptCommandRepository.VerifyNoOtherCalls();
+        _mockPollingController.VerifyNoOtherCalls();
     }
 }

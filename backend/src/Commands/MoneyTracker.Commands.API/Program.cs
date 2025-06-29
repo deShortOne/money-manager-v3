@@ -1,5 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 using Amazon.S3;
+using Amazon.SQS;
 using Microsoft.OpenApi.Models;
 using MoneyTracker.Authentication;
 using MoneyTracker.Authentication.Authentication;
@@ -7,6 +8,7 @@ using MoneyTracker.Authentication.Interfaces;
 using MoneyTracker.Commands.Application;
 using MoneyTracker.Commands.DatabaseMigration;
 using MoneyTracker.Commands.DatabaseMigration.Models;
+using MoneyTracker.Commands.Domain.Entities.MessageQueuePolling;
 using MoneyTracker.Commands.Domain.Handlers;
 using MoneyTracker.Commands.Domain.Repositories;
 using MoneyTracker.Commands.Infrastructure.AWS;
@@ -87,8 +89,7 @@ internal class Program
             }
         }
 
-        builder.Services.AddDefaultAWSOptions(builder.Configuration.GetAWSOptions());
-        builder.Services.AddAWSService<IAmazonS3>();
+        DoAmazonStuff(builder, args);
 
         builder.Services
             .AddHttpContextAccessor()
@@ -115,8 +116,6 @@ internal class Program
             .AddSingleton<ICategoryCommandRepository, CategoryCommandRepository>();
 
         builder.Services
-            .AddSingleton<IFileUploadRepository>(provider => new S3Repository(provider.GetRequiredService<IAmazonS3>(),
-                GetCliArgumentValue<string>(args, "--aws-preprocess-bucket") ?? builder.Configuration["AWS:PreprocessBucket"]!))
             .AddSingleton<IReceiptCommandRepository, ReceiptCommandRepository>()
             .AddSingleton<IRegisterService, RegisterService>()
             .AddSingleton<IRegisterCommandRepository, RegisterCommandRepository>();
@@ -159,5 +158,27 @@ internal class Program
     private static bool DoesCliArgumentExist(string[] args, string key)
     {
         return args.Any(x => x == key);
+    }
+
+    private static void DoAmazonStuff(WebApplicationBuilder builder, string[] args)
+    {
+        builder.Services
+            .AddDefaultAWSOptions(builder.Configuration.GetAWSOptions())
+            .AddAWSService<IAmazonS3>()
+            .AddAWSService<IAmazonSQS>();
+
+        var preprocessBucketName = GetCliArgumentValue<string>(args, "--aws-preprocess-bucket") ?? builder.Configuration["AWS:PreprocessBucket"]!;
+        builder.Services
+            .AddSingleton<IFileUploadRepository>(provider =>
+                new S3Repository(provider.GetRequiredService<IAmazonS3>(), preprocessBucketName));
+
+        // Polling
+        var sqsUrl = GetCliArgumentValue<string>(args, "--aws-sqs-url") ?? builder.Configuration["AWS:SQSUrl"]!;
+        builder.Services
+            .AddSingleton<IPollingController, PollingController>()
+            .AddSingleton<IMessageQueueService, MessageQueueService>()
+            .AddSingleton<IMessageQueueRepository>(provider => new SQSRepository(provider.GetRequiredService<IAmazonSQS>(), sqsUrl, 5));
+
+        builder.Services.AddHostedService<MessagePollingWorker>();
     }
 }

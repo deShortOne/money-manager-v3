@@ -10,8 +10,8 @@ public class WhenEverythingIsValid : RegisterTestHelper, IAsyncLifetime
 {
     private string _token = "71AE322B-6A27-46BC-A3FE-577BFE78CB0C";
     private int _userId = 2;
-    private string _fileName = "receipt.jpg";
-    private string _fileUploadId = "receipt.jpg-20250629-142455";
+    private string _fileName = "receipt.AA.jpg";
+    private string _fileUploadId = "receipt.AA-20250629-142455.jpg";
     private string _fileUploadUrl = "a-url-goes-here";
 
     private Mock<IFormFile> _mockFileFile = new Mock<IFormFile>();

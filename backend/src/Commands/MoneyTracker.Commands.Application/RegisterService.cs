@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Http;
 using MoneyTracker.Authentication.DTOs;
+using MoneyTracker.Commands.Domain.Entities.MessageQueuePolling;
 using MoneyTracker.Commands.Domain.Entities.Receipt;
 using MoneyTracker.Commands.Domain.Entities.Transaction;
 using MoneyTracker.Commands.Domain.Handlers;
@@ -24,6 +25,7 @@ public class RegisterService : IRegisterService
     private readonly IFileUploadRepository _fileUploadRepository;
     private readonly IDateTimeProvider _dateTimeProvider;
     private readonly IReceiptCommandRepository _receiptCommandRepository;
+    private readonly IPollingController _pollingController;
 
     public RegisterService(IRegisterCommandRepository registerDb,
         IAccountCommandRepository accountDb,
@@ -34,7 +36,8 @@ public class RegisterService : IRegisterService
         IMessageBusClient messageBus,
         IFileUploadRepository fileUploadRepository,
         IDateTimeProvider dateTimeProvider,
-        IReceiptCommandRepository receiptCommandRepository
+        IReceiptCommandRepository receiptCommandRepository,
+        IPollingController pollingController
         )
     {
         _registerDb = registerDb;
@@ -47,6 +50,7 @@ public class RegisterService : IRegisterService
         _fileUploadRepository = fileUploadRepository;
         _dateTimeProvider = dateTimeProvider;
         _receiptCommandRepository = receiptCommandRepository;
+        _pollingController = pollingController;
     }
 
     public async Task<Result> AddTransaction(string token, NewTransactionRequest newTransaction)
@@ -164,11 +168,16 @@ public class RegisterService : IRegisterService
         if (userResult.HasError)
             return userResult;
 
-        var id = $"{createTransactionFromReceipt.FileName}-{_dateTimeProvider.Now.ToString("yyyyMMdd-HHmmss")}";
+        var fileNameBrokenUp = createTransactionFromReceipt.FileName.Split(".");
+        var fileNameExtension = fileNameBrokenUp[fileNameBrokenUp.Length - 1];
+        var fileName = string.Join(".", fileNameBrokenUp.Take(fileNameBrokenUp.Length - 1));
+        var id = $"{fileName}-{_dateTimeProvider.Now.ToString("yyyyMMdd-HHmmss")}.{fileNameExtension}";
 
         var fileUploadUrl = await _fileUploadRepository.UploadAsync(createTransactionFromReceipt, id);
 
         await _receiptCommandRepository.AddReceipt(new ReceiptEntity(id, userResult.Value.Id, createTransactionFromReceipt.FileName, fileUploadUrl, (int)ReceiptState.Uploaded));
+
+        _pollingController.EnablePolling();
 
         return Result.Success();
     }

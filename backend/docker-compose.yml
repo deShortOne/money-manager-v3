@@ -101,6 +101,7 @@ services:
       Jwt:aud: ${jwt_aud}
       Jwt:key: ${jwt_key}
       AWS:PreprocessBucket: ${AWS_PREPROCESS_BUCKET_NAME}
+      AWS:SQSUrl: ${AWS_SQS_URL}
     links:
       - postgres-master
       - rabbitmq
