@@ -2,6 +2,7 @@
 using System.Text;
 using System.Text.Json;
 using MoneyTracker.Commands.Application.AWS;
+using MoneyTracker.Commands.Domain.Entities.MessageQueuePolling;
 using MoneyTracker.Commands.Domain.Entities.Receipt;
 using MoneyTracker.Commands.Domain.Entities.Transaction;
 using MoneyTracker.Commands.Domain.Handlers;
@@ -13,14 +14,17 @@ public class MessageQueueService : IMessageQueueService
     private readonly IMessageQueueRepository _messageQueueRepository;
     private readonly IReceiptCommandRepository _receiptCommandRepository;
     private readonly IFileUploadRepository _fileUploadRepository;
+    private readonly IPollingController _pollingController;
 
     public MessageQueueService(IMessageQueueRepository messageQueueRepository,
         IReceiptCommandRepository receiptCommandRepository,
-        IFileUploadRepository fileUploadRepository)
+        IFileUploadRepository fileUploadRepository,
+        IPollingController pollingController)
     {
         _messageQueueRepository = messageQueueRepository;
         _receiptCommandRepository = receiptCommandRepository;
         _fileUploadRepository = fileUploadRepository;
+        _pollingController = pollingController;
     }
 
     public async Task PollAsync(CancellationToken cancellationToken)
@@ -85,6 +89,10 @@ public class MessageQueueService : IMessageQueueService
                 await _messageQueueRepository.DeleteMessage(message.ReceiptHandle, cancellationToken);
             }
         }
-        Console.WriteLine("============");
+
+        if (await _receiptCommandRepository.GetNumberOfReceiptsLeftToProcess() == 0)
+        {
+            _pollingController.DisablePolling();
+        }
     }
 }

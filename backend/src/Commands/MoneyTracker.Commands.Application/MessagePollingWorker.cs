@@ -18,22 +18,15 @@ public class MessagePollingWorker : BackgroundService
     protected override async Task ExecuteAsync(CancellationToken ct)
     {
         Console.WriteLine("Polling started");
-        var counter = 0;
         while (!ct.IsCancellationRequested)
         {
             if (_pollingController.ShouldPoll)
             {
                 Console.WriteLine("Polling now");
                 await _messageQueueService.PollAsync(ct);
-                counter++;
-                if (counter > 2)
-                {
-                    _pollingController.DisablePolling();
-                }
             }
             else
             {
-                counter = 0;
                 Console.WriteLine("Not polling now 29");
             }
             await Task.Delay(TimeSpan.FromSeconds(10), ct);

@@ -82,6 +82,21 @@ public class ReceiptCommandRepository : IReceiptCommandRepository
         await _database.UpdateTable(query, queryParams);
     }
 
+    public async Task<int> GetNumberOfReceiptsLeftToProcess()
+    {
+        var query = """
+            SELECT count(*) as num_left
+            FROM receipt_analysis_state
+            WHERE state = 1;
+        """;
+
+        using var dataTable = await _database.GetTable(query);
+        if (dataTable.Rows.Count == 0)
+            return 0;
+
+        return dataTable.Rows[0].Field<int>("num_left");
+    }
+
     public async Task CreateTemporaryTransaction(int userId, TemporaryTransactionEntity temporaryTransactionEntity)
     {
         var query = """
