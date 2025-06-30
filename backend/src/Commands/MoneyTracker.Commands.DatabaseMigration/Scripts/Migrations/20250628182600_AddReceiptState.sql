@@ -9,3 +9,15 @@ CREATE TABLE public.receipt_analysis_state (
         foreign key (users_id)
         REFERENCES users (id)
 );
+
+CREATE TABLE public.receipt_to_register (
+    users_id integer NOT NULL,
+    payee integer,
+    amount numeric,
+    datepaid date,
+    category_id integer,
+	account_id integer,
+    constraint fk_users_id
+        foreign key (users_id)
+        REFERENCES users (id)
+);

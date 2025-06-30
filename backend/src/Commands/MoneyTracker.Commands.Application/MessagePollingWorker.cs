@@ -34,7 +34,7 @@ public class MessagePollingWorker : BackgroundService
             else
             {
                 counter = 0;
-                Console.WriteLine("Not polling now 14");
+                Console.WriteLine("Not polling now 29");
             }
             await Task.Delay(TimeSpan.FromSeconds(10), ct);
         }

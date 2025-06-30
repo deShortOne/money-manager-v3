@@ -1,4 +1,5 @@
 
+using System.Text;
 using Amazon.S3;
 using Amazon.S3.Model;
 using Microsoft.AspNetCore.Http;
@@ -30,5 +31,17 @@ public class S3Repository : IFileUploadRepository
         await _s3Client.PutObjectAsync(request);
 
         return $"https://{_bucketName}.s3.amazonaws.com/{id}";
+    }
+
+    public async Task<string> GetContentsOfFile(string id, CancellationToken ct)
+    {
+        using var response = await _s3Client.GetObjectAsync(new GetObjectRequest
+        {
+            Key = id,
+            BucketName = _bucketName,
+        });
+
+        using StreamReader reader = new StreamReader(response.ResponseStream, Encoding.UTF8);
+        return await reader.ReadToEndAsync();
     }
 }

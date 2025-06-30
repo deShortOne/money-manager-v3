@@ -173,10 +173,14 @@ internal class Program
                 new S3Repository(provider.GetRequiredService<IAmazonS3>(), preprocessBucketName));
 
         // Polling
+        var postprocessBucketName = GetCliArgumentValue<string>(args, "--aws-postprocess-bucket") ?? builder.Configuration["AWS:PostprocessBucket"]!;
         var sqsUrl = GetCliArgumentValue<string>(args, "--aws-sqs-url") ?? builder.Configuration["AWS:SQSUrl"]!;
         builder.Services
             .AddSingleton<IPollingController, PollingController>()
-            .AddSingleton<IMessageQueueService, MessageQueueService>()
+            .AddSingleton<IMessageQueueService>(provider => new MessageQueueService(
+                provider.GetRequiredService<IMessageQueueRepository>(),
+                provider.GetRequiredService<IReceiptCommandRepository>(),
+                new S3Repository(provider.GetRequiredService<IAmazonS3>(), postprocessBucketName)))
             .AddSingleton<IMessageQueueRepository>(provider => new SQSRepository(provider.GetRequiredService<IAmazonSQS>(), sqsUrl, 5));
 
         builder.Services.AddHostedService<MessagePollingWorker>();
