@@ -44,8 +44,6 @@ public class MessageQueueService : IMessageQueueService
                 continue;
             }
 
-            Console.WriteLine($"There are {body.Records.Count} records");
-
             foreach (var record in body.Records)
             {
                 var filename = record.S3.S3Object.Key;
@@ -77,6 +75,14 @@ public class MessageQueueService : IMessageQueueService
 
                 entity.UpdateState((int)ReceiptState.Finished);
                 await _receiptCommandRepository.UpdateReceipt(entity);
+            }
+            if (body.Records.Count == 0)
+            {
+                Console.WriteLine($"ERROR: There are 0 records inside message {message.MessageId}, with information {message.Body}");
+            }
+            else
+            {
+                await _messageQueueRepository.DeleteMessage(message.ReceiptHandle, cancellationToken);
             }
         }
         Console.WriteLine("============");

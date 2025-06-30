@@ -29,4 +29,13 @@ public class SQSRepository : IMessageQueueRepository
 
         return messageResponse.Messages;
     }
+
+    public async Task DeleteMessage(string receiptHandle, CancellationToken ct)
+    {
+        await _amazonSQSClient.DeleteMessageAsync(new DeleteMessageRequest
+        {
+            QueueUrl = _queueUrl,
+            ReceiptHandle = receiptHandle,
+        });
+    }
 }
