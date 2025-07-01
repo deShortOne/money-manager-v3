@@ -175,7 +175,7 @@ public class RegisterService : IRegisterService
 
         var fileUploadUrl = await _fileUploadRepository.UploadAsync(createTransactionFromReceipt, id);
 
-        await _receiptCommandRepository.AddReceipt(new ReceiptEntity(id, userResult.Value.Id, createTransactionFromReceipt.FileName, fileUploadUrl, (int)ReceiptState.Uploaded));
+        await _receiptCommandRepository.AddReceipt(new ReceiptEntity(id, userResult.Value.Id, createTransactionFromReceipt.FileName, fileUploadUrl, (int)ReceiptState.Processing));
 
         _pollingController.EnablePolling();
 

@@ -180,7 +180,8 @@ internal class Program
             .AddSingleton<IMessageQueueService>(provider => new MessageQueueService(
                 provider.GetRequiredService<IMessageQueueRepository>(),
                 provider.GetRequiredService<IReceiptCommandRepository>(),
-                new S3Repository(provider.GetRequiredService<IAmazonS3>(), postprocessBucketName)))
+                new S3Repository(provider.GetRequiredService<IAmazonS3>(), postprocessBucketName),
+                provider.GetRequiredService<IPollingController>()))
             .AddSingleton<IMessageQueueRepository>(provider => new SQSRepository(provider.GetRequiredService<IAmazonSQS>(), sqsUrl, 5));
 
         builder.Services.AddHostedService<MessagePollingWorker>();

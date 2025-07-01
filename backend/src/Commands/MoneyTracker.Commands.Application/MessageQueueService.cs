@@ -69,15 +69,16 @@ public class MessageQueueService : IMessageQueueService
 
                 var temporaryTransaction = new TemporaryTransactionEntity
                 {
+                    UserId = entity.UserId,
                     Amount = infoFromReceipt.Value,
                     CategoryId = null,
                     DatePaid = null,
                     PayeeId = null,
                     PayerId = null,
                 };
-                await _receiptCommandRepository.CreateTemporaryTransaction(entity.UserId, temporaryTransaction);
+                await _receiptCommandRepository.CreateTemporaryTransaction(temporaryTransaction);
 
-                entity.UpdateState((int)ReceiptState.Finished);
+                entity.UpdateState((int)ReceiptState.Pending);
                 await _receiptCommandRepository.UpdateReceipt(entity);
             }
             if (body.Records.Count == 0)

@@ -10,5 +10,5 @@ public interface IReceiptCommandRepository
     Task<ReceiptEntity?> GetReceiptById(string id);
     Task<int> GetNumberOfReceiptsLeftToProcess();
 
-    Task CreateTemporaryTransaction(int userId, TemporaryTransactionEntity temporaryTransactionEntity);
+    Task CreateTemporaryTransaction(TemporaryTransactionEntity temporaryTransactionEntity);
 }

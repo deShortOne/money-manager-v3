@@ -97,7 +97,7 @@ public class ReceiptCommandRepository : IReceiptCommandRepository
         return dataTable.Rows[0].Field<int>("num_left");
     }
 
-    public async Task CreateTemporaryTransaction(int userId, TemporaryTransactionEntity temporaryTransactionEntity)
+    public async Task CreateTemporaryTransaction(TemporaryTransactionEntity temporaryTransactionEntity)
     {
         var query = """
             INSERT INTO receipt_to_register (users_id, payee, amount, datepaid, category_id, account_id) VALUES
@@ -105,7 +105,7 @@ public class ReceiptCommandRepository : IReceiptCommandRepository
         """;
         var queryParams = new List<DbParameter>
         {
-            new NpgsqlParameter("users_id", userId),
+            new NpgsqlParameter("users_id", temporaryTransactionEntity.UserId),
             new NpgsqlParameter<int?>("payee", temporaryTransactionEntity.PayeeId),
             new NpgsqlParameter<decimal?>("amount", temporaryTransactionEntity.Amount),
             new NpgsqlParameter<DateOnly?>("datepaid", temporaryTransactionEntity.DatePaid),
