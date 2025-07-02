@@ -15,7 +15,7 @@ public class RegisterCommandRepository : IRegisterCommandRepository
         _database = db;
     }
 
-    public async Task<TransactionEntity?> GetTransaction(int transactionId)
+    public async Task<TransactionEntity?> GetTransaction(int transactionId, CancellationToken cancellationToken)
     {
         var query = """
             SELECT id,
@@ -32,7 +32,7 @@ public class RegisterCommandRepository : IRegisterCommandRepository
             new NpgsqlParameter("transaction_id", transactionId),
         };
 
-        using var reader = await _database.GetTable(query, queryParams);
+        using var reader = await _database.GetTable(query, cancellationToken, queryParams);
 
         if (reader.Rows.Count != 0)
             return new TransactionEntity(
@@ -45,7 +45,7 @@ public class RegisterCommandRepository : IRegisterCommandRepository
         return null;
     }
 
-    public async Task AddTransaction(TransactionEntity transaction)
+    public async Task AddTransaction(TransactionEntity transaction, CancellationToken cancellationToken)
     {
         var query = """
             INSERT INTO register (id, payee_user_id, amount, datePaid, category_id, payer_user_id) VALUES
@@ -61,10 +61,10 @@ public class RegisterCommandRepository : IRegisterCommandRepository
             new NpgsqlParameter("payer_user_id", transaction.PayerId),
         };
 
-        await _database.GetTable(query, queryParams);
+        await _database.GetTable(query, cancellationToken, queryParams);
     }
 
-    public async Task EditTransaction(EditTransactionEntity tramsaction)
+    public async Task EditTransaction(EditTransactionEntity tramsaction, CancellationToken cancellationToken)
     {
         var setParamsLis = new List<string>();
         var queryParams = new List<DbParameter>()
@@ -103,15 +103,15 @@ public class RegisterCommandRepository : IRegisterCommandRepository
         }
 
         var query = $"""
-            UPDATE register 
+            UPDATE register
                 SET {string.Join(",", setParamsLis)}
             WHERE id = @id;
             """;
 
-        await _database.GetTable(query, queryParams);
+        await _database.GetTable(query, cancellationToken, queryParams);
     }
 
-    public async Task DeleteTransaction(int transactionId)
+    public async Task DeleteTransaction(int transactionId, CancellationToken cancellationToken)
     {
         var query = """
             DELETE FROM register
@@ -121,17 +121,17 @@ public class RegisterCommandRepository : IRegisterCommandRepository
         {
             new NpgsqlParameter("id", transactionId),
         };
-        await _database.UpdateTable(query, queryParams);
+        await _database.UpdateTable(query, cancellationToken, queryParams);
     }
 
-    public async Task<int> GetLastTransactionId()
+    public async Task<int> GetLastTransactionId(CancellationToken cancellationToken)
     {
         var query = """
             SELECT MAX(id) AS last_id
             FROM register;
         """;
 
-        var reader = await _database.GetTable(query);
+        var reader = await _database.GetTable(query, cancellationToken);
 
         if (reader.Rows.Count != 0)
         {

@@ -26,7 +26,7 @@ public sealed class AddBillTest : BillRespositoryTestHelper
         var payerId = 2;
         var newBillEntity = new BillEntity(id, payee, amount, nextDueDate, monthDay, frequency, categoryId, payerId);
 
-        await _billRepo.AddBill(newBillEntity);
+        await _billRepo.AddBill(newBillEntity, CancellationToken.None);
 
         List<BillEntity> results = await GetAllBillEntity();
 

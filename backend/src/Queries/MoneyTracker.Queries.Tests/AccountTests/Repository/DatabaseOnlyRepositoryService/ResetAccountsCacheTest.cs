@@ -11,6 +11,6 @@ public class ResetAccountCacheTest : DatabaseOnlyTestHelper
     public async Task FailsToResetData()
     {
         await Assert.ThrowsAsync<NotImplementedException>(async ()
-            => await _accountRepositoryService.ResetAccountsCache(It.IsAny<AuthenticatedUser>()));
+            => await _accountRepositoryService.ResetAccountsCache(It.IsAny<AuthenticatedUser>(), CancellationToken.None));
     }
 }

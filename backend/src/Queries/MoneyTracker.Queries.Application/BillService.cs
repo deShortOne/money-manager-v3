@@ -22,15 +22,15 @@ public class BillService : IBillService
         _userRepository = userRepository;
     }
 
-    public async Task<ResultT<List<BillResponse>>> GetAllBills(string token)
+    public async Task<ResultT<List<BillResponse>>> GetAllBills(string token, CancellationToken cancellationToken)
     {
-        var userAuth = await _userRepository.GetUserAuthFromToken(token);
+        var userAuth = await _userRepository.GetUserAuthFromToken(token, cancellationToken);
         if (userAuth == null)
             throw new InvalidDataException("Token not found");
         userAuth.CheckValidation();
 
         var user = new AuthenticatedUser(userAuth.User.Id);
-        var billsResult = await _billRepository.GetAllBills(user);
+        var billsResult = await _billRepository.GetAllBills(user, cancellationToken);
         if (billsResult.HasError)
             return billsResult.Error!;
 
@@ -63,7 +63,7 @@ public class BillService : IBillService
                 _frequencyCalculation.CalculateOverDueBillInfo(
                     bill.MonthDay,
                     bill.Frequency,
-                   bill.NextDueDate
+                    bill.NextDueDate
                 ),
                 new(
                     bill.PayerId,

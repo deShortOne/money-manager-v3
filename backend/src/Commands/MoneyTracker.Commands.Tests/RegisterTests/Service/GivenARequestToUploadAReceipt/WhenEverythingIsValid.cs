@@ -21,7 +21,7 @@ public class WhenEverythingIsValid : RegisterTestHelper, IAsyncLifetime
 
     public async Task InitializeAsync()
     {
-        _mockUserService.Setup(x => x.GetUserFromToken(_token))
+        _mockUserService.Setup(x => x.GetUserFromToken(_token, CancellationToken.None))
             .ReturnsAsync(new AuthenticatedUser(_userId));
 
         _mockDateTimeProvider.Setup(x => x.Now)
@@ -30,13 +30,13 @@ public class WhenEverythingIsValid : RegisterTestHelper, IAsyncLifetime
         _mockFileFile.Setup(x => x.FileName)
             .Returns(_fileName);
 
-        _mockFileUploadRepository.Setup(x => x.UploadAsync(_mockFileFile.Object, _fileUploadId))
+        _mockFileUploadRepository.Setup(x => x.UploadAsync(_mockFileFile.Object, _fileUploadId, CancellationToken.None))
             .ReturnsAsync(_fileUploadUrl);
 
-        _mockReceiptCommandRepository.Setup(x => x.AddReceipt(It.IsAny<ReceiptEntity>()))
-            .Callback((ReceiptEntity entity) => _resultReceiptEntity = entity);
+        _mockReceiptCommandRepository.Setup(x => x.AddReceipt(It.IsAny<ReceiptEntity>(), CancellationToken.None))
+            .Callback((ReceiptEntity entity, CancellationToken _) => _resultReceiptEntity = entity);
 
-        _result = await _registerService.CreateTransactionFromReceipt(_token, _mockFileFile.Object);
+        _result = await _registerService.CreateTransactionFromReceipt(_token, _mockFileFile.Object, CancellationToken.None);
     }
 
     public async Task DisposeAsync()
@@ -53,19 +53,19 @@ public class WhenEverythingIsValid : RegisterTestHelper, IAsyncLifetime
     [Fact]
     public void ThenRequestToGetUserIsOnlyCalledOnce()
     {
-        _mockUserService.Verify(x => x.GetUserFromToken(_token), Times.Once);
+        _mockUserService.Verify(x => x.GetUserFromToken(_token, CancellationToken.None), Times.Once);
     }
 
     [Fact]
     public void ThenTheFileIsUploadedOnlyOnce()
     {
-        _mockFileUploadRepository.Verify(x => x.UploadAsync(_mockFileFile.Object, _fileUploadId), Times.Once);
+        _mockFileUploadRepository.Verify(x => x.UploadAsync(_mockFileFile.Object, _fileUploadId, CancellationToken.None), Times.Once);
     }
 
     [Fact]
     public void ThenTheReceiptStateIsUploadedOnceToRepository()
     {
-        _mockReceiptCommandRepository.Verify(x => x.AddReceipt(It.IsAny<ReceiptEntity>()), Times.Once);
+        _mockReceiptCommandRepository.Verify(x => x.AddReceipt(It.IsAny<ReceiptEntity>(), CancellationToken.None), Times.Once);
     }
 
     [Fact]

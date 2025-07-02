@@ -11,10 +11,10 @@ public class WhenTheUserTokenIsInvalid : RegisterTestHelper, IAsyncLifetime
 
     public async Task InitializeAsync()
     {
-        _mockUserService.Setup(x => x.GetUserFromToken(_token))
+        _mockUserService.Setup(x => x.GetUserFromToken(_token, CancellationToken.None))
             .ReturnsAsync(Error.AccessUnAuthorised("asdf", "fdsa"));
 
-        _result = await _registerService.CreateTransactionFromReceipt(_token, Mock.Of<IFormFile>());
+        _result = await _registerService.CreateTransactionFromReceipt(_token, Mock.Of<IFormFile>(), CancellationToken.None);
     }
 
     public async Task DisposeAsync()

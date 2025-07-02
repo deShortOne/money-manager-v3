@@ -20,9 +20,9 @@ public class AccountController
 
     [HttpGet]
     [Route("get")]
-    public async Task<IActionResult> GetAllAccounts()
+    public async Task<IActionResult> GetAllAccounts(CancellationToken cancellationToken)
     {
-        var accounts = await _accountService.GetAccounts(ControllerHelper.GetToken(_httpContextAccessor));
+        var accounts = await _accountService.GetAccounts(ControllerHelper.GetToken(_httpContextAccessor), cancellationToken);
 
         return ControllerHelper.Convert(accounts);
     }

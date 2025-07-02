@@ -15,7 +15,8 @@ public class RegisterCache : IRegisterCache
         _registerCollection = database.GetCollection<MongoRegisterEntity>("register");
     }
 
-    public async Task<ResultT<List<TransactionEntity>>> GetAllTransactions(AuthenticatedUser user)
+    public async Task<ResultT<List<TransactionEntity>>> GetAllTransactions(AuthenticatedUser user,
+        CancellationToken cancellationToken)
     {
         var transactionsLisIterable = await _registerCollection.FindAsync(Builders<MongoRegisterEntity>.Filter.Eq(x => x.User, user));
         var registersLis = await transactionsLisIterable.ToListAsync();

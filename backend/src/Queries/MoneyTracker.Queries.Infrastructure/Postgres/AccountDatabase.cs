@@ -16,7 +16,8 @@ public class AccountDatabase : IAccountDatabase
         _database = db;
     }
 
-    public async Task<ResultT<List<AccountEntity>>> GetAccountsOwnedByUser(AuthenticatedUser user)
+    public async Task<ResultT<List<AccountEntity>>> GetAccountsOwnedByUser(AuthenticatedUser user,
+        CancellationToken cancellationToken)
     {
         var query = """
             SELECT account_user.id, name
@@ -31,7 +32,7 @@ public class AccountDatabase : IAccountDatabase
             new NpgsqlParameter("userid", user.Id),
         };
 
-        using var reader = await _database.GetTable(query, queryParams);
+        using var reader = await _database.GetTable(query, cancellationToken, queryParams);
 
         List<AccountEntity> res = [];
         foreach (DataRow row in reader.Rows)

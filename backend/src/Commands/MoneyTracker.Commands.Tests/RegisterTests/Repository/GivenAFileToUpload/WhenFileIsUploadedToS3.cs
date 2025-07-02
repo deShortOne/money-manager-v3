@@ -38,7 +38,7 @@ public class WhenFileIsUploadedToS3 : IAsyncLifetime
 
         var sut = new S3Repository(_mockClient.Object, _bucketName);
 
-        _resultUrl = await sut.UploadAsync(_mockFile.Object, _id);
+        _resultUrl = await sut.UploadAsync(_mockFile.Object, _id, CancellationToken.None);
     }
 
     public async Task DisposeAsync()

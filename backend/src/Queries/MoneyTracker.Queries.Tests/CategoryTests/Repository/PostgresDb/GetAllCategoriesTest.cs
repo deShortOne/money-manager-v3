@@ -18,7 +18,7 @@ public sealed class GetAllCategoriesTest : IClassFixture<PostgresDbFixture>
         var db = new PostgresDatabase(_postgresFixture.ConnectionString);
         var budgetDb = new CategoryDatabase(db);
 
-        var actual = await budgetDb.GetAllCategories();
+        var actual = await budgetDb.GetAllCategories(CancellationToken.None);
 
         var expected = new List<CategoryEntity>()
         {

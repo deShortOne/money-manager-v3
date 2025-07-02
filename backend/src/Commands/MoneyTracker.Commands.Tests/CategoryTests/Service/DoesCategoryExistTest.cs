@@ -10,13 +10,13 @@ public sealed class DoesCategoryExistTest : CategoryTestHelper
     public void CategoryDoesExist()
     {
         var categoryId = 12345;
-        _mockCategoryDatabase.Setup(x => x.GetCategory(categoryId)).ReturnsAsync(new CategoryEntity(categoryId, ""));
+        _mockCategoryDatabase.Setup(x => x.GetCategory(categoryId, CancellationToken.None)).ReturnsAsync(new CategoryEntity(categoryId, ""));
 
         Assert.Multiple(async () =>
         {
-            Assert.True(await _categoryService.DoesCategoryExist(categoryId));
+            Assert.True(await _categoryService.DoesCategoryExist(categoryId, CancellationToken.None));
 
-            _mockCategoryDatabase.Verify(x => x.GetCategory(categoryId), Times.Once);
+            _mockCategoryDatabase.Verify(x => x.GetCategory(categoryId, CancellationToken.None), Times.Once);
 
             EnsureAllMocksHadNoOtherCalls();
         });
@@ -25,13 +25,13 @@ public sealed class DoesCategoryExistTest : CategoryTestHelper
     public void CategoryNotExist()
     {
         var categoryId = 12345;
-        _mockCategoryDatabase.Setup(x => x.GetCategory(categoryId)).ReturnsAsync((CategoryEntity)null);
+        _mockCategoryDatabase.Setup(x => x.GetCategory(categoryId, CancellationToken.None)).ReturnsAsync((CategoryEntity)null);
 
         Assert.Multiple(async () =>
         {
-            Assert.False(await _categoryService.DoesCategoryExist(categoryId));
+            Assert.False(await _categoryService.DoesCategoryExist(categoryId, CancellationToken.None));
 
-            _mockCategoryDatabase.Verify(x => x.GetCategory(categoryId), Times.Once);
+            _mockCategoryDatabase.Verify(x => x.GetCategory(categoryId, CancellationToken.None), Times.Once);
 
             EnsureAllMocksHadNoOtherCalls();
         });

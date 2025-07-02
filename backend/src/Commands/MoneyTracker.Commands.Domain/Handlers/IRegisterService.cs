@@ -6,9 +6,12 @@ using MoneyTracker.Contracts.Requests.Transaction;
 namespace MoneyTracker.Commands.Domain.Handlers;
 public interface IRegisterService
 {
-    Task<Result> AddTransaction(string token, NewTransactionRequest newTransaction);
-    Task<Result> DeleteTransaction(string token, DeleteTransactionRequest deleteTransaction);
-    Task<Result> EditTransaction(string token, EditTransactionRequest editTransaction);
-    Task<bool> DoesUserOwnTransaction(AuthenticatedUser user, int transactionId);
-    Task<Result> CreateTransactionFromReceipt(string token, IFormFile createTransactionFromReceipt);
+    Task<Result> AddTransaction(string token, NewTransactionRequest newTransaction, CancellationToken cancellationToken);
+    Task<Result> DeleteTransaction(string token, DeleteTransactionRequest deleteTransaction,
+        CancellationToken cancellationToken);
+    Task<Result> EditTransaction(string token, EditTransactionRequest editTransaction,
+        CancellationToken cancellationToken);
+    Task<bool> DoesUserOwnTransaction(AuthenticatedUser user, int transactionId, CancellationToken cancellationToken);
+    Task<Result> CreateTransactionFromReceipt(string token, IFormFile createTransactionFromReceipt,
+        CancellationToken cancellationToken);
 }

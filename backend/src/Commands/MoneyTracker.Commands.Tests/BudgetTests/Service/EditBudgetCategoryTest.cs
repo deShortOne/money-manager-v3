@@ -22,20 +22,20 @@ public sealed class EditBudgetCategoryTest : BudgetTestHelper
     public async Task EditBudget(int? budgetGroupId, decimal? planned)
     {
         var authedUser = new AuthenticatedUser(_userId);
-        _mockUserService.Setup(x => x.GetUserFromToken(_tokenToDecode))
+        _mockUserService.Setup(x => x.GetUserFromToken(_tokenToDecode, CancellationToken.None))
             .ReturnsAsync(authedUser);
 
         var editBudgetCategoryRequest = new EditBudgetCategoryRequest(_categoryId, budgetGroupId, planned);
         var editBudgetCategory = new EditBudgetCategoryEntity(_userId, _categoryId, budgetGroupId, planned);
 
-        _mockBudgetCategoryDatabase.Setup(x => x.EditBudgetCategory(editBudgetCategory));
+        _mockBudgetCategoryDatabase.Setup(x => x.EditBudgetCategory(editBudgetCategory, CancellationToken.None));
 
-        await _budgetService.EditBudgetCategory(_tokenToDecode, editBudgetCategoryRequest);
+        await _budgetService.EditBudgetCategory(_tokenToDecode, editBudgetCategoryRequest, CancellationToken.None);
 
         Assert.Multiple(() =>
         {
-            _mockUserService.Verify(x => x.GetUserFromToken(_tokenToDecode), Times.Once);
-            _mockBudgetCategoryDatabase.Verify(x => x.EditBudgetCategory(editBudgetCategory), Times.Once);
+            _mockUserService.Verify(x => x.GetUserFromToken(_tokenToDecode, CancellationToken.None), Times.Once);
+            _mockBudgetCategoryDatabase.Verify(x => x.EditBudgetCategory(editBudgetCategory, CancellationToken.None), Times.Once);
 
             _mockMessageBusClient.Verify(x => x.PublishEvent(new EventUpdate(authedUser, DataTypes.Budget), It.IsAny<CancellationToken>()), Times.Once);
 

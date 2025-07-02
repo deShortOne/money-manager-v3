@@ -14,20 +14,20 @@ public sealed class IsTokenValidTest : UserTestHelper
         mockUserAuth.Setup(x => x.CheckValidation())
             .Returns(Result.Success());
 
-        _mockUserDatabase.Setup(x => x.GetUserAuthFromToken(token))
+        _mockUserDatabase.Setup(x => x.GetUserAuthFromToken(token, CancellationToken.None))
             .ReturnsAsync(mockUserAuth.Object);
 
-        Assert.True(await _userService.IsTokenValid(token));
+        Assert.True(await _userService.IsTokenValid(token, CancellationToken.None));
     }
 
     [Fact]
     public async Task TokenReturnsNull()
     {
         var token = "Afds";
-        _mockUserDatabase.Setup(x => x.GetUserAuthFromToken(token))
+        _mockUserDatabase.Setup(x => x.GetUserAuthFromToken(token, CancellationToken.None))
             .ReturnsAsync((UserAuthentication?)null);
 
-        Assert.False(await _userService.IsTokenValid(token));
+        Assert.False(await _userService.IsTokenValid(token, CancellationToken.None));
     }
 
     [Fact]
@@ -37,9 +37,9 @@ public sealed class IsTokenValidTest : UserTestHelper
         mockUserAuth.Setup(x => x.CheckValidation())
             .Returns(Result.Failure(Error.Validation("", "")));
 
-        _mockUserDatabase.Setup(x => x.GetUserAuthFromToken(It.IsAny<string>()))
+        _mockUserDatabase.Setup(x => x.GetUserAuthFromToken(It.IsAny<string>(), CancellationToken.None))
             .ReturnsAsync(mockUserAuth.Object);
 
-        Assert.False(await _userService.IsTokenValid(It.IsAny<string>()));
+        Assert.False(await _userService.IsTokenValid(It.IsAny<string>(), CancellationToken.None));
     }
 }

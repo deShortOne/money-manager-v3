@@ -30,7 +30,7 @@ public sealed class SaveAndGetAccountsTest : IClassFixture<MongoDbFixture>
 
         await accountCache.SaveAccounts(authedUser, accounts);
 
-        var result = await accountCache.GetAccountsOwnedByUser(authedUser);
+        var result = await accountCache.GetAccountsOwnedByUser(authedUser, CancellationToken.None);
 
         Assert.Equal(accounts, result);
     }
@@ -54,7 +54,7 @@ public sealed class SaveAndGetAccountsTest : IClassFixture<MongoDbFixture>
 
         await accountCache.SaveAccounts(authedUser1, accounts);
 
-        var result = await accountCache.GetAccountsOwnedByUser(authedUser2);
+        var result = await accountCache.GetAccountsOwnedByUser(authedUser2, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
     }

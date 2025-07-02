@@ -28,50 +28,53 @@ public class BudgetService : IBudgetService
         _messageBus = messageBus;
     }
 
-    public async Task<Result> AddBudgetCategory(string token, NewBudgetCategoryRequest newBudget)
+    public async Task<Result> AddBudgetCategory(string token, NewBudgetCategoryRequest newBudget,
+        CancellationToken cancellationToken)
     {
-        var userResult = await _userService.GetUserFromToken(token);
+        var userResult = await _userService.GetUserFromToken(token, cancellationToken);
         if (userResult.HasError)
             return userResult;
 
         var user = userResult.Value;
         var dtoToDb = new BudgetCategoryEntity(user.Id, newBudget.BudgetGroupId, newBudget.CategoryId, newBudget.Planned);
 
-        await _dbService.AddBudgetCategory(dtoToDb);
+        await _dbService.AddBudgetCategory(dtoToDb, cancellationToken);
 
-        await _messageBus.PublishEvent(new EventUpdate(user, DataTypes.Budget), CancellationToken.None);
+        await _messageBus.PublishEvent(new EventUpdate(user, DataTypes.Budget), cancellationToken);
 
         return Result.Success();
     }
 
-    public async Task<Result> EditBudgetCategory(string token, EditBudgetCategoryRequest editBudgetCategory)
+    public async Task<Result> EditBudgetCategory(string token, EditBudgetCategoryRequest editBudgetCategory,
+        CancellationToken cancellationToken)
     {
-        var userResult = await _userService.GetUserFromToken(token);
+        var userResult = await _userService.GetUserFromToken(token, cancellationToken);
         if (userResult.HasError)
             return userResult;
 
         var user = userResult.Value;
         var dtoToDb = new EditBudgetCategoryEntity(user.Id, editBudgetCategory.BudgetCategoryId, editBudgetCategory.BudgetGroupId, editBudgetCategory.BudgetCategoryPlanned);
 
-        await _dbService.EditBudgetCategory(dtoToDb);
+        await _dbService.EditBudgetCategory(dtoToDb, cancellationToken);
 
-        await _messageBus.PublishEvent(new EventUpdate(user, DataTypes.Budget), CancellationToken.None);
+        await _messageBus.PublishEvent(new EventUpdate(user, DataTypes.Budget), cancellationToken);
 
         return Result.Success();
     }
 
-    public async Task<Result> DeleteBudgetCategory(string token, DeleteBudgetCategoryRequest deleteBudgetCategory)
+    public async Task<Result> DeleteBudgetCategory(string token, DeleteBudgetCategoryRequest deleteBudgetCategory,
+        CancellationToken cancellationToken)
     {
-        var userResult = await _userService.GetUserFromToken(token);
+        var userResult = await _userService.GetUserFromToken(token, cancellationToken);
         if (userResult.HasError)
             return userResult;
 
         var user = userResult.Value;
         var dtoToDb = new DeleteBudgetCategoryEntity(user.Id, deleteBudgetCategory.BudgetGroupId, deleteBudgetCategory.BudgetCategoryId);
 
-        await _dbService.DeleteBudgetCategory(dtoToDb);
+        await _dbService.DeleteBudgetCategory(dtoToDb, cancellationToken);
 
-        await _messageBus.PublishEvent(new EventUpdate(user, DataTypes.Budget), CancellationToken.None);
+        await _messageBus.PublishEvent(new EventUpdate(user, DataTypes.Budget), cancellationToken);
 
         return Result.Success();
     }

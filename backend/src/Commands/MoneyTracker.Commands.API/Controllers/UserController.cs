@@ -18,17 +18,17 @@ public class UserController
 
     [HttpPost]
     [Route("add")]
-    public async Task<IActionResult> AddUser(LoginWithUsernameAndPassword usernameAndPassword)
+    public async Task<IActionResult> AddUser(LoginWithUsernameAndPassword usernameAndPassword, CancellationToken cancellationToken)
     {
-        var result = await _authService.AddNewUser(usernameAndPassword);
+        var result = await _authService.AddNewUser(usernameAndPassword, cancellationToken);
         return ControllerHelper.Convert(result);
     }
 
     [HttpPost]
     [Route("login")]
-    public async Task<IActionResult> LoginUser(LoginWithUsernameAndPassword usernameAndPassword)
+    public async Task<IActionResult> LoginUser(LoginWithUsernameAndPassword usernameAndPassword, CancellationToken cancellationToken)
     {
-        var result = await _authService.LoginUser(usernameAndPassword);
+        var result = await _authService.LoginUser(usernameAndPassword, cancellationToken);
         return ControllerHelper.Convert(result);
     }
 }

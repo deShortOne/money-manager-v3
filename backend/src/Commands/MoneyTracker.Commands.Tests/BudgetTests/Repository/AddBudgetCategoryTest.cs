@@ -23,7 +23,7 @@ public sealed class AddBudgetCategoryTest : BudgetRespositoryTestHelper
         var caregoryId = 4;
         var newBudgetEntity = new BudgetCategoryEntity(userId, budgetGroupId, planned, caregoryId);
 
-        await _budgetRepo.AddBudgetCategory(newBudgetEntity);
+        await _budgetRepo.AddBudgetCategory(newBudgetEntity, CancellationToken.None);
 
         List<BudgetCategoryEntity> results = await GetAllBudgetCategoryEntities();
 

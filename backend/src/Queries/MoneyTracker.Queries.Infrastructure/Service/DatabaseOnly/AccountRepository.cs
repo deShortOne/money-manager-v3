@@ -14,10 +14,10 @@ public class AccountRepository : IAccountRepositoryService
     {
         _accountDatabase = accountDatabase;
     }
-    public Task<ResultT<List<AccountEntity>>> GetAccounts(AuthenticatedUser user)
+    public Task<ResultT<List<AccountEntity>>> GetAccounts(AuthenticatedUser user, CancellationToken cancellationToken)
     {
-        return _accountDatabase.GetAccountsOwnedByUser(user);
+        return _accountDatabase.GetAccountsOwnedByUser(user, cancellationToken);
     }
 
-    public Task ResetAccountsCache(AuthenticatedUser user) => throw new NotImplementedException();
+    public Task ResetAccountsCache(AuthenticatedUser user, CancellationToken cancellationToken) => throw new NotImplementedException();
 }

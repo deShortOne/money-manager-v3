@@ -25,25 +25,25 @@ public sealed class DeleteRegisterTest : RegisterTestHelper
     {
         var commonAccountId = 1562;
 
-        _mockUserService.Setup(x => x.GetUserFromToken(_tokenToDecode))
+        _mockUserService.Setup(x => x.GetUserFromToken(_tokenToDecode, CancellationToken.None))
             .ReturnsAsync(_authedUser);
 
         var newTransactionRequest = new DeleteTransactionRequest(_transactionId);
 
-        _mockRegisterDatabase.Setup(x => x.GetTransaction(_transactionId))
+        _mockRegisterDatabase.Setup(x => x.GetTransaction(_transactionId, CancellationToken.None))
             .ReturnsAsync(new TransactionEntity(_transactionId, -1, -1, new DateOnly(), -1, commonAccountId));
 
-        _accountService.Setup(x => x.DoesUserOwnAccount(_authedUser, commonAccountId))
+        _accountService.Setup(x => x.DoesUserOwnAccount(_authedUser, commonAccountId, CancellationToken.None))
             .ReturnsAsync(true);
 
-        await _registerService.DeleteTransaction(_tokenToDecode, newTransactionRequest);
+        await _registerService.DeleteTransaction(_tokenToDecode, newTransactionRequest, CancellationToken.None);
 
         Assert.Multiple(() =>
         {
-            _mockUserService.Verify(x => x.GetUserFromToken(_tokenToDecode), Times.Once);
-            _mockRegisterDatabase.Verify(x => x.DeleteTransaction(_transactionId), Times.Once);
-            _mockRegisterDatabase.Verify(x => x.GetTransaction(_transactionId), Times.Once);
-            _accountService.Verify(x => x.DoesUserOwnAccount(_authedUser, commonAccountId), Times.Once);
+            _mockUserService.Verify(x => x.GetUserFromToken(_tokenToDecode, CancellationToken.None), Times.Once);
+            _mockRegisterDatabase.Verify(x => x.DeleteTransaction(_transactionId, CancellationToken.None), Times.Once);
+            _mockRegisterDatabase.Verify(x => x.GetTransaction(_transactionId, CancellationToken.None), Times.Once);
+            _accountService.Verify(x => x.DoesUserOwnAccount(_authedUser, commonAccountId, CancellationToken.None), Times.Once);
 
             _mockMessageBusClient.Verify(x => x.PublishEvent(
                 new EventUpdate(_authedUser, DataTypes.Register), It.IsAny<CancellationToken>()

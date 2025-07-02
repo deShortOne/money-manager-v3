@@ -18,7 +18,7 @@ public sealed class GetBillByIdTest : IClassFixture<PostgresDbFixture>
     {
         var expected = new BillEntity(1, 7, 23, new DateOnly(2024, 9, 3), 3, "Weekly", 4, 1);
 
-        Assert.Equal(expected, await _billRepo.GetBillById(1));
+        Assert.Equal(expected, await _billRepo.GetBillById(1, CancellationToken.None));
     }
 
     [Fact]
@@ -26,7 +26,7 @@ public sealed class GetBillByIdTest : IClassFixture<PostgresDbFixture>
     {
         var expected = new BillEntity(2, 9, 100, new DateOnly(2024, 8, 30), 30, "Monthly", 1, 3);
 
-        Assert.Equal(expected, await _billRepo.GetBillById(2));
+        Assert.Equal(expected, await _billRepo.GetBillById(2, CancellationToken.None));
     }
 
     [Fact]
@@ -34,12 +34,12 @@ public sealed class GetBillByIdTest : IClassFixture<PostgresDbFixture>
     {
         var expected = new BillEntity(3, 17, 100, new DateOnly(2024, 8, 30), 30, "Monthly", 1, 2);
 
-        Assert.Equal(expected, await _billRepo.GetBillById(3));
+        Assert.Equal(expected, await _billRepo.GetBillById(3, CancellationToken.None));
     }
 
     [Fact]
     public async Task GetBillThatDoesntExist()
     {
-        Assert.Null(await _billRepo.GetBillById(-1));
+        Assert.Null(await _billRepo.GetBillById(-1, CancellationToken.None));
     }
 }

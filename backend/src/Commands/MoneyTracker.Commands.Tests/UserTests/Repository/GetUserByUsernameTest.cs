@@ -28,7 +28,7 @@ public sealed class GetUserByUsernameTest : IClassFixture<PostgresDbFixture>
     {
         var expected = new UserEntity(1, "root", "IfC1pbsUdKwcX68HPvPybQ==.bfXuHix96vvlXfGqLpY+/kRgBnCbXCU/Kqu2uIY8M60=");
 
-        var actual = await _userRepo.GetUserByUsername("root");
+        var actual = await _userRepo.GetUserByUsername("root", CancellationToken.None);
         Assert.Equal(expected, actual);
     }
 
@@ -37,14 +37,14 @@ public sealed class GetUserByUsernameTest : IClassFixture<PostgresDbFixture>
     {
         var expected = new UserEntity(2, "secondary root", "lH0GmZnlH6TAwD+2wQx1UA==.C4UPD8P66L/A4AKv77WTsN6CSl6Wobgyy0psL3OkO+s=");
 
-        var actual = await _userRepo.GetUserByUsername("secondary root");
+        var actual = await _userRepo.GetUserByUsername("secondary root", CancellationToken.None);
         Assert.Equal(expected, actual);
     }
 
     [Fact]
     public async Task GetUserByUsernameFailDueToNameNotBeingInDatabase()
     {
-        var actual = await _userRepo.GetUserByUsername("asd");
+        var actual = await _userRepo.GetUserByUsername("asd", CancellationToken.None);
         Assert.Null(actual);
     }
 }

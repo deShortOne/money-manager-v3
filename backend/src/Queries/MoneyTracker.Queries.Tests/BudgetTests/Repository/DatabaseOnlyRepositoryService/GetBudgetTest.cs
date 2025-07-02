@@ -16,12 +16,12 @@ public class GetBudgetTest : DatabaseOnlyTestHelper
             new(3, "iolk,"),
             new(1, "iukhm"),
         };
-        _mockBudgetDatabase.Setup(x => x.GetBudget(_authedUser))
+        _mockBudgetDatabase.Setup(x => x.GetBudget(_authedUser, CancellationToken.None))
             .ReturnsAsync(budgets);
 
-        await _budgetRepositoryService.GetBudget(_authedUser);
+        await _budgetRepositoryService.GetBudget(_authedUser, CancellationToken.None);
 
-        _mockBudgetDatabase.Verify(x => x.GetBudget(_authedUser), Times.Once);
+        _mockBudgetDatabase.Verify(x => x.GetBudget(_authedUser, CancellationToken.None), Times.Once);
         VerifyNoOtherCalls();
     }
 }

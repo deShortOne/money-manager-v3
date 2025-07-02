@@ -86,7 +86,7 @@ public class MessageBusSubscriber : BackgroundService, IAsyncDisposable
             if (eventType == null)
                 throw new InvalidOperationException("Event passed is not correct object");
 
-            _eventProcessor.ProcessEvent(eventType);
+            _eventProcessor.ProcessEvent(eventType, cancellationToken);
 
             return Task.CompletedTask;
         };

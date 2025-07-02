@@ -8,6 +8,6 @@ public class ResetBudgetCacheTest : DatabaseOnlyTestHelper
     public async Task RefetchDataFromDatabaseAndWriteIntoCache()
     {
         await Assert.ThrowsAsync<NotImplementedException>(()
-            => _budgetRepositoryService.ResetBudgetCache(It.IsAny<AuthenticatedUser>()));
+            => _budgetRepositoryService.ResetBudgetCache(It.IsAny<AuthenticatedUser>(), CancellationToken.None));
     }
 }

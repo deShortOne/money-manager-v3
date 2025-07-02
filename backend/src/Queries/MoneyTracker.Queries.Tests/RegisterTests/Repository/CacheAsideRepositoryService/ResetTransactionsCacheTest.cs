@@ -18,12 +18,12 @@ public class ResetTransactionsCacheTest : CacheAsideTestHelper
             new(777, 64, "TWUhglzSSK", 127, new DateOnly(), 542, "PzNRgFliyc", 991, "eNMhdpxeDD"),
         };
 
-        _mockRegisterDatabase.Setup(x => x.GetAllTransactions(_authedUser))
+        _mockRegisterDatabase.Setup(x => x.GetAllTransactions(_authedUser, CancellationToken.None))
             .ReturnsAsync(Transactions);
 
-        await _registerRepositoryService.ResetTransactionsCache(_authedUser);
+        await _registerRepositoryService.ResetTransactionsCache(_authedUser, CancellationToken.None);
 
-        _mockRegisterDatabase.Verify(x => x.GetAllTransactions(_authedUser));
+        _mockRegisterDatabase.Verify(x => x.GetAllTransactions(_authedUser, CancellationToken.None));
         _mockRegisterCache.Verify(x => x.SaveTransactions(_authedUser, Transactions));
         VerifyNoOtherCalls();
     }

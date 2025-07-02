@@ -16,18 +16,18 @@ public sealed class AddNewUserTest : UserTestHelper
     [Fact]
     public async Task SuccessfullyAddNewUser()
     {
-        _mockUserDatabase.Setup(x => x.GetLastUserId()).ReturnsAsync(_lastUserId);
+        _mockUserDatabase.Setup(x => x.GetLastUserId(CancellationToken.None)).ReturnsAsync(_lastUserId);
         _mockIdGenerator.Setup(x => x.NewInt(_lastUserId)).Returns(_newUserId);
         _mockPasswordHasher.Setup(x => x.HashPassword(_password)).Returns(_hashedPassword);
-        _mockUserDatabase.Setup(x => x.AddUser(new UserEntity(_newUserId, _username, _hashedPassword)));
+        _mockUserDatabase.Setup(x => x.AddUser(new UserEntity(_newUserId, _username, _hashedPassword), CancellationToken.None));
 
-        var result = await _userService.AddNewUser(new LoginWithUsernameAndPassword(_username, _password));
+        var result = await _userService.AddNewUser(new LoginWithUsernameAndPassword(_username, _password), CancellationToken.None);
 
         Assert.True(result.IsSuccess);
-        _mockUserDatabase.Verify(x => x.GetLastUserId(), Times.Once);
+        _mockUserDatabase.Verify(x => x.GetLastUserId(CancellationToken.None), Times.Once);
         _mockIdGenerator.Verify(x => x.NewInt(_lastUserId), Times.Once);
         _mockPasswordHasher.Verify(x => x.HashPassword(_password), Times.Once);
-        _mockUserDatabase.Verify(x => x.AddUser(new UserEntity(_newUserId, _username, _hashedPassword)), Times.Once);
+        _mockUserDatabase.Verify(x => x.AddUser(new UserEntity(_newUserId, _username, _hashedPassword), CancellationToken.None), Times.Once);
 
         _mockMessageBusClient.Verify(x => x.PublishEvent(
             new EventUpdate(new AuthenticatedUser(_newUserId), DataTypes.User), It.IsAny<CancellationToken>()

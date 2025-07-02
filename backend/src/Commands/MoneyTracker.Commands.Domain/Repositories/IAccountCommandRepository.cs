@@ -3,12 +3,12 @@ using MoneyTracker.Commands.Domain.Entities.Account;
 namespace MoneyTracker.Commands.Domain.Repositories;
 public interface IAccountCommandRepository
 {
-    Task<AccountEntity?> GetAccountById(int accountId);
-    Task<AccountEntity?> GetAccountByName(string accountName);
-    Task<AccountUserEntity?> GetAccountUserEntity(int accountId, int userId);
-    Task<AccountUserEntity?> GetAccountUserEntity(int accountUserId);
-    Task AddAccountToUser(AccountUserEntity newAccountUserEntity);
-    Task AddAccount(AccountEntity newAccount);
-    Task<int> GetLastAccountId();
-    Task<int> GetLastAccountUserId();
+    Task<AccountEntity?> GetAccountById(int accountId, CancellationToken cancellationToken);
+    Task<AccountEntity?> GetAccountByName(string accountName, CancellationToken cancellationToken);
+    Task<AccountUserEntity?> GetAccountUserEntity(int accountId, int userId, CancellationToken cancellationToken);
+    Task<AccountUserEntity?> GetAccountUserEntity(int accountUserId, CancellationToken cancellationToken);
+    Task AddAccountToUser(AccountUserEntity newAccountUserEntity, CancellationToken cancellationToken);
+    Task AddAccount(AccountEntity newAccount, CancellationToken cancellationToken);
+    Task<int> GetLastAccountId(CancellationToken cancellationToken);
+    Task<int> GetLastAccountUserId(CancellationToken cancellationToken);
 }

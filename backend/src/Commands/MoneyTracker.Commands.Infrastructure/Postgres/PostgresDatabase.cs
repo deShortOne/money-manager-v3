@@ -15,9 +15,10 @@ public class PostgresDatabase : IDatabase
         _dataSource_rw = dataSourceBuilder_ro.Build();
     }
 
-    public async Task<DataTable> GetTable(string query, List<DbParameter>? parameters = null)
+    public async Task<DataTable> GetTable(string query,
+        CancellationToken cancellationToken, List<DbParameter>? parameters = null)
     {
-        await using (var conn = await _dataSource_rw.OpenConnectionAsync())
+        await using (var conn = await _dataSource_rw.OpenConnectionAsync(cancellationToken))
         {
             await using (var cmd = new NpgsqlCommand(query, conn))
             {
@@ -30,15 +31,16 @@ public class PostgresDatabase : IDatabase
                 }
 
                 var dataTable = new DataTable();
-                dataTable.Load(await cmd.ExecuteReaderAsync());
+                dataTable.Load(await cmd.ExecuteReaderAsync(cancellationToken));
                 return dataTable;
             }
         }
     }
 
-    public async Task<int> UpdateTable(string query, List<DbParameter>? parameters = null)
+    public async Task<int> UpdateTable(string query, CancellationToken cancellationToken,
+        List<DbParameter>? parameters = null)
     {
-        await using (var conn = await _dataSource_rw.OpenConnectionAsync())
+        await using (var conn = await _dataSource_rw.OpenConnectionAsync(cancellationToken))
         {
             await using (var cmd = new NpgsqlCommand(query, conn))
             {
@@ -49,7 +51,7 @@ public class PostgresDatabase : IDatabase
                         cmd.Parameters.Add(parameter);
                     }
                 }
-                return cmd.ExecuteNonQuery();
+                return await cmd.ExecuteNonQueryAsync(cancellationToken);
             }
         }
     }

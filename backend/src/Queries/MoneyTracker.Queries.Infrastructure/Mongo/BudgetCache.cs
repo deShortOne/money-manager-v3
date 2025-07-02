@@ -15,10 +15,11 @@ public class BudgetCache : IBudgetCache
         _budgetCollection = database.GetCollection<MongoBudgetEntity>("budget");
     }
 
-    public async Task<ResultT<List<BudgetGroupEntity>>> GetBudget(AuthenticatedUser user)
+    public async Task<ResultT<List<BudgetGroupEntity>>> GetBudget(AuthenticatedUser user,
+        CancellationToken cancellationToken)
     {
-        var budgetLisIterable = await _budgetCollection.FindAsync(Builders<MongoBudgetEntity>.Filter.Eq(x => x.User, user));
-        var budgetLis = await budgetLisIterable.ToListAsync();
+        var budgetLisIterable = await _budgetCollection.FindAsync(Builders<MongoBudgetEntity>.Filter.Eq(x => x.User, user), cancellationToken: cancellationToken);
+        var budgetLis = await budgetLisIterable.ToListAsync(cancellationToken: cancellationToken);
         if (budgetLis.Count != 1)
         {
             return Error.NotFound("BudgetCache.GetBudget", $"Found {budgetLis.Count} budget for user {user}");

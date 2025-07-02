@@ -15,6 +15,6 @@ public sealed class GetLastCategoryIdTest : IClassFixture<PostgresDbFixture>
     [Fact]
     public async Task GetLastCategoryId()
     {
-        Assert.Equal(6, await _categoryRepo.GetLastCategoryId());
+        Assert.Equal(6, await _categoryRepo.GetLastCategoryId(CancellationToken.None));
     }
 }

@@ -21,21 +21,22 @@ public class RegisterRepository : IRegisterRepositoryService
         _registerCache = registerCache;
     }
 
-    public async Task<ResultT<List<TransactionEntity>>> GetAllTransactions(AuthenticatedUser user)
+    public async Task<ResultT<List<TransactionEntity>>> GetAllTransactions(AuthenticatedUser user,
+        CancellationToken cancellationToken)
     {
-        var result = await _registerCache.GetAllTransactions(user);
+        var result = await _registerCache.GetAllTransactions(user, cancellationToken);
         if (result.HasError)
         {
-            result = await _registerDatabase.GetAllTransactions(user);
+            result = await _registerDatabase.GetAllTransactions(user, cancellationToken);
             await _registerCache.SaveTransactions(user, result.Value);
         }
 
         return result;
     }
 
-    public async Task ResetTransactionsCache(AuthenticatedUser user)
+    public async Task ResetTransactionsCache(AuthenticatedUser user, CancellationToken cancellationToken)
     {
-        var result = await _registerDatabase.GetAllTransactions(user);
+        var result = await _registerDatabase.GetAllTransactions(user, cancellationToken);
         await _registerCache.SaveTransactions(user, result.Value);
     }
 }

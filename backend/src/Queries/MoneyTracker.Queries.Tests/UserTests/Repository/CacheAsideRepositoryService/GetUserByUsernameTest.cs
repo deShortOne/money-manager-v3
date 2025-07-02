@@ -6,9 +6,9 @@ public class GetUserByUsernameTest : CacheAsideTestHelper
     [Fact]
     public async Task WillCallOffToDatabase()
     {
-        await _userRepositoryService.GetUserByUsername(_username);
+        await _userRepositoryService.GetUserByUsername(_username, CancellationToken.None);
 
-        _mockUserDatabase.Verify(x => x.GetUserByUsername(_username));
+        _mockUserDatabase.Verify(x => x.GetUserByUsername(_username, CancellationToken.None));
         VerifyNoOtherCalls();
     }
 }

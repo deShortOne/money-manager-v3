@@ -20,6 +20,6 @@ public class GetLastAccountUserId : IClassFixture<PostgresDbFixture>
     [Fact]
     public async Task GetLastIdWithDataInTables()
     {
-        Assert.Equal(19, await _accountRepo.GetLastAccountUserId());
+        Assert.Equal(19, await _accountRepo.GetLastAccountUserId(CancellationToken.None));
     }
 }

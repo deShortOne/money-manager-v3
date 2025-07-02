@@ -44,9 +44,9 @@ public class BillService : IBillService
         _messageBus = messageBus;
     }
 
-    public async Task<Result> AddBill(string token, NewBillRequest newBill)
+    public async Task<Result> AddBill(string token, NewBillRequest newBill, CancellationToken cancellationToken)
     {
-        var userResult = await _userService.GetUserFromToken(token);
+        var userResult = await _userService.GetUserFromToken(token, cancellationToken);
         if (userResult.HasError)
             return userResult;
 
@@ -56,11 +56,11 @@ public class BillService : IBillService
             return Error.Validation("BillService.AddBill", "Amount must be a positive number");
         }
 
-        if (!await _accountService.DoesUserOwnAccount(user, newBill.PayerId))
+        if (!await _accountService.DoesUserOwnAccount(user, newBill.PayerId, cancellationToken))
         {
             return Error.Validation("BillService.AddBill", "Payer account not found");
         }
-        var payeeAccount = await _accountDatabase.GetAccountUserEntity(newBill.PayeeId);
+        var payeeAccount = await _accountDatabase.GetAccountUserEntity(newBill.PayeeId, cancellationToken);
         if (payeeAccount == null || payeeAccount.UserId != user.Id)
         {
             return Error.Validation("BillService.AddBill", "Payee account not found");
@@ -69,13 +69,13 @@ public class BillService : IBillService
         {
             return Error.Validation("BillService.AddBill", "Frequency type not found");
         }
-        if (!await _categoryService.DoesCategoryExist(newBill.CategoryId))
+        if (!await _categoryService.DoesCategoryExist(newBill.CategoryId, cancellationToken))
         {
             return Error.Validation("BillService.AddBill", "Category not found");
         }
 
         var dtoToDb = new BillEntity(
-            _idGenerator.NewInt(await _dbService.GetLastId()),
+            _idGenerator.NewInt(await _dbService.GetLastId(cancellationToken)),
             newBill.PayeeId,
             newBill.Amount,
             newBill.NextDueDate,
@@ -84,16 +84,16 @@ public class BillService : IBillService
             newBill.CategoryId,
             newBill.PayerId
         );
-        await _dbService.AddBill(dtoToDb);
+        await _dbService.AddBill(dtoToDb, cancellationToken);
 
-        await _messageBus.PublishEvent(new EventUpdate(user, DataTypes.Bill), CancellationToken.None);
+        await _messageBus.PublishEvent(new EventUpdate(user, DataTypes.Bill), cancellationToken);
 
         return Result.Success();
     }
 
-    public async Task<Result> EditBill(string token, EditBillRequest editBill)
+    public async Task<Result> EditBill(string token, EditBillRequest editBill, CancellationToken cancellationToken)
     {
-        var userResult = await _userService.GetUserFromToken(token);
+        var userResult = await _userService.GetUserFromToken(token, cancellationToken);
         if (userResult.HasError)
             return userResult;
 
@@ -106,7 +106,7 @@ public class BillService : IBillService
             return Error.Validation("BillService.EditBill", "Must have at least one non-null value");
         }
 
-        var getBillIfOwnedByUser = await GetBillIfOwnedByUser(editBill.Id, user);
+        var getBillIfOwnedByUser = await GetBillIfOwnedByUser(editBill.Id, user, cancellationToken);
         if (getBillIfOwnedByUser == null)
         {
             return Error.Validation("BillService.EditBill", "Bill not found");
@@ -114,12 +114,12 @@ public class BillService : IBillService
 
         if (editBill.PayerId != null)
         {
-            if (!await _accountService.DoesUserOwnAccount(user, (int)editBill.PayerId))
+            if (!await _accountService.DoesUserOwnAccount(user, (int)editBill.PayerId, cancellationToken))
                 return Error.Validation("BillService.EditBill", "Payer account not found");
         }
         if (editBill.PayeeId != null)
         {
-            var payeeAccount = await _accountDatabase.GetAccountUserEntity((int)editBill.PayeeId);
+            var payeeAccount = await _accountDatabase.GetAccountUserEntity((int)editBill.PayeeId, cancellationToken);
             if (payeeAccount == null || payeeAccount.UserId != user.Id)
             {
                 return Error.Validation("BillService.EditBill", "Payee account not found");
@@ -130,7 +130,7 @@ public class BillService : IBillService
         {
             return Error.Validation("BillService.EditBill", "Frequency type not found");
         }
-        if (editBill.CategoryId != null && !await _categoryService.DoesCategoryExist((int)editBill.CategoryId))
+        if (editBill.CategoryId != null && !await _categoryService.DoesCategoryExist((int)editBill.CategoryId, cancellationToken))
         {
             return Error.Validation("BillService.EditBill", "Category not found");
         }
@@ -151,41 +151,43 @@ public class BillService : IBillService
             editBill.CategoryId,
             editBill.PayerId
         );
-        await _dbService.EditBill(dtoToDb);
+        await _dbService.EditBill(dtoToDb, cancellationToken);
 
-        await _messageBus.PublishEvent(new EventUpdate(user, DataTypes.Bill), CancellationToken.None);
+        await _messageBus.PublishEvent(new EventUpdate(user, DataTypes.Bill), cancellationToken);
 
         return Result.Success();
     }
 
-    public async Task<Result> DeleteBill(string token, DeleteBillRequest deleteBill)
+    public async Task<Result> DeleteBill(string token, DeleteBillRequest deleteBill,
+        CancellationToken cancellationToken)
     {
-        var userResult = await _userService.GetUserFromToken(token);
+        var userResult = await _userService.GetUserFromToken(token, cancellationToken);
         if (userResult.HasError)
             return userResult;
 
         var user = userResult.Value;
-        var doesUserOwnBill = await GetBillIfOwnedByUser(deleteBill.Id, user);
+        var doesUserOwnBill = await GetBillIfOwnedByUser(deleteBill.Id, user, cancellationToken);
         if (doesUserOwnBill == null)
         {
             return Error.Validation("BillService.DeleteBill", "Bill not found");
         }
 
-        await _dbService.DeleteBill(deleteBill.Id);
+        await _dbService.DeleteBill(deleteBill.Id, cancellationToken);
 
-        await _messageBus.PublishEvent(new EventUpdate(user, DataTypes.Bill), CancellationToken.None);
+        await _messageBus.PublishEvent(new EventUpdate(user, DataTypes.Bill), cancellationToken);
 
         return Result.Success();
     }
 
-    public async Task<Result> SkipOccurence(string token, SkipBillOccurrenceRequest skipBillDTO)
+    public async Task<Result> SkipOccurence(string token, SkipBillOccurrenceRequest skipBillDTO,
+        CancellationToken cancellationToken)
     {
-        var userResult = await _userService.GetUserFromToken(token);
+        var userResult = await _userService.GetUserFromToken(token, cancellationToken);
         if (userResult.HasError)
             return userResult;
 
         var user = userResult.Value;
-        var getBillIfOwnedByUser = await GetBillIfOwnedByUser(skipBillDTO.Id, user);
+        var getBillIfOwnedByUser = await GetBillIfOwnedByUser(skipBillDTO.Id, user, cancellationToken);
         if (getBillIfOwnedByUser == null)
         {
             return Error.Validation("BillService.SkipOccurence", "Bill not found");
@@ -194,21 +196,22 @@ public class BillService : IBillService
         var newDueDate = _frequencyCalculation.CalculateNextDueDate(getBillIfOwnedByUser.Frequency, getBillIfOwnedByUser.MonthDay, skipBillDTO.SkipDatePastThisDate);
 
         var editBill = new EditBillEntity(skipBillDTO.Id, nextDueDate: newDueDate);
-        await _dbService.EditBill(editBill);
+        await _dbService.EditBill(editBill, cancellationToken);
 
-        await _messageBus.PublishEvent(new EventUpdate(user, DataTypes.Bill), CancellationToken.None);
+        await _messageBus.PublishEvent(new EventUpdate(user, DataTypes.Bill), cancellationToken);
 
         return Result.Success();
     }
 
-    private async Task<BillEntity?> GetBillIfOwnedByUser(int billId, AuthenticatedUser user)
+    private async Task<BillEntity?> GetBillIfOwnedByUser(int billId, AuthenticatedUser user,
+        CancellationToken cancellationToken)
     {
-        var bill = await _dbService.GetBillById(billId);
+        var bill = await _dbService.GetBillById(billId, cancellationToken);
         if (bill == null)
         {
             return null;
         }
-        var billsPayerAccount = await _accountDatabase.GetAccountUserEntity(bill.PayerId);
+        var billsPayerAccount = await _accountDatabase.GetAccountUserEntity(bill.PayerId, cancellationToken);
         if (billsPayerAccount == null || billsPayerAccount.UserId != user.Id || !billsPayerAccount.UserOwnsAccount)
         {
             return null;

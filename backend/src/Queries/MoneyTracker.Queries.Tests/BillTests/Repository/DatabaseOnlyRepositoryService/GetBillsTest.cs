@@ -16,12 +16,12 @@ public class GetAllBillsTest : DatabaseOnlyTestHelper
             new(319, 563, "QYYbCMbZsu", 183, new DateOnly(), 2, "CJMkFSlBok", 272, "yAKoErAMiK", 927, "KIbcSMciyY"),
             new(890, 124, "bqNyVwFbmt", 106, new DateOnly(), 53, "YBvVPJhtkQ", 413, "kxvILdiuVv", 688, "eeQpHYFTxE")
         };
-        _mockBillDatabase.Setup(x => x.GetAllBills(_authedUser))
+        _mockBillDatabase.Setup(x => x.GetAllBills(_authedUser, CancellationToken.None))
             .ReturnsAsync(bills);
 
-        await _billRepositoryService.GetAllBills(_authedUser);
+        await _billRepositoryService.GetAllBills(_authedUser, CancellationToken.None);
 
-        _mockBillDatabase.Verify(x => x.GetAllBills(_authedUser), Times.Once);
+        _mockBillDatabase.Verify(x => x.GetAllBills(_authedUser, CancellationToken.None), Times.Once);
         VerifyNoOtherCalls();
     }
 }

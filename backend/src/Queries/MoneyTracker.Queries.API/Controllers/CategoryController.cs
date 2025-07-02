@@ -20,9 +20,9 @@ public class CategoryController
 
     [HttpGet]
     [Route("get")]
-    public async Task<IActionResult> GetAllCategories()
+    public async Task<IActionResult> GetAllCategories(CancellationToken cancellationToken)
     {
-        var categories = await _categoryService.GetAllCategories();
+        var categories = await _categoryService.GetAllCategories(cancellationToken);
         return ControllerHelper.Convert(categories);
     }
 }

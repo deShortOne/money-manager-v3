@@ -30,7 +30,7 @@ public sealed class SaveAndGetCategoriesTest : IClassFixture<MongoDbFixture>
 
         await registerCache.SaveTransactions(authedUser, transactions);
 
-        var result = await registerCache.GetAllTransactions(authedUser);
+        var result = await registerCache.GetAllTransactions(authedUser, CancellationToken.None);
 
         Assert.Equal(transactions, result);
     }
@@ -52,7 +52,7 @@ public sealed class SaveAndGetCategoriesTest : IClassFixture<MongoDbFixture>
 
         await registerCache.SaveTransactions(authedUser1, transactions);
 
-        var result = await registerCache.GetAllTransactions(authedUser2);
+        var result = await registerCache.GetAllTransactions(authedUser2, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
     }

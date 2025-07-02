@@ -28,41 +28,43 @@ public class AccountService : IAccountService
         _messageBus = messageBus;
     }
 
-    public async Task<Result> AddAccount(string token, AddAccountToUserRequest newAccountRequest)
+    public async Task<Result> AddAccount(string token, AddAccountToUserRequest newAccountRequest,
+        CancellationToken cancellationToken)
     {
-        var userResult = await _userService.GetUserFromToken(token);
+        var userResult = await _userService.GetUserFromToken(token, cancellationToken);
         if (userResult.HasError)
             return userResult;
 
         var user = userResult.Value;
-        var accountToAdd = await _accountDb.GetAccountByName(newAccountRequest.AccountName);
+        var accountToAdd = await _accountDb.GetAccountByName(newAccountRequest.AccountName, cancellationToken);
         if (accountToAdd == null)
         {
-            accountToAdd = new AccountEntity(_idGenerator.NewInt(await _accountDb.GetLastAccountId()), newAccountRequest.AccountName);
-            await _accountDb.AddAccount(accountToAdd);
+            accountToAdd = new AccountEntity(_idGenerator.NewInt(await _accountDb.GetLastAccountId(cancellationToken)), newAccountRequest.AccountName);
+            await _accountDb.AddAccount(accountToAdd, cancellationToken);
         }
-        if (await _accountDb.GetAccountUserEntity(accountToAdd.Id, user.Id) != null)
+        if (await _accountDb.GetAccountUserEntity(accountToAdd.Id, user.Id, cancellationToken) != null)
         {
             return Error.Validation("", "Account is already associated with user");
         }
 
-        var newAccountUserId = _idGenerator.NewInt(await _accountDb.GetLastAccountUserId());
+        var newAccountUserId = _idGenerator.NewInt(await _accountDb.GetLastAccountUserId(cancellationToken));
         var newAccountToUse = new AccountUserEntity(
             newAccountUserId,
             accountToAdd.Id,
             user.Id,
             newAccountRequest.DoesUserOwnAccount
         );
-        await _accountDb.AddAccountToUser(newAccountToUse);
+        await _accountDb.AddAccountToUser(newAccountToUse, cancellationToken);
 
-        await _messageBus.PublishEvent(new EventUpdate(user, DataTypes.Account), CancellationToken.None);
+        await _messageBus.PublishEvent(new EventUpdate(user, DataTypes.Account), cancellationToken);
 
         return Result.Success();
     }
 
-    public async Task<bool> DoesUserOwnAccount(AuthenticatedUser user, int accountId)
+    public async Task<bool> DoesUserOwnAccount(AuthenticatedUser user, int accountId,
+        CancellationToken cancellationToken)
     {
-        var account = await _accountDb.GetAccountUserEntity(accountId);
+        var account = await _accountDb.GetAccountUserEntity(accountId, cancellationToken);
         if (account == null || account.UserId != user.Id)
             return false;
 

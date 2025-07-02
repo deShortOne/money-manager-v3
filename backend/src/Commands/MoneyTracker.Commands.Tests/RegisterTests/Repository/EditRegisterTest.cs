@@ -50,7 +50,7 @@ public sealed class EditRegisterTest : RegisterRespositoryTestHelper
         await SetupDb();
 
         var editBillRequest = new EditTransactionEntity(_id, payee, amount, datePaid, categoryId, payerId);
-        await _registerRepo.EditTransaction(editBillRequest);
+        await _registerRepo.EditTransaction(editBillRequest, CancellationToken.None);
 
         var expectedBillEntity = new TransactionEntity(_id,
             payee ?? _payeeId,

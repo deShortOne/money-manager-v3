@@ -18,13 +18,13 @@ public sealed class GetAllCategories : CategoryTestHelper
         ];
 
 
-        _mockCategoryDatabase.Setup(x => x.GetAllCategories()).ReturnsAsync(categoryDatabaseReturn);
+        _mockCategoryDatabase.Setup(x => x.GetAllCategories(CancellationToken.None)).ReturnsAsync(categoryDatabaseReturn);
 
         Assert.Multiple(async () =>
         {
-            Assert.Equal(expected, await _budgetService.GetAllCategories());
+            Assert.Equal(expected, await _budgetService.GetAllCategories(CancellationToken.None));
 
-            _mockCategoryDatabase.Verify(x => x.GetAllCategories(), Times.Once);
+            _mockCategoryDatabase.Verify(x => x.GetAllCategories(CancellationToken.None), Times.Once);
 
             EnsureAllMocksHadNoOtherCalls();
         });

@@ -19,7 +19,7 @@ public sealed class GetBudgetTest : IClassFixture<PostgresDbFixture>
         var db = new PostgresDatabase(_postgresFixture.ConnectionString);
         var budgetDb = new BudgetDatabase(db);
 
-        var actual = await budgetDb.GetBudget(new AuthenticatedUser(1));
+        var actual = await budgetDb.GetBudget(new AuthenticatedUser(1), CancellationToken.None);
 
         var expected = new List<BudgetGroupEntity>()
         {
@@ -44,7 +44,7 @@ public sealed class GetBudgetTest : IClassFixture<PostgresDbFixture>
         var db = new PostgresDatabase(_postgresFixture.ConnectionString);
         var budgetDb = new BudgetDatabase(db);
 
-        var actual = await budgetDb.GetBudget(new AuthenticatedUser(2));
+        var actual = await budgetDb.GetBudget(new AuthenticatedUser(2), CancellationToken.None);
 
         var expected = new List<BudgetGroupEntity>()
         {

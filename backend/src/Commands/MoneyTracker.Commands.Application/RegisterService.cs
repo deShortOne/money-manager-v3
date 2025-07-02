@@ -53,15 +53,16 @@ public class RegisterService : IRegisterService
         _pollingController = pollingController;
     }
 
-    public async Task<Result> AddTransaction(string token, NewTransactionRequest newTransaction)
+    public async Task<Result> AddTransaction(string token, NewTransactionRequest newTransaction,
+        CancellationToken cancellationToken)
     {
-        var userResult = await _userService.GetUserFromToken(token);
+        var userResult = await _userService.GetUserFromToken(token, cancellationToken);
         if (userResult.HasError)
             return userResult;
 
         var user = userResult.Value;
 
-        var payerAccount = await _accountDb.GetAccountUserEntity(newTransaction.PayerId);
+        var payerAccount = await _accountDb.GetAccountUserEntity(newTransaction.PayerId, cancellationToken);
         if (payerAccount == null) // to be logged differently
         {
             return Error.Validation("RegisterService.AddTransaction", "Payer account not found");
@@ -71,7 +72,7 @@ public class RegisterService : IRegisterService
             return Error.Validation("RegisterService.AddTransaction", "Payer account not found");
         }
 
-        var payeeAccount = await _accountDb.GetAccountUserEntity(newTransaction.PayeeId);
+        var payeeAccount = await _accountDb.GetAccountUserEntity(newTransaction.PayeeId, cancellationToken);
         if (payeeAccount == null) // to be logged differently
         {
             return Error.Validation("RegisterService.AddTransaction", "Payee account not found");
@@ -81,12 +82,12 @@ public class RegisterService : IRegisterService
             return Error.Validation("RegisterService.AddTransaction", "Payee account not found");
         }
 
-        if (!await _categoryService.DoesCategoryExist(newTransaction.CategoryId))
+        if (!await _categoryService.DoesCategoryExist(newTransaction.CategoryId, cancellationToken))
         {
             return Error.Validation("RegisterService.AddTransaction", "Category not found");
         }
 
-        var newTransactionId = _idGenerator.NewInt(await _registerDb.GetLastTransactionId());
+        var newTransactionId = _idGenerator.NewInt(await _registerDb.GetLastTransactionId(cancellationToken));
 
         var dtoToDb = new TransactionEntity(newTransactionId,
             newTransaction.PayeeId,
@@ -95,27 +96,28 @@ public class RegisterService : IRegisterService
             newTransaction.CategoryId,
             newTransaction.PayerId);
 
-        await _registerDb.AddTransaction(dtoToDb);
+        await _registerDb.AddTransaction(dtoToDb, cancellationToken);
 
-        await _messageBus.PublishEvent(new EventUpdate(user, DataTypes.Register), CancellationToken.None);
+        await _messageBus.PublishEvent(new EventUpdate(user, DataTypes.Register), cancellationToken);
 
         return Result.Success();
     }
 
-    public async Task<Result> EditTransaction(string token, EditTransactionRequest editTransaction)
+    public async Task<Result> EditTransaction(string token, EditTransactionRequest editTransaction,
+        CancellationToken cancellationToken)
     {
-        var userResult = await _userService.GetUserFromToken(token);
+        var userResult = await _userService.GetUserFromToken(token, cancellationToken);
         if (userResult.HasError)
             return userResult;
 
         var user = userResult.Value;
-        if (!await DoesUserOwnTransaction(user, editTransaction.Id))
+        if (!await DoesUserOwnTransaction(user, editTransaction.Id, cancellationToken))
         {
             return Error.Validation("RegisterService.EditTransaction", "Transaction not found");
         }
         if (editTransaction.PayerId != null)
         {
-            var payerAccount = await _accountDb.GetAccountUserEntity((int)editTransaction.PayerId, user.Id);
+            var payerAccount = await _accountDb.GetAccountUserEntity((int)editTransaction.PayerId, user.Id, cancellationToken);
             if (payerAccount == null)
             {
                 return Error.Validation("RegisterService.EditTransaction", "Payer account not found");
@@ -127,44 +129,47 @@ public class RegisterService : IRegisterService
         var dtoToDb = new EditTransactionEntity(editTransaction.Id, editTransaction.PayeeId, editTransaction.Amount,
             editTransaction.DatePaid, editTransaction.CategoryId, editTransaction.PayerId);
 
-        await _registerDb.EditTransaction(dtoToDb);
+        await _registerDb.EditTransaction(dtoToDb, cancellationToken);
 
-        await _messageBus.PublishEvent(new EventUpdate(user, DataTypes.Register), CancellationToken.None);
+        await _messageBus.PublishEvent(new EventUpdate(user, DataTypes.Register), cancellationToken);
 
         return Result.Success();
     }
 
-    public async Task<Result> DeleteTransaction(string token, DeleteTransactionRequest deleteTransaction)
+    public async Task<Result> DeleteTransaction(string token, DeleteTransactionRequest deleteTransaction,
+        CancellationToken cancellationToken)
     {
-        var userResult = await _userService.GetUserFromToken(token);
+        var userResult = await _userService.GetUserFromToken(token, cancellationToken);
         if (userResult.HasError)
             return userResult;
 
         var user = userResult.Value;
-        if (!await DoesUserOwnTransaction(user, deleteTransaction.Id))
+        if (!await DoesUserOwnTransaction(user, deleteTransaction.Id, cancellationToken))
         {
             return Error.Validation("RegisterService.DeleteTransaction", "Transaction not found");
         }
 
-        await _registerDb.DeleteTransaction(deleteTransaction.Id);
+        await _registerDb.DeleteTransaction(deleteTransaction.Id, cancellationToken);
 
-        await _messageBus.PublishEvent(new EventUpdate(user, DataTypes.Register), CancellationToken.None);
+        await _messageBus.PublishEvent(new EventUpdate(user, DataTypes.Register), cancellationToken);
 
         return Result.Success();
     }
 
-    public async Task<bool> DoesUserOwnTransaction(AuthenticatedUser user, int transactionId)
+    public async Task<bool> DoesUserOwnTransaction(AuthenticatedUser user, int transactionId,
+        CancellationToken cancellationToken)
     {
-        var transaction = await _registerDb.GetTransaction(transactionId);
+        var transaction = await _registerDb.GetTransaction(transactionId, cancellationToken);
         if (transaction == null)
             return false;
 
-        return await _accountService.DoesUserOwnAccount(user, transaction.PayerId);
+        return await _accountService.DoesUserOwnAccount(user, transaction.PayerId, cancellationToken);
     }
 
-    public async Task<Result> CreateTransactionFromReceipt(string token, IFormFile createTransactionFromReceipt)
+    public async Task<Result> CreateTransactionFromReceipt(string token, IFormFile createTransactionFromReceipt,
+        CancellationToken cancellationToken)
     {
-        var userResult = await _userService.GetUserFromToken(token);
+        var userResult = await _userService.GetUserFromToken(token, cancellationToken);
         if (userResult.HasError)
             return userResult;
 
@@ -173,9 +178,9 @@ public class RegisterService : IRegisterService
         var fileName = string.Join(".", fileNameBrokenUp.Take(fileNameBrokenUp.Length - 1));
         var id = $"{fileName}-{_dateTimeProvider.Now.ToString("yyyyMMdd-HHmmss")}.{fileNameExtension}";
 
-        var fileUploadUrl = await _fileUploadRepository.UploadAsync(createTransactionFromReceipt, id);
+        var fileUploadUrl = await _fileUploadRepository.UploadAsync(createTransactionFromReceipt, id, cancellationToken);
 
-        await _receiptCommandRepository.AddReceipt(new ReceiptEntity(id, userResult.Value.Id, createTransactionFromReceipt.FileName, fileUploadUrl, (int)ReceiptState.Processing));
+        await _receiptCommandRepository.AddReceipt(new ReceiptEntity(id, userResult.Value.Id, createTransactionFromReceipt.FileName, fileUploadUrl, (int)ReceiptState.Processing), cancellationToken);
 
         _pollingController.EnablePolling();
 

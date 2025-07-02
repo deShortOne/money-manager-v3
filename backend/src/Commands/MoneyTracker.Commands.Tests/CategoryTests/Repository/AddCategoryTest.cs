@@ -15,7 +15,7 @@ public sealed class AddCategoryTest : CategoryRespositoryTestHelper
         var name = "Super duper new category";
         var newCategoryEntity = new CategoryEntity(id, name);
 
-        await _categoryRepo.AddCategory(newCategoryEntity);
+        await _categoryRepo.AddCategory(newCategoryEntity, CancellationToken.None);
 
         List<CategoryEntity> results = await GetAllCategoryEntities();
 

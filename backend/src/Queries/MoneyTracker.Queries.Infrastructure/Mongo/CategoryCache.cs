@@ -14,7 +14,7 @@ public class CategoryCache : ICategoryCache
         _categoriesCollection = database.GetCollection<MongoCategoryEntity>("category");
     }
 
-    public async Task<ResultT<List<CategoryEntity>>> GetAllCategories()
+    public async Task<ResultT<List<CategoryEntity>>> GetAllCategories(CancellationToken cancellationToken)
     {
         var categoriessLisIterable = await _categoriesCollection.FindAsync(_ => true);
         var categoriessLis = await categoriessLisIterable.ToListAsync();

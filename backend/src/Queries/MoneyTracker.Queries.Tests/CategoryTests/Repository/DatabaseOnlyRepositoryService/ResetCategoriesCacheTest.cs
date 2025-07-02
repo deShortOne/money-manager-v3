@@ -5,6 +5,6 @@ public class ResetCategoriesCacheTest : DatabaseOnlyTestHelper
     [Fact]
     public async Task RefetchDataFromDatabaseAndWriteIntoCache()
     {
-        await Assert.ThrowsAsync<NotImplementedException>(_categoryRepositoryService.ResetCategoriesCache);
+        await Assert.ThrowsAsync<NotImplementedException>(() => _categoryRepositoryService.ResetCategoriesCache(CancellationToken.None));
     }
 }

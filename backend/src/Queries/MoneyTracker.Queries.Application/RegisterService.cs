@@ -17,15 +17,16 @@ public class RegisterService : IRegisterService
         _userRepository = userRepository;
     }
 
-    public async Task<ResultT<List<TransactionResponse>>> GetAllTransactions(string token)
+    public async Task<ResultT<List<TransactionResponse>>> GetAllTransactions(string token,
+        CancellationToken cancellationToken)
     {
-        var userAuth = await _userRepository.GetUserAuthFromToken(token);
+        var userAuth = await _userRepository.GetUserAuthFromToken(token, cancellationToken);
         if (userAuth == null)
             throw new InvalidDataException("Token not found");
         userAuth.CheckValidation();
 
         var user = new AuthenticatedUser(userAuth.User.Id);
-        var transactionsResult = await _registerRepository.GetAllTransactions(user);
+        var transactionsResult = await _registerRepository.GetAllTransactions(user, cancellationToken);
         if (transactionsResult.HasError)
             return transactionsResult.Error!;
 

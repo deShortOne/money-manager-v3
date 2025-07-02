@@ -15,7 +15,8 @@ public class BillCache : IBillCache
         _billCollection = database.GetCollection<MongoBillEntity>("bill");
     }
 
-    public async Task<ResultT<List<BillEntity>>> GetAllBills(AuthenticatedUser user)
+    public async Task<ResultT<List<BillEntity>>> GetAllBills(AuthenticatedUser user,
+        CancellationToken cancellationToken)
     {
         var billsLisIterable = await _billCollection.FindAsync(Builders<MongoBillEntity>.Filter.Eq(x => x.User, user));
         var billsLis = await billsLisIterable.ToListAsync();

@@ -28,24 +28,24 @@ public class EventProcessor : IEventProcessor
         _userRepositoryService = userRepositoryService;
     }
 
-    public void ProcessEvent(EventUpdate eventUpdate)
+    public void ProcessEvent(EventUpdate eventUpdate, CancellationToken cancellationToken)
     {
         switch (eventUpdate.Name)
         {
             case DataTypes.Account:
-                _accountRepositoryService.ResetAccountsCache(eventUpdate.User);
+                _accountRepositoryService.ResetAccountsCache(eventUpdate.User, cancellationToken);
                 break;
             case DataTypes.Bill:
-                _billRepositoryService.ResetBillsCache(eventUpdate.User);
+                _billRepositoryService.ResetBillsCache(eventUpdate.User, cancellationToken);
                 break;
             case DataTypes.Budget:
-                _budgetRepositoryService.ResetBudgetCache(eventUpdate.User);
+                _budgetRepositoryService.ResetBudgetCache(eventUpdate.User, cancellationToken);
                 break;
             case DataTypes.Category:
-                _categoryRepositoryService.ResetCategoriesCache();
+                _categoryRepositoryService.ResetCategoriesCache(cancellationToken);
                 break;
             case DataTypes.Register:
-                _registerRepositoryService.ResetTransactionsCache(eventUpdate.User);
+                _registerRepositoryService.ResetTransactionsCache(eventUpdate.User, cancellationToken);
                 break;
             case DataTypes.User:
                 _userRepositoryService.ResetUsersCache();

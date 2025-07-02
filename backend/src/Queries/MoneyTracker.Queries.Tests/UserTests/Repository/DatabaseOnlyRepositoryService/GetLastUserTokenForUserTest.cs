@@ -8,9 +8,9 @@ public class GetLastUserTokenForUserTest : CacheAsideTestHelper
     [Fact]
     public async Task WillCallOffToDatabase()
     {
-        await _userRepositoryService.GetLastUserTokenForUser(_userEntity);
+        await _userRepositoryService.GetLastUserTokenForUser(_userEntity, CancellationToken.None);
 
-        _mockUserDatabase.Verify(x => x.GetLastUserTokenForUser(_userEntity));
+        _mockUserDatabase.Verify(x => x.GetLastUserTokenForUser(_userEntity, CancellationToken.None));
         VerifyNoOtherCalls();
     }
 }

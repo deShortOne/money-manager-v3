@@ -23,7 +23,7 @@ public sealed class GetUserFromTokenTest : IClassFixture<PostgresDbFixture>
     {
         var expected = new UserAuthentication(new(1, "root", "IfC1pbsUdKwcX68HPvPybQ==.bfXuHix96vvlXfGqLpY+/kRgBnCbXCU/Kqu2uIY8M60="), "token 1", new DateTime(2025, 2, 3, 23, 24, 13, 126, 961), _mockDateTimeProvider.Object);
 
-        var actual = await _userAuthRepo.GetUserAuthFromToken("token 1");
+        var actual = await _userAuthRepo.GetUserAuthFromToken("token 1", CancellationToken.None);
         Assert.Equal(expected, actual);
     }
 
@@ -31,7 +31,7 @@ public sealed class GetUserFromTokenTest : IClassFixture<PostgresDbFixture>
     [Fact]
     public async Task ReturnNullForIncorrectToken()
     {
-        var actual = await _userAuthRepo.GetUserAuthFromToken(Guid.NewGuid().ToString());
+        var actual = await _userAuthRepo.GetUserAuthFromToken(Guid.NewGuid().ToString(), CancellationToken.None);
         Assert.Null(actual);
     }
 }

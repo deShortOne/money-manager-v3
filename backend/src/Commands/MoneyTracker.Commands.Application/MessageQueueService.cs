@@ -51,7 +51,7 @@ public class MessageQueueService : IMessageQueueService
             foreach (var record in body.Records)
             {
                 var filename = record.S3.S3Object.Key;
-                var entity = await _receiptCommandRepository.GetReceiptById(filename);
+                var entity = await _receiptCommandRepository.GetReceiptById(filename, cancellationToken);
                 if (entity is null)
                 {
                     Console.WriteLine($"ERROR: entity doesnt exist id: {filename}");
@@ -76,10 +76,10 @@ public class MessageQueueService : IMessageQueueService
                     PayeeId = null,
                     PayerId = null,
                 };
-                await _receiptCommandRepository.CreateTemporaryTransaction(temporaryTransaction);
+                await _receiptCommandRepository.CreateTemporaryTransaction(temporaryTransaction, cancellationToken);
 
                 entity.UpdateState((int)ReceiptState.Pending);
-                await _receiptCommandRepository.UpdateReceipt(entity);
+                await _receiptCommandRepository.UpdateReceipt(entity, cancellationToken);
             }
             if (body.Records.Count == 0)
             {
@@ -91,7 +91,7 @@ public class MessageQueueService : IMessageQueueService
             }
         }
 
-        if (await _receiptCommandRepository.GetNumberOfReceiptsLeftToProcess() == 0)
+        if (await _receiptCommandRepository.GetNumberOfReceiptsLeftToProcess(cancellationToken) == 0)
         {
             _pollingController.DisablePolling();
         }

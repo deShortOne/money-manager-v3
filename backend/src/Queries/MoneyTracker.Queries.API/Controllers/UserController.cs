@@ -18,15 +18,15 @@ public class UserController
 
     [HttpPost]
     [Route("get-token")]
-    public Task<string> GetUserToken(LoginWithUsernameAndPassword usernameAndPassword)
+    public Task<string> GetUserToken(LoginWithUsernameAndPassword usernameAndPassword, CancellationToken cancellationToken)
     {
-        return _authService.GetUserToken(usernameAndPassword);
+        return _authService.GetUserToken(usernameAndPassword, cancellationToken);
     }
 
     [HttpPost]
     [Route("is-token-valid")]
-    public Task<bool> IsTokenValid(string token)
+    public Task<bool> IsTokenValid(string token, CancellationToken cancellationToken)
     {
-        return _authService.IsTokenValid(token);
+        return _authService.IsTokenValid(token, cancellationToken);
     }
 }

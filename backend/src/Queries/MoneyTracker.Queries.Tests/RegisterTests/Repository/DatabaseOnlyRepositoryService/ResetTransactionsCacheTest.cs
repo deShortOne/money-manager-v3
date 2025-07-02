@@ -8,6 +8,6 @@ public class ResetTransactionsCacheTest : DatabaseOnlyTestHelper
     public async Task RefetchDataFromDatabaseAndWriteIntoCache()
     {
         await Assert.ThrowsAsync<NotImplementedException>(()
-            => _registerRepositoryService.ResetTransactionsCache(It.IsAny<AuthenticatedUser>()));
+            => _registerRepositoryService.ResetTransactionsCache(It.IsAny<AuthenticatedUser>(), CancellationToken.None));
     }
 }

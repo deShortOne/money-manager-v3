@@ -7,7 +7,7 @@ public sealed class GetLastIdTest : BillRespositoryTestHelper
     [Fact]
     public async Task GetLastIdWithNoDataInTables()
     {
-        Assert.Equal(0, await _billRepo.GetLastId());
+        Assert.Equal(0, await _billRepo.GetLastId(CancellationToken.None));
     }
 
     [Fact]
@@ -15,6 +15,6 @@ public sealed class GetLastIdTest : BillRespositoryTestHelper
     {
         Migration.CheckMigration(_postgres.GetConnectionString(), new MigrationOption(true));
 
-        Assert.Equal(3, await _billRepo.GetLastId());
+        Assert.Equal(3, await _billRepo.GetLastId(CancellationToken.None));
     }
 }

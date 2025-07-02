@@ -20,9 +20,9 @@ public class RegisterController
 
     [HttpGet]
     [Route("get")]
-    public async Task<IActionResult> GetAllTransactions()
+    public async Task<IActionResult> GetAllTransactions(CancellationToken cancellationToken)
     {
-        var transactionsResult = await _registerService.GetAllTransactions(ControllerHelper.GetToken(_httpContextAccessor));
+        var transactionsResult = await _registerService.GetAllTransactions(ControllerHelper.GetToken(_httpContextAccessor), cancellationToken);
 
         return ControllerHelper.Convert(transactionsResult);
     }

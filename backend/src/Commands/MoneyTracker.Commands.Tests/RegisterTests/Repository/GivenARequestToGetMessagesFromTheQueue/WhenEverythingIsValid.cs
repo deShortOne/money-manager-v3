@@ -43,7 +43,7 @@ public class WhenEverythingIsValid : IAsyncLifetime
     public void ThenTheResponseIsCorrect()
     {
         Assert.Single(_receiveMessageResponse.Messages);
-        Assert.Equal(_queueUrl, _receiveMessageResponse.Messages[0].MessageId);
+        Assert.Equal(_firstMessageId, _receiveMessageResponse.Messages[0].MessageId);
     }
 
     [Fact]

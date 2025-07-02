@@ -17,7 +17,8 @@ public class RegisterDatabase : IRegisterDatabase
         _database = db;
     }
 
-    public async Task<ResultT<List<TransactionEntity>>> GetAllTransactions(AuthenticatedUser user)
+    public async Task<ResultT<List<TransactionEntity>>> GetAllTransactions(AuthenticatedUser user,
+        CancellationToken cancellationToken)
     {
         var query = """
             SELECT register.id,
@@ -62,7 +63,7 @@ public class RegisterDatabase : IRegisterDatabase
             new NpgsqlParameter("user_id", user.Id),
         };
 
-        using var reader = await _database.GetTable(query, queryParams);
+        using var reader = await _database.GetTable(query, cancellationToken, queryParams);
 
         var res = new List<TransactionEntity>();
         foreach (DataRow row in reader.Rows)

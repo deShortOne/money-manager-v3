@@ -38,21 +38,23 @@ public class UserService : IUserService
         _messageBus = messageBus;
     }
 
-    public async Task<Result> AddNewUser(LoginWithUsernameAndPassword usernameAndPassword)
+    public async Task<Result> AddNewUser(LoginWithUsernameAndPassword usernameAndPassword,
+        CancellationToken cancellationToken)
     {
-        var lastUserId = await _userRepository.GetLastUserId();
+        var lastUserId = await _userRepository.GetLastUserId(cancellationToken);
         var newUserId = _idGenerator.NewInt(lastUserId);
         var hashedPassword = _passwordHasher.HashPassword(usernameAndPassword.Password);
-        await _userRepository.AddUser(new UserEntity(newUserId, usernameAndPassword.Username, hashedPassword));
+        await _userRepository.AddUser(new UserEntity(newUserId, usernameAndPassword.Username, hashedPassword), cancellationToken);
 
-        await _messageBus.PublishEvent(new EventUpdate(new AuthenticatedUser(newUserId), DataTypes.User), CancellationToken.None);
+        await _messageBus.PublishEvent(new EventUpdate(new AuthenticatedUser(newUserId), DataTypes.User), cancellationToken);
 
         return Result.Success();
     }
 
-    public async Task<Result> LoginUser(LoginWithUsernameAndPassword usernameAndPassword)
+    public async Task<Result> LoginUser(LoginWithUsernameAndPassword usernameAndPassword,
+        CancellationToken cancellationToken)
     {
-        var user = await _userRepository.GetUserByUsername(usernameAndPassword.Username);
+        var user = await _userRepository.GetUserByUsername(usernameAndPassword.Username, cancellationToken);
         if (user == null)
             return Error.NotFound("UserService.LoginUser", "User does not exist");
         if (!_passwordHasher.VerifyPassword(user.Password, usernameAndPassword.Password))
@@ -60,16 +62,16 @@ public class UserService : IUserService
 
         var expiration = _dateTimeProvider.Now.AddMinutes(ExpirationTimeInMinutesForAll);
         var tokenToReturn = _authenticationService.GenerateToken(new UserIdentity(user.Id.ToString()), expiration);
-        await _userRepository.StoreTemporaryTokenToUser(new UserAuthentication(user, tokenToReturn, expiration, _dateTimeProvider));
+        await _userRepository.StoreTemporaryTokenToUser(new UserAuthentication(user, tokenToReturn, expiration, _dateTimeProvider), cancellationToken);
 
-        await _messageBus.PublishEvent(new EventUpdate(new AuthenticatedUser(user.Id), DataTypes.User), CancellationToken.None);
+        await _messageBus.PublishEvent(new EventUpdate(new AuthenticatedUser(user.Id), DataTypes.User), cancellationToken);
 
         return Result.Success();
     }
 
-    public async Task<ResultT<AuthenticatedUser>> GetUserFromToken(string token)
+    public async Task<ResultT<AuthenticatedUser>> GetUserFromToken(string token, CancellationToken cancellationToken)
     {
-        var userAuth = await _userRepository.GetUserAuthFromToken(token);
+        var userAuth = await _userRepository.GetUserAuthFromToken(token, cancellationToken);
         if (userAuth == null)
             return Error.AccessUnAuthorised("UserService.GetUserFromToken", "Token not found");
 

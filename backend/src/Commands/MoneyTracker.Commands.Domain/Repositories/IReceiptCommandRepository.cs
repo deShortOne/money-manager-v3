@@ -5,10 +5,11 @@ using MoneyTracker.Commands.Domain.Entities.Transaction;
 namespace MoneyTracker.Commands.Domain.Repositories;
 public interface IReceiptCommandRepository
 {
-    Task AddReceipt(ReceiptEntity receipt);
-    Task UpdateReceipt(ReceiptEntity receipt);
-    Task<ReceiptEntity?> GetReceiptById(string id);
-    Task<int> GetNumberOfReceiptsLeftToProcess();
+    Task AddReceipt(ReceiptEntity receipt, CancellationToken cancellationToken);
+    Task UpdateReceipt(ReceiptEntity receipt, CancellationToken cancellationToken);
+    Task<ReceiptEntity?> GetReceiptById(string id, CancellationToken cancellationToken);
+    Task<int> GetNumberOfReceiptsLeftToProcess(CancellationToken cancellationToken);
 
-    Task CreateTemporaryTransaction(TemporaryTransactionEntity temporaryTransactionEntity);
+    Task CreateTemporaryTransaction(TemporaryTransactionEntity temporaryTransactionEntity,
+        CancellationToken cancellationToken);
 }

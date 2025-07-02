@@ -17,7 +17,7 @@ public class S3Repository : IFileUploadRepository
         _bucketName = bucketName;
     }
 
-    public async Task<string> UploadAsync(IFormFile file, string id)
+    public async Task<string> UploadAsync(IFormFile file, string id, CancellationToken cancellationToken)
     {
         using var stream = file.OpenReadStream();
         var request = new PutObjectRequest
@@ -28,20 +28,20 @@ public class S3Repository : IFileUploadRepository
             InputStream = stream,
         };
 
-        await _s3Client.PutObjectAsync(request);
+        await _s3Client.PutObjectAsync(request, cancellationToken);
 
         return $"https://{_bucketName}.s3.amazonaws.com/{id}";
     }
 
-    public async Task<string> GetContentsOfFile(string id, CancellationToken ct)
+    public async Task<string> GetContentsOfFile(string id, CancellationToken cancellationToken)
     {
         using var response = await _s3Client.GetObjectAsync(new GetObjectRequest
         {
             Key = id,
             BucketName = _bucketName,
-        });
+        }, cancellationToken);
 
         using StreamReader reader = new StreamReader(response.ResponseStream, Encoding.UTF8);
-        return await reader.ReadToEndAsync();
+        return await reader.ReadToEndAsync(cancellationToken);
     }
 }

@@ -20,15 +20,15 @@ public class BudgetService : IBudgetService
         _userRepository = userRepository;
     }
 
-    public async Task<ResultT<List<BudgetGroupResponse>>> GetBudget(string token)
+    public async Task<ResultT<List<BudgetGroupResponse>>> GetBudget(string token, CancellationToken cancellationToken)
     {
-        var userAuth = await _userRepository.GetUserAuthFromToken(token);
+        var userAuth = await _userRepository.GetUserAuthFromToken(token, cancellationToken);
         if (userAuth == null)
             throw new InvalidDataException("Token not found");
         userAuth.CheckValidation();
 
         var user = new AuthenticatedUser(userAuth.User.Id);
-        var budgetResult = await _budgetRepository.GetBudget(user);
+        var budgetResult = await _budgetRepository.GetBudget(user, cancellationToken);
         if (budgetResult.HasError)
             return budgetResult.Error!;
 

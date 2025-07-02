@@ -16,12 +16,12 @@ public class GetAllTransactionsTest : DatabaseOnlyTestHelper
             new(341, 254, "ZXrYRIZjAH", 946, new DateOnly(), 29, "oUFYOolNTI", 169, "EVOwvBPhGp"),
             new(66, 290, "mQuxYVliBr", 917, new DateOnly(), 253, "NzwRYulZfN", 429, "vPRBXvFuOc"),
         };
-        _mockRegisterDatabase.Setup(x => x.GetAllTransactions(_authedUser))
+        _mockRegisterDatabase.Setup(x => x.GetAllTransactions(_authedUser, CancellationToken.None))
             .ReturnsAsync(Transactions);
 
-        await _registerRepositoryService.GetAllTransactions(_authedUser);
+        await _registerRepositoryService.GetAllTransactions(_authedUser, CancellationToken.None);
 
-        _mockRegisterDatabase.Verify(x => x.GetAllTransactions(_authedUser));
+        _mockRegisterDatabase.Verify(x => x.GetAllTransactions(_authedUser, CancellationToken.None));
         VerifyNoOtherCalls();
     }
 }

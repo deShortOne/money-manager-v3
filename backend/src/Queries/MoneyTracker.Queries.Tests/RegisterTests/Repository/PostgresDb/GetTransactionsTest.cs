@@ -19,7 +19,7 @@ public sealed class GetTransactionsTest : IClassFixture<PostgresDbFixture>
         var db = new PostgresDatabase(_postgresFixture.ConnectionString);
         var registerDb = new RegisterDatabase(db);
 
-        var actual = await registerDb.GetAllTransactions(new AuthenticatedUser(1));
+        var actual = await registerDb.GetAllTransactions(new AuthenticatedUser(1), CancellationToken.None);
 
         var expected = new List<TransactionEntity>()
         {
@@ -41,7 +41,7 @@ public sealed class GetTransactionsTest : IClassFixture<PostgresDbFixture>
         var db = new PostgresDatabase(_postgresFixture.ConnectionString);
         var registerDb = new RegisterDatabase(db);
 
-        var actual = await registerDb.GetAllTransactions(new AuthenticatedUser(2));
+        var actual = await registerDb.GetAllTransactions(new AuthenticatedUser(2), CancellationToken.None);
 
         var expected = new List<TransactionEntity>()
         {

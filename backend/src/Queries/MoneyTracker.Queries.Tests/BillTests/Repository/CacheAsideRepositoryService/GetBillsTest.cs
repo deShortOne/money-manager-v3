@@ -11,12 +11,12 @@ public class GetAllBillsTest : CacheAsideTestHelper
     [Fact]
     public async Task DataInCacheWontCallOffToDatabase()
     {
-        _mockBillCache.Setup(x => x.GetAllBills(_authedUser))
+        _mockBillCache.Setup(x => x.GetAllBills(_authedUser, CancellationToken.None))
             .ReturnsAsync(new List<BillEntity>());
 
-        await _billRepositoryService.GetAllBills(_authedUser);
+        await _billRepositoryService.GetAllBills(_authedUser, CancellationToken.None);
 
-        _mockBillCache.Verify(x => x.GetAllBills(_authedUser));
+        _mockBillCache.Verify(x => x.GetAllBills(_authedUser, CancellationToken.None));
         VerifyNoOtherCalls();
     }
 
@@ -30,15 +30,15 @@ public class GetAllBillsTest : CacheAsideTestHelper
             new(890, 124, "bqNyVwFbmt", 106, new DateOnly(), 53, "YBvVPJhtkQ", 413, "kxvILdiuVv", 688, "eeQpHYFTxE")
         };
 
-        _mockBillCache.Setup(x => x.GetAllBills(_authedUser))
+        _mockBillCache.Setup(x => x.GetAllBills(_authedUser, CancellationToken.None))
             .ReturnsAsync(Error.NotFound("", ""));
-        _mockBillDatabase.Setup(x => x.GetAllBills(_authedUser))
+        _mockBillDatabase.Setup(x => x.GetAllBills(_authedUser, CancellationToken.None))
             .ReturnsAsync(Bills);
 
-        await _billRepositoryService.GetAllBills(_authedUser);
+        await _billRepositoryService.GetAllBills(_authedUser, CancellationToken.None);
 
-        _mockBillCache.Verify(x => x.GetAllBills(_authedUser));
-        _mockBillDatabase.Verify(x => x.GetAllBills(_authedUser));
+        _mockBillCache.Verify(x => x.GetAllBills(_authedUser, CancellationToken.None));
+        _mockBillDatabase.Verify(x => x.GetAllBills(_authedUser, CancellationToken.None));
         _mockBillCache.Verify(x => x.SaveBills(_authedUser, Bills));
         VerifyNoOtherCalls();
     }

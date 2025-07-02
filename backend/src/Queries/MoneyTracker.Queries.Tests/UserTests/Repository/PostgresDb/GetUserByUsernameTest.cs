@@ -11,12 +11,12 @@ public sealed class GetUserByUsernameTest : UserDatabaseTestHelper
     [Fact]
     public async Task SuccessfullyGetsAValidUser()
     {
-        Assert.NotNull(await _userRepository.GetUserByUsername("root"));
+        Assert.NotNull(await _userRepository.GetUserByUsername("root", CancellationToken.None));
     }
 
     [Fact]
     public async Task FailsToGetsAnInvalidUser()
     {
-        Assert.Null(await _userRepository.GetUserByUsername("fdashg"));
+        Assert.Null(await _userRepository.GetUserByUsername("fdashg", CancellationToken.None));
     }
 }

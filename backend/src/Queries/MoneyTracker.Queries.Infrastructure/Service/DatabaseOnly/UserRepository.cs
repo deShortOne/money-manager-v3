@@ -13,11 +13,11 @@ public class UserRepository : IUserRepositoryService
         _userDatabase = userDatabase;
     }
 
-    public Task<string?> GetLastUserTokenForUser(UserEntity user)
-        => _userDatabase.GetLastUserTokenForUser(user);
-    public Task<IUserAuthentication?> GetUserAuthFromToken(string token)
-        => _userDatabase.GetUserAuthFromToken(token);
-    public Task<UserEntity?> GetUserByUsername(string username)
-        => _userDatabase.GetUserByUsername(username);
+    public Task<string?> GetLastUserTokenForUser(UserEntity user, CancellationToken cancellationToken)
+        => _userDatabase.GetLastUserTokenForUser(user, cancellationToken);
+    public Task<IUserAuthentication?> GetUserAuthFromToken(string token, CancellationToken cancellationToken)
+        => _userDatabase.GetUserAuthFromToken(token, cancellationToken);
+    public Task<UserEntity?> GetUserByUsername(string username, CancellationToken cancellationToken)
+        => _userDatabase.GetUserByUsername(username, cancellationToken);
     public Task ResetUsersCache() => throw new NotImplementedException();
 }

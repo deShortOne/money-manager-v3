@@ -11,12 +11,12 @@ public class GetAllTransactionsTest : CacheAsideTestHelper
     [Fact]
     public async Task DataInCacheWontCallOffToDatabase()
     {
-        _mockRegisterCache.Setup(x => x.GetAllTransactions(_authedUser))
+        _mockRegisterCache.Setup(x => x.GetAllTransactions(_authedUser, CancellationToken.None))
             .ReturnsAsync(new List<TransactionEntity>());
 
-        await _registerRepositoryService.GetAllTransactions(_authedUser);
+        await _registerRepositoryService.GetAllTransactions(_authedUser, CancellationToken.None);
 
-        _mockRegisterCache.Verify(x => x.GetAllTransactions(_authedUser));
+        _mockRegisterCache.Verify(x => x.GetAllTransactions(_authedUser, CancellationToken.None));
         VerifyNoOtherCalls();
     }
 
@@ -30,15 +30,15 @@ public class GetAllTransactionsTest : CacheAsideTestHelper
             new(66, 290, "mQuxYVliBr", 917, new DateOnly(), 253, "NzwRYulZfN", 429, "vPRBXvFuOc"),
         };
 
-        _mockRegisterCache.Setup(x => x.GetAllTransactions(_authedUser))
+        _mockRegisterCache.Setup(x => x.GetAllTransactions(_authedUser, CancellationToken.None))
             .ReturnsAsync(Error.NotFound("", ""));
-        _mockRegisterDatabase.Setup(x => x.GetAllTransactions(_authedUser))
+        _mockRegisterDatabase.Setup(x => x.GetAllTransactions(_authedUser, CancellationToken.None))
             .ReturnsAsync(Transactions);
 
-        await _registerRepositoryService.GetAllTransactions(_authedUser);
+        await _registerRepositoryService.GetAllTransactions(_authedUser, CancellationToken.None);
 
-        _mockRegisterCache.Verify(x => x.GetAllTransactions(_authedUser));
-        _mockRegisterDatabase.Verify(x => x.GetAllTransactions(_authedUser));
+        _mockRegisterCache.Verify(x => x.GetAllTransactions(_authedUser, CancellationToken.None));
+        _mockRegisterDatabase.Verify(x => x.GetAllTransactions(_authedUser, CancellationToken.None));
         _mockRegisterCache.Verify(x => x.SaveTransactions(_authedUser, Transactions));
         VerifyNoOtherCalls();
     }

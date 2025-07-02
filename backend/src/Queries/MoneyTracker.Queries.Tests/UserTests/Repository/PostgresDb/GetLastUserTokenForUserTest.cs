@@ -17,12 +17,12 @@ public sealed class GetLastUserTokenForUserTest : UserDatabaseTestHelper
     [Fact]
     public async Task SuccessfullyGetLastToken()
     {
-        Assert.Equal("token 2", await _userRepository.GetLastUserTokenForUser(new UserEntity(1, "", "")));
+        Assert.Equal("token 2", await _userRepository.GetLastUserTokenForUser(new UserEntity(1, "", ""), CancellationToken.None));
     }
 
     [Fact]
     public async Task FailToGetTokenForUsersNotInDb()
     {
-        Assert.Null(await _userRepository.GetLastUserTokenForUser(new UserEntity(2, "", "")));
+        Assert.Null(await _userRepository.GetLastUserTokenForUser(new UserEntity(2, "", ""), CancellationToken.None));
     }
 }

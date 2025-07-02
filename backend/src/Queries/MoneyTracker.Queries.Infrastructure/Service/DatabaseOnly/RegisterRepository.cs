@@ -15,10 +15,11 @@ public class RegisterRepository : IRegisterRepositoryService
         _registerDatabase = registerDatabase;
     }
 
-    public Task<ResultT<List<TransactionEntity>>> GetAllTransactions(AuthenticatedUser user)
+    public Task<ResultT<List<TransactionEntity>>> GetAllTransactions(AuthenticatedUser user,
+        CancellationToken cancellationToken)
     {
-        return _registerDatabase.GetAllTransactions(user);
+        return _registerDatabase.GetAllTransactions(user, cancellationToken);
     }
 
-    public Task ResetTransactionsCache(AuthenticatedUser user) => throw new NotImplementedException();
+    public Task ResetTransactionsCache(AuthenticatedUser user, CancellationToken cancellationToken) => throw new NotImplementedException();
 }

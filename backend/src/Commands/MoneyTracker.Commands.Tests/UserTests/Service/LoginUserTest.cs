@@ -23,23 +23,23 @@ public sealed class LoginUserTest : UserTestHelper
         var userIdentity = new UserIdentity(_userId.ToString());
         var userAuthentication = new UserAuthentication(user, _newToken.ToString(), _timeExpire, _mockDateTimeProvider.Object);
 
-        _mockUserDatabase.Setup(x => x.GetUserByUsername(_username))
+        _mockUserDatabase.Setup(x => x.GetUserByUsername(_username, CancellationToken.None))
             .ReturnsAsync(user);
         _mockPasswordHasher.Setup(x => x.VerifyPassword(_passwordFromDatabase, _passwordFromLogin))
             .Returns(true);
         _mockAuthService.Setup(x => x.GenerateToken(userIdentity, _timeExpire)).Returns(_newToken.ToString());
         _mockDateTimeProvider.Setup(x => x.Now).Returns(_timeNow);
-        _mockUserDatabase.Setup(x => x.StoreTemporaryTokenToUser(userAuthentication));
+        _mockUserDatabase.Setup(x => x.StoreTemporaryTokenToUser(userAuthentication, CancellationToken.None));
 
         Assert.Multiple(async () =>
         {
-            await _userService.LoginUser(new LoginWithUsernameAndPassword(_username, _passwordFromLogin));
+            await _userService.LoginUser(new LoginWithUsernameAndPassword(_username, _passwordFromLogin), CancellationToken.None);
 
-            _mockUserDatabase.Verify(x => x.GetUserByUsername(_username), Times.Once);
+            _mockUserDatabase.Verify(x => x.GetUserByUsername(_username, CancellationToken.None), Times.Once);
             _mockPasswordHasher.Verify(x => x.VerifyPassword(_passwordFromDatabase, _passwordFromLogin), Times.Once);
             _mockDateTimeProvider.Verify(x => x.Now, Times.Once);
             _mockAuthService.Verify(x => x.GenerateToken(userIdentity, _timeExpire), Times.Once);
-            _mockUserDatabase.Verify(x => x.StoreTemporaryTokenToUser(userAuthentication), Times.Once);
+            _mockUserDatabase.Verify(x => x.StoreTemporaryTokenToUser(userAuthentication, CancellationToken.None), Times.Once);
 
             _mockMessageBusClient.Verify(x => x.PublishEvent(
                 new EventUpdate(new AuthenticatedUser(_userId), DataTypes.User), It.IsAny<CancellationToken>()

@@ -42,7 +42,7 @@ public sealed class EditBudgetTest : BudgetRespositoryTestHelper
         await SetupDb();
 
         var editBillRequest = new EditBudgetCategoryEntity(_userId, _categoryId, budgetGroupId, planned);
-        await _budgetRepo.EditBudgetCategory(editBillRequest);
+        await _budgetRepo.EditBudgetCategory(editBillRequest, CancellationToken.None);
 
         var expectedBillEntity = new BudgetCategoryEntity(_userId,
             budgetGroupId ?? _budgetGroupId,

@@ -29,7 +29,7 @@ public sealed class SaveAndGetBillsTest : IClassFixture<MongoDbFixture>
 
         await billCache.SaveBills(authedUser, bills);
 
-        var result = await billCache.GetAllBills(authedUser);
+        var result = await billCache.GetAllBills(authedUser, CancellationToken.None);
 
         Assert.Equal(bills, result);
     }
@@ -51,7 +51,7 @@ public sealed class SaveAndGetBillsTest : IClassFixture<MongoDbFixture>
 
         await billCache.SaveBills(authedUser1, bills);
 
-        var result = await billCache.GetAllBills(authedUser2);
+        var result = await billCache.GetAllBills(authedUser2, CancellationToken.None);
 
         Assert.False(result.IsSuccess);
     }

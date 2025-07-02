@@ -17,7 +17,7 @@ public class ReceiptCommandRepository : IReceiptCommandRepository
         _database = db;
     }
 
-    public async Task AddReceipt(ReceiptEntity receipt)
+    public async Task AddReceipt(ReceiptEntity receipt, CancellationToken cancellationToken)
     {
         var query = """
             INSERT INTO receipt_analysis_state (id, users_id, filename, url, state) VALUES
@@ -32,10 +32,10 @@ public class ReceiptCommandRepository : IReceiptCommandRepository
             new NpgsqlParameter("state", receipt.State),
         };
 
-        await _database.UpdateTable(query, queryParams);
+        await _database.UpdateTable(query, cancellationToken, queryParams);
     }
 
-    public async Task<ReceiptEntity?> GetReceiptById(string id)
+    public async Task<ReceiptEntity?> GetReceiptById(string id, CancellationToken cancellationToken)
     {
         var query = """
             SELECT id, users_id, filename, url, state
@@ -47,7 +47,7 @@ public class ReceiptCommandRepository : IReceiptCommandRepository
             new NpgsqlParameter("id", id),
         };
 
-        using var dataTable = await _database.GetTable(query, queryParams);
+        using var dataTable = await _database.GetTable(query, cancellationToken, queryParams);
         if (dataTable.Rows.Count == 0)
             return null;
 
@@ -60,7 +60,7 @@ public class ReceiptCommandRepository : IReceiptCommandRepository
             data.Field<int>("state"));
     }
 
-    public async Task UpdateReceipt(ReceiptEntity receipt)
+    public async Task UpdateReceipt(ReceiptEntity receipt, CancellationToken cancellationToken)
     {
         var query = """
             UPDATE receipt_analysis_state
@@ -79,10 +79,10 @@ public class ReceiptCommandRepository : IReceiptCommandRepository
             new NpgsqlParameter("state", receipt.State),
         };
 
-        await _database.UpdateTable(query, queryParams);
+        await _database.UpdateTable(query, cancellationToken, queryParams);
     }
 
-    public async Task<int> GetNumberOfReceiptsLeftToProcess()
+    public async Task<int> GetNumberOfReceiptsLeftToProcess(CancellationToken cancellationToken)
     {
         var query = """
             SELECT count(*) as num_left
@@ -90,14 +90,15 @@ public class ReceiptCommandRepository : IReceiptCommandRepository
             WHERE state = 1;
         """;
 
-        using var dataTable = await _database.GetTable(query);
+        using var dataTable = await _database.GetTable(query, cancellationToken);
         if (dataTable.Rows.Count == 0)
             return 0;
 
         return dataTable.Rows[0].Field<int>("num_left");
     }
 
-    public async Task CreateTemporaryTransaction(TemporaryTransactionEntity temporaryTransactionEntity)
+    public async Task CreateTemporaryTransaction(TemporaryTransactionEntity temporaryTransactionEntity,
+        CancellationToken cancellationToken)
     {
         var query = """
             INSERT INTO receipt_to_register (users_id, payee, amount, datepaid, category_id, account_id) VALUES
@@ -113,6 +114,6 @@ public class ReceiptCommandRepository : IReceiptCommandRepository
             new NpgsqlParameter<int?>("account_id", temporaryTransactionEntity.PayerId),
         };
 
-        await _database.UpdateTable(query, queryParams);
+        await _database.UpdateTable(query, cancellationToken, queryParams);
     }
 }

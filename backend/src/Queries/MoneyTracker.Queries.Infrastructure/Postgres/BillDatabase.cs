@@ -16,7 +16,8 @@ public class BillDatabase : IBillDatabase
         _database = db;
     }
 
-    public async Task<ResultT<List<BillEntity>>> GetAllBills(AuthenticatedUser user)
+    public async Task<ResultT<List<BillEntity>>> GetAllBills(AuthenticatedUser user,
+        CancellationToken cancellationToken)
     {
         string query = """
             SELECT b.id,
@@ -58,7 +59,7 @@ public class BillDatabase : IBillDatabase
                 new NpgsqlParameter("user_id", user.Id),
             };
 
-        using var reader = await _database.GetTable(query, queryParams);
+        using var reader = await _database.GetTable(query, cancellationToken, queryParams);
 
         List<BillEntity> res = [];
         foreach (DataRow row in reader.Rows)

@@ -18,12 +18,12 @@ public class ResetAccountCacheTest : CacheAsideTestHelper
             new(1, "iukhm"),
         };
 
-        _mockAccountDatabase.Setup(x => x.GetAccountsOwnedByUser(_authedUser))
+        _mockAccountDatabase.Setup(x => x.GetAccountsOwnedByUser(_authedUser, CancellationToken.None))
             .ReturnsAsync(accounts);
 
-        await _accountRepositoryService.ResetAccountsCache(_authedUser);
+        await _accountRepositoryService.ResetAccountsCache(_authedUser, CancellationToken.None);
 
-        _mockAccountDatabase.Verify(x => x.GetAccountsOwnedByUser(_authedUser));
+        _mockAccountDatabase.Verify(x => x.GetAccountsOwnedByUser(_authedUser, CancellationToken.None));
         _mockAccountCache.Verify(x => x.SaveAccounts(_authedUser, accounts));
         VerifyNoOtherCalls();
     }

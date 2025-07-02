@@ -20,9 +20,9 @@ public class BudgetController
 
     [HttpGet]
     [Route("get")]
-    public async Task<IActionResult> GetBudget()
+    public async Task<IActionResult> GetBudget(CancellationToken cancellationToken)
     {
-        var budget = await _budgetService.GetBudget(ControllerHelper.GetToken(_httpContextAccessor));
+        var budget = await _budgetService.GetBudget(ControllerHelper.GetToken(_httpContextAccessor), cancellationToken);
 
         return ControllerHelper.Convert(budget);
     }
