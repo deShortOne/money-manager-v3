@@ -28,13 +28,14 @@ public class BillCache : IBillCache
         return billsLis[0].Bills;
     }
 
-    public async Task<Result> SaveBills(AuthenticatedUser user, List<BillEntity> bills)
+    public async Task<Result> SaveBills(AuthenticatedUser user, List<BillEntity> bills,
+        CancellationToken cancellationToken)
     {
         await _billCollection.InsertOneAsync(new MongoBillEntity()
         {
             User = user,
             Bills = bills,
-        });
+        }, cancellationToken: cancellationToken);
 
         return Result.Success();
     }

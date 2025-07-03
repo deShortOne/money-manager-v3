@@ -3,6 +3,7 @@ using MoneyTracker.Common.Result;
 using MoneyTracker.Queries.Domain.Entities.BudgetCategory;
 using MoneyTracker.Queries.Domain.Repositories.Cache;
 using MoneyTracker.Queries.Infrastructure.Mongo.Entities;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace MoneyTracker.Queries.Infrastructure.Mongo;
@@ -28,13 +29,14 @@ public class BudgetCache : IBudgetCache
         return budgetLis[0].Budget;
     }
 
-    public async Task<Result> SaveBudget(AuthenticatedUser user, List<BudgetGroupEntity> budget)
+    public async Task<Result> SaveBudget(AuthenticatedUser user, List<BudgetGroupEntity> budget,
+        CancellationToken cancellationToken)
     {
         await _budgetCollection.InsertOneAsync(new MongoBudgetEntity()
         {
             User = user,
             Budget = budget,
-        });
+        }, cancellationToken: cancellationToken);
 
         return Result.Success();
     }

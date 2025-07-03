@@ -34,7 +34,7 @@ public sealed class SaveAndGetBudgetTest : IClassFixture<MongoDbFixture>
             new(607, "rBSStnXVqF", 329, 580, 99, []),
         };
 
-        await budgetCache.SaveBudget(authedUser, budgetGroup);
+        await budgetCache.SaveBudget(authedUser, budgetGroup, CancellationToken.None);
 
         var result = await budgetCache.GetBudget(authedUser, CancellationToken.None);
 
@@ -61,7 +61,7 @@ public sealed class SaveAndGetBudgetTest : IClassFixture<MongoDbFixture>
             new(607, "rBSStnXVqF", 329, 580, 99, []),
         };
 
-        await budgetCache.SaveBudget(authedUser1, budgetGroup);
+        await budgetCache.SaveBudget(authedUser1, budgetGroup, CancellationToken.None);
 
         var result = await budgetCache.GetBudget(authedUser2, CancellationToken.None);
 

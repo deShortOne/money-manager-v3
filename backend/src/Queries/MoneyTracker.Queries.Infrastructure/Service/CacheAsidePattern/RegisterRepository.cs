@@ -28,7 +28,7 @@ public class RegisterRepository : IRegisterRepositoryService
         if (result.HasError)
         {
             result = await _registerDatabase.GetAllTransactions(user, cancellationToken);
-            await _registerCache.SaveTransactions(user, result.Value);
+            await _registerCache.SaveTransactions(user, result.Value, cancellationToken);
         }
 
         return result;
@@ -37,6 +37,6 @@ public class RegisterRepository : IRegisterRepositoryService
     public async Task ResetTransactionsCache(AuthenticatedUser user, CancellationToken cancellationToken)
     {
         var result = await _registerDatabase.GetAllTransactions(user, cancellationToken);
-        await _registerCache.SaveTransactions(user, result.Value);
+        await _registerCache.SaveTransactions(user, result.Value, cancellationToken);
     }
 }

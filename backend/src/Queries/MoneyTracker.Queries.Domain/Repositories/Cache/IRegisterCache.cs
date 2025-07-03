@@ -7,5 +7,6 @@ using MoneyTracker.Queries.Domain.Repositories.Database;
 namespace MoneyTracker.Queries.Domain.Repositories.Cache;
 public interface IRegisterCache : IRegisterDatabase
 {
-    Task<Result> SaveTransactions(AuthenticatedUser user, List<TransactionEntity> transactions);
+    Task<Result> SaveTransactions(AuthenticatedUser user, List<TransactionEntity> transactions,
+        CancellationToken cancellationToken);
 }

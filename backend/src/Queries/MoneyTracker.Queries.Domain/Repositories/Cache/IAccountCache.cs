@@ -7,5 +7,5 @@ using MoneyTracker.Queries.Domain.Repositories.Database;
 namespace MoneyTracker.Queries.Domain.Repositories.Cache;
 public interface IAccountCache : IAccountDatabase
 {
-    Task<Result> SaveAccounts(AuthenticatedUser user, List<AccountEntity> accounts);
+    Task<Result> SaveAccounts(AuthenticatedUser user, List<AccountEntity> accounts, CancellationToken cancellationToken);
 }

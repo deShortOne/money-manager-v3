@@ -23,7 +23,7 @@ public class ResetCategoriesCacheTest : CacheAsideTestHelper
         await _categoryRepositoryService.ResetCategoriesCache(CancellationToken.None);
 
         _mockCategoryDatabase.Verify(x => x.GetAllCategories(CancellationToken.None));
-        _mockCategoryCache.Verify(x => x.SaveCategories(categorys));
+        _mockCategoryCache.Verify(x => x.SaveCategories(categorys, CancellationToken.None));
         VerifyNoOtherCalls();
     }
 }

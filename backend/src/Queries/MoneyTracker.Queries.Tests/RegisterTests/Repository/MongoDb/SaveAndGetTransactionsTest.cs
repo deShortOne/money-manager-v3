@@ -28,7 +28,7 @@ public sealed class SaveAndGetCategoriesTest : IClassFixture<MongoDbFixture>
             new(360, 523, "ABZsTGUygM", 477, new DateOnly(), 954, "JhNpucfVNM", 767, "WDpsTOHItH"),
         };
 
-        await registerCache.SaveTransactions(authedUser, transactions);
+        await registerCache.SaveTransactions(authedUser, transactions, CancellationToken.None);
 
         var result = await registerCache.GetAllTransactions(authedUser, CancellationToken.None);
 
@@ -50,7 +50,7 @@ public sealed class SaveAndGetCategoriesTest : IClassFixture<MongoDbFixture>
             new(360, 523, "ABZsTGUygM", 477, new DateOnly(), 954, "JhNpucfVNM", 767, "WDpsTOHItH"),
         };
 
-        await registerCache.SaveTransactions(authedUser1, transactions);
+        await registerCache.SaveTransactions(authedUser1, transactions, CancellationToken.None);
 
         var result = await registerCache.GetAllTransactions(authedUser2, CancellationToken.None);
 

@@ -23,7 +23,7 @@ public class ResetBillsCacheTest : CacheAsideTestHelper
         await _billRepositoryService.ResetBillsCache(_authedUser, CancellationToken.None);
 
         _mockBillDatabase.Verify(x => x.GetAllBills(_authedUser, CancellationToken.None));
-        _mockBillCache.Verify(x => x.SaveBills(_authedUser, bills));
+        _mockBillCache.Verify(x => x.SaveBills(_authedUser, bills, CancellationToken.None));
         VerifyNoOtherCalls();
     }
 }

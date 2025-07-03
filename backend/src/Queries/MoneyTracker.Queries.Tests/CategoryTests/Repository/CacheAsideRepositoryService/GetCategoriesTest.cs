@@ -39,7 +39,7 @@ public class GetAllCategoriesTest : CacheAsideTestHelper
 
         _mockCategoryCache.Verify(x => x.GetAllCategories(CancellationToken.None));
         _mockCategoryDatabase.Verify(x => x.GetAllCategories(CancellationToken.None));
-        _mockCategoryCache.Verify(x => x.SaveCategories(categories));
+        _mockCategoryCache.Verify(x => x.SaveCategories(categories, CancellationToken.None));
         VerifyNoOtherCalls();
     }
 }

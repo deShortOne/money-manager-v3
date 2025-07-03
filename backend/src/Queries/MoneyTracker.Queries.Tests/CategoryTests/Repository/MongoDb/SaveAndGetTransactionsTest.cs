@@ -25,7 +25,7 @@ public sealed class SaveAndGetCategoriesTest : IClassFixture<MongoDbFixture>
             new(415, "zXdOgFqRCc"),
         };
 
-        await categoriesCache.SaveCategories(categories);
+        await categoriesCache.SaveCategories(categories, CancellationToken.None);
 
         var result = await categoriesCache.GetAllCategories(CancellationToken.None);
 

@@ -27,7 +27,7 @@ public sealed class SaveAndGetBillsTest : IClassFixture<MongoDbFixture>
             new(479, 259, "OAYEzcsXAu", 942, new DateOnly(), 436, "HOWUSFkJLd", 947, "NBOGcXgiXW", 91, "alGdvJZVPh"),
         };
 
-        await billCache.SaveBills(authedUser, bills);
+        await billCache.SaveBills(authedUser, bills, CancellationToken.None);
 
         var result = await billCache.GetAllBills(authedUser, CancellationToken.None);
 
@@ -49,7 +49,7 @@ public sealed class SaveAndGetBillsTest : IClassFixture<MongoDbFixture>
             new(479, 259, "OAYEzcsXAu", 942, new DateOnly(), 436, "HOWUSFkJLd", 947, "NBOGcXgiXW", 91, "alGdvJZVPh"),
         };
 
-        await billCache.SaveBills(authedUser1, bills);
+        await billCache.SaveBills(authedUser1, bills, CancellationToken.None);
 
         var result = await billCache.GetAllBills(authedUser2, CancellationToken.None);
 

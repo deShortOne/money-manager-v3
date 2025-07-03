@@ -28,7 +28,7 @@ public class BudgetRepository : IBudgetRepositoryService
         if (result.HasError)
         {
             result = await _budgetDatabase.GetBudget(user, cancellationToken);
-            await _budgetCache.SaveBudget(user, result.Value);
+            await _budgetCache.SaveBudget(user, result.Value, cancellationToken);
         }
 
         return result;
@@ -37,6 +37,6 @@ public class BudgetRepository : IBudgetRepositoryService
     public async Task ResetBudgetCache(AuthenticatedUser user, CancellationToken cancellationToken)
     {
         var result = await _budgetDatabase.GetBudget(user, cancellationToken);
-        await _budgetCache.SaveBudget(user, result.Value);
+        await _budgetCache.SaveBudget(user, result.Value, cancellationToken);
     }
 }

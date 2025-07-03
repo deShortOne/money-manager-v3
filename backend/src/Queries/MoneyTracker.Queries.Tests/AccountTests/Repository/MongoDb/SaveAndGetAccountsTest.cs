@@ -28,7 +28,7 @@ public sealed class SaveAndGetAccountsTest : IClassFixture<MongoDbFixture>
             new(8, "cptcnvravt"),
         };
 
-        await accountCache.SaveAccounts(authedUser, accounts);
+        await accountCache.SaveAccounts(authedUser, accounts, CancellationToken.None);
 
         var result = await accountCache.GetAccountsOwnedByUser(authedUser, CancellationToken.None);
 
@@ -52,7 +52,7 @@ public sealed class SaveAndGetAccountsTest : IClassFixture<MongoDbFixture>
             new(8, "cptcnvravt"),
         };
 
-        await accountCache.SaveAccounts(authedUser1, accounts);
+        await accountCache.SaveAccounts(authedUser1, accounts, CancellationToken.None);
 
         var result = await accountCache.GetAccountsOwnedByUser(authedUser2, CancellationToken.None);
 

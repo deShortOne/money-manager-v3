@@ -23,7 +23,7 @@ public class ResetBudgetCacheTest : CacheAsideTestHelper
         await _budgetRepositoryService.ResetBudgetCache(_authedUser, CancellationToken.None);
 
         _mockBudgetDatabase.Verify(x => x.GetBudget(_authedUser, CancellationToken.None));
-        _mockBudgetCache.Verify(x => x.SaveBudget(_authedUser, budget));
+        _mockBudgetCache.Verify(x => x.SaveBudget(_authedUser, budget, CancellationToken.None));
         VerifyNoOtherCalls();
     }
 }

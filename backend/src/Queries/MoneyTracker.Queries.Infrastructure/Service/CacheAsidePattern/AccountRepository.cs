@@ -27,7 +27,7 @@ public class AccountRepository : IAccountRepositoryService
         if (result.HasError)
         {
             result = await _accountDatabase.GetAccountsOwnedByUser(user, cancellationToken);
-            await _accountCache.SaveAccounts(user, result.Value);
+            await _accountCache.SaveAccounts(user, result.Value, cancellationToken);
         }
 
         return result;
@@ -36,6 +36,6 @@ public class AccountRepository : IAccountRepositoryService
     public async Task ResetAccountsCache(AuthenticatedUser user, CancellationToken cancellationToken)
     {
         ResultT<List<AccountEntity>> result = await _accountDatabase.GetAccountsOwnedByUser(user, cancellationToken);
-        await _accountCache.SaveAccounts(user, result.Value);
+        await _accountCache.SaveAccounts(user, result.Value, cancellationToken);
     }
 }

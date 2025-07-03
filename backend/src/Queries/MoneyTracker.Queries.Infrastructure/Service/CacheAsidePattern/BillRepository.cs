@@ -28,7 +28,7 @@ public class BillRepository : IBillRepositoryService
         if (result.HasError)
         {
             result = await _billDatabase.GetAllBills(user, cancellationToken);
-            await _billCache.SaveBills(user, result.Value);
+            await _billCache.SaveBills(user, result.Value, cancellationToken);
         }
 
         return result;
@@ -37,6 +37,6 @@ public class BillRepository : IBillRepositoryService
     public async Task ResetBillsCache(AuthenticatedUser user, CancellationToken cancellationToken)
     {
         var result = await _billDatabase.GetAllBills(user, cancellationToken);
-        await _billCache.SaveBills(user, result.Value);
+        await _billCache.SaveBills(user, result.Value, cancellationToken);
     }
 }

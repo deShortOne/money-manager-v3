@@ -24,7 +24,7 @@ public class ResetAccountCacheTest : CacheAsideTestHelper
         await _accountRepositoryService.ResetAccountsCache(_authedUser, CancellationToken.None);
 
         _mockAccountDatabase.Verify(x => x.GetAccountsOwnedByUser(_authedUser, CancellationToken.None));
-        _mockAccountCache.Verify(x => x.SaveAccounts(_authedUser, accounts));
+        _mockAccountCache.Verify(x => x.SaveAccounts(_authedUser, accounts, CancellationToken.None));
         VerifyNoOtherCalls();
     }
 }

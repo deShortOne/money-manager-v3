@@ -39,7 +39,7 @@ public class GetAllBillsTest : CacheAsideTestHelper
 
         _mockBillCache.Verify(x => x.GetAllBills(_authedUser, CancellationToken.None));
         _mockBillDatabase.Verify(x => x.GetAllBills(_authedUser, CancellationToken.None));
-        _mockBillCache.Verify(x => x.SaveBills(_authedUser, Bills));
+        _mockBillCache.Verify(x => x.SaveBills(_authedUser, Bills, CancellationToken.None));
         VerifyNoOtherCalls();
     }
 }

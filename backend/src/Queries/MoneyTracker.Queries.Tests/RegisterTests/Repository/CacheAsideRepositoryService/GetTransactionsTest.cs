@@ -39,7 +39,7 @@ public class GetAllTransactionsTest : CacheAsideTestHelper
 
         _mockRegisterCache.Verify(x => x.GetAllTransactions(_authedUser, CancellationToken.None));
         _mockRegisterDatabase.Verify(x => x.GetAllTransactions(_authedUser, CancellationToken.None));
-        _mockRegisterCache.Verify(x => x.SaveTransactions(_authedUser, Transactions));
+        _mockRegisterCache.Verify(x => x.SaveTransactions(_authedUser, Transactions, CancellationToken.None));
         VerifyNoOtherCalls();
     }
 }

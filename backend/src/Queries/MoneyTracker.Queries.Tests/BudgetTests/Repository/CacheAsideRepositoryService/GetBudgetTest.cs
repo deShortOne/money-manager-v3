@@ -39,7 +39,7 @@ public class GetBudgetTest : CacheAsideTestHelper
 
         _mockBudgetCache.Verify(x => x.GetBudget(_authedUser, CancellationToken.None));
         _mockBudgetDatabase.Verify(x => x.GetBudget(_authedUser, CancellationToken.None));
-        _mockBudgetCache.Verify(x => x.SaveBudget(_authedUser, budgets));
+        _mockBudgetCache.Verify(x => x.SaveBudget(_authedUser, budgets, CancellationToken.None));
         VerifyNoOtherCalls();
     }
 }

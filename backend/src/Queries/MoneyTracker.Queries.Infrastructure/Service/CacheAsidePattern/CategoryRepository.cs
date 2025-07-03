@@ -26,7 +26,7 @@ public class CategoryRepository : ICategoryRepositoryService
         if (result.HasError)
         {
             result = await _categoryDatabase.GetAllCategories(cancellationToken);
-            await _categoryCache.SaveCategories(result.Value);
+            await _categoryCache.SaveCategories(result.Value, cancellationToken);
         }
 
         return result;
@@ -35,6 +35,6 @@ public class CategoryRepository : ICategoryRepositoryService
     public async Task ResetCategoriesCache(CancellationToken cancellationToken)
     {
         var result = await _categoryDatabase.GetAllCategories(cancellationToken);
-        await _categoryCache.SaveCategories(result.Value);
+        await _categoryCache.SaveCategories(result.Value, cancellationToken);
     }
 }
