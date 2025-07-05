@@ -12,6 +12,6 @@ public interface IRegisterService
     Task<Result> EditTransaction(string token, EditTransactionRequest editTransaction,
         CancellationToken cancellationToken);
     Task<bool> DoesUserOwnTransaction(AuthenticatedUser user, int transactionId, CancellationToken cancellationToken);
-    Task<Result> CreateTransactionFromReceipt(string token, IFormFile createTransactionFromReceipt,
+    Task<ResultT<string>> CreateTransactionFromReceipt(string token, IFormFile createTransactionFromReceipt,
         CancellationToken cancellationToken);
 }

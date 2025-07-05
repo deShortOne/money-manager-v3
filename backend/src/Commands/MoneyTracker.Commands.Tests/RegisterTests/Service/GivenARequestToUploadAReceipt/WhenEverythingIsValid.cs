@@ -17,7 +17,7 @@ public class WhenEverythingIsValid : RegisterTestHelper, IAsyncLifetime
     private Mock<IFormFile> _mockFileFile = new Mock<IFormFile>();
 
     private ReceiptEntity _resultReceiptEntity;
-    private Result _result;
+    private ResultT<string> _result;
 
     public async Task InitializeAsync()
     {
@@ -48,6 +48,7 @@ public class WhenEverythingIsValid : RegisterTestHelper, IAsyncLifetime
     public void ThenThereAreNoErrors()
     {
         Assert.True(_result.IsSuccess);
+        Assert.Equal(_fileUploadId, _result.Value);
     }
 
     [Fact]

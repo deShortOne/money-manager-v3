@@ -30,7 +30,7 @@ public class RegisterService : IRegisterService
         if (transactionsResult.HasError)
             return transactionsResult.Error!;
 
-        List<TransactionResponse> res = [];
+        var res = new List<TransactionResponse>();
         foreach (var transaction in transactionsResult.Value)
         {
             res.Add(new(transaction.Id,
@@ -51,4 +51,6 @@ public class RegisterService : IRegisterService
         }
         return res;
     }
+
+
 }

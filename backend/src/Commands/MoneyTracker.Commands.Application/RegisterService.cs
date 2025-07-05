@@ -166,12 +166,12 @@ public class RegisterService : IRegisterService
         return await _accountService.DoesUserOwnAccount(user, transaction.PayerId, cancellationToken);
     }
 
-    public async Task<Result> CreateTransactionFromReceipt(string token, IFormFile createTransactionFromReceipt,
+    public async Task<ResultT<string>> CreateTransactionFromReceipt(string token, IFormFile createTransactionFromReceipt,
         CancellationToken cancellationToken)
     {
         var userResult = await _userService.GetUserFromToken(token, cancellationToken);
         if (userResult.HasError)
-            return userResult;
+            return userResult.Error!;
 
         var fileNameBrokenUp = createTransactionFromReceipt.FileName.Split(".");
         var fileNameExtension = fileNameBrokenUp[fileNameBrokenUp.Length - 1];
@@ -184,6 +184,6 @@ public class RegisterService : IRegisterService
 
         _pollingController.EnablePolling();
 
-        return Result.Success();
+        return id;
     }
 }
