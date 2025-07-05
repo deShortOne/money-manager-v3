@@ -1,6 +1,8 @@
+using MoneyTracker.Commands.Domain.Entities.MessageQueuePolling;
+using MoneyTracker.Common.Result;
 
 namespace MoneyTracker.Commands.Domain.Handlers;
 public interface IMessageQueueService
 {
-    Task PollAsync(CancellationToken cancellationToken);
+    Task<ResultT<MessageQueueResult>> PollAsync(CancellationToken cancellationToken);
 }

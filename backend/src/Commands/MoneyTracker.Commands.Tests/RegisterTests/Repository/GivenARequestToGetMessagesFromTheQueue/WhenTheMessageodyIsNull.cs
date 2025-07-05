@@ -1,30 +1,27 @@
 
+using System.Text.Json;
 using Amazon.SQS;
 using Amazon.SQS.Model;
+using MoneyTracker.Commands.Application.AWS;
+using MoneyTracker.Commands.Domain.Entities.MessageQueuePolling;
 using MoneyTracker.Commands.Infrastructure.AWS;
+using MoneyTracker.Common.Result;
 using Moq;
 
 namespace MoneyTracker.Commands.Tests.RegisterTests.Repository.GivenARequestToGetMessagesFromTheQueue;
-public class WhenEverythingIsValid : IAsyncLifetime
+public class WhenTheMessageodyIsNull : IAsyncLifetime
 {
     private Mock<IAmazonSQS> _amazonSQSClient = new Mock<IAmazonSQS>();
     private string _queueUrl = "da URL will go here";
     private int _maxMessages = 5;
-    private string _firstMessageId = "C7C844DB-EEC1-46D8-A0BA-2D78BE0781B3";
     private ReceiveMessageResponse _receiveMessageResponse = new ReceiveMessageResponse();
 
     private ReceiveMessageRequest _resultReceiveMessageRequest;
-    private List<Message> _result;
+    private ResultT<SuccessfulFileNamesAndFailedMessageIds> _result;
 
     public async Task InitializeAsync()
     {
-        _receiveMessageResponse.Messages = new List<Message>
-        {
-            new Message
-            {
-                MessageId = _firstMessageId,
-            }
-        };
+        _receiveMessageResponse.Messages = null;
 
         _amazonSQSClient.Setup(x => x.ReceiveMessageAsync(It.IsAny<ReceiveMessageRequest>(), It.IsAny<CancellationToken>()))
             .Callback((ReceiveMessageRequest rmr, CancellationToken _) => _resultReceiveMessageRequest = rmr)
@@ -32,7 +29,7 @@ public class WhenEverythingIsValid : IAsyncLifetime
 
         var sut = new SQSRepository(_amazonSQSClient.Object, _queueUrl, _maxMessages);
 
-        _result = await sut.ReceiveMessage(CancellationToken.None);
+        _result = await sut.GetFileNamesThatHaveBeenProcessed(CancellationToken.None);
     }
     public Task DisposeAsync()
     {
@@ -40,10 +37,10 @@ public class WhenEverythingIsValid : IAsyncLifetime
     }
 
     [Fact]
-    public void ThenTheResponseIsCorrect()
+    public void ThenThereAreErrorsAreReturned()
     {
-        Assert.Single(_receiveMessageResponse.Messages);
-        Assert.Equal(_firstMessageId, _receiveMessageResponse.Messages[0].MessageId);
+        Assert.True(_result.HasError);
+        Assert.Equal("Failed to get messages from AWS", _result.Error!.Description);
     }
 
     [Fact]

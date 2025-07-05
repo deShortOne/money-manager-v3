@@ -1,5 +1,4 @@
 
-using System.Text;
 using System.Text.Json;
 using MoneyTracker.Commands.Application.AWS;
 using MoneyTracker.Commands.Domain.Entities.MessageQueuePolling;
@@ -7,6 +6,7 @@ using MoneyTracker.Commands.Domain.Entities.Receipt;
 using MoneyTracker.Commands.Domain.Entities.Transaction;
 using MoneyTracker.Commands.Domain.Handlers;
 using MoneyTracker.Commands.Domain.Repositories;
+using MoneyTracker.Common.Result;
 
 namespace MoneyTracker.Commands.Application;
 public class MessageQueueService : IMessageQueueService
@@ -27,73 +27,64 @@ public class MessageQueueService : IMessageQueueService
         _pollingController = pollingController;
     }
 
-    public async Task PollAsync(CancellationToken cancellationToken)
+    public async Task<ResultT<MessageQueueResult>> PollAsync(CancellationToken cancellationToken)
     {
-        var messages = await _messageQueueRepository.ReceiveMessage(cancellationToken);
-        if (messages == null)
+        var successfulFileNamesAndFailedMessageIds = await _messageQueueRepository.GetFileNamesThatHaveBeenProcessed(cancellationToken);
+        if (successfulFileNamesAndFailedMessageIds.HasError)
         {
-            Console.WriteLine("There are x messages");
-            return;
+            Console.WriteLine(successfulFileNamesAndFailedMessageIds.Error!.Description);
+            return successfulFileNamesAndFailedMessageIds.Error;
         }
 
-        Console.WriteLine($"There are {messages.Count} messages");
-        foreach (var message in messages)
+        var successfulMessageIds = new List<string>();
+        var failedMessageIdsWithReason = successfulFileNamesAndFailedMessageIds.Value.FailedMessageIds;
+        foreach (var filenameAndMessageId in successfulFileNamesAndFailedMessageIds.Value.SuccessfulFiles)
         {
-            Console.WriteLine(message.MessageId);
-
-            var body = JsonSerializer.Deserialize<MessageBody>(message.Body);
-            if (body is null)
+            var entity = await _receiptCommandRepository.GetReceiptById(filenameAndMessageId.Filename, cancellationToken);
+            if (entity is null)
             {
-                Console.WriteLine($"ERROR: CANNOT PARSE BODY: {message.Body}");
+                Console.WriteLine($"ERROR: entity doesnt exist id: {filenameAndMessageId.Filename}");
+                failedMessageIdsWithReason.Add(Error.Failure(filenameAndMessageId.MessageId, $"ERROR: entity doesnt exist id: {filenameAndMessageId.Filename}"));
                 continue;
             }
 
-            foreach (var record in body.Records)
+            var fileContents = await _fileUploadRepository.GetContentsOfFile(filenameAndMessageId.Filename, cancellationToken);
+
+            var infoFromReceipt = JsonSerializer.Deserialize<TemporaryTransactionObject>(fileContents);
+            if (infoFromReceipt is null)
             {
-                var filename = record.S3.S3Object.Key;
-                var entity = await _receiptCommandRepository.GetReceiptById(filename, cancellationToken);
-                if (entity is null)
-                {
-                    Console.WriteLine($"ERROR: entity doesnt exist id: {filename}");
-                    continue;
-                }
-
-                var fileContents = await _fileUploadRepository.GetContentsOfFile(filename, cancellationToken);
-
-                var infoFromReceipt = JsonSerializer.Deserialize<TemporaryTransactionObject>(fileContents);
-                if (infoFromReceipt is null)
-                {
-                    Console.WriteLine($"ERROR: object is wrong??");
-                    continue;
-                }
-
-                var temporaryTransaction = new TemporaryTransactionEntity
-                {
-                    UserId = entity.UserId,
-                    Amount = infoFromReceipt.Value,
-                    CategoryId = null,
-                    DatePaid = null,
-                    PayeeId = null,
-                    PayerId = null,
-                };
-                await _receiptCommandRepository.CreateTemporaryTransaction(temporaryTransaction, cancellationToken);
-
-                entity.UpdateState((int)ReceiptState.Pending);
-                await _receiptCommandRepository.UpdateReceipt(entity, cancellationToken);
+                Console.WriteLine($"ERROR: object is wrong??");
+                failedMessageIdsWithReason.Add(Error.Failure(filenameAndMessageId.MessageId, $"ERROR: object is wrong: {fileContents}"));
+                continue;
             }
-            if (body.Records.Count == 0)
+
+            var temporaryTransaction = new TemporaryTransactionEntity
             {
-                Console.WriteLine($"ERROR: There are 0 records inside message {message.MessageId}, with information {message.Body}");
-            }
-            else
-            {
-                await _messageQueueRepository.DeleteMessage(message.ReceiptHandle, cancellationToken);
-            }
+                UserId = entity.UserId,
+                Amount = infoFromReceipt.Value,
+                CategoryId = null,
+                DatePaid = null,
+                PayeeId = null,
+                PayerId = null,
+            };
+            await _receiptCommandRepository.CreateTemporaryTransaction(temporaryTransaction, cancellationToken);
+
+            entity.UpdateState((int)ReceiptState.Pending);
+            await _receiptCommandRepository.UpdateReceipt(entity, cancellationToken);
+
+            await _messageQueueRepository.DeleteMessage(filenameAndMessageId.QueueMessageId, cancellationToken);
+            successfulMessageIds.Add(filenameAndMessageId.MessageId);
         }
 
         if (await _receiptCommandRepository.GetNumberOfReceiptsLeftToProcess(cancellationToken) == 0)
         {
             _pollingController.DisablePolling();
         }
+
+        return new MessageQueueResult
+        {
+            SuccessfullyProcessedFileIds = successfulMessageIds,
+            FailedProcessedFileIds = failedMessageIdsWithReason,
+        };
     }
 }

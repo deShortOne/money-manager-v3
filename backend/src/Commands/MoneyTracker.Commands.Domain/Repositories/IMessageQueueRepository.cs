@@ -1,9 +1,11 @@
 
 using Amazon.SQS.Model;
+using MoneyTracker.Commands.Domain.Entities.MessageQueuePolling;
+using MoneyTracker.Common.Result;
 
 namespace MoneyTracker.Commands.Domain.Repositories;
 public interface IMessageQueueRepository
 {
-    Task<List<Message>> ReceiveMessage(CancellationToken ct);
-    Task DeleteMessage(string receiptHandle, CancellationToken ct);
+    Task<ResultT<SuccessfulFileNamesAndFailedMessageIds>> GetFileNamesThatHaveBeenProcessed(CancellationToken cancellationToken);
+    Task DeleteMessage(string receiptHandle, CancellationToken cancellationToken);
 }

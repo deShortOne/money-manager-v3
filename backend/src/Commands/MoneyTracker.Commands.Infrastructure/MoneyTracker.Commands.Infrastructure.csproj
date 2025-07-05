@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MoneyTracker.Commands.Application\MoneyTracker.Commands.Application.csproj" />
     <ProjectReference Include="..\MoneyTracker.Commands.Domain\MoneyTracker.Commands.Domain.csproj" />
   </ItemGroup>
 
