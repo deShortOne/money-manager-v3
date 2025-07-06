@@ -8,11 +8,11 @@ public class RegisterTestHelper
     public readonly Mock<IRegisterRepositoryService> _mockRegisterDatabase = new();
     public readonly Mock<IUserRepositoryService> _mockUserRepository = new();
 
-    public readonly RegisterService _budgetService;
+    public readonly RegisterService _registerService;
 
     public RegisterTestHelper()
     {
-        _budgetService = new RegisterService(_mockRegisterDatabase.Object, _mockUserRepository.Object);
+        _registerService = new RegisterService(_mockRegisterDatabase.Object, _mockUserRepository.Object);
     }
 
     public void EnsureAllMocksHadNoOtherCalls()

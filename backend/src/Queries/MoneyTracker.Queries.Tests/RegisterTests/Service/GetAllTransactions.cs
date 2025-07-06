@@ -33,7 +33,7 @@ public sealed class GetAllTransactionsTest : RegisterTestHelper
 
         Assert.Multiple(async () =>
         {
-            Assert.Equal(expected, await _budgetService.GetAllTransactions(tokenToDecode, CancellationToken.None));
+            Assert.Equal(expected, await _registerService.GetAllTransactions(tokenToDecode, CancellationToken.None));
 
             _mockUserRepository.Verify(x => x.GetUserAuthFromToken(tokenToDecode, CancellationToken.None), Times.Once);
             _mockRegisterDatabase.Verify(x => x.GetAllTransactions(authedUser, CancellationToken.None), Times.Once);

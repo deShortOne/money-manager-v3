@@ -1,6 +1,8 @@
 
 using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Common.Result;
+using MoneyTracker.Common.Values;
+using MoneyTracker.Contracts.Responses.Receipt;
 using MoneyTracker.Contracts.Responses.Transaction;
 using MoneyTracker.Queries.Domain.Handlers;
 using MoneyTracker.Queries.Domain.Repositories.Service;
@@ -53,7 +55,7 @@ public class RegisterService : IRegisterService
         return res;
     }
 
-    public async Task<Result> GetTransactionFromReceipt(string token, string filename, CancellationToken cancellationToken)
+    public async Task<ResultT<ReceiptResponse>> GetTransactionFromReceipt(string token, string filename, CancellationToken cancellationToken)
     {
         var userAuth = await _userRepository.GetUserAuthFromToken(token, cancellationToken);
         if (userAuth == null)
@@ -61,7 +63,11 @@ public class RegisterService : IRegisterService
         userAuth.CheckValidation();
 
         var receiptState = await _registerRepository.GetReceiptProcessingInfo(filename, cancellationToken);
+        if (receiptState.HasError)
+            return receiptState.Error!;
+        if (receiptState.Value.State == ReceiptState.Processing)
+            return new ReceiptResponse("Processing", null);
 
-        return Result.Success();
+        return new ReceiptResponse("invalid", null);
     }
 }
