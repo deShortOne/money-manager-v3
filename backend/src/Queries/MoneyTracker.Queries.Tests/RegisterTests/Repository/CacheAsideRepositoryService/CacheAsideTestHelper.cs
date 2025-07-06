@@ -4,7 +4,7 @@ using MoneyTracker.Queries.Infrastructure.Service.CacheAsidePattern;
 using Moq;
 
 namespace MoneyTracker.Queries.Tests.RegisterTests.Repository.CacheAsideRepositoryService;
-public class CacheAsideTestHelper
+public abstract class CacheAsideTestHelper : IAsyncLifetime
 {
     protected Mock<IRegisterDatabase> _mockRegisterDatabase;
     protected Mock<IRegisterCache> _mockRegisterCache;
@@ -21,6 +21,9 @@ public class CacheAsideTestHelper
             _mockRegisterCache.Object
         );
     }
+
+    public abstract Task InitializeAsync();
+    public abstract Task DisposeAsync();
 
     protected void VerifyNoOtherCalls()
     {

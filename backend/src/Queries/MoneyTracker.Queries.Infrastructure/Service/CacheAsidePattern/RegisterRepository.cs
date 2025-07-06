@@ -1,6 +1,7 @@
 
 using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Common.Result;
+using MoneyTracker.Queries.Domain.Entities.Receipt;
 using MoneyTracker.Queries.Domain.Entities.Transaction;
 using MoneyTracker.Queries.Domain.Repositories.Cache;
 using MoneyTracker.Queries.Domain.Repositories.Database;
@@ -32,6 +33,11 @@ public class RegisterRepository : IRegisterRepositoryService
         }
 
         return result;
+    }
+
+    public Task<ResultT<ReceiptEntity>> GetReceiptProcessingInfo(string receiptId, CancellationToken cancellationToken)
+    {
+        return _registerDatabase.GetReceiptProcessingInfo(receiptId, cancellationToken);
     }
 
     public async Task ResetTransactionsCache(AuthenticatedUser user, CancellationToken cancellationToken)

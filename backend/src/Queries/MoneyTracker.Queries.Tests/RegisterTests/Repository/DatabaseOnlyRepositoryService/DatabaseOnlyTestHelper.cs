@@ -3,7 +3,7 @@ using MoneyTracker.Queries.Infrastructure.Service.DatabaseOnly;
 using Moq;
 
 namespace MoneyTracker.Queries.Tests.RegisterTests.Repository.DatabaseOnlyRepositoryService;
-public class DatabaseOnlyTestHelper
+public abstract class DatabaseOnlyTestHelper : IAsyncLifetime
 {
     protected Mock<IRegisterDatabase> _mockRegisterDatabase;
 
@@ -17,6 +17,9 @@ public class DatabaseOnlyTestHelper
             _mockRegisterDatabase.Object
         );
     }
+
+    public abstract Task InitializeAsync();
+    public abstract Task DisposeAsync();
 
     protected void VerifyNoOtherCalls()
     {

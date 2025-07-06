@@ -3,6 +3,8 @@ using System.Data.Common;
 using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Common.Interfaces;
 using MoneyTracker.Common.Result;
+using MoneyTracker.Common.Values;
+using MoneyTracker.Queries.Domain.Entities.Receipt;
 using MoneyTracker.Queries.Domain.Entities.Transaction;
 using MoneyTracker.Queries.Domain.Repositories.Database;
 using Npgsql;
@@ -81,5 +83,37 @@ public class RegisterDatabase : IRegisterDatabase
             ));
         }
         return res;
+    }
+
+    public async Task<ResultT<ReceiptEntity>> GetReceiptProcessingInfo(string fileId, CancellationToken cancellationToken)
+    {
+        var query = """
+            select id,
+                users_id,
+                filename,
+                url,
+                state
+            FROM receipt_analysis_state
+            WHERE id = @id;
+            """;
+        var queryParams = new List<DbParameter>()
+        {
+            new NpgsqlParameter("id", fileId),
+        };
+
+        using var reader = await _database.GetTable(query, cancellationToken, queryParams);
+
+        if (reader.Rows.Count == 0)
+            return Error.NotFound("", $"Could not find receipt procesing information for given id: {fileId}");
+
+        var data = reader.Rows[0];
+
+        return new ReceiptEntity(
+            data.Field<string>("id")!,
+            data.Field<int>("users_id"),
+            data.Field<string>("filename")!,
+            data.Field<string>("url")!,
+            (ReceiptState)data.Field<int>("state")
+            );
     }
 }

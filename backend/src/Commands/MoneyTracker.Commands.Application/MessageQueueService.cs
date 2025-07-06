@@ -7,6 +7,7 @@ using MoneyTracker.Commands.Domain.Entities.Transaction;
 using MoneyTracker.Commands.Domain.Handlers;
 using MoneyTracker.Commands.Domain.Repositories;
 using MoneyTracker.Common.Result;
+using MoneyTracker.Common.Values;
 
 namespace MoneyTracker.Commands.Application;
 public class MessageQueueService : IMessageQueueService

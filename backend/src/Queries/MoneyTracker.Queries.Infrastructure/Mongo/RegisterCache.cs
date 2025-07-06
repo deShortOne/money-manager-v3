@@ -1,5 +1,6 @@
 using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Common.Result;
+using MoneyTracker.Queries.Domain.Entities.Receipt;
 using MoneyTracker.Queries.Domain.Entities.Transaction;
 using MoneyTracker.Queries.Domain.Repositories.Cache;
 using MoneyTracker.Queries.Infrastructure.Mongo.Entities;
@@ -27,6 +28,9 @@ public class RegisterCache : IRegisterCache
 
         return registersLis[0].Transactions;
     }
+
+    public Task<ResultT<ReceiptEntity>> GetReceiptProcessingInfo(string fileId, CancellationToken cancellationToken) => throw new NotImplementedException("Receipt processing data is never cached");
+
     public async Task<Result> SaveTransactions(AuthenticatedUser user, List<TransactionEntity> transactions,
         CancellationToken cancellationToken)
     {

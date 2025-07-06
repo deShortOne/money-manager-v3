@@ -1,3 +1,4 @@
+
 using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Common.Result;
 using MoneyTracker.Contracts.Responses.Transaction;
@@ -52,5 +53,15 @@ public class RegisterService : IRegisterService
         return res;
     }
 
+    public async Task<Result> GetTransactionFromReceipt(string token, string filename, CancellationToken cancellationToken)
+    {
+        var userAuth = await _userRepository.GetUserAuthFromToken(token, cancellationToken);
+        if (userAuth == null)
+            throw new InvalidDataException("Token not found");
+        userAuth.CheckValidation();
 
+        var receiptState = await _registerRepository.GetReceiptProcessingInfo(filename, cancellationToken);
+
+        return Result.Success();
+    }
 }

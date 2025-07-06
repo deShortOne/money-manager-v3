@@ -1,5 +1,5 @@
 
-namespace MoneyTracker.Commands.Domain.Entities.Receipt;
+namespace MoneyTracker.Common.Values;
 public enum ReceiptState
 {
     Unknown = 0,
