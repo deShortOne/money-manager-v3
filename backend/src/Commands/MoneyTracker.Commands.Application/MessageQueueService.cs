@@ -2,7 +2,6 @@
 using System.Text.Json;
 using MoneyTracker.Commands.Application.AWS;
 using MoneyTracker.Commands.Domain.Entities.MessageQueuePolling;
-using MoneyTracker.Commands.Domain.Entities.Receipt;
 using MoneyTracker.Commands.Domain.Entities.Transaction;
 using MoneyTracker.Commands.Domain.Handlers;
 using MoneyTracker.Commands.Domain.Repositories;

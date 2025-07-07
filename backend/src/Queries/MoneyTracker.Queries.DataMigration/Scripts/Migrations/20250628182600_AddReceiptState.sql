@@ -12,6 +12,7 @@ CREATE TABLE public.receipt_analysis_state (
 
 CREATE TABLE public.receipt_to_register (
     users_id integer NOT NULL,
+    filename character varying(50) NOT NULL,
     payee integer,
     amount numeric,
     datepaid date,

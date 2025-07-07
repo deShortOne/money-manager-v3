@@ -9,4 +9,5 @@ public interface IRegisterDatabase
     public Task<ResultT<List<TransactionEntity>>> GetAllTransactions(AuthenticatedUser user,
         CancellationToken cancellationToken);
     public Task<ResultT<ReceiptEntity>> GetReceiptProcessingInfo(string fileId, CancellationToken cancellationToken);
+    public Task<ResultT<TemporaryTransaction>> GetTemporaryTransactionFromReceipt(string fileId, CancellationToken cancellationToken);
 }

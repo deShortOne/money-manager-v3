@@ -33,7 +33,7 @@ public class WhenRequestingReceiptProcessingInfo : CacheAsideTestHelper
     }
 
     [Fact]
-    public async Task ThenTheDatabaseIsOnlyCalledOnce()
+    public void ThenTheDatabaseIsOnlyCalledOnce()
     {
         _mockRegisterDatabase.Verify(x => x.GetReceiptProcessingInfo(_receiptId, CancellationToken.None), Times.Once);
     }

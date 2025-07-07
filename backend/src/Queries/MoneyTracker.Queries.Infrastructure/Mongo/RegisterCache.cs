@@ -30,6 +30,7 @@ public class RegisterCache : IRegisterCache
     }
 
     public Task<ResultT<ReceiptEntity>> GetReceiptProcessingInfo(string fileId, CancellationToken cancellationToken) => throw new NotImplementedException("Receipt processing data is never cached");
+    public Task<ResultT<TemporaryTransaction>> GetTemporaryTransactionFromReceipt(string fileId, CancellationToken cancellationToken) => throw new NotImplementedException("Temporary transactions are never cached");
 
     public async Task<Result> SaveTransactions(AuthenticatedUser user, List<TransactionEntity> transactions,
         CancellationToken cancellationToken)

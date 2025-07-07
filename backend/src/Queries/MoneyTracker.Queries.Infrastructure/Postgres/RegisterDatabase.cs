@@ -114,6 +114,42 @@ public class RegisterDatabase : IRegisterDatabase
             data.Field<string>("filename")!,
             data.Field<string>("url")!,
             (ReceiptState)data.Field<int>("state")
-            );
+        );
+    }
+
+    public async Task<ResultT<TemporaryTransaction>> GetTemporaryTransactionFromReceipt(string fileId, CancellationToken cancellationToken)
+    {
+        var query = """
+            SELECT users_id,
+                filename,
+                payee,
+                amount,
+                datepaid,
+                category_id,
+                account_id
+            FROM receipt_to_register
+            WHERE filename = @fileId;
+            """;
+        var queryParams = new List<DbParameter>()
+        {
+            new NpgsqlParameter("fileId", fileId),
+        };
+
+        using var reader = await _database.GetTable(query, cancellationToken, queryParams);
+
+        if (reader.Rows.Count == 0)
+            return Error.NotFound("", $"Could not find temporary transaction information for given id: {fileId}");
+
+        var data = reader.Rows[0];
+
+        return new TemporaryTransaction(
+            data.Field<int>("users_id"),
+            data.Field<string>("filename")!,
+            null,
+            data.Field<decimal?>("amount"),
+            null,
+            null,
+            null
+        );
     }
 }
