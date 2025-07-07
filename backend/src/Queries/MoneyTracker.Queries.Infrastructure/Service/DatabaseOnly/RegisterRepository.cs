@@ -28,4 +28,9 @@ public class RegisterRepository : IRegisterRepositoryService
     {
         return _registerDatabase.GetReceiptProcessingInfo(receiptId, cancellationToken);
     }
+
+    public Task<ResultT<TemporaryTransaction>> GetTemporaryTransactionFromReceipt(string fileId, CancellationToken cancellationToken)
+    {
+        return _registerDatabase.GetTemporaryTransactionFromReceipt(fileId, cancellationToken);
+    }
 }

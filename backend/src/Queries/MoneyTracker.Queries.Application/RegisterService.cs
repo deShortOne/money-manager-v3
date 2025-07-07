@@ -1,4 +1,5 @@
 
+using Microsoft.AspNetCore.Mvc.Filters;
 using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Common.Result;
 using MoneyTracker.Common.Values;
@@ -67,6 +68,22 @@ public class RegisterService : IRegisterService
             return receiptState.Error!;
         if (receiptState.Value.State == ReceiptState.Processing)
             return new ReceiptResponse("Processing", null);
+        if (receiptState.Value.State == ReceiptState.Pending)
+        {
+            var temporaryTransactionResult = await _registerRepository.GetTemporaryTransactionFromReceipt(filename, cancellationToken);
+            if (temporaryTransactionResult.HasError)
+                return Error.Failure("", $"Cannot find temporary transaction for {filename}");
+
+            var temporaryTransactionResponse = new TemporaryTransactionResponse
+            (
+                temporaryTransactionResult.Value.Payee,
+                temporaryTransactionResult.Value.Amount,
+                temporaryTransactionResult.Value.DatePaid,
+                temporaryTransactionResult.Value.Category,
+                temporaryTransactionResult.Value.Payer
+            );
+            return new ReceiptResponse("Pending", temporaryTransactionResponse);
+        }
 
         return new ReceiptResponse("invalid", null);
     }

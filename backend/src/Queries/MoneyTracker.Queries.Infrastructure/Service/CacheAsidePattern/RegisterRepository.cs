@@ -40,6 +40,11 @@ public class RegisterRepository : IRegisterRepositoryService
         return _registerDatabase.GetReceiptProcessingInfo(receiptId, cancellationToken);
     }
 
+    public Task<ResultT<TemporaryTransaction>> GetTemporaryTransactionFromReceipt(string fileId, CancellationToken cancellationToken)
+    {
+        return _registerDatabase.GetTemporaryTransactionFromReceipt(fileId, cancellationToken);
+    }
+
     public async Task ResetTransactionsCache(AuthenticatedUser user, CancellationToken cancellationToken)
     {
         var result = await _registerDatabase.GetAllTransactions(user, cancellationToken);
