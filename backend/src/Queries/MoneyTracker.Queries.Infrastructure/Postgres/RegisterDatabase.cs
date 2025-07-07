@@ -4,6 +4,8 @@ using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Common.Interfaces;
 using MoneyTracker.Common.Result;
 using MoneyTracker.Common.Values;
+using MoneyTracker.Contracts.Responses.Account;
+using MoneyTracker.Contracts.Responses.Category;
 using MoneyTracker.Queries.Domain.Entities.Receipt;
 using MoneyTracker.Queries.Domain.Entities.Transaction;
 using MoneyTracker.Queries.Domain.Repositories.Database;
@@ -123,11 +125,20 @@ public class RegisterDatabase : IRegisterDatabase
             SELECT users_id,
                 filename,
                 payee,
+                user_payee."name" payee_name,
                 amount,
                 datepaid,
                 category_id,
-                account_id
+                category."name" category_name,
+                account_id,
+                user_payer."name" payer_name
             FROM receipt_to_register
+            LEFT JOIN users user_payee
+            ON user_payee.id = payee
+            LEFT JOIN users user_payer
+            ON user_payer.id = account_id
+            LEFT JOIN category
+            ON category.id = category_id 
             WHERE filename = @fileId;
             """;
         var queryParams = new List<DbParameter>()
@@ -142,14 +153,30 @@ public class RegisterDatabase : IRegisterDatabase
 
         var data = reader.Rows[0];
 
+        var payee = data.Field<int?>("payee") == null
+            ? null
+            : new AccountResponse(data.Field<int>("payee"), data.Field<string>("payee_name")!);
+
+        var category = data.Field<int?>("category_id") == null
+            ? null
+            : new CategoryResponse(data.Field<int>("category_id"), data.Field<string>("category_name")!);
+
+        var payer = data.Field<int?>("account_id") == null
+            ? null
+            : new AccountResponse(data.Field<int>("account_id"), data.Field<string>("payer_name")!);
+
+        DateOnly? datePaid = data.Field<DateTime?>("datepaid") == null
+            ? null
+            : DateOnly.FromDateTime(data.Field<DateTime>("datepaid"));
+
         return new TemporaryTransaction(
             data.Field<int>("users_id"),
             data.Field<string>("filename")!,
-            null,
+            payee,
             data.Field<decimal?>("amount"),
-            null,
-            null,
-            null
+            datePaid,
+            category,
+            payer
         );
     }
 }

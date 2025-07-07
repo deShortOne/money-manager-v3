@@ -11,11 +11,11 @@ public class WhenTheTemporaryTransactionExists : TemporaryTransactionHelper
 {
     private readonly int _userId = 1;
     private readonly string _filename = "file name";
-    private readonly AccountResponse? _payee = null;
+    private readonly AccountResponse? _payee = new AccountResponse(1, "root");
     private readonly decimal? _amount = 43m;
-    private readonly DateOnly? _datePaid = null;
-    private readonly CategoryResponse? _category = null;
-    private readonly AccountResponse? _payer = null;
+    private readonly DateOnly? _datePaid = new DateOnly(2025, 7, 7);
+    private readonly CategoryResponse? _category = new CategoryResponse(4, "Groceries");
+    private readonly AccountResponse? _payer = new AccountResponse(2, "secondary root");
 
     private ResultT<TemporaryTransaction> _result;
 
