@@ -94,7 +94,7 @@ public class ReceiptCommandRepository : IReceiptCommandRepository
         if (dataTable.Rows.Count == 0)
             return 0;
 
-        return dataTable.Rows[0].Field<int>("num_left");
+        return (int)dataTable.Rows[0].Field<long>("num_left");
     }
 
     public async Task CreateTemporaryTransaction(TemporaryTransactionEntity temporaryTransactionEntity,
