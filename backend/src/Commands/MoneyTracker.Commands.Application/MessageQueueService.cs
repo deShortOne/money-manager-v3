@@ -62,6 +62,7 @@ public class MessageQueueService : IMessageQueueService
             var temporaryTransaction = new TemporaryTransactionEntity
             {
                 UserId = entity.UserId,
+                Filename = filenameAndMessageId.Filename,
                 Amount = infoFromReceipt.Value,
                 CategoryId = null,
                 DatePaid = null,

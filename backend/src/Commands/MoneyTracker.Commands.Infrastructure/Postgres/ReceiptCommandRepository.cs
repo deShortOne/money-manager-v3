@@ -101,12 +101,13 @@ public class ReceiptCommandRepository : IReceiptCommandRepository
         CancellationToken cancellationToken)
     {
         var query = """
-            INSERT INTO receipt_to_register (users_id, payee, amount, datepaid, category_id, account_id) VALUES
-                (@users_id, @payee, @amount, @datepaid, @category_id, @account_id);
+            INSERT INTO receipt_to_register (users_id, filename, payee, amount, datepaid, category_id, account_id) VALUES
+                (@users_id, @filename, @payee, @amount, @datepaid, @category_id, @account_id);
         """;
         var queryParams = new List<DbParameter>
         {
             new NpgsqlParameter("users_id", temporaryTransactionEntity.UserId),
+            new NpgsqlParameter("filename", temporaryTransactionEntity.Filename),
             new NpgsqlParameter<int?>("payee", temporaryTransactionEntity.PayeeId),
             new NpgsqlParameter<decimal?>("amount", temporaryTransactionEntity.Amount),
             new NpgsqlParameter<DateOnly?>("datepaid", temporaryTransactionEntity.DatePaid),
