@@ -20,9 +20,9 @@ const defaultDefaultValues = {
 
 type UploadReceiptModalSetting = {
     isOpen: boolean
-    updateRegisterAction: (authToken: string, transaction: FormData) => Promise<Result<Transaction[]>>
+    updateRegisterAction: (authToken: string, transaction: FormData) => Promise<Result<string>>
     onOpen: (
-        registerAction: (authToken: string, transaction: FormData) => Promise<Result<Transaction[]>>,
+        registerAction: (authToken: string, transaction: FormData) => Promise<Result<string>>,
     ) => void
     onClose: () => void
 }
@@ -31,10 +31,10 @@ export const useUploadReceiptModalSetting = create<UploadReceiptModalSetting>((s
     isOpen: false,
     defaultValues: defaultDefaultValues,
     updateRegisterAction: () => {
-        return new Promise(() => new ErrorResult<Transaction[]>("error transaction action not updated", true));
+        return new Promise(() => new ErrorResult<string>("error transaction action not updated", true));
     },
     onOpen: (
-        registerAction: (authToken: string, transaction: FormData) => Promise<Result<Transaction[]>>,
+        registerAction: (authToken: string, transaction: FormData) => Promise<Result<string>>,
     ) => set(
         {
             updateRegisterAction: registerAction,

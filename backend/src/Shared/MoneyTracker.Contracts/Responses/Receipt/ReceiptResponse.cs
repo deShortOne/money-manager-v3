@@ -5,7 +5,9 @@ using MoneyTracker.Contracts.Responses.Category;
 namespace MoneyTracker.Contracts.Responses.Receipt;
 public class ReceiptResponse(string receiptProcessingState, TemporaryTransactionResponse? temporaryTransaction)
 {
+    [JsonPropertyName("receiptProcessingState")]
     public string ReceiptProcessingState { get; } = receiptProcessingState;
+    [JsonPropertyName("temporaryTransaction")]
     public TemporaryTransactionResponse? TemporaryTransaction { get; } = temporaryTransaction;
 }
 

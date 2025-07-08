@@ -1,6 +1,6 @@
 'use server'
 
-import { Newtransaction, Transaction, UpdateTransaction } from "@/interface/transaction";
+import { Newtransaction, ReceiptResponse, Transaction, UpdateTransaction } from "@/interface/transaction";
 import { ErrorResult, SuccessResult, Result } from "@/types/result";
 import { convertDateToString } from "@/utils/date-converter";
 
@@ -83,7 +83,7 @@ export async function deleteTransaction(authToken: string, transactionId: number
     return JSON.parse(JSON.stringify(new ErrorResult(await response.text(), false)));
 }
 
-export async function uploadReceipt(authToken: string, formData: FormData): Promise<Result<Transaction>> {
+export async function uploadReceipt(authToken: string, formData: FormData): Promise<Result<string>> {
     const response = await fetch(process.env.COMMAND_SERVER_URL + `/Register/upload-receipt`, {
         method: "POST",
         headers: {
@@ -98,4 +98,22 @@ export async function uploadReceipt(authToken: string, formData: FormData): Prom
 
     console.log("error returned uploading receipt");
     return JSON.parse(JSON.stringify(new ErrorResult(await response.text(), false)));
+}
+
+export async function getTemporaryTransaction(authToken: string, receiptId: string): Promise<Result<ReceiptResponse>> {
+    const response = await fetch(process.env.QUERY_SERVER_URL + `/Register/get-temporary-transaction?` + new URLSearchParams({
+        filename: receiptId,
+    }).toString(), {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + authToken,
+        },
+    });
+    if (response.ok) {
+        return JSON.parse(JSON.stringify(new SuccessResult(JSON.parse(await response.text()))));
+    }
+
+    const text = await response.text()
+    return JSON.parse(JSON.stringify(new ErrorResult(text, false)));
 }
