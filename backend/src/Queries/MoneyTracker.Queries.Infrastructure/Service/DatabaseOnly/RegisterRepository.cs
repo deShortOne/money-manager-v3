@@ -33,4 +33,9 @@ public class RegisterRepository : IRegisterRepositoryService
     {
         return _registerDatabase.GetTemporaryTransactionFromReceipt(fileId, cancellationToken);
     }
+
+    public Task<List<ReceiptIdAndStateEntity>> GetReceiptStatesForUser(AuthenticatedUser user, List<int> designatedStates, CancellationToken cancellationToken)
+    {
+        return _registerDatabase.GetReceiptStatesForUser(user, designatedStates, cancellationToken);
+    }
 }

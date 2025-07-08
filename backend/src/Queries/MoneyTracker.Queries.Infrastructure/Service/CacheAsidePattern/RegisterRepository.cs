@@ -50,4 +50,9 @@ public class RegisterRepository : IRegisterRepositoryService
         var result = await _registerDatabase.GetAllTransactions(user, cancellationToken);
         await _registerCache.SaveTransactions(user, result.Value, cancellationToken);
     }
+
+    public Task<List<ReceiptIdAndStateEntity>> GetReceiptStatesForUser(AuthenticatedUser user, List<int> designatedStates, CancellationToken cancellationToken)
+    {
+        return _registerDatabase.GetReceiptStatesForUser(user, designatedStates, cancellationToken);
+    }
 }

@@ -1,6 +1,5 @@
 
 using MoneyTracker.Common.Result;
-using MoneyTracker.Common.Values;
 using MoneyTracker.Queries.Domain.Entities.Receipt;
 using Moq;
 
