@@ -179,4 +179,25 @@ public class RegisterDatabase : IRegisterDatabase
             payer
         );
     }
+
+    public async Task<List<ReceiptIdAndStateEntity>> GetReceiptStatesForUser(AuthenticatedUser user, CancellationToken cancellationToken)
+    {
+        var query = """
+            SELECT id,
+                state
+            FROM receipt_analysis_state
+            WHERE users_id = @users_id;
+        """;
+        var queryParams = new List<DbParameter>
+        {
+            new NpgsqlParameter("users_id", user.Id),
+        };
+
+        using var dataTable = await _database.GetTable(query, cancellationToken, queryParams);
+
+        return dataTable.Rows
+            .OfType<DataRow>()
+            .Select(x => new ReceiptIdAndStateEntity(x.Field<string>("id")!, x.Field<int>("state")))
+            .ToList();
+    }
 }

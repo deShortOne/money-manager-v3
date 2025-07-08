@@ -11,4 +11,5 @@ public interface IRegisterRepositoryService
     Task ResetTransactionsCache(AuthenticatedUser user, CancellationToken cancellationToken);
     Task<ResultT<ReceiptEntity>> GetReceiptProcessingInfo(string receiptId, CancellationToken cancellationToken);
     Task<ResultT<TemporaryTransaction>> GetTemporaryTransactionFromReceipt(string fileId, CancellationToken cancellationToken);
+
 }
