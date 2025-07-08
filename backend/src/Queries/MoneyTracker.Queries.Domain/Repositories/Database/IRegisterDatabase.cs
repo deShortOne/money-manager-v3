@@ -10,5 +10,5 @@ public interface IRegisterDatabase
         CancellationToken cancellationToken);
     Task<ResultT<ReceiptEntity>> GetReceiptProcessingInfo(string fileId, CancellationToken cancellationToken);
     Task<ResultT<TemporaryTransaction>> GetTemporaryTransactionFromReceipt(string fileId, CancellationToken cancellationToken);
-    Task<List<ReceiptIdAndStateEntity>> GetReceiptStatesForUser(AuthenticatedUser user, CancellationToken cancellationToken);
+    Task<List<ReceiptIdAndStateEntity>> GetReceiptStatesForUser(AuthenticatedUser user, List<int> designatedStates, CancellationToken cancellationToken);
 }

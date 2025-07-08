@@ -37,7 +37,7 @@ public class WhenThereAreItems : IAsyncLifetime
 
         await SetupDatabase();
 
-        _result = await _registerDatabase.GetReceiptStatesForUser(new AuthenticatedUser(UserId), CancellationToken.None);
+        _result = await _registerDatabase.GetReceiptStatesForUser(new AuthenticatedUser(UserId), [State1, State3], CancellationToken.None);
     }
 
     private const int UserId = 1;
@@ -82,17 +82,20 @@ public class WhenThereAreItems : IAsyncLifetime
     [Fact]
     public void ThenTheItemsAreReturned()
     {
-        Assert.Equal(3, _result.Count);
+        Assert.Equal(2, _result.Count);
         Assert.Multiple(() =>
         {
             Assert.Equal(Id1, _result[0].Id);
             Assert.Equal(State1, _result[0].State);
 
-            Assert.Equal(Id2, _result[1].Id);
-            Assert.Equal(State2, _result[1].State);
-
-            Assert.Equal(Id3, _result[2].Id);
-            Assert.Equal(State3, _result[2].State);
+            Assert.Equal(Id3, _result[1].Id);
+            Assert.Equal(State3, _result[1].State);
         });
+    }
+
+    [Fact]
+    public void ThenTheItemWithTheMissingStateIsNotInTheList()
+    {
+        Assert.DoesNotContain(_result, x => x.Id == Id2);
     }
 }

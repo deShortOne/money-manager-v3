@@ -16,7 +16,7 @@ public class WhenRequestingReceiptStatesForUser : IClassFixture<MongoDbFixture>
     [Fact]
     public async Task ThenAnExceptionIsThrown()
     {
-        var message = await Assert.ThrowsAsync<NotImplementedException>(async () => await _registerCache.GetReceiptStatesForUser(new AuthenticatedUser(1), CancellationToken.None));
+        var message = await Assert.ThrowsAsync<NotImplementedException>(async () => await _registerCache.GetReceiptStatesForUser(new AuthenticatedUser(1), [], CancellationToken.None));
 
         Assert.Equal("Receipt id and state is never cached", message.Message);
     }

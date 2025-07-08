@@ -10,6 +10,7 @@ using MoneyTracker.Queries.Domain.Entities.Receipt;
 using MoneyTracker.Queries.Domain.Entities.Transaction;
 using MoneyTracker.Queries.Domain.Repositories.Database;
 using Npgsql;
+using NpgsqlTypes;
 
 namespace MoneyTracker.Queries.Infrastructure.Postgres;
 public class RegisterDatabase : IRegisterDatabase
@@ -180,17 +181,22 @@ public class RegisterDatabase : IRegisterDatabase
         );
     }
 
-    public async Task<List<ReceiptIdAndStateEntity>> GetReceiptStatesForUser(AuthenticatedUser user, CancellationToken cancellationToken)
+    public async Task<List<ReceiptIdAndStateEntity>> GetReceiptStatesForUser(AuthenticatedUser user, List<int> designatedStates, CancellationToken cancellationToken)
     {
         var query = """
             SELECT id,
                 state
             FROM receipt_analysis_state
-            WHERE users_id = @users_id;
+            WHERE users_id = @users_id
+                AND state = ANY(@states);
         """;
+
+        var lis = new NpgsqlParameter("states", NpgsqlDbType.Array | NpgsqlDbType.Integer);
+        lis.Value = designatedStates.ToArray();
         var queryParams = new List<DbParameter>
         {
             new NpgsqlParameter("users_id", user.Id),
+            lis,
         };
 
         using var dataTable = await _database.GetTable(query, cancellationToken, queryParams);
