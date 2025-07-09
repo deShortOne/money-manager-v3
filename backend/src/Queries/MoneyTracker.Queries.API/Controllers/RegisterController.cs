@@ -36,4 +36,14 @@ public class RegisterController
 
         return ControllerHelper.Convert(transactionsResult);
     }
+
+    [HttpPost]
+    [Route("get-receipts-states")]
+    public async Task<IActionResult> GetReceiptStates(CancellationToken cancellationToken)
+    {
+        var token = ControllerHelper.GetToken(_httpContextAccessor);
+        var transactionsResult = await _registerService.GetReceiptsAndStatesForGivenUser(token, cancellationToken);
+
+        return ControllerHelper.Convert(transactionsResult);
+    }
 }
