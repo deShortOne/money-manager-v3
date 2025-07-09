@@ -1,5 +1,6 @@
 using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Common.Result;
+using MoneyTracker.Common.Values;
 using MoneyTracker.Queries.Domain.Entities.Receipt;
 using MoneyTracker.Queries.Domain.Entities.Transaction;
 using MoneyTracker.Queries.Domain.Repositories.Cache;
@@ -30,7 +31,7 @@ public class RegisterCache : IRegisterCache
     }
 
     public Task<ResultT<ReceiptEntity>> GetReceiptProcessingInfo(string fileId, CancellationToken cancellationToken) => throw new NotImplementedException("Receipt processing data is never cached");
-    public Task<List<ReceiptIdAndStateEntity>> GetReceiptStatesForUser(AuthenticatedUser user, List<int> designatedStates, CancellationToken cancellationToken) => throw new NotImplementedException("Receipt id and state is never cached");
+    public Task<List<ReceiptIdAndStateEntity>> GetReceiptStatesForUser(AuthenticatedUser user, List<ReceiptState> designatedStates, CancellationToken cancellationToken) => throw new NotImplementedException("Receipt id and state is never cached");
     public Task<ResultT<TemporaryTransaction>> GetTemporaryTransactionFromReceipt(string fileId, CancellationToken cancellationToken) => throw new NotImplementedException("Temporary transactions are never cached");
 
     public async Task<Result> SaveTransactions(AuthenticatedUser user, List<TransactionEntity> transactions,

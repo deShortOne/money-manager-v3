@@ -4,6 +4,7 @@
 
 using System.Data.Common;
 using MoneyTracker.Authentication.DTOs;
+using MoneyTracker.Common.Values;
 using MoneyTracker.Queries.DatabaseMigration;
 using MoneyTracker.Queries.DatabaseMigration.Models;
 using MoneyTracker.Queries.Domain.Entities.Receipt;
@@ -37,19 +38,19 @@ public class WhenThereAreItems : IAsyncLifetime
 
         await SetupDatabase();
 
-        _result = await _registerDatabase.GetReceiptStatesForUser(new AuthenticatedUser(UserId), [State1, State3], CancellationToken.None);
+        _result = await _registerDatabase.GetReceiptStatesForUser(new AuthenticatedUser(UserId), [ReceiptState.Processing, ReceiptState.Pending], CancellationToken.None);
     }
 
     private const int UserId = 1;
 
     private const string Id1 = "id 1 receipt";
-    private const int State1 = 2;
+    private const ReceiptState State1 = ReceiptState.Processing;
 
     private const string Id2 = "id 24 receipt";
-    private const int State2 = 3;
+    private const ReceiptState State2 = ReceiptState.Pending;
 
     private const string Id3 = "id 8945 receipt";
-    private const int State3 = 4;
+    private const ReceiptState State3 = ReceiptState.Finished;
 
     private async Task SetupDatabase()
     {
@@ -64,13 +65,13 @@ public class WhenThereAreItems : IAsyncLifetime
             new NpgsqlParameter("users_id", UserId),
 
             new NpgsqlParameter("id1", Id1),
-            new NpgsqlParameter("state1", State1),
+            new NpgsqlParameter("state1", (int)State1),
 
             new NpgsqlParameter("id2", Id2),
-            new NpgsqlParameter("state2", State2),
+            new NpgsqlParameter("state2", (int)State2),
 
             new NpgsqlParameter("id3", Id3),
-            new NpgsqlParameter("state3", State3),
+            new NpgsqlParameter("state3", (int)State3),
         };
 
         await _database.UpdateTable(query, CancellationToken.None, queryParams);
@@ -88,14 +89,14 @@ public class WhenThereAreItems : IAsyncLifetime
             Assert.Equal(Id1, _result[0].Id);
             Assert.Equal(State1, _result[0].State);
 
-            Assert.Equal(Id3, _result[1].Id);
-            Assert.Equal(State3, _result[1].State);
+            Assert.Equal(Id2, _result[1].Id);
+            Assert.Equal(State2, _result[1].State);
         });
     }
 
     [Fact]
     public void ThenTheItemWithTheMissingStateIsNotInTheList()
     {
-        Assert.DoesNotContain(_result, x => x.Id == Id2);
+        Assert.DoesNotContain(_result, x => x.Id == Id3);
     }
 }

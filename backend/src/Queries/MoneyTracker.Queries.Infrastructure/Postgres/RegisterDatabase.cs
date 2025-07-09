@@ -181,7 +181,7 @@ public class RegisterDatabase : IRegisterDatabase
         );
     }
 
-    public async Task<List<ReceiptIdAndStateEntity>> GetReceiptStatesForUser(AuthenticatedUser user, List<int> designatedStates, CancellationToken cancellationToken)
+    public async Task<List<ReceiptIdAndStateEntity>> GetReceiptStatesForUser(AuthenticatedUser user, List<ReceiptState> designatedStates, CancellationToken cancellationToken)
     {
         var query = """
             SELECT id,
@@ -192,7 +192,7 @@ public class RegisterDatabase : IRegisterDatabase
         """;
 
         var lis = new NpgsqlParameter("states", NpgsqlDbType.Array | NpgsqlDbType.Integer);
-        lis.Value = designatedStates.ToArray();
+        lis.Value = designatedStates.ConvertAll(x => (int)x);
         var queryParams = new List<DbParameter>
         {
             new NpgsqlParameter("users_id", user.Id),
@@ -203,7 +203,7 @@ public class RegisterDatabase : IRegisterDatabase
 
         return dataTable.Rows
             .OfType<DataRow>()
-            .Select(x => new ReceiptIdAndStateEntity(x.Field<string>("id")!, x.Field<int>("state")))
+            .Select(x => new ReceiptIdAndStateEntity(x.Field<string>("id")!, (ReceiptState)x.Field<int>("state")))
             .ToList();
     }
 }

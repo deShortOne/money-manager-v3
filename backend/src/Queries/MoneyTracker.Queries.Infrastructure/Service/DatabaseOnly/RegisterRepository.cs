@@ -1,6 +1,7 @@
 
 using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Common.Result;
+using MoneyTracker.Common.Values;
 using MoneyTracker.Queries.Domain.Entities.Receipt;
 using MoneyTracker.Queries.Domain.Entities.Transaction;
 using MoneyTracker.Queries.Domain.Repositories.Database;
@@ -34,7 +35,7 @@ public class RegisterRepository : IRegisterRepositoryService
         return _registerDatabase.GetTemporaryTransactionFromReceipt(fileId, cancellationToken);
     }
 
-    public Task<List<ReceiptIdAndStateEntity>> GetReceiptStatesForUser(AuthenticatedUser user, List<int> designatedStates, CancellationToken cancellationToken)
+    public Task<List<ReceiptIdAndStateEntity>> GetReceiptStatesForUser(AuthenticatedUser user, List<ReceiptState> designatedStates, CancellationToken cancellationToken)
     {
         return _registerDatabase.GetReceiptStatesForUser(user, designatedStates, cancellationToken);
     }

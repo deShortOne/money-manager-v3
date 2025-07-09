@@ -1,5 +1,6 @@
 
 using MoneyTracker.Authentication.DTOs;
+using MoneyTracker.Common.Values;
 using MoneyTracker.Queries.Domain.Entities.Receipt;
 using Moq;
 
@@ -7,7 +8,7 @@ namespace MoneyTracker.Queries.Tests.RegisterTests.Repository.DatabaseOnlyReposi
 public class WhenRequestingReceiptsOfStateForAUser : DatabaseOnlyTestHelper
 {
     private AuthenticatedUser _user = new AuthenticatedUser(1);
-    private List<int> _designatedStates = [1, 3, 4];
+    private List<ReceiptState> _designatedStates = [ReceiptState.Unknown, ReceiptState.Finished];
     private List<ReceiptIdAndStateEntity> _receiptIdAndStateEntities = new List<ReceiptIdAndStateEntity>();
 
     private List<ReceiptIdAndStateEntity> _result;
