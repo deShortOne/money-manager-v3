@@ -86,4 +86,15 @@ public class RegisterService : IRegisterService
 
         return new ReceiptResponse("invalid", null);
     }
+
+    public async Task<ResultT<List<ReceiptIdAndStateResponse>>> GetReceiptsAndStatesForGivenUser(string token, CancellationToken cancellationToken)
+    {
+        var userAuth = await _userRepository.GetUserAuthFromToken(token, cancellationToken);
+        if (userAuth == null)
+            throw new InvalidDataException("Token not found");
+        userAuth.CheckValidation();
+
+        var entities = await _registerRepository.GetReceiptStatesForUser(new AuthenticatedUser(userAuth.User.Id), [ReceiptState.Processing, ReceiptState.Pending], cancellationToken);
+        return entities.ConvertAll(x => new ReceiptIdAndStateResponse(x.Id, x.State));
+    }
 }

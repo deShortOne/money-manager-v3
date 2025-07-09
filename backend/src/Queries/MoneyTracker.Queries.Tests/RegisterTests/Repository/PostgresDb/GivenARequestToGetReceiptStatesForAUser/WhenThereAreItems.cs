@@ -1,7 +1,4 @@
 
-
-
-
 using System.Data.Common;
 using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Common.Values;

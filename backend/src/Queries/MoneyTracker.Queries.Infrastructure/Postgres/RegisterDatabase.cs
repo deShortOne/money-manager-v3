@@ -6,6 +6,7 @@ using MoneyTracker.Common.Result;
 using MoneyTracker.Common.Values;
 using MoneyTracker.Contracts.Responses.Account;
 using MoneyTracker.Contracts.Responses.Category;
+using MoneyTracker.Contracts.Responses.Receipt;
 using MoneyTracker.Queries.Domain.Entities.Receipt;
 using MoneyTracker.Queries.Domain.Entities.Transaction;
 using MoneyTracker.Queries.Domain.Repositories.Database;
