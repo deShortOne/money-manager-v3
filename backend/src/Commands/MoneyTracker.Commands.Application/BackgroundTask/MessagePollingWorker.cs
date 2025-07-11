@@ -3,7 +3,7 @@ using Microsoft.Extensions.Hosting;
 using MoneyTracker.Commands.Domain.Entities.MessageQueuePolling;
 using MoneyTracker.Commands.Domain.Handlers;
 
-namespace MoneyTracker.Commands.Application;
+namespace MoneyTracker.Commands.Application.BackgroundTask;
 public class MessagePollingWorker : BackgroundService
 {
     private readonly IMessageQueueService _messageQueueService;

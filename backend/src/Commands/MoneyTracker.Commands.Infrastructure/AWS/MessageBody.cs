@@ -1,7 +1,7 @@
 
 using System.Text.Json.Serialization;
 
-namespace MoneyTracker.Commands.Application.AWS;
+namespace MoneyTracker.Commands.Infrastructure.AWS;
 
 public class MessageBody
 {

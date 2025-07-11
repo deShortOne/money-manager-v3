@@ -1,5 +1,4 @@
-
-using MoneyTracker.Commands.Application;
+using MoneyTracker.Commands.Application.BackgroundTask;
 using MoneyTracker.Commands.Domain.Entities.MessageQueuePolling;
 using MoneyTracker.Commands.Domain.Repositories;
 using Moq;

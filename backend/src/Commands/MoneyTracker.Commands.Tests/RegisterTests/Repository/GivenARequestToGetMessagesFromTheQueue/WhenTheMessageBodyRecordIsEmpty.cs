@@ -2,7 +2,6 @@
 using System.Text.Json;
 using Amazon.SQS;
 using Amazon.SQS.Model;
-using MoneyTracker.Commands.Application.AWS;
 using MoneyTracker.Commands.Domain.Entities.MessageQueuePolling;
 using MoneyTracker.Commands.Infrastructure.AWS;
 using MoneyTracker.Common.Result;
@@ -24,7 +23,7 @@ public class WhenTheMessageBodyRecordIsEmpty : IAsyncLifetime
     {
         var messageBodyWithMissingRecord = new MessageBody
         {
-            Records = new List<Application.AWS.Record>(),
+            Records = new List<Infrastructure.AWS.Record>(),
         };
         var failedMessageDueToNullRecord = new Message
         {

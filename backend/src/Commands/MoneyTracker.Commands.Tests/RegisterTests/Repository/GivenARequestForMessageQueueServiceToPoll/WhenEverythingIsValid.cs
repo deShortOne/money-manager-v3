@@ -1,6 +1,6 @@
 
 using System.Text.Json;
-using MoneyTracker.Commands.Application.AWS;
+using MoneyTracker.Commands.Application.BackgroundTask.ResultingObject.Schemas.V1;
 using MoneyTracker.Commands.Domain.Entities.MessageQueuePolling;
 using MoneyTracker.Commands.Domain.Entities.Receipt;
 using MoneyTracker.Commands.Domain.Entities.Transaction;
@@ -49,7 +49,11 @@ public class WhenEverythingIsValid : MessageQueueServiceHelper
 
         var fileContentsFromFileUploadRepository = new TemporaryTransactionObject
         {
-            Value = _amount,
+            VersionNumber = 1,
+            Data = new Data
+            {
+                Value = _amount
+            },
         };
         _mockFileUploadRepository
             .Setup(x => x.GetContentsOfFile(_successfulMessageFilename, CancellationToken.None))

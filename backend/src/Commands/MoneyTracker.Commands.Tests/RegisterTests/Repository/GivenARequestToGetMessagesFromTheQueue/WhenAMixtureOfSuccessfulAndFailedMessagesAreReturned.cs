@@ -2,7 +2,6 @@
 using System.Text.Json;
 using Amazon.SQS;
 using Amazon.SQS.Model;
-using MoneyTracker.Commands.Application.AWS;
 using MoneyTracker.Commands.Domain.Entities.MessageQueuePolling;
 using MoneyTracker.Commands.Infrastructure.AWS;
 using MoneyTracker.Common.Result;
@@ -33,9 +32,9 @@ public class WhenAMixtureOfSuccessfulAndFailedMessagesAreReturned : IAsyncLifeti
 
         var successfulMessageBody = new MessageBody
         {
-            Records = new List<Application.AWS.Record>
+            Records = new List<Infrastructure.AWS.Record>
             {
-                new Application.AWS.Record
+                new Infrastructure.AWS.Record
                 {
                     S3 = new S3
                     {

@@ -6,6 +6,7 @@ using MoneyTracker.Authentication;
 using MoneyTracker.Authentication.Authentication;
 using MoneyTracker.Authentication.Interfaces;
 using MoneyTracker.Commands.Application;
+using MoneyTracker.Commands.Application.BackgroundTask;
 using MoneyTracker.Commands.Application.Fake;
 using MoneyTracker.Commands.DatabaseMigration;
 using MoneyTracker.Commands.DatabaseMigration.Models;

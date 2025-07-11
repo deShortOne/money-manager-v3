@@ -1,14 +1,16 @@
 
 using System.Text.Json;
-using MoneyTracker.Commands.Application.AWS;
+using System.Text.Json.Serialization;
+using MoneyTracker.Commands.Application.BackgroundTask.ResultingObject;
+using MoneyTracker.Commands.Application.BackgroundTask.ResultingObject.Schemas;
+using MoneyTracker.Commands.Application.BackgroundTask.ResultingObject.Schemas.V1;
 using MoneyTracker.Commands.Domain.Entities.MessageQueuePolling;
-using MoneyTracker.Commands.Domain.Entities.Transaction;
 using MoneyTracker.Commands.Domain.Handlers;
 using MoneyTracker.Commands.Domain.Repositories;
 using MoneyTracker.Common.Result;
 using MoneyTracker.Common.Values;
 
-namespace MoneyTracker.Commands.Application;
+namespace MoneyTracker.Commands.Application.BackgroundTask;
 public class MessageQueueService : IMessageQueueService
 {
     private readonly IMessageQueueRepository _messageQueueRepository;
@@ -49,25 +51,13 @@ public class MessageQueueService : IMessageQueueService
             }
 
             var fileContents = await _fileUploadRepository.GetContentsOfFile(filenameAndMessageId.Filename, cancellationToken);
-            var infoFromReceipt = JsonSerializer.Deserialize<TemporaryTransactionObject>(fileContents);
-            if (infoFromReceipt is null)
+            var fileHandler = SelectHandler(fileContents);
+            var fileHandlerResult = await fileHandler.Handle(fileContents, filenameAndMessageId.MessageId, entity.UserId, filenameAndMessageId.Filename, cancellationToken);
+            if (fileHandlerResult.HasError)
             {
-                Console.WriteLine($"ERROR: object is wrong??");
-                failedMessageIdsWithReason.Add(Error.Failure(filenameAndMessageId.MessageId, $"ERROR: object is wrong: {fileContents}"));
+                failedMessageIdsWithReason.Add(fileHandlerResult.Error!);
                 continue;
             }
-
-            var temporaryTransaction = new TemporaryTransactionEntity
-            {
-                UserId = entity.UserId,
-                Filename = filenameAndMessageId.Filename,
-                Amount = infoFromReceipt.Value,
-                CategoryId = null,
-                DatePaid = null,
-                PayeeId = null,
-                PayerId = null,
-            };
-            await _receiptCommandRepository.CreateTemporaryTransaction(temporaryTransaction, cancellationToken);
 
             entity.UpdateState((int)ReceiptState.Pending);
             await _receiptCommandRepository.UpdateReceipt(entity, cancellationToken);
@@ -85,6 +75,16 @@ public class MessageQueueService : IMessageQueueService
         {
             SuccessfullyProcessedFileIds = successfulMessageIds,
             FailedProcessedFileIds = failedMessageIdsWithReason,
+        };
+    }
+
+    private IHandler SelectHandler(string fileContents)
+    {
+        var fileWithVersionOnly = JsonSerializer.Deserialize<VersionNumberObject>(fileContents);
+        return fileWithVersionOnly?.VersionNumber switch
+        {
+            1 => new HandleV1(_receiptCommandRepository),
+            _ => throw new InvalidOperationException(),
         };
     }
 }
