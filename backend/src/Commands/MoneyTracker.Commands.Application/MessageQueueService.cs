@@ -49,7 +49,6 @@ public class MessageQueueService : IMessageQueueService
             }
 
             var fileContents = await _fileUploadRepository.GetContentsOfFile(filenameAndMessageId.Filename, cancellationToken);
-
             var infoFromReceipt = JsonSerializer.Deserialize<TemporaryTransactionObject>(fileContents);
             if (infoFromReceipt is null)
             {

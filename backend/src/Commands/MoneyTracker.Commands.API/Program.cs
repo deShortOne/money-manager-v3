@@ -6,6 +6,7 @@ using MoneyTracker.Authentication;
 using MoneyTracker.Authentication.Authentication;
 using MoneyTracker.Authentication.Interfaces;
 using MoneyTracker.Commands.Application;
+using MoneyTracker.Commands.Application.Fake;
 using MoneyTracker.Commands.DatabaseMigration;
 using MoneyTracker.Commands.DatabaseMigration.Models;
 using MoneyTracker.Commands.Domain.Entities.MessageQueuePolling;
@@ -89,7 +90,8 @@ internal class Program
             }
         }
 
-        DoAmazonStuff(builder, args);
+        SetupFakes(builder, args);
+        //DoAmazonStuff(builder, args);
 
         builder.Services
             .AddHttpContextAccessor()
@@ -165,12 +167,15 @@ internal class Program
         builder.Services
             .AddDefaultAWSOptions(builder.Configuration.GetAWSOptions())
             .AddAWSService<IAmazonS3>()
-            .AddAWSService<IAmazonSQS>();
+            .AddAWSService<IAmazonSQS>()
+            ;
 
+        var a = new FakeFileUploadRepository();
         var preprocessBucketName = GetCliArgumentValue<string>(args, "--aws-preprocess-bucket") ?? builder.Configuration["AWS:PreprocessBucket"]!;
         builder.Services
             .AddSingleton<IFileUploadRepository>(provider =>
-                new S3Repository(provider.GetRequiredService<IAmazonS3>(), preprocessBucketName));
+            a);
+        //new S3Repository(provider.GetRequiredService<IAmazonS3>(), preprocessBucketName));
 
         // Polling
         var postprocessBucketName = GetCliArgumentValue<string>(args, "--aws-postprocess-bucket") ?? builder.Configuration["AWS:PostprocessBucket"]!;
@@ -180,9 +185,25 @@ internal class Program
             .AddSingleton<IMessageQueueService>(provider => new MessageQueueService(
                 provider.GetRequiredService<IMessageQueueRepository>(),
                 provider.GetRequiredService<IReceiptCommandRepository>(),
-                new S3Repository(provider.GetRequiredService<IAmazonS3>(), postprocessBucketName),
+                a,
+                //new S3Repository(provider.GetRequiredService<IAmazonS3>(), postprocessBucketName),
                 provider.GetRequiredService<IPollingController>()))
-            .AddSingleton<IMessageQueueRepository>(provider => new SQSRepository(provider.GetRequiredService<IAmazonSQS>(), sqsUrl, 5));
+            .AddSingleton<IMessageQueueRepository>(provider => new FakeSQS())
+            //.AddSingleton<IMessageQueueRepository>(provider => new SQSRepository(provider.GetRequiredService<IAmazonSQS>(), sqsUrl, 5))
+            ;
+
+        builder.Services.AddHostedService<MessagePollingWorker>();
+    }
+
+    // For testing only until OCR is setup locally
+    private static void SetupFakes(WebApplicationBuilder builder, string[] args)
+    {
+        builder.Services.AddSingleton<IFileUploadRepository, FakeFileUploadRepository>();
+
+        builder.Services
+            .AddSingleton<IPollingController, PollingController>()
+            .AddSingleton<IMessageQueueService, MessageQueueService>()
+            .AddSingleton<IMessageQueueRepository, FakeSQS>();
 
         builder.Services.AddHostedService<MessagePollingWorker>();
     }

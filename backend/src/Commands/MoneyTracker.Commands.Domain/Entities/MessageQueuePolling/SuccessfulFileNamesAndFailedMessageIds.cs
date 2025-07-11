@@ -11,6 +11,6 @@ public class SuccessfulFileNamesAndFailedMessageIds
 public class SuccessfulMessageInfo
 {
     public required string MessageId { get; init; }
-    public required string Filename { get; init; }
+    public required string Filename { get; set; }
     public required string QueueMessageId { get; init; }
 }
