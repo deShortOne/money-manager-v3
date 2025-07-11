@@ -9,7 +9,7 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import { useQuery } from "@tanstack/react-query";
-import { addNewTransactions, getReceiptStates, getTemporaryTransaction } from "./action";
+import { addNewTransactions, getReceiptStates } from "./action";
 import { useUpdateTemporaryTransactionCounter } from "../hooks/useTemporaryTransactions";
 import { useRegisterModalSetting } from "../hooks/useEditRegisterForm";
 

@@ -100,24 +100,6 @@ export async function uploadReceipt(authToken: string, formData: FormData): Prom
     return JSON.parse(JSON.stringify(new ErrorResult(await response.text(), false)));
 }
 
-export async function getTemporaryTransaction(authToken: string, receiptId: string): Promise<Result<ReceiptResponse>> {
-    const response = await fetch(process.env.QUERY_SERVER_URL + `/Register/get-temporary-transaction?` + new URLSearchParams({
-        filename: receiptId,
-    }).toString(), {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + authToken,
-        },
-    });
-    if (response.ok) {
-        return JSON.parse(JSON.stringify(new SuccessResult(JSON.parse(await response.text()))));
-    }
-
-    const text = await response.text()
-    return JSON.parse(JSON.stringify(new ErrorResult(text, false)));
-}
-
 export async function getReceiptStates(authToken: string): Promise<Result<ReceiptStates[]>> {
     const response = await fetch(process.env.QUERY_SERVER_URL + `/Register/get-receipts-states`, {
         method: "POST",
