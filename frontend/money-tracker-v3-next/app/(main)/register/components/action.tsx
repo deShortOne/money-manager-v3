@@ -1,6 +1,6 @@
 'use server'
 
-import { Newtransaction, ReceiptResponse, Transaction, UpdateTransaction } from "@/interface/transaction";
+import { Newtransaction, ReceiptResponse, ReceiptStates, Transaction, UpdateTransaction } from "@/interface/transaction";
 import { ErrorResult, SuccessResult, Result } from "@/types/result";
 import { convertDateToString } from "@/utils/date-converter";
 
@@ -115,5 +115,21 @@ export async function getTemporaryTransaction(authToken: string, receiptId: stri
     }
 
     const text = await response.text()
+    return JSON.parse(JSON.stringify(new ErrorResult(text, false)));
+}
+
+export async function getReceiptStates(authToken: string): Promise<Result<ReceiptStates[]>> {
+    const response = await fetch(process.env.QUERY_SERVER_URL + `/Register/get-receipts-states`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + authToken,
+        },
+    });
+    const text = await response.text()
+    if (response.ok) {
+        return JSON.parse(JSON.stringify(new SuccessResult(JSON.parse(text))));
+    }
+
     return JSON.parse(JSON.stringify(new ErrorResult(text, false)));
 }

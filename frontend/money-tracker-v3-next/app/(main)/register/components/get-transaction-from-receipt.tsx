@@ -7,7 +7,6 @@ import { addNewTransactions, getTemporaryTransaction } from "./action";
 import { useCookies } from "react-cookie";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { Newtransaction } from "@/interface/transaction";
 
 export function TemporaryTransactionEditor() {
     const onOpen = useRegisterModalSetting(state => state.onOpen);

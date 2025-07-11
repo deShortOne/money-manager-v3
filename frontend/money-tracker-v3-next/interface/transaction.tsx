@@ -39,3 +39,8 @@ export interface TemopraryTransaction {
     category: Category | null,
     payer: Account | null,
 }
+
+export interface ReceiptStates {
+    id: string,
+    state: string,
+}
