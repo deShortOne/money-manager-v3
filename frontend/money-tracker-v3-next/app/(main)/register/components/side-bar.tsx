@@ -7,7 +7,11 @@ export default function SideBar() {
         <ul className="box-border">
             <li>
                 <AddNewTransaction />
+            </li>
+            <li>
                 <UploadReceipt />
+            </li>
+            <li>
                 <PendingReceiptStates />
             </li>
         </ul>
