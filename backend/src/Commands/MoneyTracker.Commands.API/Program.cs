@@ -7,6 +7,10 @@ using MoneyTracker.Authentication.Authentication;
 using MoneyTracker.Authentication.Interfaces;
 using MoneyTracker.Commands.Application;
 using MoneyTracker.Commands.Application.BackgroundTask;
+using MoneyTracker.Commands.Application.BackgroundTask.ResultingObject;
+using MoneyTracker.Commands.Application.BackgroundTask.ResultingObject.Schemas;
+using MoneyTracker.Commands.Application.BackgroundTask.ResultingObject.Schemas.V1;
+using MoneyTracker.Commands.Application.BackgroundTask.ResultingObject.Schemas.V2;
 using MoneyTracker.Commands.Application.Fake;
 using MoneyTracker.Commands.DatabaseMigration;
 using MoneyTracker.Commands.DatabaseMigration.Models;
@@ -163,8 +167,16 @@ internal class Program
         return args.Any(x => x == key);
     }
 
+    private static void SetStrategy(WebApplicationBuilder builder)
+    {
+        builder.Services.AddSingleton<IHandler, HandleObjectVersion1>();
+        builder.Services.AddSingleton<IHandler, HandleObjectVersion2>();
+        builder.Services.AddSingleton<StrategyContext>();
+    }
+
     private static void DoAmazonStuff(WebApplicationBuilder builder, string[] args)
     {
+        SetStrategy(builder);
         builder.Services
             .AddDefaultAWSOptions(builder.Configuration.GetAWSOptions())
             .AddAWSService<IAmazonS3>()
@@ -188,7 +200,8 @@ internal class Program
                 provider.GetRequiredService<IReceiptCommandRepository>(),
                 a,
                 //new S3Repository(provider.GetRequiredService<IAmazonS3>(), postprocessBucketName),
-                provider.GetRequiredService<IPollingController>()))
+                provider.GetRequiredService<IPollingController>(),
+                new StrategyContext([])))
             .AddSingleton<IMessageQueueRepository>(provider => new FakeSQS())
             //.AddSingleton<IMessageQueueRepository>(provider => new SQSRepository(provider.GetRequiredService<IAmazonSQS>(), sqsUrl, 5))
             ;
@@ -199,6 +212,8 @@ internal class Program
     // For testing only until OCR is setup locally
     private static void SetupFakes(WebApplicationBuilder builder, string[] args)
     {
+        SetStrategy(builder);
+
         builder.Services.AddSingleton<IFileUploadRepository, FakeFileUploadRepository>();
 
         builder.Services

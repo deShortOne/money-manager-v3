@@ -145,6 +145,36 @@ public class AccountCommandRepository : IAccountCommandRepository
         return null;
     }
 
+    public async Task<AccountUserEntity?> GetAccountUserEntity(string accountUserName, int userId, CancellationToken cancellationToken)
+    {
+        var query = """
+            SELECT account_user.id,
+                users_id,
+                account_id,
+                user_owns_account
+            FROM account_user
+            JOIN account
+            ON account_id = account.id
+            WHERE  users_id = @account_users_id
+            AND account.name = @account_users_name;
+         """;
+        var queryParams = new List<DbParameter>()
+        {
+            new NpgsqlParameter("account_users_name", accountUserName),
+            new NpgsqlParameter("account_users_id", userId),
+        };
+
+        using var reader = await _database.GetTable(query, cancellationToken, queryParams);
+
+        if (reader.Rows.Count != 0)
+            return new AccountUserEntity(
+                reader.Rows[0].Field<int>("id"),
+                reader.Rows[0].Field<int>("account_id"),
+                reader.Rows[0].Field<int>("users_id")!,
+                reader.Rows[0].Field<bool>("user_owns_account"));
+        return null;
+    }
+
     public async Task<int> GetLastAccountId(CancellationToken cancellationToken)
     {
         string query = """

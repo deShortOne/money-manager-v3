@@ -80,8 +80,30 @@ public class CategoryCommandRepository : ICategoryCommandRepository
                 reader.Rows[0].Field<int>("id"),
                 reader.Rows[0].Field<string>("name")!);
         return null;
-
     }
+
+    public async Task<CategoryEntity?> GetCategory(string categoryName, CancellationToken cancellationToken)
+    {
+        var query = """
+            SELECT id,
+                name
+            FROM category
+            WHERE name = @category_name;
+         """;
+        var queryParams = new List<DbParameter>()
+        {
+            new NpgsqlParameter("category_name", categoryName),
+        };
+
+        using var reader = await _database.GetTable(query, cancellationToken, queryParams);
+
+        if (reader.Rows.Count != 0)
+            return new CategoryEntity(
+                reader.Rows[0].Field<int>("id"),
+                reader.Rows[0].Field<string>("name")!);
+        return null;
+    }
+
 
     public async Task<int> GetLastCategoryId(CancellationToken cancellationToken)
     {

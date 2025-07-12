@@ -1,10 +1,8 @@
-
-
 using MoneyTracker.Commands.Domain.Entities.MessageQueuePolling;
 using MoneyTracker.Common.Result;
 using Moq;
 
-namespace MoneyTracker.Commands.Tests.RegisterTests.Repository.GivenARequestForMessageQueueServiceToPoll;
+namespace MoneyTracker.Commands.Tests.RegisterTests.Repository.GivenARequestForMessageQueueServiceToPoll.V1;
 public class WhenTheMessageQueueRepositoryFails : MessageQueueServiceHelper
 {
     private readonly string _messageQueueRepositoryErrorDescription = "error message desc goes here";

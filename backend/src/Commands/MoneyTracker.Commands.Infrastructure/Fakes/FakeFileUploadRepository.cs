@@ -1,7 +1,7 @@
 
 using System.Text.Json;
 using Microsoft.AspNetCore.Http;
-using MoneyTracker.Commands.Application.BackgroundTask.ResultingObject.Schemas.V1;
+using MoneyTracker.Commands.Application.BackgroundTask.ResultingObject.Schemas.V2;
 using MoneyTracker.Commands.Domain.Repositories;
 
 namespace MoneyTracker.Commands.Application.Fake;
@@ -22,10 +22,14 @@ public class FakeFileUploadRepository : IFileUploadRepository
 
         var res = new TemporaryTransactionObject
         {
-            VersionNumber = 1,
+            VersionNumber = 2,
             Data = new Data
             {
-                Value = 24
+                // for user root only
+                DatePaid = new DateOnly(2025, 7, 12),
+                PayeeName = "Bank A",
+                PayerName = "Supermarket A",
+                Amount = 6.4m,
             },
         };
         return JsonSerializer.Serialize(res);

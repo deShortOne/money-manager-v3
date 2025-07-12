@@ -1,9 +1,5 @@
 
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using MoneyTracker.Commands.Application.BackgroundTask.ResultingObject;
-using MoneyTracker.Commands.Application.BackgroundTask.ResultingObject.Schemas;
-using MoneyTracker.Commands.Application.BackgroundTask.ResultingObject.Schemas.V1;
 using MoneyTracker.Commands.Domain.Entities.MessageQueuePolling;
 using MoneyTracker.Commands.Domain.Handlers;
 using MoneyTracker.Commands.Domain.Repositories;
@@ -17,16 +13,19 @@ public class MessageQueueService : IMessageQueueService
     private readonly IReceiptCommandRepository _receiptCommandRepository;
     private readonly IFileUploadRepository _fileUploadRepository;
     private readonly IPollingController _pollingController;
+    private readonly StrategyContext _strategyContext;
 
     public MessageQueueService(IMessageQueueRepository messageQueueRepository,
         IReceiptCommandRepository receiptCommandRepository,
         IFileUploadRepository fileUploadRepository,
-        IPollingController pollingController)
+        IPollingController pollingController,
+        StrategyContext strategyContext)
     {
         _messageQueueRepository = messageQueueRepository;
         _receiptCommandRepository = receiptCommandRepository;
         _fileUploadRepository = fileUploadRepository;
         _pollingController = pollingController;
+        _strategyContext = strategyContext;
     }
 
     public async Task<ResultT<MessageQueueResult>> PollAsync(CancellationToken cancellationToken)
@@ -51,8 +50,13 @@ public class MessageQueueService : IMessageQueueService
             }
 
             var fileContents = await _fileUploadRepository.GetContentsOfFile(filenameAndMessageId.Filename, cancellationToken);
-            var fileHandler = SelectHandler(fileContents);
-            var fileHandlerResult = await fileHandler.Handle(fileContents, filenameAndMessageId.MessageId, entity.UserId, filenameAndMessageId.Filename, cancellationToken);
+            var fileHandler = _strategyContext.GetStrategy(fileContents);
+            if (fileHandler.HasError)
+            {
+                failedMessageIdsWithReason.Add(fileHandler);
+                continue;
+            }
+            var fileHandlerResult = await fileHandler.Value!.Handle(fileContents, filenameAndMessageId.MessageId, entity.UserId, filenameAndMessageId.Filename, cancellationToken);
             if (fileHandlerResult.HasError)
             {
                 failedMessageIdsWithReason.Add(fileHandlerResult.Error!);
@@ -75,16 +79,6 @@ public class MessageQueueService : IMessageQueueService
         {
             SuccessfullyProcessedFileIds = successfulMessageIds,
             FailedProcessedFileIds = failedMessageIdsWithReason,
-        };
-    }
-
-    private IHandler SelectHandler(string fileContents)
-    {
-        var fileWithVersionOnly = JsonSerializer.Deserialize<VersionNumberObject>(fileContents);
-        return fileWithVersionOnly?.VersionNumber switch
-        {
-            1 => new HandleV1(_receiptCommandRepository),
-            _ => throw new InvalidOperationException(),
         };
     }
 }

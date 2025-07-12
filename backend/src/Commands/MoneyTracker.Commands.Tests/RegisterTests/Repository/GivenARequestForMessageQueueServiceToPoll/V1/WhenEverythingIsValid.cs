@@ -7,7 +7,7 @@ using MoneyTracker.Commands.Domain.Entities.Transaction;
 using MoneyTracker.Common.Result;
 using Moq;
 
-namespace MoneyTracker.Commands.Tests.RegisterTests.Repository.GivenARequestForMessageQueueServiceToPoll;
+namespace MoneyTracker.Commands.Tests.RegisterTests.Repository.GivenARequestForMessageQueueServiceToPoll.V1;
 public class WhenEverythingIsValid : MessageQueueServiceHelper
 {
     private readonly string _successfulMessageMessageId = "EFDF6BA9-4D8F-45C9-A4B2-B08265EAF211";
@@ -131,7 +131,7 @@ public class WhenEverythingIsValid : MessageQueueServiceHelper
     [Fact]
     public void ThenTheCallToUpdateTheReceiptIsCalledOnce()
     {
-        _mockReceiptCommandRepository.Verify(x => x.UpdateReceipt(It.IsAny<ReceiptEntity?>(), CancellationToken.None), Times.Once);
+        _mockReceiptCommandRepository.Verify(x => x.UpdateReceipt(It.IsAny<ReceiptEntity>(), CancellationToken.None), Times.Once);
     }
 
     [Fact]
