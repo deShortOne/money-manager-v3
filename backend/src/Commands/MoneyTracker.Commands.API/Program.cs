@@ -95,8 +95,14 @@ internal class Program
             }
         }
 
-        SetupFakes(builder, args);
-        //DoAmazonStuff(builder, args);
+        if (true)
+        {
+            DoAmazonStuff(builder, args);
+        }
+        else
+        {
+            SetupFakes(builder, args);
+        }
 
         builder.Services
             .AddHttpContextAccessor()
@@ -180,15 +186,12 @@ internal class Program
         builder.Services
             .AddDefaultAWSOptions(builder.Configuration.GetAWSOptions())
             .AddAWSService<IAmazonS3>()
-            .AddAWSService<IAmazonSQS>()
-            ;
+            .AddAWSService<IAmazonSQS>();
 
-        var a = new FakeFileUploadRepository();
         var preprocessBucketName = GetCliArgumentValue<string>(args, "--aws-preprocess-bucket") ?? builder.Configuration["AWS:PreprocessBucket"]!;
         builder.Services
             .AddSingleton<IFileUploadRepository>(provider =>
-            a);
-        //new S3Repository(provider.GetRequiredService<IAmazonS3>(), preprocessBucketName));
+            new S3Repository(provider.GetRequiredService<IAmazonS3>(), preprocessBucketName));
 
         // Polling
         var postprocessBucketName = GetCliArgumentValue<string>(args, "--aws-postprocess-bucket") ?? builder.Configuration["AWS:PostprocessBucket"]!;
@@ -198,12 +201,10 @@ internal class Program
             .AddSingleton<IMessageQueueService>(provider => new MessageQueueService(
                 provider.GetRequiredService<IMessageQueueRepository>(),
                 provider.GetRequiredService<IReceiptCommandRepository>(),
-                a,
-                //new S3Repository(provider.GetRequiredService<IAmazonS3>(), postprocessBucketName),
+                new S3Repository(provider.GetRequiredService<IAmazonS3>(), postprocessBucketName),
                 provider.GetRequiredService<IPollingController>(),
-                new StrategyContext([])))
-            .AddSingleton<IMessageQueueRepository>(provider => new FakeSQS())
-            //.AddSingleton<IMessageQueueRepository>(provider => new SQSRepository(provider.GetRequiredService<IAmazonSQS>(), sqsUrl, 5))
+                provider.GetRequiredService<StrategyContext>()))
+            .AddSingleton<IMessageQueueRepository>(provider => new SQSRepository(provider.GetRequiredService<IAmazonSQS>(), sqsUrl, 5))
             ;
 
         builder.Services.AddHostedService<MessagePollingWorker>();
