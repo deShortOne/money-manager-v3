@@ -20,8 +20,8 @@ public class ReceiptCommandRepository : IReceiptCommandRepository
     public async Task AddReceipt(ReceiptEntity receipt, CancellationToken cancellationToken)
     {
         var query = """
-            INSERT INTO receipt_analysis_state (id, users_id, filename, url, state) VALUES
-                (@id, @users_id, @filename, @url, @state);
+            INSERT INTO receipt_analysis_state (id, users_id, filename, url, state, final_transaction_id) VALUES
+                (@id, @users_id, @filename, @url, @state, @final_transaction_id);
         """;
         var queryParams = new List<DbParameter>
         {
@@ -30,6 +30,7 @@ public class ReceiptCommandRepository : IReceiptCommandRepository
             new NpgsqlParameter("filename", receipt.Name),
             new NpgsqlParameter("url", receipt.Url),
             new NpgsqlParameter("state", receipt.State),
+            new NpgsqlParameter<int?>("final_transaction_id", receipt.FinalTransactionId),
         };
 
         await _database.UpdateTable(query, cancellationToken, queryParams);
@@ -67,7 +68,8 @@ public class ReceiptCommandRepository : IReceiptCommandRepository
                 SET users_id = @users_id,
                     filename = @filename,
                     url = @url,
-                    state = @state
+                    state = @state,
+                    final_transaction_id = @final_transaction_id
                 WHERE id = @id;
         """;
         var queryParams = new List<DbParameter>
@@ -77,6 +79,7 @@ public class ReceiptCommandRepository : IReceiptCommandRepository
             new NpgsqlParameter("filename", receipt.Name),
             new NpgsqlParameter("url", receipt.Url),
             new NpgsqlParameter("state", receipt.State),
+            new NpgsqlParameter<int?>("final_transaction_id", receipt.FinalTransactionId),
         };
 
         await _database.UpdateTable(query, cancellationToken, queryParams);

@@ -54,12 +54,12 @@ public class RegisterService : IRegisterService
         _pollingController = pollingController;
     }
 
-    public async Task<Result> AddTransaction(string token, NewTransactionRequest newTransaction,
+    public async Task<ResultT<int>> AddTransaction(string token, NewTransactionRequest newTransaction,
         CancellationToken cancellationToken)
     {
         var userResult = await _userService.GetUserFromToken(token, cancellationToken);
         if (userResult.HasError)
-            return userResult;
+            return userResult.Error!;
 
         var user = userResult.Value;
 
@@ -101,7 +101,7 @@ public class RegisterService : IRegisterService
 
         await _messageBus.PublishEvent(new EventUpdate(user, DataTypes.Register), cancellationToken);
 
-        return Result.Success();
+        return newTransactionId;
     }
 
     public async Task<Result> EditTransaction(string token, EditTransactionRequest editTransaction,
@@ -186,5 +186,29 @@ public class RegisterService : IRegisterService
         _pollingController.EnablePolling();
 
         return id;
+    }
+
+    public async Task<Result> AddTransactionFromReceipt(string token, NewTransactionFromReceiptRequest newTransaction, CancellationToken cancellationToken)
+    {
+        var userResult = await _userService.GetUserFromToken(token, cancellationToken);
+        if (userResult.HasError)
+            return userResult.Error!;
+
+        var entity = await _receiptCommandRepository.GetReceiptById(newTransaction.Fileid, cancellationToken);
+        if (entity is null)
+            return Error.NotFound("RegisterService.AddTransactionFromReceipt", $"ERROR: entity doesnt exist id: {newTransaction.Fileid}");
+
+        if (entity.UserId != userResult.Value.Id)
+            return Error.NotFound("RegisterService.AddTransactionFromReceipt", $"Cannot find entity: {newTransaction.Fileid} for user {userResult.Value.Id}");
+
+        var addTransactionResult = await AddTransaction(token, new NewTransactionRequest(newTransaction.PayeeId, newTransaction.Amount, newTransaction.DatePaid, newTransaction.CategoryId, newTransaction.PayerId), cancellationToken);
+        if (addTransactionResult.HasError)
+            return addTransactionResult;
+
+        entity.SetFinalTransactionId(addTransactionResult.Value);
+        entity.UpdateState((int)ReceiptState.Finished);
+        await _receiptCommandRepository.UpdateReceipt(entity, cancellationToken);
+
+        return Result.Success();
     }
 }
