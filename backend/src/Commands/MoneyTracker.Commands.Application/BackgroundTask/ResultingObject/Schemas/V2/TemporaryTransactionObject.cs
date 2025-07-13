@@ -7,8 +7,8 @@ public class TemporaryTransactionObject : VersionNumberObject
 
 public class Data
 {
-    public decimal Amount { get; set; }
-    public DateOnly DatePaid { get; set; }
-    public string PayeeName { get; set; }
-    public string PayerName { get; set; }
+    public decimal? Amount { get; set; }
+    public DateOnly? DatePaid { get; set; }
+    public string? PayeeName { get; set; }
+    public string? PayerName { get; set; }
 }
