@@ -1,5 +1,6 @@
 
 using System.Text.Json;
+using MoneyTracker.Commands.Domain.Entities.Account;
 using MoneyTracker.Commands.Domain.Entities.Transaction;
 using MoneyTracker.Commands.Domain.Repositories;
 using MoneyTracker.Common.Result;
@@ -35,17 +36,24 @@ public class HandleObjectVersion2 : IHandler
         if (transactionObject is null)
             return Error.Failure(messageId, $"ERROR: object does not contain data: {fileContents}");
 
-
-        var payee = await _accountCommandRepository.GetAccountUserEntity(transactionObject.PayeeName, userId, cancellationToken);
-        if (payee is null)
+        AccountUserEntity? payee = null;
+        if (transactionObject.PayeeName is not null)
         {
-            return Error.NotFound(messageId, $"ERROR: payee cannot be found: {transactionObject.PayeeName}");
+            payee = await _accountCommandRepository.GetAccountUserEntity(transactionObject.PayeeName, userId, cancellationToken);
+            if (payee is null)
+            {
+                return Error.NotFound(messageId, $"ERROR: payee cannot be found: {transactionObject.PayeeName}");
+            }
         }
 
-        var payer = await _accountCommandRepository.GetAccountUserEntity(transactionObject.PayerName, userId, cancellationToken);
-        if (payer is null)
+        AccountUserEntity? payer = null;
+        if (transactionObject.PayeeName is not null)
         {
-            return Error.NotFound(messageId, $"ERROR: payer cannot be found: {transactionObject.PayerName}");
+            payer = await _accountCommandRepository.GetAccountUserEntity(transactionObject.PayerName, userId, cancellationToken);
+            if (payer is null)
+            {
+                return Error.NotFound(messageId, $"ERROR: payer cannot be found: {transactionObject.PayerName}");
+            }
         }
 
         var temporaryTransaction = new TemporaryTransactionEntity
@@ -55,8 +63,8 @@ public class HandleObjectVersion2 : IHandler
             Amount = transactionObject.Amount,
             CategoryId = null,
             DatePaid = transactionObject.DatePaid,
-            PayeeId = payee.Id,
-            PayerId = payer.Id,
+            PayeeId = payee?.Id,
+            PayerId = payer?.Id,
         };
         await _receiptCommandRepository.CreateTemporaryTransaction(temporaryTransaction, cancellationToken);
 
