@@ -12,6 +12,7 @@ import { useQuery } from "@tanstack/react-query";
 import { addNewTransactions, getReceiptStates } from "./action";
 import { useUpdateTemporaryTransactionCounter } from "../hooks/useTemporaryTransactions";
 import { useRegisterModalSetting } from "../hooks/useEditRegisterForm";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
 export function SelectTemporaryTransactionForm() {
     const open = useUpdateTemporaryTransactionCounter(state => state.isOpen);
@@ -30,10 +31,10 @@ export function SelectTemporaryTransactionForm() {
                     return (
                         <Button
                             key={data.id}
-                            disabled={data.state == "Processing"}
+                            disabled={data.state === "Processing"}
                             onClick={() => onOpen(addNewTransactions, undefined, data.id)}
                         >
-                            {data.id}
+                            {data.id} {data.state === "Processing" && <LoadingSpinner />}
                         </Button>
                     )
                 })}
