@@ -95,6 +95,6 @@ public class RegisterService : IRegisterService
         userAuth.CheckValidation();
 
         var entities = await _registerRepository.GetReceiptStatesForUser(new AuthenticatedUser(userAuth.User.Id), [ReceiptState.Processing, ReceiptState.Pending], cancellationToken);
-        return entities.ConvertAll(x => new ReceiptIdAndStateResponse(x.Id, x.State));
+        return entities.ConvertAll(x => new ReceiptIdAndStateResponse(x.Id, x.State.ToString()));
     }
 }

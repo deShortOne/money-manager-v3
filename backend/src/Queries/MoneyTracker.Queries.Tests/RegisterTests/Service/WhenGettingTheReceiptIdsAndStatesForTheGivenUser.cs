@@ -69,10 +69,10 @@ public class WhenGettingTheReceiptIdsAndStatesForTheGivenUser : RegisterTestHelp
         Assert.Multiple(() =>
         {
             Assert.Equal(_receiptEntities[0].Id, _result.Value[0].Id);
-            Assert.Equal(_receiptEntities[0].State, _result.Value[0].State);
+            Assert.Equal("Finished", _result.Value[0].State);
 
             Assert.Equal(_receiptEntities[1].Id, _result.Value[1].Id);
-            Assert.Equal(_receiptEntities[1].State, _result.Value[1].State);
+            Assert.Equal("Unknown", _result.Value[1].State);
         });
     }
 }
