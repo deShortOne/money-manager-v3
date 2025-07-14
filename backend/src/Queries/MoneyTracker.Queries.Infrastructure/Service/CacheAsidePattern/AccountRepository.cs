@@ -20,21 +20,22 @@ public class AccountRepository : IAccountRepositoryService
         _accountDatabase = accountDatabase;
         _accountCache = accountCache;
     }
-    public async Task<ResultT<List<AccountEntity>>> GetAccounts(AuthenticatedUser user)
+    public async Task<ResultT<List<AccountEntity>>> GetAccounts(AuthenticatedUser user,
+        CancellationToken cancellationToken)
     {
-        ResultT<List<AccountEntity>> result = await _accountCache.GetAccountsOwnedByUser(user);
+        ResultT<List<AccountEntity>> result = await _accountCache.GetAccountsOwnedByUser(user, cancellationToken);
         if (result.HasError)
         {
-            result = await _accountDatabase.GetAccountsOwnedByUser(user);
-            await _accountCache.SaveAccounts(user, result.Value);
+            result = await _accountDatabase.GetAccountsOwnedByUser(user, cancellationToken);
+            await _accountCache.SaveAccounts(user, result.Value, cancellationToken);
         }
 
         return result;
     }
 
-    public async Task ResetAccountsCache(AuthenticatedUser user)
+    public async Task ResetAccountsCache(AuthenticatedUser user, CancellationToken cancellationToken)
     {
-        ResultT<List<AccountEntity>> result = await _accountDatabase.GetAccountsOwnedByUser(user);
-        await _accountCache.SaveAccounts(user, result.Value);
+        ResultT<List<AccountEntity>> result = await _accountDatabase.GetAccountsOwnedByUser(user, cancellationToken);
+        await _accountCache.SaveAccounts(user, result.Value, cancellationToken);
     }
 }

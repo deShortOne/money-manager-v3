@@ -16,7 +16,8 @@ public class BudgetDatabase : IBudgetDatabase
         _database = db;
     }
 
-    public async Task<ResultT<List<BudgetGroupEntity>>> GetBudget(AuthenticatedUser user)
+    public async Task<ResultT<List<BudgetGroupEntity>>> GetBudget(AuthenticatedUser user,
+        CancellationToken cancellationToken)
     {
         string query = """
             SELECT bg.id,
@@ -51,13 +52,13 @@ public class BudgetDatabase : IBudgetDatabase
             ORDER BY bg.id,
             	bg."name",
             	c.name;
-            
+
             """;
         var queryParams = new List<DbParameter>
         {
             new NpgsqlParameter("userId", user.Id),
         };
-        using var reader = await _database.GetTable(query, queryParams);
+        using var reader = await _database.GetTable(query, cancellationToken, queryParams);
 
         Dictionary<int, BudgetGroupEntity> res = [];
         foreach (DataRow row in reader.Rows)

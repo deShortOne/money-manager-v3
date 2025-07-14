@@ -17,13 +17,13 @@ public class ResetCategoriesCacheTest : CacheAsideTestHelper
             new(1, "iukhm"),
         };
 
-        _mockCategoryDatabase.Setup(x => x.GetAllCategories())
+        _mockCategoryDatabase.Setup(x => x.GetAllCategories(CancellationToken.None))
             .ReturnsAsync(categorys);
 
-        await _categoryRepositoryService.ResetCategoriesCache();
+        await _categoryRepositoryService.ResetCategoriesCache(CancellationToken.None);
 
-        _mockCategoryDatabase.Verify(x => x.GetAllCategories());
-        _mockCategoryCache.Verify(x => x.SaveCategories(categorys));
+        _mockCategoryDatabase.Verify(x => x.GetAllCategories(CancellationToken.None));
+        _mockCategoryCache.Verify(x => x.SaveCategories(categorys, CancellationToken.None));
         VerifyNoOtherCalls();
     }
 }

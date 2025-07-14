@@ -1,6 +1,8 @@
 
 using MoneyTracker.Authentication.DTOs;
 using MoneyTracker.Common.Result;
+using MoneyTracker.Common.Values;
+using MoneyTracker.Queries.Domain.Entities.Receipt;
 using MoneyTracker.Queries.Domain.Entities.Transaction;
 using MoneyTracker.Queries.Domain.Repositories.Cache;
 using MoneyTracker.Queries.Domain.Repositories.Database;
@@ -21,21 +23,37 @@ public class RegisterRepository : IRegisterRepositoryService
         _registerCache = registerCache;
     }
 
-    public async Task<ResultT<List<TransactionEntity>>> GetAllTransactions(AuthenticatedUser user)
+    public async Task<ResultT<List<TransactionEntity>>> GetAllTransactions(AuthenticatedUser user,
+        CancellationToken cancellationToken)
     {
-        var result = await _registerCache.GetAllTransactions(user);
+        var result = await _registerCache.GetAllTransactions(user, cancellationToken);
         if (result.HasError)
         {
-            result = await _registerDatabase.GetAllTransactions(user);
-            await _registerCache.SaveTransactions(user, result.Value);
+            result = await _registerDatabase.GetAllTransactions(user, cancellationToken);
+            await _registerCache.SaveTransactions(user, result.Value, cancellationToken);
         }
 
         return result;
     }
 
-    public async Task ResetTransactionsCache(AuthenticatedUser user)
+    public Task<ResultT<ReceiptEntity>> GetReceiptProcessingInfo(string receiptId, CancellationToken cancellationToken)
     {
-        var result = await _registerDatabase.GetAllTransactions(user);
-        await _registerCache.SaveTransactions(user, result.Value);
+        return _registerDatabase.GetReceiptProcessingInfo(receiptId, cancellationToken);
+    }
+
+    public Task<ResultT<TemporaryTransaction>> GetTemporaryTransactionFromReceipt(string fileId, CancellationToken cancellationToken)
+    {
+        return _registerDatabase.GetTemporaryTransactionFromReceipt(fileId, cancellationToken);
+    }
+
+    public async Task ResetTransactionsCache(AuthenticatedUser user, CancellationToken cancellationToken)
+    {
+        var result = await _registerDatabase.GetAllTransactions(user, cancellationToken);
+        await _registerCache.SaveTransactions(user, result.Value, cancellationToken);
+    }
+
+    public Task<List<ReceiptIdAndStateEntity>> GetReceiptStatesForUser(AuthenticatedUser user, List<ReceiptState> designatedStates, CancellationToken cancellationToken)
+    {
+        return _registerDatabase.GetReceiptStatesForUser(user, designatedStates, cancellationToken);
     }
 }

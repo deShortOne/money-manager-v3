@@ -20,21 +20,21 @@ public class CategoryRepository : ICategoryRepositoryService
         _categoryCache = categoryCache;
     }
 
-    public async Task<ResultT<List<CategoryEntity>>> GetAllCategories()
+    public async Task<ResultT<List<CategoryEntity>>> GetAllCategories(CancellationToken cancellationToken)
     {
-        var result = await _categoryCache.GetAllCategories();
+        var result = await _categoryCache.GetAllCategories(cancellationToken);
         if (result.HasError)
         {
-            result = await _categoryDatabase.GetAllCategories();
-            await _categoryCache.SaveCategories(result.Value);
+            result = await _categoryDatabase.GetAllCategories(cancellationToken);
+            await _categoryCache.SaveCategories(result.Value, cancellationToken);
         }
 
         return result;
     }
 
-    public async Task ResetCategoriesCache()
+    public async Task ResetCategoriesCache(CancellationToken cancellationToken)
     {
-        var result = await _categoryDatabase.GetAllCategories();
-        await _categoryCache.SaveCategories(result.Value);
+        var result = await _categoryDatabase.GetAllCategories(cancellationToken);
+        await _categoryCache.SaveCategories(result.Value, cancellationToken);
     }
 }

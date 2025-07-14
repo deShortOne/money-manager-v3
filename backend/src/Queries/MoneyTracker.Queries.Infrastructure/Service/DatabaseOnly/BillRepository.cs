@@ -15,10 +15,10 @@ public class BillRepository : IBillRepositoryService
         _billDatabase = billDatabase;
     }
 
-    public Task<ResultT<List<BillEntity>>> GetAllBills(AuthenticatedUser user)
+    public Task<ResultT<List<BillEntity>>> GetAllBills(AuthenticatedUser user, CancellationToken cancellationToken)
     {
-        return _billDatabase.GetAllBills(user);
+        return _billDatabase.GetAllBills(user, cancellationToken);
     }
 
-    public Task ResetBillsCache(AuthenticatedUser user) => throw new NotImplementedException();
+    public Task ResetBillsCache(AuthenticatedUser user, CancellationToken cancellationToken) => throw new NotImplementedException();
 }

@@ -26,17 +26,17 @@ public sealed class GetAllTransactionsTest : RegisterTestHelper
         var mockUserAuth = new Mock<IUserAuthentication>();
         mockUserAuth.Setup(x => x.CheckValidation()).Returns(Result.Success());
         mockUserAuth.Setup(x => x.User).Returns(new UserEntity(userId, "", ""));
-        _mockUserRepository.Setup(x => x.GetUserAuthFromToken(tokenToDecode))
+        _mockUserRepository.Setup(x => x.GetUserAuthFromToken(tokenToDecode, CancellationToken.None))
             .ReturnsAsync(mockUserAuth.Object);
 
-        _mockRegisterDatabase.Setup(x => x.GetAllTransactions(authedUser)).ReturnsAsync(budgetDatabaseReturn);
+        _mockRegisterDatabase.Setup(x => x.GetAllTransactions(authedUser, CancellationToken.None)).ReturnsAsync(budgetDatabaseReturn);
 
         Assert.Multiple(async () =>
         {
-            Assert.Equal(expected, await _budgetService.GetAllTransactions(tokenToDecode));
+            Assert.Equal(expected, await _registerService.GetAllTransactions(tokenToDecode, CancellationToken.None));
 
-            _mockUserRepository.Verify(x => x.GetUserAuthFromToken(tokenToDecode), Times.Once);
-            _mockRegisterDatabase.Verify(x => x.GetAllTransactions(authedUser), Times.Once);
+            _mockUserRepository.Verify(x => x.GetUserAuthFromToken(tokenToDecode, CancellationToken.None), Times.Once);
+            _mockRegisterDatabase.Verify(x => x.GetAllTransactions(authedUser, CancellationToken.None), Times.Once);
 
             EnsureAllMocksHadNoOtherCalls();
         });

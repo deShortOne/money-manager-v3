@@ -17,13 +17,13 @@ public class ResetBudgetCacheTest : CacheAsideTestHelper
             new(1, "iukhm"),
         };
 
-        _mockBudgetDatabase.Setup(x => x.GetBudget(_authedUser))
+        _mockBudgetDatabase.Setup(x => x.GetBudget(_authedUser, CancellationToken.None))
             .ReturnsAsync(budget);
 
-        await _budgetRepositoryService.ResetBudgetCache(_authedUser);
+        await _budgetRepositoryService.ResetBudgetCache(_authedUser, CancellationToken.None);
 
-        _mockBudgetDatabase.Verify(x => x.GetBudget(_authedUser));
-        _mockBudgetCache.Verify(x => x.SaveBudget(_authedUser, budget));
+        _mockBudgetDatabase.Verify(x => x.GetBudget(_authedUser, CancellationToken.None));
+        _mockBudgetCache.Verify(x => x.SaveBudget(_authedUser, budget, CancellationToken.None));
         VerifyNoOtherCalls();
     }
 }

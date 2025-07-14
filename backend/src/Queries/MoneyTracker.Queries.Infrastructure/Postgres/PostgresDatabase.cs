@@ -15,7 +15,8 @@ public class PostgresDatabase : IDatabase
         _dataSource_rw = dataSourceBuilder_ro.Build();
     }
 
-    public async Task<DataTable> GetTable(string query, List<DbParameter>? parameters = null)
+    public async Task<DataTable> GetTable(string query,
+        CancellationToken cancellationToken, List<DbParameter>? parameters = null)
     {
         await using (var conn = await _dataSource_rw.OpenConnectionAsync())
         {
@@ -36,7 +37,8 @@ public class PostgresDatabase : IDatabase
         }
     }
 
-    public async Task<int> UpdateTable(string query, List<DbParameter>? parameters = null)
+    public async Task<int> UpdateTable(string query, CancellationToken cancellationToken,
+        List<DbParameter>? parameters = null)
     {
         await using (var conn = await _dataSource_rw.OpenConnectionAsync())
         {

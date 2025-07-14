@@ -19,9 +19,9 @@ public sealed class GetUserFromTokenTest : UserTestHelper
         var expected = ResultT<AuthenticatedUser>.Success(new AuthenticatedUser(userId));
 
         _mockDateTimeProvider.Setup(x => x.Now).Returns(new DateTime(2025, 1, 10));
-        _mockUserDatabase.Setup(x => x.GetUserAuthFromToken(token)).ReturnsAsync(userAuthFromRepository);
+        _mockUserDatabase.Setup(x => x.GetUserAuthFromToken(token, CancellationToken.None)).ReturnsAsync(userAuthFromRepository);
 
-        var result = await _userService.GetUserFromToken(token);
+        var result = await _userService.GetUserFromToken(token, CancellationToken.None);
 
         Assert.Equal(expected, result);
     }
@@ -35,10 +35,10 @@ public sealed class GetUserFromTokenTest : UserTestHelper
             .Failure(Error.AccessUnAuthorised("UserService.GetUserFromToken", "Token not found"));
 
         _mockDateTimeProvider.Setup(x => x.Now).Returns(new DateTime(2025, 1, 10));
-        _mockUserDatabase.Setup(x => x.GetUserAuthFromToken(It.IsAny<string>()))
+        _mockUserDatabase.Setup(x => x.GetUserAuthFromToken(It.IsAny<string>(), CancellationToken.None))
             .ReturnsAsync((UserAuthentication)null);
 
-        var result = await _userService.GetUserFromToken(token);
+        var result = await _userService.GetUserFromToken(token, CancellationToken.None);
 
         Assert.Equal(expected, result);
         //ResultExtensions.Equals(expected, result);

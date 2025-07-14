@@ -42,6 +42,6 @@ public sealed class SendAndReceiveTest : IAsyncLifetime
 
         await Task.Delay(5000); // f l a k e y y y y y
 
-        mockEventProcessor.Verify(x => x.ProcessEvent(eventToPublish), Times.Once);
+        mockEventProcessor.Verify(x => x.ProcessEvent(eventToPublish, It.IsAny<CancellationToken>()), Times.Once);
     }
 }

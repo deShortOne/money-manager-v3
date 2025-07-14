@@ -13,9 +13,9 @@ public class CategoryService : ICategoryService
         _categoryRepository = dbService;
     }
 
-    public async Task<ResultT<List<CategoryResponse>>> GetAllCategories()
+    public async Task<ResultT<List<CategoryResponse>>> GetAllCategories(CancellationToken cancellationToken)
     {
-        var categoriesResult = await _categoryRepository.GetAllCategories();
+        var categoriesResult = await _categoryRepository.GetAllCategories(cancellationToken);
         if (categoriesResult.HasError)
             return categoriesResult.Error!;
 

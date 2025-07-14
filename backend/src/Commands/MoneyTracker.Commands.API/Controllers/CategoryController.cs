@@ -21,22 +21,22 @@ public class CategoryController
 
     [HttpPost]
     [Route("add")]
-    public Task AddCategory(NewCategoryRequest newCategory)
+    public Task AddCategory(NewCategoryRequest newCategory, CancellationToken cancellationToken)
     {
-        return _categoryService.AddCategory(newCategory);
+        return _categoryService.AddCategory(newCategory, cancellationToken);
     }
 
     [HttpPatch]
     [Route("edit")]
-    public Task EditCategory(EditCategoryRequest editCategory)
+    public Task EditCategory(EditCategoryRequest editCategory, CancellationToken cancellationToken)
     {
-        return _categoryService.EditCategory(editCategory);
+        return _categoryService.EditCategory(editCategory, cancellationToken);
     }
 
     [HttpDelete]
     [Route("delete")]
-    public Task DeleteCategory(DeleteCategoryRequest deleteCategory)
+    public Task DeleteCategory(DeleteCategoryRequest deleteCategory, CancellationToken cancellationToken)
     {
-        return _categoryService.DeleteCategory(deleteCategory);
+        return _categoryService.DeleteCategory(deleteCategory, cancellationToken);
     }
 }

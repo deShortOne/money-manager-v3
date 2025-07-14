@@ -29,35 +29,35 @@ public sealed class AddRegisterTest : RegisterTestHelper
     [Fact]
     public async Task SuccessfullyAddNewTransaction()
     {
-        _mockUserService.Setup(x => x.GetUserFromToken(_tokenToDecode))
+        _mockUserService.Setup(x => x.GetUserFromToken(_tokenToDecode, CancellationToken.None))
             .ReturnsAsync(_authedUser);
 
-        _mockRegisterDatabase.Setup(x => x.GetLastTransactionId()).Returns(Task.FromResult(_lastTransactionId));
+        _mockRegisterDatabase.Setup(x => x.GetLastTransactionId(CancellationToken.None)).Returns(Task.FromResult(_lastTransactionId));
         _mockIdGenerator.Setup(x => x.NewInt(_lastTransactionId)).Returns(_newTransactionId);
         _mockAccountDatabase
-            .Setup(x => x.GetAccountUserEntity(_payerId))
+            .Setup(x => x.GetAccountUserEntity(_payerId, CancellationToken.None))
             .ReturnsAsync(new AccountUserEntity(_payerId, 1, _userId, true));
         _mockAccountDatabase
-            .Setup(x => x.GetAccountUserEntity(_payeeId))
+            .Setup(x => x.GetAccountUserEntity(_payeeId, CancellationToken.None))
             .ReturnsAsync(new AccountUserEntity(_payeeId, 3, _userId, false));
 
         _mockCategoryService
-            .Setup(x => x.DoesCategoryExist(_categoryId))
+            .Setup(x => x.DoesCategoryExist(_categoryId, CancellationToken.None))
             .ReturnsAsync(true);
 
         var newTransactionRequest = new NewTransactionRequest(_payeeId, _amount, _datePaid, _categoryId, _payerId);
         var newTransaction = new TransactionEntity(_newTransactionId, _payeeId, _amount, _datePaid, _categoryId, _payerId);
 
-        await _registerService.AddTransaction(_tokenToDecode, newTransactionRequest);
+        await _registerService.AddTransaction(_tokenToDecode, newTransactionRequest, CancellationToken.None);
 
         Assert.Multiple(() =>
         {
-            _mockUserService.Verify(x => x.GetUserFromToken(_tokenToDecode), Times.Once);
-            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(_payerId), Times.Once);
-            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(_payeeId), Times.Once);
-            _mockCategoryService.Verify(x => x.DoesCategoryExist(_categoryId), Times.Once);
-            _mockRegisterDatabase.Verify(x => x.GetLastTransactionId(), Times.Once);
-            _mockRegisterDatabase.Verify(x => x.AddTransaction(newTransaction), Times.Once);
+            _mockUserService.Verify(x => x.GetUserFromToken(_tokenToDecode, CancellationToken.None), Times.Once);
+            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(_payerId, CancellationToken.None), Times.Once);
+            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(_payeeId, CancellationToken.None), Times.Once);
+            _mockCategoryService.Verify(x => x.DoesCategoryExist(_categoryId, CancellationToken.None), Times.Once);
+            _mockRegisterDatabase.Verify(x => x.GetLastTransactionId(CancellationToken.None), Times.Once);
+            _mockRegisterDatabase.Verify(x => x.AddTransaction(newTransaction, CancellationToken.None), Times.Once);
             _mockIdGenerator.Verify(x => x.NewInt(_lastTransactionId), Times.Once);
 
             _mockMessageBusClient.Verify(x => x.PublishEvent(
@@ -71,26 +71,26 @@ public sealed class AddRegisterTest : RegisterTestHelper
     [Fact]
     public async Task FailsDueToPayerAccountNotExisting()
     {
-        _mockUserService.Setup(x => x.GetUserFromToken(_tokenToDecode))
+        _mockUserService.Setup(x => x.GetUserFromToken(_tokenToDecode, CancellationToken.None))
             .ReturnsAsync(_authedUser);
 
-        _mockRegisterDatabase.Setup(x => x.GetLastTransactionId()).Returns(Task.FromResult(_lastTransactionId));
+        _mockRegisterDatabase.Setup(x => x.GetLastTransactionId(CancellationToken.None)).Returns(Task.FromResult(_lastTransactionId));
         _mockIdGenerator.Setup(x => x.NewInt(_lastTransactionId)).Returns(_newTransactionId);
         _mockAccountDatabase
-            .Setup(x => x.GetAccountUserEntity(_payerId))
+            .Setup(x => x.GetAccountUserEntity(_payerId, CancellationToken.None))
             .ReturnsAsync((AccountUserEntity)null);
 
         var newTransactionRequest = new NewTransactionRequest(_payeeId, _amount, _datePaid, _categoryId, _payerId);
         var newTransaction = new TransactionEntity(_newTransactionId, _payeeId, _amount, _datePaid, _categoryId, _payerId);
 
-        var error = await _registerService.AddTransaction(_tokenToDecode, newTransactionRequest);
+        var error = await _registerService.AddTransaction(_tokenToDecode, newTransactionRequest, CancellationToken.None);
 
         Assert.Multiple(() =>
         {
             Assert.Equal("Payer account not found", error.Error.Description);
 
-            _mockUserService.Verify(x => x.GetUserFromToken(_tokenToDecode), Times.Once);
-            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(_payerId), Times.Once);
+            _mockUserService.Verify(x => x.GetUserFromToken(_tokenToDecode, CancellationToken.None), Times.Once);
+            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(_payerId, CancellationToken.None), Times.Once);
 
             EnsureAllMocksHadNoOtherCalls();
         });
@@ -99,26 +99,26 @@ public sealed class AddRegisterTest : RegisterTestHelper
     [Fact]
     public async Task FailsDueToUserNotOwningPayerAccount()
     {
-        _mockUserService.Setup(x => x.GetUserFromToken(_tokenToDecode))
+        _mockUserService.Setup(x => x.GetUserFromToken(_tokenToDecode, CancellationToken.None))
             .ReturnsAsync(_authedUser);
 
-        _mockRegisterDatabase.Setup(x => x.GetLastTransactionId()).Returns(Task.FromResult(_lastTransactionId));
+        _mockRegisterDatabase.Setup(x => x.GetLastTransactionId(CancellationToken.None)).Returns(Task.FromResult(_lastTransactionId));
         _mockIdGenerator.Setup(x => x.NewInt(_lastTransactionId)).Returns(_newTransactionId);
         _mockAccountDatabase
-            .Setup(x => x.GetAccountUserEntity(_payerId))
+            .Setup(x => x.GetAccountUserEntity(_payerId, CancellationToken.None))
             .ReturnsAsync(new AccountUserEntity(_payerId, 1, _userId, false));
 
         var newTransactionRequest = new NewTransactionRequest(_payeeId, _amount, _datePaid, _categoryId, _payerId);
         var newTransaction = new TransactionEntity(_newTransactionId, _payeeId, _amount, _datePaid, _categoryId, _payerId);
 
-        var error = await _registerService.AddTransaction(_tokenToDecode, newTransactionRequest);
+        var error = await _registerService.AddTransaction(_tokenToDecode, newTransactionRequest, CancellationToken.None);
 
         Assert.Multiple(() =>
         {
             Assert.Equal("Payer account not found", error.Error.Description);
 
-            _mockUserService.Verify(x => x.GetUserFromToken(_tokenToDecode), Times.Once);
-            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(_payerId), Times.Once);
+            _mockUserService.Verify(x => x.GetUserFromToken(_tokenToDecode, CancellationToken.None), Times.Once);
+            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(_payerId, CancellationToken.None), Times.Once);
 
             EnsureAllMocksHadNoOtherCalls();
         });
@@ -127,26 +127,26 @@ public sealed class AddRegisterTest : RegisterTestHelper
     [Fact]
     public async Task FailsDuePayerToAccountNotBelongingToUser()
     {
-        _mockUserService.Setup(x => x.GetUserFromToken(_tokenToDecode))
+        _mockUserService.Setup(x => x.GetUserFromToken(_tokenToDecode, CancellationToken.None))
             .ReturnsAsync(_authedUser);
 
-        _mockRegisterDatabase.Setup(x => x.GetLastTransactionId()).Returns(Task.FromResult(_lastTransactionId));
+        _mockRegisterDatabase.Setup(x => x.GetLastTransactionId(CancellationToken.None)).Returns(Task.FromResult(_lastTransactionId));
         _mockIdGenerator.Setup(x => x.NewInt(_lastTransactionId)).Returns(_newTransactionId);
         _mockAccountDatabase
-            .Setup(x => x.GetAccountUserEntity(_payerId))
+            .Setup(x => x.GetAccountUserEntity(_payerId, CancellationToken.None))
             .ReturnsAsync(new AccountUserEntity(_payerId, 1, _userId + 1, true));
 
         var newTransactionRequest = new NewTransactionRequest(_payeeId, _amount, _datePaid, _categoryId, _payerId);
         var newTransaction = new TransactionEntity(_newTransactionId, _payeeId, _amount, _datePaid, _categoryId, _payerId);
 
-        var error = await _registerService.AddTransaction(_tokenToDecode, newTransactionRequest);
+        var error = await _registerService.AddTransaction(_tokenToDecode, newTransactionRequest, CancellationToken.None);
 
         Assert.Multiple(() =>
         {
             Assert.Equal("Payer account not found", error.Error.Description);
 
-            _mockUserService.Verify(x => x.GetUserFromToken(_tokenToDecode), Times.Once);
-            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(_payerId), Times.Once);
+            _mockUserService.Verify(x => x.GetUserFromToken(_tokenToDecode, CancellationToken.None), Times.Once);
+            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(_payerId, CancellationToken.None), Times.Once);
 
             EnsureAllMocksHadNoOtherCalls();
         });
@@ -155,32 +155,32 @@ public sealed class AddRegisterTest : RegisterTestHelper
     [Fact]
     public async Task FailsDueToPayeeAccountNotExisting()
     {
-        _mockUserService.Setup(x => x.GetUserFromToken(_tokenToDecode))
+        _mockUserService.Setup(x => x.GetUserFromToken(_tokenToDecode, CancellationToken.None))
             .ReturnsAsync(_authedUser);
 
-        _mockRegisterDatabase.Setup(x => x.GetLastTransactionId()).Returns(Task.FromResult(_lastTransactionId));
+        _mockRegisterDatabase.Setup(x => x.GetLastTransactionId(CancellationToken.None)).Returns(Task.FromResult(_lastTransactionId));
 
         _mockIdGenerator.Setup(x => x.NewInt(_lastTransactionId)).Returns(_newTransactionId);
 
         _mockAccountDatabase
-            .Setup(x => x.GetAccountUserEntity(_payerId))
+            .Setup(x => x.GetAccountUserEntity(_payerId, CancellationToken.None))
             .ReturnsAsync(new AccountUserEntity(_payerId, 1, _userId, true));
         _mockAccountDatabase
-            .Setup(x => x.GetAccountUserEntity(_payeeId))
+            .Setup(x => x.GetAccountUserEntity(_payeeId, CancellationToken.None))
             .ReturnsAsync((AccountUserEntity)null);
 
         var newTransactionRequest = new NewTransactionRequest(_payeeId, _amount, _datePaid, _categoryId, _payerId);
         var newTransaction = new TransactionEntity(_newTransactionId, _payeeId, _amount, _datePaid, _categoryId, _payerId);
 
-        var error = await _registerService.AddTransaction(_tokenToDecode, newTransactionRequest);
+        var error = await _registerService.AddTransaction(_tokenToDecode, newTransactionRequest, CancellationToken.None);
 
         Assert.Multiple(() =>
         {
             Assert.Equal("Payee account not found", error.Error.Description);
 
-            _mockUserService.Verify(x => x.GetUserFromToken(_tokenToDecode), Times.Once);
-            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(_payerId), Times.Once);
-            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(_payeeId), Times.Once);
+            _mockUserService.Verify(x => x.GetUserFromToken(_tokenToDecode, CancellationToken.None), Times.Once);
+            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(_payerId, CancellationToken.None), Times.Once);
+            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(_payeeId, CancellationToken.None), Times.Once);
 
             EnsureAllMocksHadNoOtherCalls();
         });
@@ -189,32 +189,32 @@ public sealed class AddRegisterTest : RegisterTestHelper
     [Fact]
     public async Task FailsDueToPayeeAccountNotBelongingToUser()
     {
-        _mockUserService.Setup(x => x.GetUserFromToken(_tokenToDecode))
+        _mockUserService.Setup(x => x.GetUserFromToken(_tokenToDecode, CancellationToken.None))
             .ReturnsAsync(_authedUser);
 
-        _mockRegisterDatabase.Setup(x => x.GetLastTransactionId()).Returns(Task.FromResult(_lastTransactionId));
+        _mockRegisterDatabase.Setup(x => x.GetLastTransactionId(CancellationToken.None)).Returns(Task.FromResult(_lastTransactionId));
 
         _mockIdGenerator.Setup(x => x.NewInt(_lastTransactionId)).Returns(_newTransactionId);
 
         _mockAccountDatabase
-            .Setup(x => x.GetAccountUserEntity(_payerId))
+            .Setup(x => x.GetAccountUserEntity(_payerId, CancellationToken.None))
             .ReturnsAsync(new AccountUserEntity(_payerId, 1, _userId, true));
         _mockAccountDatabase
-            .Setup(x => x.GetAccountUserEntity(_payeeId))
+            .Setup(x => x.GetAccountUserEntity(_payeeId, CancellationToken.None))
             .ReturnsAsync(new AccountUserEntity(_payeeId, 1, _userId + 1, true));
 
         var newTransactionRequest = new NewTransactionRequest(_payeeId, _amount, _datePaid, _categoryId, _payerId);
         var newTransaction = new TransactionEntity(_newTransactionId, _payeeId, _amount, _datePaid, _categoryId, _payerId);
 
-        var error = await _registerService.AddTransaction(_tokenToDecode, newTransactionRequest);
+        var error = await _registerService.AddTransaction(_tokenToDecode, newTransactionRequest, CancellationToken.None);
 
         Assert.Multiple(() =>
         {
             Assert.Equal("Payee account not found", error.Error.Description);
 
-            _mockUserService.Verify(x => x.GetUserFromToken(_tokenToDecode), Times.Once);
-            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(_payerId), Times.Once);
-            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(_payeeId), Times.Once);
+            _mockUserService.Verify(x => x.GetUserFromToken(_tokenToDecode, CancellationToken.None), Times.Once);
+            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(_payerId, CancellationToken.None), Times.Once);
+            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(_payeeId, CancellationToken.None), Times.Once);
 
             EnsureAllMocksHadNoOtherCalls();
         });
@@ -223,35 +223,35 @@ public sealed class AddRegisterTest : RegisterTestHelper
     [Fact]
     public async Task FailsDueToCategoryNotExisting()
     {
-        _mockUserService.Setup(x => x.GetUserFromToken(_tokenToDecode))
+        _mockUserService.Setup(x => x.GetUserFromToken(_tokenToDecode, CancellationToken.None))
             .ReturnsAsync(_authedUser);
 
-        _mockRegisterDatabase.Setup(x => x.GetLastTransactionId()).Returns(Task.FromResult(_lastTransactionId));
+        _mockRegisterDatabase.Setup(x => x.GetLastTransactionId(CancellationToken.None)).Returns(Task.FromResult(_lastTransactionId));
         _mockIdGenerator.Setup(x => x.NewInt(_lastTransactionId)).Returns(_newTransactionId);
         _mockAccountDatabase
-            .Setup(x => x.GetAccountUserEntity(_payerId))
+            .Setup(x => x.GetAccountUserEntity(_payerId, CancellationToken.None))
             .ReturnsAsync(new AccountUserEntity(_payerId, 1, _userId, true));
         _mockAccountDatabase
-            .Setup(x => x.GetAccountUserEntity(_payeeId))
+            .Setup(x => x.GetAccountUserEntity(_payeeId, CancellationToken.None))
             .ReturnsAsync(new AccountUserEntity(_payeeId, 3, _userId, false));
 
         _mockCategoryService
-            .Setup(x => x.DoesCategoryExist(_categoryId))
+            .Setup(x => x.DoesCategoryExist(_categoryId, CancellationToken.None))
             .ReturnsAsync(false);
 
         var newTransactionRequest = new NewTransactionRequest(_payeeId, _amount, _datePaid, _categoryId, _payerId);
         var newTransaction = new TransactionEntity(_newTransactionId, _payeeId, _amount, _datePaid, _categoryId, _payerId);
 
-        var error = await _registerService.AddTransaction(_tokenToDecode, newTransactionRequest);
+        var error = await _registerService.AddTransaction(_tokenToDecode, newTransactionRequest, CancellationToken.None);
 
         Assert.Multiple(() =>
         {
             Assert.Equal("Category not found", error.Error.Description);
 
-            _mockUserService.Verify(x => x.GetUserFromToken(_tokenToDecode), Times.Once);
-            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(_payerId), Times.Once);
-            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(_payeeId), Times.Once);
-            _mockCategoryService.Verify(x => x.DoesCategoryExist(_categoryId), Times.Once);
+            _mockUserService.Verify(x => x.GetUserFromToken(_tokenToDecode, CancellationToken.None), Times.Once);
+            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(_payerId, CancellationToken.None), Times.Once);
+            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(_payeeId, CancellationToken.None), Times.Once);
+            _mockCategoryService.Verify(x => x.DoesCategoryExist(_categoryId, CancellationToken.None), Times.Once);
 
             EnsureAllMocksHadNoOtherCalls();
         });

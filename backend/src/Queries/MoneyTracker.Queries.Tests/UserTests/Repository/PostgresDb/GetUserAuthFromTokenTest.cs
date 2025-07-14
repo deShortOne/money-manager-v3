@@ -11,13 +11,13 @@ public sealed class GetUserAuthFromTokenTest : UserDatabaseTestHelper
     [Fact]
     public async Task SuccessfullyGetsToken()
     {
-        var user = await _userRepository.GetUserAuthFromToken("token 2");
+        var user = await _userRepository.GetUserAuthFromToken("token 2", CancellationToken.None);
         Assert.True(user != null && user.Token == "token 2");
     }
 
     [Fact]
     public async Task FailsAsTokenDoesntExistInDatabase()
     {
-        Assert.Null(await _userRepository.GetUserAuthFromToken("rea"));
+        Assert.Null(await _userRepository.GetUserAuthFromToken("rea", CancellationToken.None));
     }
 }

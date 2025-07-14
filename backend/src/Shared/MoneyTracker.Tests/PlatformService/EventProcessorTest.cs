@@ -50,52 +50,52 @@ public sealed class EventProcessorTest
     [Fact]
     public void SuccessfullyUpdateAccountCache()
     {
-        _eventProcessor.ProcessEvent(new EventUpdate(_authenticatedUser, DataTypes.Account));
+        _eventProcessor.ProcessEvent(new EventUpdate(_authenticatedUser, DataTypes.Account), CancellationToken.None);
 
-        _accountRepositoryService.Verify(x => x.ResetAccountsCache(_authenticatedUser));
+        _accountRepositoryService.Verify(x => x.ResetAccountsCache(_authenticatedUser, CancellationToken.None));
         NoOtherCalls();
     }
 
     [Fact]
     public void SuccessfullyUpdateBillCache()
     {
-        _eventProcessor.ProcessEvent(new EventUpdate(_authenticatedUser, DataTypes.Bill));
+        _eventProcessor.ProcessEvent(new EventUpdate(_authenticatedUser, DataTypes.Bill), CancellationToken.None);
 
-        _billRepositoryService.Verify(x => x.ResetBillsCache(_authenticatedUser));
+        _billRepositoryService.Verify(x => x.ResetBillsCache(_authenticatedUser, CancellationToken.None));
         NoOtherCalls();
     }
 
     [Fact]
     public void SuccessfullyUpdateBudgetCache()
     {
-        _eventProcessor.ProcessEvent(new EventUpdate(_authenticatedUser, DataTypes.Budget));
+        _eventProcessor.ProcessEvent(new EventUpdate(_authenticatedUser, DataTypes.Budget), CancellationToken.None);
 
-        _budgetRepositoryService.Verify(x => x.ResetBudgetCache(_authenticatedUser));
+        _budgetRepositoryService.Verify(x => x.ResetBudgetCache(_authenticatedUser, CancellationToken.None));
         NoOtherCalls();
     }
 
     [Fact]
     public void SuccessfullyUpdateCategoryCache()
     {
-        _eventProcessor.ProcessEvent(new EventUpdate(_authenticatedUser, DataTypes.Category));
+        _eventProcessor.ProcessEvent(new EventUpdate(_authenticatedUser, DataTypes.Category), CancellationToken.None);
 
-        _cateogryRepositoryService.Verify(x => x.ResetCategoriesCache());
+        _cateogryRepositoryService.Verify(x => x.ResetCategoriesCache(CancellationToken.None));
         NoOtherCalls();
     }
 
     [Fact]
     public void SuccessfullyUpdateRegisterCache()
     {
-        _eventProcessor.ProcessEvent(new EventUpdate(_authenticatedUser, DataTypes.Register));
+        _eventProcessor.ProcessEvent(new EventUpdate(_authenticatedUser, DataTypes.Register), CancellationToken.None);
 
-        _registerRepositoryService.Verify(x => x.ResetTransactionsCache(_authenticatedUser));
+        _registerRepositoryService.Verify(x => x.ResetTransactionsCache(_authenticatedUser, CancellationToken.None));
         NoOtherCalls();
     }
 
     [Fact]
     public void SuccessfullyUpdateUserCache()
     {
-        _eventProcessor.ProcessEvent(new EventUpdate(_authenticatedUser, DataTypes.User));
+        _eventProcessor.ProcessEvent(new EventUpdate(_authenticatedUser, DataTypes.User), CancellationToken.None);
 
         _userRepositoryService.Verify(x => x.ResetUsersCache());
         NoOtherCalls();
@@ -104,7 +104,7 @@ public sealed class EventProcessorTest
     [Fact]
     public void FailToUpdateCacheDueToUnknownDataType()
     {
-        _eventProcessor.ProcessEvent(new EventUpdate(_authenticatedUser, ""));
+        _eventProcessor.ProcessEvent(new EventUpdate(_authenticatedUser, ""), CancellationToken.None);
 
         NoOtherCalls();
     }

@@ -12,7 +12,7 @@ public class BudgetCommandRepository : IBudgetCommandRepository
     {
         _database = db;
     }
-    public async Task AddBudgetCategory(BudgetCategoryEntity newBudgetCategory)
+    public async Task AddBudgetCategory(BudgetCategoryEntity newBudgetCategory, CancellationToken cancellationToken)
     {
         var queryInsertIntoBudgetCategory = """
             INSERT INTO budgetcategory VALUES
@@ -28,10 +28,11 @@ public class BudgetCommandRepository : IBudgetCommandRepository
             new NpgsqlParameter("categoryId", newBudgetCategory.CategoryId),
         };
 
-        await _database.GetTable(queryInsertIntoBudgetCategory, queryInsertIntoBudgetCategoryParams);
+        await _database.GetTable(queryInsertIntoBudgetCategory, cancellationToken, queryInsertIntoBudgetCategoryParams);
     }
 
-    public async Task EditBudgetCategory(EditBudgetCategoryEntity editBudgetCateogry)
+    public async Task EditBudgetCategory(EditBudgetCategoryEntity editBudgetCateogry,
+        CancellationToken cancellationToken)
     {
         var setParamsLis = new List<string>();
         var queryParams = new List<DbParameter>()
@@ -56,14 +57,15 @@ public class BudgetCommandRepository : IBudgetCommandRepository
             WHERE category_id = @id
                 AND users_id = @user_id;
             """;
-        var reader = await _database.UpdateTable(query, queryParams);
+        var reader = await _database.UpdateTable(query, cancellationToken, queryParams);
         if (reader != 1)
         {
             throw new InvalidDataException("Unknown error");
         }
     }
 
-    public async Task DeleteBudgetCategory(DeleteBudgetCategoryEntity deleteBudgetCategory)
+    public async Task DeleteBudgetCategory(DeleteBudgetCategoryEntity deleteBudgetCategory,
+        CancellationToken cancellationToken)
     {
         var query = """
             DELETE FROM budgetcategory
@@ -75,6 +77,7 @@ public class BudgetCommandRepository : IBudgetCommandRepository
             new NpgsqlParameter("id", deleteBudgetCategory.BudgetCategoryId),
             new NpgsqlParameter("user_id", deleteBudgetCategory.UserId),
         };
-        await _database.UpdateTable(query, queryParams);
+        await _database.UpdateTable(query, cancellationToken, queryParams);
     }
 }
+

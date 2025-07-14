@@ -28,20 +28,20 @@ public sealed class GetAccountsTest : AccountTestHelper
         var mockUserAuth = new Mock<IUserAuthentication>();
         mockUserAuth.Setup(x => x.CheckValidation()).Returns(Result.Success());
         mockUserAuth.Setup(x => x.User).Returns(new UserEntity(userId, "", ""));
-        _mockUserRepository.Setup(x => x.GetUserAuthFromToken(tokenToDecode))
+        _mockUserRepository.Setup(x => x.GetUserAuthFromToken(tokenToDecode, CancellationToken.None))
             .ReturnsAsync(mockUserAuth.Object);
 
-        _mockAccountDatabase.Setup(x => x.GetAccountsOwnedByUser(authedUser)).ReturnsAsync(billDatabaseReturn);
+        _mockAccountDatabase.Setup(x => x.GetAccountsOwnedByUser(authedUser, CancellationToken.None)).ReturnsAsync(billDatabaseReturn);
 
         Assert.Multiple(async () =>
         {
-            var accounts = await _accountService.GetAccounts(tokenToDecode);
+            var accounts = await _accountService.GetAccounts(tokenToDecode, CancellationToken.None);
             //Assert.Equal(expected.Value, accounts.Value);
 
             Assert.Equal(expected, accounts);
 
-            _mockUserRepository.Verify(x => x.GetUserAuthFromToken(tokenToDecode), Times.Once);
-            _mockAccountDatabase.Verify(x => x.GetAccountsOwnedByUser(authedUser), Times.Once);
+            _mockUserRepository.Verify(x => x.GetUserAuthFromToken(tokenToDecode, CancellationToken.None), Times.Once);
+            _mockAccountDatabase.Verify(x => x.GetAccountsOwnedByUser(authedUser, CancellationToken.None), Times.Once);
 
             EnsureAllMocksHadNoOtherCalls();
         });

@@ -12,6 +12,11 @@ Chain of responsibility in wage calculator. This pattern was used because not al
 ## How to run
 ### Backend
 #### Running Command and Query together using docker
+You will need to setup aws using the below command. Which permissions
+```bash
+aws configure --profile "money-tracker-dotnet"
+```
+
 Run in the root directory
 ```bash
 docker compose up

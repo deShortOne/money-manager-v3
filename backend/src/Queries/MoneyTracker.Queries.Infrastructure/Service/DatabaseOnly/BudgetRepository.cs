@@ -15,10 +15,10 @@ public class BudgetRepository : IBudgetRepositoryService
         _budgetDatabase = budgetDatabase;
     }
 
-    public Task<ResultT<List<BudgetGroupEntity>>> GetBudget(AuthenticatedUser user)
+    public Task<ResultT<List<BudgetGroupEntity>>> GetBudget(AuthenticatedUser user, CancellationToken cancellationToken)
     {
-        return _budgetDatabase.GetBudget(user);
+        return _budgetDatabase.GetBudget(user, cancellationToken);
     }
 
-    public Task ResetBudgetCache(AuthenticatedUser user) => throw new NotImplementedException();
+    public Task ResetBudgetCache(AuthenticatedUser user, CancellationToken cancellationToken) => throw new NotImplementedException();
 }

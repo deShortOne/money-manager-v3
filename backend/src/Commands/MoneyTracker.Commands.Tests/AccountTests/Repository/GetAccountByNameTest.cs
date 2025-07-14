@@ -17,24 +17,24 @@ public class GetAccountByNameTest : IClassFixture<PostgresDbFixture>
     [Fact]
     public async Task GetBankA()
     {
-        Assert.Equal(new AccountEntity(1, "Bank A"), await _accountRepo.GetAccountByName("Bank A"));
+        Assert.Equal(new AccountEntity(1, "Bank A"), await _accountRepo.GetAccountByName("Bank A", CancellationToken.None));
     }
 
     [Fact]
     public async Task GetHobbyItem()
     {
-        Assert.Equal(new AccountEntity(4, "Hobby Item"), await _accountRepo.GetAccountByName("Hobby Item"));
+        Assert.Equal(new AccountEntity(4, "Hobby Item"), await _accountRepo.GetAccountByName("Hobby Item", CancellationToken.None));
     }
 
     [Fact]
     public async Task GetFootballKit()
     {
-        Assert.Equal(new AccountEntity(10, "Football Kit"), await _accountRepo.GetAccountByName("Football Kit"));
+        Assert.Equal(new AccountEntity(10, "Football Kit"), await _accountRepo.GetAccountByName("Football Kit", CancellationToken.None));
     }
 
     [Fact]
     public async Task FailToGetAnAccountThatDoesntExistAHHH()
     {
-        Assert.Null(await _accountRepo.GetAccountByName("An account that doesn't exist AHHH"));
+        Assert.Null(await _accountRepo.GetAccountByName("An account that doesn't exist AHHH", CancellationToken.None));
     }
 }

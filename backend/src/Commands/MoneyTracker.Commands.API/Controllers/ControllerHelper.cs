@@ -22,7 +22,21 @@ public class ControllerHelper
     public static IActionResult Convert(Result result)
     {
         if (result.IsSuccess)
-            return new OkResult();
+        {
+            if (result.GetType() == typeof(ResultT<string>))
+            {
+                return new ContentResult
+                {
+                    Content = ((ResultT<string>)result).Value,
+                    ContentType = "text/plain",
+                    StatusCode = StatusCodes.Status200OK,
+                };
+            }
+            else
+            {
+                return new OkResult();
+            }
+        }
         if (result.Error != null)
         {
             switch (result.Error.ErrorType)

@@ -5,9 +5,9 @@ public sealed class DeleteBillTest : BillRespositoryTestHelper
     [Fact]
     public async Task DeleteBillsFromSeed()
     {
-        await _billRepo.DeleteBill(1);
-        await _billRepo.DeleteBill(2);
-        await _billRepo.DeleteBill(3);
+        await _billRepo.DeleteBill(1, CancellationToken.None);
+        await _billRepo.DeleteBill(2, CancellationToken.None);
+        await _billRepo.DeleteBill(3, CancellationToken.None);
 
         Assert.Multiple(async () =>
         {

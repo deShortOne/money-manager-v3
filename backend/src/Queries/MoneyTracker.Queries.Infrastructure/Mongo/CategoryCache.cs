@@ -14,10 +14,10 @@ public class CategoryCache : ICategoryCache
         _categoriesCollection = database.GetCollection<MongoCategoryEntity>("category");
     }
 
-    public async Task<ResultT<List<CategoryEntity>>> GetAllCategories()
+    public async Task<ResultT<List<CategoryEntity>>> GetAllCategories(CancellationToken cancellationToken)
     {
-        var categoriessLisIterable = await _categoriesCollection.FindAsync(_ => true);
-        var categoriessLis = await categoriessLisIterable.ToListAsync();
+        var categoriessLisIterable = await _categoriesCollection.FindAsync(_ => true, cancellationToken: cancellationToken);
+        var categoriessLis = await categoriessLisIterable.ToListAsync(cancellationToken);
         if (categoriessLis.Count != 1)
         {
             return Error.NotFound("CategoryCache.GetAllCategories", $"Found {categoriessLis.Count} category");
@@ -26,12 +26,12 @@ public class CategoryCache : ICategoryCache
         return categoriessLis[0].Categories;
     }
 
-    public async Task<Result> SaveCategories(List<CategoryEntity> categories)
+    public async Task<Result> SaveCategories(List<CategoryEntity> categories, CancellationToken cancellationToken)
     {
         await _categoriesCollection.InsertOneAsync(new MongoCategoryEntity()
         {
             Categories = categories,
-        });
+        }, cancellationToken: cancellationToken);
 
         return Result.Success();
     }

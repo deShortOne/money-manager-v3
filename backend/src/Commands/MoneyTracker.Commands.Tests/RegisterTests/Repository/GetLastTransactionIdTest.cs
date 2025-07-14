@@ -15,6 +15,6 @@ public sealed class GetLastTransactionIdTest : IClassFixture<PostgresDbFixture>
     [Fact]
     public async Task GetLastTransactionId()
     {
-        Assert.Equal(10, await _registerRepo.GetLastTransactionId());
+        Assert.Equal(10, await _registerRepo.GetLastTransactionId(CancellationToken.None));
     }
 }

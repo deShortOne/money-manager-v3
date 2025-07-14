@@ -57,7 +57,7 @@ public sealed class EditBillTest : BillRespositoryTestHelper
         await SetupDb();
 
         var editBillRequest = new EditBillEntity(_id, payee, amount, nextDueDate, monthDay, frequency, category, accountId);
-        await _billRepo.EditBill(editBillRequest);
+        await _billRepo.EditBill(editBillRequest, CancellationToken.None);
 
         var expectedBillEntity = new BillEntity(_id,
             payee ?? _payeeId,

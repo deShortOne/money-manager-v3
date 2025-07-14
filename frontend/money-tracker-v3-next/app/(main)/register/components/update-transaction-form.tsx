@@ -46,6 +46,7 @@ export function UpdateTransactionForm() {
     const [cookies] = useCookies(['token']);
     const open = useRegisterModalSetting(state => state.isOpen);
     const defaultValues = useRegisterModalSetting(state => state.defaultValues);
+    const receiptId = useRegisterModalSetting(state => state.defaultReceiptId);
     const closeUpdateTransactionForm = useRegisterModalSetting(state => state.onClose);
     const registerAction = useRegisterModalSetting(state => state.updateRegisterAction);
 
@@ -72,6 +73,34 @@ export function UpdateTransactionForm() {
             }
         }).then(async (x) => await x.json()),
         initialData: [],
+    });
+
+    const { data } = useQuery<boolean>({
+        queryKey: ["register-receipt: " + receiptId],
+        queryFn: () => fetch("api/register", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                receiptId: receiptId,
+            }),
+        }).then(async (x) => {
+            const data = await x.json();
+
+            const temporaryTransaction = data.item.temporaryTransaction;
+            defaultValues.payeeId = temporaryTransaction.payeeId;
+            defaultValues.payerId = temporaryTransaction.payerId;
+            defaultValues.amount = temporaryTransaction.amount;
+            defaultValues.datePaid = temporaryTransaction.datePaid;
+            defaultValues.categoryId = temporaryTransaction.categoryId;
+
+            SetFormToBeDefault();
+
+            return data;
+        }),
+        initialData: false,
+        enabled: !!receiptId,
     });
 
     const formSchema = z.object({
@@ -163,7 +192,7 @@ export function UpdateTransactionForm() {
         closeUpdateTransactionForm();
     }
 
-    useEffect(() => {
+    function SetFormToBeDefault() {
         form.reset({
             payee: defaultValues.payeeId,
             payer: defaultValues.payerId,
@@ -171,6 +200,10 @@ export function UpdateTransactionForm() {
             datePaid: defaultValues.datePaid,
             category: defaultValues.categoryId,
         });
+    }
+
+    useEffect(() => {
+        SetFormToBeDefault();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [open]);
 

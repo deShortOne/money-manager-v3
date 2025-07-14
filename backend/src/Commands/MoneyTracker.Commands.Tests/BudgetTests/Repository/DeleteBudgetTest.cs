@@ -7,10 +7,10 @@ public sealed class DeleteBudgetTest : BudgetRespositoryTestHelper
     [Fact]
     public async Task DeleteBudgetCategoriesFromSeed()
     {
-        await _budgetRepo.DeleteBudgetCategory(new DeleteBudgetCategoryEntity(1, 1, 1));
-        await _budgetRepo.DeleteBudgetCategory(new DeleteBudgetCategoryEntity(1, 1, 2));
-        await _budgetRepo.DeleteBudgetCategory(new DeleteBudgetCategoryEntity(1, 1, 3));
-        await _budgetRepo.DeleteBudgetCategory(new DeleteBudgetCategoryEntity(1, 1, 4));
+        await _budgetRepo.DeleteBudgetCategory(new DeleteBudgetCategoryEntity(1, 1, 1), CancellationToken.None);
+        await _budgetRepo.DeleteBudgetCategory(new DeleteBudgetCategoryEntity(1, 1, 2), CancellationToken.None);
+        await _budgetRepo.DeleteBudgetCategory(new DeleteBudgetCategoryEntity(1, 1, 3), CancellationToken.None);
+        await _budgetRepo.DeleteBudgetCategory(new DeleteBudgetCategoryEntity(1, 1, 4), CancellationToken.None);
 
         Assert.Multiple(async () =>
         {

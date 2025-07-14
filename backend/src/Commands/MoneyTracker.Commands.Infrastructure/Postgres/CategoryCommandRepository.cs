@@ -15,7 +15,7 @@ public class CategoryCommandRepository : ICategoryCommandRepository
         _database = db;
     }
 
-    public async Task AddCategory(CategoryEntity category)
+    public async Task AddCategory(CategoryEntity category, CancellationToken cancellationToken)
     {
         var queryGetIdOfCategoryName = """
             INSERT INTO category (id, name) VALUES
@@ -27,10 +27,10 @@ public class CategoryCommandRepository : ICategoryCommandRepository
             new NpgsqlParameter("categoryName", category.Name),
         };
 
-        using var reader = await _database.GetTable(queryGetIdOfCategoryName, queryGetIdOfCategoryNameParams);
+        using var reader = await _database.GetTable(queryGetIdOfCategoryName, cancellationToken, queryGetIdOfCategoryNameParams);
     }
 
-    public async Task EditCategory(EditCategoryEntity editCategoryDTO)
+    public async Task EditCategory(EditCategoryEntity editCategoryDTO, CancellationToken cancellationToken)
     {
         var queryGetIdOfCategoryName = """
             UPDATE category
@@ -43,10 +43,10 @@ public class CategoryCommandRepository : ICategoryCommandRepository
             new NpgsqlParameter("categoryName", editCategoryDTO.Name),
         };
 
-        await _database.GetTable(queryGetIdOfCategoryName, queryGetIdOfCategoryNameParams);
+        await _database.GetTable(queryGetIdOfCategoryName, cancellationToken, queryGetIdOfCategoryNameParams);
     }
 
-    public async Task DeleteCategory(int categoryId)
+    public async Task DeleteCategory(int categoryId, CancellationToken cancellationToken)
     {
         var query = """
             DELETE FROM category
@@ -57,11 +57,10 @@ public class CategoryCommandRepository : ICategoryCommandRepository
             new NpgsqlParameter("id", categoryId),
         };
 
-        // get category id
-        await _database.UpdateTable(query, queryParams);
+        await _database.UpdateTable(query, cancellationToken, queryParams);
     }
 
-    public async Task<CategoryEntity?> GetCategory(int categoryId)
+    public async Task<CategoryEntity?> GetCategory(int categoryId, CancellationToken cancellationToken)
     {
         var query = """
             SELECT id,
@@ -74,24 +73,46 @@ public class CategoryCommandRepository : ICategoryCommandRepository
             new NpgsqlParameter("category_id", categoryId),
         };
 
-        using var reader = await _database.GetTable(query, queryParams);
+        using var reader = await _database.GetTable(query, cancellationToken, queryParams);
 
         if (reader.Rows.Count != 0)
             return new CategoryEntity(
                 reader.Rows[0].Field<int>("id"),
                 reader.Rows[0].Field<string>("name")!);
         return null;
-
     }
 
-    public async Task<int> GetLastCategoryId()
+    public async Task<CategoryEntity?> GetCategory(string categoryName, CancellationToken cancellationToken)
+    {
+        var query = """
+            SELECT id,
+                name
+            FROM category
+            WHERE name = @category_name;
+         """;
+        var queryParams = new List<DbParameter>()
+        {
+            new NpgsqlParameter("category_name", categoryName),
+        };
+
+        using var reader = await _database.GetTable(query, cancellationToken, queryParams);
+
+        if (reader.Rows.Count != 0)
+            return new CategoryEntity(
+                reader.Rows[0].Field<int>("id"),
+                reader.Rows[0].Field<string>("name")!);
+        return null;
+    }
+
+
+    public async Task<int> GetLastCategoryId(CancellationToken cancellationToken)
     {
         var query = """
             SELECT MAX(id) as last_id
             FROM category;
             """;
 
-        var reader = await _database.GetTable(query);
+        var reader = await _database.GetTable(query, cancellationToken);
 
         if (reader.Rows.Count != 0)
         {

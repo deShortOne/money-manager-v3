@@ -14,10 +14,10 @@ public class CategoryRepository : ICategoryRepositoryService
         _categoryDatabase = categoryDatabase;
     }
 
-    public Task<ResultT<List<CategoryEntity>>> GetAllCategories()
+    public Task<ResultT<List<CategoryEntity>>> GetAllCategories(CancellationToken cancellationToken)
     {
-        return _categoryDatabase.GetAllCategories();
+        return _categoryDatabase.GetAllCategories(cancellationToken);
     }
 
-    public Task ResetCategoriesCache() => throw new NotImplementedException();
+    public Task ResetCategoriesCache(CancellationToken cancellationToken) => throw new NotImplementedException();
 }

@@ -22,9 +22,9 @@ public class AccountController
     [HttpPost]
     [Route("add")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IActionResult> AddAccountToUser(AddAccountToUserRequest accountToUser)
+    public async Task<IActionResult> AddAccountToUser(AddAccountToUserRequest accountToUser, CancellationToken cancellationToken)
     {
-        var result = await _accountService.AddAccount(ControllerHelper.GetToken(_httpContextAccessor), accountToUser);
+        var result = await _accountService.AddAccount(ControllerHelper.GetToken(_httpContextAccessor), accountToUser, cancellationToken);
         return ControllerHelper.Convert(result);
     }
 }

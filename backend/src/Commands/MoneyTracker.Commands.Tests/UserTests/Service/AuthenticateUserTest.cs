@@ -16,7 +16,7 @@ public class AuthenticateUserTest : UserTestHelper
 
         var userToAuthenticate = new LoginWithUsernameAndPassword("root", "root-pass");
 
-        _mockUserDatabase.Setup(x => x.GetUserByUsername("root"))
+        _mockUserDatabase.Setup(x => x.GetUserByUsername("root", CancellationToken.None))
             .Returns(Task.FromResult(userFromDb));
 
         _mockPasswordHasher.Setup(x => x.VerifyPassword("root-pass", "root-pass"))
@@ -28,12 +28,12 @@ public class AuthenticateUserTest : UserTestHelper
 
         Assert.Multiple(async () =>
         {
-            await _userService.LoginUser(userToAuthenticate);
+            await _userService.LoginUser(userToAuthenticate, CancellationToken.None);
 
-            _mockUserDatabase.Verify(x => x.GetUserByUsername("root"), Times.Once);
+            _mockUserDatabase.Verify(x => x.GetUserByUsername("root", CancellationToken.None), Times.Once);
             _mockPasswordHasher.Verify(x => x.VerifyPassword("root-pass", "root-pass"), Times.Once);
             _mockUserDatabase.Verify(x => x.StoreTemporaryTokenToUser(new UserAuthentication(userFromDb, "ASDF",
-                dateTimeExp, _mockDateTimeProvider.Object)));
+                dateTimeExp, _mockDateTimeProvider.Object), CancellationToken.None));
             _mockAuthService.Verify(x => x.GenerateToken(new UserIdentity("1"), dateTimeExp), Times.Once);
             _mockDateTimeProvider.Verify(x => x.Now, Times.Once);
 
@@ -54,7 +54,7 @@ public class AuthenticateUserTest : UserTestHelper
 
         var userToAuthenticate = new LoginWithUsernameAndPassword("secondary root", "secondary root-pass");
 
-        _mockUserDatabase.Setup(x => x.GetUserByUsername(It.Is<string>(y => y == "secondary root")))
+        _mockUserDatabase.Setup(x => x.GetUserByUsername(It.Is<string>(y => y == "secondary root"), CancellationToken.None))
             .Returns(Task.FromResult(userFromDb));
 
         _mockPasswordHasher.Setup(x => x.VerifyPassword("secondary root-pass", "secondary root-pass"))
@@ -66,12 +66,12 @@ public class AuthenticateUserTest : UserTestHelper
 
         Assert.Multiple(async () =>
         {
-            await _userService.LoginUser(userToAuthenticate);
+            await _userService.LoginUser(userToAuthenticate, CancellationToken.None);
 
-            _mockUserDatabase.Verify(x => x.GetUserByUsername("secondary root"), Times.Once);
+            _mockUserDatabase.Verify(x => x.GetUserByUsername("secondary root", CancellationToken.None), Times.Once);
             _mockPasswordHasher.Verify(x => x.VerifyPassword("secondary root-pass", "secondary root-pass"), Times.Once);
             _mockUserDatabase.Verify(x => x.StoreTemporaryTokenToUser(new UserAuthentication(userFromDb, "ASDFAA",
-                dateTimeExp, _mockDateTimeProvider.Object)));
+                dateTimeExp, _mockDateTimeProvider.Object), CancellationToken.None));
             _mockAuthService.Verify(x => x.GenerateToken(new UserIdentity("2"), dateTimeExp), Times.Once);
             _mockDateTimeProvider.Verify(x => x.Now, Times.Once);
 
@@ -88,18 +88,18 @@ public class AuthenticateUserTest : UserTestHelper
     {
         var userToAuthenticate = new LoginWithUsernameAndPassword("root", "root-");
 
-        _mockUserDatabase.Setup(x => x.GetUserByUsername("root"))
+        _mockUserDatabase.Setup(x => x.GetUserByUsername("root", CancellationToken.None))
             .Returns(Task.FromResult(new UserEntity(1, "root", "root-pass")));
 
         _mockPasswordHasher.Setup(x => x.VerifyPassword("root-pass", "root-"))
             .Returns(false);
 
-        var result = await _userService.LoginUser(userToAuthenticate);
+        var result = await _userService.LoginUser(userToAuthenticate, CancellationToken.None);
         Assert.Multiple(() =>
         {
             Assert.Equal("User does not exist", result.Error.Description);
 
-            _mockUserDatabase.Verify(x => x.GetUserByUsername("root"), Times.Once);
+            _mockUserDatabase.Verify(x => x.GetUserByUsername("root", CancellationToken.None), Times.Once);
             _mockPasswordHasher.Verify(x => x.VerifyPassword("root-pass", "root-"), Times.Once);
             EnsureAllMocksHadNoOtherCalls();
         });
@@ -110,15 +110,15 @@ public class AuthenticateUserTest : UserTestHelper
     {
         var userToAuthenticate = new LoginWithUsernameAndPassword("broken root", "broken root-pass");
 
-        _mockUserDatabase.Setup(x => x.GetUserByUsername(It.IsAny<string>()))
+        _mockUserDatabase.Setup(x => x.GetUserByUsername(It.IsAny<string>(), CancellationToken.None))
             .Returns(Task.FromResult<UserEntity>(null));
 
-        var result = await _userService.LoginUser(userToAuthenticate);
+        var result = await _userService.LoginUser(userToAuthenticate, CancellationToken.None);
         Assert.Multiple(() =>
         {
             Assert.Equal("User does not exist", result.Error.Description);
 
-            _mockUserDatabase.Verify(x => x.GetUserByUsername(It.IsAny<string>()), Times.Once);
+            _mockUserDatabase.Verify(x => x.GetUserByUsername(It.IsAny<string>(), CancellationToken.None), Times.Once);
             EnsureAllMocksHadNoOtherCalls();
         });
     }

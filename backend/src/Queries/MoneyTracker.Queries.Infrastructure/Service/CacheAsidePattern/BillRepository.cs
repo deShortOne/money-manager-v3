@@ -21,21 +21,22 @@ public class BillRepository : IBillRepositoryService
         _billCache = billCache;
     }
 
-    public async Task<ResultT<List<BillEntity>>> GetAllBills(AuthenticatedUser user)
+    public async Task<ResultT<List<BillEntity>>> GetAllBills(AuthenticatedUser user,
+        CancellationToken cancellationToken)
     {
-        var result = await _billCache.GetAllBills(user);
+        var result = await _billCache.GetAllBills(user, cancellationToken);
         if (result.HasError)
         {
-            result = await _billDatabase.GetAllBills(user);
-            await _billCache.SaveBills(user, result.Value);
+            result = await _billDatabase.GetAllBills(user, cancellationToken);
+            await _billCache.SaveBills(user, result.Value, cancellationToken);
         }
 
         return result;
     }
 
-    public async Task ResetBillsCache(AuthenticatedUser user)
+    public async Task ResetBillsCache(AuthenticatedUser user, CancellationToken cancellationToken)
     {
-        var result = await _billDatabase.GetAllBills(user);
-        await _billCache.SaveBills(user, result.Value);
+        var result = await _billDatabase.GetAllBills(user, cancellationToken);
+        await _billCache.SaveBills(user, result.Value, cancellationToken);
     }
 }

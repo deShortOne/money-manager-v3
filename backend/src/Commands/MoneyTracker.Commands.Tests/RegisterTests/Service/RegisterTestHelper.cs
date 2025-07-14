@@ -1,6 +1,8 @@
 using MoneyTracker.Commands.Application;
+using MoneyTracker.Commands.Domain.Entities.MessageQueuePolling;
 using MoneyTracker.Commands.Domain.Handlers;
 using MoneyTracker.Commands.Domain.Repositories;
+using MoneyTracker.Common.Utilities.DateTimeUtil;
 using MoneyTracker.Common.Utilities.IdGeneratorUtil;
 using MoneyTracker.PlatformService.Domain;
 using Moq;
@@ -15,6 +17,11 @@ public class RegisterTestHelper
     public readonly Mock<IAccountService> _accountService = new();
     public readonly Mock<ICategoryService> _mockCategoryService = new();
     public readonly Mock<IMessageBusClient> _mockMessageBusClient = new();
+    public readonly Mock<IFileUploadRepository> _mockFileUploadRepository = new();
+    public readonly Mock<IDateTimeProvider> _mockDateTimeProvider = new();
+    public readonly Mock<IReceiptCommandRepository> _mockReceiptCommandRepository = new();
+    public readonly Mock<IPollingController> _mockPollingController = new();
+
 
     public readonly RegisterService _registerService;
 
@@ -27,7 +34,11 @@ public class RegisterTestHelper
             _mockUserService.Object,
             _accountService.Object,
             _mockCategoryService.Object,
-            _mockMessageBusClient.Object
+            _mockMessageBusClient.Object,
+            _mockFileUploadRepository.Object,
+            _mockDateTimeProvider.Object,
+            _mockReceiptCommandRepository.Object,
+            _mockPollingController.Object
             );
     }
 
@@ -40,5 +51,9 @@ public class RegisterTestHelper
         _accountService.VerifyNoOtherCalls();
         _mockCategoryService.VerifyNoOtherCalls();
         _mockMessageBusClient.VerifyNoOtherCalls();
+        _mockFileUploadRepository.VerifyNoOtherCalls();
+        _mockDateTimeProvider.VerifyNoOtherCalls();
+        _mockReceiptCommandRepository.VerifyNoOtherCalls();
+        _mockPollingController.VerifyNoOtherCalls();
     }
 }

@@ -9,12 +9,14 @@
   <ItemGroup>
     <None Remove="Scripts\Migrations\20240914174402_InitialTables.sql" />
     <None Remove="Scripts\Migrations\20250418230010_SplittingAccountIntoSeparateTables.sql" />
+    <None Remove="Scripts\Migrations\20250628182600_AddReceiptState.sql" />
     <None Remove="Scripts\Seed.sql" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Scripts\Migrations\20240914174402_InitialTables.sql" />
     <EmbeddedResource Include="Scripts\Migrations\20250418230010_SplittingAccountIntoSeparateTables.sql" />
+    <EmbeddedResource Include="Scripts\Migrations\20250628182600_AddReceiptState.sql" />
     <EmbeddedResource Include="Scripts\Seed.sql" />
   </ItemGroup>
 

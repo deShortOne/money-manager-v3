@@ -54,14 +54,14 @@ public sealed class StoreTokenForUserTest : IAsyncLifetime
             new NpgsqlParameter("name", "a"),
             new NpgsqlParameter("password", "b"),
         };
-        await _database.UpdateTable(queryInsertUser, queryInsertUserParams); // Insert user
+        await _database.UpdateTable(queryInsertUser, CancellationToken.None, queryInsertUserParams); // Insert user
 
         var dateTimeProvider = new Mock<IDateTimeProvider>();
         dateTimeProvider.Setup(x => x.Now).Returns(new DateTime(2024, 6, 5, 0, 0, 0));
 
         // act
         await _userAuthRepo.StoreTemporaryTokenToUser(new UserAuthentication(new UserEntity(userId, "", ""), token.ToString(),
-            expiration, dateTimeProvider.Object));
+            expiration, dateTimeProvider.Object), CancellationToken.None);
 
         // assert
         var query = """
@@ -77,7 +77,7 @@ public sealed class StoreTokenForUserTest : IAsyncLifetime
             new NpgsqlParameter("token", token.ToString()),
             new NpgsqlParameter("expiration", expiration),
         };
-        var reader = await _database.GetTable(query, queryParams);
+        var reader = await _database.GetTable(query, CancellationToken.None, queryParams);
         Assert.True(reader.Rows.Count != 0);
     }
 }

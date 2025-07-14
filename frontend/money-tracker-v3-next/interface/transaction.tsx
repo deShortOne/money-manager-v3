@@ -26,3 +26,21 @@ export interface UpdateTransaction {
     categoryId: number,
     payerId: number,
 }
+
+export interface ReceiptResponse {
+    receiptProcessingState: string,
+    temporaryTransaction: TemopraryTransaction | null
+}
+
+export interface TemopraryTransaction {
+    payee: Account | null,
+    amount: number | null,
+    datePaid: Date | null,
+    category: Category | null,
+    payer: Account | null,
+}
+
+export interface ReceiptStates {
+    id: string,
+    state: string,
+}

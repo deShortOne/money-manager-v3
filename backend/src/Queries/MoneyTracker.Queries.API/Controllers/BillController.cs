@@ -20,15 +20,15 @@ public class BillController
 
     [HttpGet]
     [Route("get")]
-    public async Task<IActionResult> GetAllBills()
+    public async Task<IActionResult> GetAllBills(CancellationToken cancellationToken)
     {
-        var billsResult = await _billService.GetAllBills(ControllerHelper.GetToken(_httpContextAccessor));
+        var billsResult = await _billService.GetAllBills(ControllerHelper.GetToken(_httpContextAccessor), cancellationToken);
         return ControllerHelper.Convert(billsResult);
     }
 
     [HttpGet]
     [Route("get-all-frequency-names")]
-    public Task<List<string>> GetAllFrequencyNames()
+    public Task<List<string>> GetAllFrequencyNames(CancellationToken cancellationToken)
     {
         return _billService.GetAllFrequencyNames();
     }

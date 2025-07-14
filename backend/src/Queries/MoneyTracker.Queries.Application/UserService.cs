@@ -16,23 +16,23 @@ public class UserService : IUserService
         _userRepository = userRepository;
         _passwordHasher = passwordHasher;
     }
-    public async Task<string> GetUserToken(LoginWithUsernameAndPassword userLogin)
+    public async Task<string> GetUserToken(LoginWithUsernameAndPassword userLogin, CancellationToken cancellationToken)
     {
-        var user = await _userRepository.GetUserByUsername(userLogin.Username);
+        var user = await _userRepository.GetUserByUsername(userLogin.Username, cancellationToken);
         if (user == null)
             throw new InvalidDataException("User does not exist");
         if (!_passwordHasher.VerifyPassword(user.Password, userLogin.Password))
             throw new InvalidDataException("User does not exist");
 
-        var token = await _userRepository.GetLastUserTokenForUser(user);
+        var token = await _userRepository.GetLastUserTokenForUser(user, cancellationToken);
         if (token == null)
             throw new InvalidDataException("Token not found");
         return token;
     }
 
-    public async Task<bool> IsTokenValid(string token)
+    public async Task<bool> IsTokenValid(string token, CancellationToken cancellationToken)
     {
-        var userAuth = await _userRepository.GetUserAuthFromToken(token);
+        var userAuth = await _userRepository.GetUserAuthFromToken(token, cancellationToken);
         if (userAuth == null)
             return false;
         var userAuthResult = userAuth.CheckValidation();

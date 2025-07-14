@@ -3,7 +3,7 @@ using MoneyTracker.Queries.Infrastructure.Mongo.Entities;
 using MongoDB.Driver;
 
 namespace MoneyTracker.Queries.Infrastructure.Mongo;
-public sealed class MongoDatabase
+public class MongoDatabase
 {
     private readonly IMongoDatabase _database;
 

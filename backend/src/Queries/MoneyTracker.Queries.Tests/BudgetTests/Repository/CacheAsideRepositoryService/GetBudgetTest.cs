@@ -11,12 +11,12 @@ public class GetBudgetTest : CacheAsideTestHelper
     [Fact]
     public async Task DataInCacheWontCallOffToDatabase()
     {
-        _mockBudgetCache.Setup(x => x.GetBudget(_authedUser))
+        _mockBudgetCache.Setup(x => x.GetBudget(_authedUser, CancellationToken.None))
             .ReturnsAsync(new List<BudgetGroupEntity>());
 
-        await _budgetRepositoryService.GetBudget(_authedUser);
+        await _budgetRepositoryService.GetBudget(_authedUser, CancellationToken.None);
 
-        _mockBudgetCache.Verify(x => x.GetBudget(_authedUser));
+        _mockBudgetCache.Verify(x => x.GetBudget(_authedUser, CancellationToken.None));
         VerifyNoOtherCalls();
     }
 
@@ -30,16 +30,16 @@ public class GetBudgetTest : CacheAsideTestHelper
             new(1, "iukhm"),
         };
 
-        _mockBudgetCache.Setup(x => x.GetBudget(_authedUser))
+        _mockBudgetCache.Setup(x => x.GetBudget(_authedUser, CancellationToken.None))
             .ReturnsAsync(Error.NotFound("", ""));
-        _mockBudgetDatabase.Setup(x => x.GetBudget(_authedUser))
+        _mockBudgetDatabase.Setup(x => x.GetBudget(_authedUser, CancellationToken.None))
             .ReturnsAsync(budgets);
 
-        await _budgetRepositoryService.GetBudget(_authedUser);
+        await _budgetRepositoryService.GetBudget(_authedUser, CancellationToken.None);
 
-        _mockBudgetCache.Verify(x => x.GetBudget(_authedUser));
-        _mockBudgetDatabase.Verify(x => x.GetBudget(_authedUser));
-        _mockBudgetCache.Verify(x => x.SaveBudget(_authedUser, budgets));
+        _mockBudgetCache.Verify(x => x.GetBudget(_authedUser, CancellationToken.None));
+        _mockBudgetDatabase.Verify(x => x.GetBudget(_authedUser, CancellationToken.None));
+        _mockBudgetCache.Verify(x => x.SaveBudget(_authedUser, budgets, CancellationToken.None));
         VerifyNoOtherCalls();
     }
 }

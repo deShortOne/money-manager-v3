@@ -18,15 +18,15 @@ public class AccountService : IAccountService
         _dbService = dbService;
         _userRepository = userRepository;
     }
-    public async Task<ResultT<List<AccountResponse>>> GetAccounts(string token)
+    public async Task<ResultT<List<AccountResponse>>> GetAccounts(string token, CancellationToken cancellationToken)
     {
-        var userAuth = await _userRepository.GetUserAuthFromToken(token);
+        var userAuth = await _userRepository.GetUserAuthFromToken(token, cancellationToken);
         if (userAuth == null)
             throw new InvalidDataException("Token not found");
         userAuth.CheckValidation();
 
         var user = new AuthenticatedUser(userAuth.User.Id);
-        var dtoFromDbResult = await _dbService.GetAccountsOwnedByUser(user);
+        var dtoFromDbResult = await _dbService.GetAccountsOwnedByUser(user, cancellationToken);
         if (dtoFromDbResult.HasError)
             return dtoFromDbResult.Error!;
 

@@ -11,12 +11,12 @@ public class GetAllCategoriesTest : CacheAsideTestHelper
     [Fact]
     public async Task DataInCacheWontCallOffToDatabase()
     {
-        _mockCategoryCache.Setup(x => x.GetAllCategories())
+        _mockCategoryCache.Setup(x => x.GetAllCategories(CancellationToken.None))
             .ReturnsAsync(new List<CategoryEntity>());
 
-        await _categoryRepositoryService.GetAllCategories();
+        await _categoryRepositoryService.GetAllCategories(CancellationToken.None);
 
-        _mockCategoryCache.Verify(x => x.GetAllCategories());
+        _mockCategoryCache.Verify(x => x.GetAllCategories(CancellationToken.None));
         VerifyNoOtherCalls();
     }
 
@@ -30,16 +30,16 @@ public class GetAllCategoriesTest : CacheAsideTestHelper
             new(1, "iukhm"),
         };
 
-        _mockCategoryCache.Setup(x => x.GetAllCategories())
+        _mockCategoryCache.Setup(x => x.GetAllCategories(CancellationToken.None))
             .ReturnsAsync(Error.NotFound("", ""));
-        _mockCategoryDatabase.Setup(x => x.GetAllCategories())
+        _mockCategoryDatabase.Setup(x => x.GetAllCategories(CancellationToken.None))
             .ReturnsAsync(categories);
 
-        await _categoryRepositoryService.GetAllCategories();
+        await _categoryRepositoryService.GetAllCategories(CancellationToken.None);
 
-        _mockCategoryCache.Verify(x => x.GetAllCategories());
-        _mockCategoryDatabase.Verify(x => x.GetAllCategories());
-        _mockCategoryCache.Verify(x => x.SaveCategories(categories));
+        _mockCategoryCache.Verify(x => x.GetAllCategories(CancellationToken.None));
+        _mockCategoryDatabase.Verify(x => x.GetAllCategories(CancellationToken.None));
+        _mockCategoryCache.Verify(x => x.SaveCategories(categories, CancellationToken.None));
         VerifyNoOtherCalls();
     }
 }

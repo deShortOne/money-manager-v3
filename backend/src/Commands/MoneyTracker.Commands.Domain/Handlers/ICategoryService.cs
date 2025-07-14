@@ -3,8 +3,8 @@ using MoneyTracker.Contracts.Requests.Category;
 namespace MoneyTracker.Commands.Domain.Handlers;
 public interface ICategoryService
 {
-    Task AddCategory(NewCategoryRequest newCategory);
-    Task DeleteCategory(DeleteCategoryRequest deleteCategory);
-    Task EditCategory(EditCategoryRequest editCategory);
-    Task<bool> DoesCategoryExist(int categoryId);
+    Task AddCategory(NewCategoryRequest newCategory, CancellationToken cancellationToken);
+    Task DeleteCategory(DeleteCategoryRequest deleteCategory, CancellationToken cancellationToken);
+    Task EditCategory(EditCategoryRequest editCategory, CancellationToken cancellationToken);
+    Task<bool> DoesCategoryExist(int categoryId, CancellationToken cancellationToken);
 }

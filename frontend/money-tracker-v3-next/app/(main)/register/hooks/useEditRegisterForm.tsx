@@ -21,10 +21,12 @@ const defaultDefaultValues = {
 type RegisterModalSetting = {
     isOpen: boolean
     defaultValues: defaultValuesProp
+    defaultReceiptId: string
     updateRegisterAction: (authToken: string, transaction: Newtransaction) => Promise<Result<Transaction[]>>
     onOpen: (
         registerAction: (authToken: string, transaction: Newtransaction) => Promise<Result<Transaction[]>>,
-        defaultValues?: defaultValuesProp
+        defaultValues?: defaultValuesProp,
+        defaultReceiptId?: string,
     ) => void
     onClose: () => void
 }
@@ -32,17 +34,20 @@ type RegisterModalSetting = {
 export const useRegisterModalSetting = create<RegisterModalSetting>((set) => ({
     isOpen: false,
     defaultValues: defaultDefaultValues,
+    defaultReceiptId: "",
     updateRegisterAction: () => {
         return new Promise(() => new ErrorResult<Transaction[]>("error transaction action not updated", true));
     },
     onOpen: (
         registerAction: (authToken: string, transaction: Newtransaction) => Promise<Result<Transaction[]>>,
-        defaultValues = defaultDefaultValues
+        defaultValues = defaultDefaultValues,
+        defaultReceiptIda = "" as string,
     ) => set(
         {
             updateRegisterAction: registerAction,
             isOpen: true,
             defaultValues: defaultValues,
+            defaultReceiptId: defaultReceiptIda,
         }
     ),
     onClose: () => set({ isOpen: false }),

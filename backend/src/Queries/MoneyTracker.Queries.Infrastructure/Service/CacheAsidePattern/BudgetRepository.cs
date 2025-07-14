@@ -21,21 +21,22 @@ public class BudgetRepository : IBudgetRepositoryService
         _budgetCache = budgetCache;
     }
 
-    public async Task<ResultT<List<BudgetGroupEntity>>> GetBudget(AuthenticatedUser user)
+    public async Task<ResultT<List<BudgetGroupEntity>>> GetBudget(AuthenticatedUser user,
+        CancellationToken cancellationToken)
     {
-        var result = await _budgetCache.GetBudget(user);
+        var result = await _budgetCache.GetBudget(user, cancellationToken);
         if (result.HasError)
         {
-            result = await _budgetDatabase.GetBudget(user);
-            await _budgetCache.SaveBudget(user, result.Value);
+            result = await _budgetDatabase.GetBudget(user, cancellationToken);
+            await _budgetCache.SaveBudget(user, result.Value, cancellationToken);
         }
 
         return result;
     }
 
-    public async Task ResetBudgetCache(AuthenticatedUser user)
+    public async Task ResetBudgetCache(AuthenticatedUser user, CancellationToken cancellationToken)
     {
-        var result = await _budgetDatabase.GetBudget(user);
-        await _budgetCache.SaveBudget(user, result.Value);
+        var result = await _budgetDatabase.GetBudget(user, cancellationToken);
+        await _budgetCache.SaveBudget(user, result.Value, cancellationToken);
     }
 }

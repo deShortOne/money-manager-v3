@@ -35,9 +35,9 @@
   <ItemGroup>
     <Using Include="Xunit" />
   </ItemGroup>
-
+  
   <PropertyGroup Condition="'$(COMPUTERNAME)' != ''">
-    <DefineConstants>$(DefineConstants);RUN_LOCAL</DefineConstants>
+        <DefineConstants>$(DefineConstants);RUN_LOCAL</DefineConstants>
   </PropertyGroup>
 
 </Project>

@@ -38,7 +38,7 @@ public sealed class GetlastUserIdTest : IAsyncLifetime
     {
         Migration.CheckMigration(_postgres.GetConnectionString(), new MigrationOption());
 
-        Assert.Equal(0, await _userRepo.GetLastUserId());
+        Assert.Equal(0, await _userRepo.GetLastUserId(CancellationToken.None));
     }
 
     [Fact]
@@ -46,6 +46,6 @@ public sealed class GetlastUserIdTest : IAsyncLifetime
     {
         Migration.CheckMigration(_postgres.GetConnectionString(), new MigrationOption(true));
 
-        Assert.Equal(2, await _userRepo.GetLastUserId());
+        Assert.Equal(2, await _userRepo.GetLastUserId(CancellationToken.None));
     }
 }

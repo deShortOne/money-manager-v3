@@ -20,17 +20,17 @@ public class DeleteBudgetCategoryTest : BudgetTestHelper
         var deleteBudgetCategoryRequest = new DeleteBudgetCategoryRequest(budgetGroupId, categoryId);
         var deleteBudgetCategory = new DeleteBudgetCategoryEntity(userId, budgetGroupId, categoryId);
 
-        _mockUserService.Setup(x => x.GetUserFromToken(tokenToDecode))
+        _mockUserService.Setup(x => x.GetUserFromToken(tokenToDecode, CancellationToken.None))
             .ReturnsAsync(authedUser);
 
-        _mockBudgetCategoryDatabase.Setup(x => x.DeleteBudgetCategory(deleteBudgetCategory));
+        _mockBudgetCategoryDatabase.Setup(x => x.DeleteBudgetCategory(deleteBudgetCategory, CancellationToken.None));
 
-        await _budgetService.DeleteBudgetCategory(tokenToDecode, deleteBudgetCategoryRequest);
+        await _budgetService.DeleteBudgetCategory(tokenToDecode, deleteBudgetCategoryRequest, CancellationToken.None);
 
         Assert.Multiple(() =>
         {
-            _mockUserService.Verify(x => x.GetUserFromToken(tokenToDecode), Times.Once);
-            _mockBudgetCategoryDatabase.Verify(x => x.DeleteBudgetCategory(deleteBudgetCategory), Times.Once);
+            _mockUserService.Verify(x => x.GetUserFromToken(tokenToDecode, CancellationToken.None), Times.Once);
+            _mockBudgetCategoryDatabase.Verify(x => x.DeleteBudgetCategory(deleteBudgetCategory, CancellationToken.None), Times.Once);
 
             _mockMessageBusClient.Verify(x => x.PublishEvent(new EventUpdate(authedUser, DataTypes.Budget), It.IsAny<CancellationToken>()), Times.Once);
 

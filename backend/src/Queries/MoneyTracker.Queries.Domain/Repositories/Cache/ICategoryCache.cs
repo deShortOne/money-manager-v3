@@ -6,5 +6,5 @@ using MoneyTracker.Queries.Domain.Repositories.Database;
 namespace MoneyTracker.Queries.Domain.Repositories.Cache;
 public interface ICategoryCache : ICategoryDatabase
 {
-    Task<Result> SaveCategories(List<CategoryEntity> categories);
+    Task<Result> SaveCategories(List<CategoryEntity> categories, CancellationToken cancellationToken);
 }

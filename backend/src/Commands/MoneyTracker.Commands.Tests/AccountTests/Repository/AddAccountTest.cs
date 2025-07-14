@@ -12,7 +12,7 @@ public class AddAccountTest : AccountRespositoryTestHelper
         var allAccountsInitiallyCount = (await GetAllAccountEntity()).Count;
 
         var accountToAdd = new AccountEntity(61252, "gasdlkfhjsadfl");
-        await _accountRepo.AddAccount(accountToAdd);
+        await _accountRepo.AddAccount(accountToAdd, CancellationToken.None);
 
         var results = await GetAllAccountEntity();
         Assert.Equal(accountToAdd, results[allAccountsInitiallyCount]);

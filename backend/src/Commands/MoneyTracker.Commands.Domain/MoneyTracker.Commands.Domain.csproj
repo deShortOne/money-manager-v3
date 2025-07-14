@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AWSSDK.SQS" Version="4.0.0.12" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\Shared\MoneyTracker.Authentication\MoneyTracker.Authentication.csproj" />
     <ProjectReference Include="..\..\Shared\MoneyTracker.Common\MoneyTracker.Common.csproj" />
     <ProjectReference Include="..\..\Shared\MoneyTracker.Contracts\MoneyTracker.Contracts.csproj" />

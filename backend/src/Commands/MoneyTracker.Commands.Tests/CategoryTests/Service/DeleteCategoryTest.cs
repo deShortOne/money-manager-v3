@@ -15,11 +15,11 @@ public sealed class DeleteCategoryTest : CategoryTestHelper
     {
         var editCategoryRequest = new DeleteCategoryRequest(_categoryId);
 
-        await _categoryService.DeleteCategory(editCategoryRequest);
+        await _categoryService.DeleteCategory(editCategoryRequest, CancellationToken.None);
 
         Assert.Multiple(() =>
         {
-            _mockCategoryDatabase.Verify(x => x.DeleteCategory(_categoryId), Times.Once);
+            _mockCategoryDatabase.Verify(x => x.DeleteCategory(_categoryId, CancellationToken.None), Times.Once);
 
             _mockMessageBusClient.Verify(x => x.PublishEvent(
                 It.Is<EventUpdate>(x => x.Name == DataTypes.Category), It.IsAny<CancellationToken>()

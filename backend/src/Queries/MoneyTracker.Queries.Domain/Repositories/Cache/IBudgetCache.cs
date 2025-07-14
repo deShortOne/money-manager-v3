@@ -7,5 +7,5 @@ using MoneyTracker.Queries.Domain.Repositories.Database;
 namespace MoneyTracker.Queries.Domain.Repositories.Cache;
 public interface IBudgetCache : IBudgetDatabase
 {
-    Task<Result> SaveBudget(AuthenticatedUser user, List<BudgetGroupEntity> budget);
+    Task<Result> SaveBudget(AuthenticatedUser user, List<BudgetGroupEntity> budget, CancellationToken cancellationToken);
 }

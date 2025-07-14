@@ -18,7 +18,7 @@ public class UserCommandRepository : IUserCommandRepository
         _dateTimeProvider = dateTimeProvider;
     }
 
-    public async Task AddUser(UserEntity userLogin)
+    public async Task AddUser(UserEntity userLogin, CancellationToken cancellationToken)
     {
         var query = """
             INSERT INTO users (id, name, password) VALUES
@@ -31,21 +31,21 @@ public class UserCommandRepository : IUserCommandRepository
             new NpgsqlParameter("password", userLogin.Password),
         };
 
-        await _database.GetTable(query, queryParams);
+        await _database.GetTable(query, cancellationToken, queryParams);
     }
 
-    public async Task<int> GetLastUserId()
+    public async Task<int> GetLastUserId(CancellationToken cancellationToken)
     {
         var query = """
             SELECT COALESCE(MAX(id), 0) as last_id
             from users;
          """;
-        using var reader = await _database.GetTable(query);
+        using var reader = await _database.GetTable(query, cancellationToken);
 
         return reader.Rows[0].Field<int>("last_id");
     }
 
-    public async Task<UserAuthentication?> GetUserAuthFromToken(string token)
+    public async Task<UserAuthentication?> GetUserAuthFromToken(string token, CancellationToken cancellationToken)
     {
         var query = """
             SELECT user_id, expires, name, password
@@ -58,7 +58,7 @@ public class UserCommandRepository : IUserCommandRepository
         {
             new NpgsqlParameter("token", token),
         };
-        using var reader = await _database.GetTable(query, queryParams);
+        using var reader = await _database.GetTable(query, cancellationToken, queryParams);
 
         if (reader.Rows.Count != 0)
         {
@@ -70,7 +70,7 @@ public class UserCommandRepository : IUserCommandRepository
         return null;
     }
 
-    public async Task<UserEntity?> GetUserByUsername(string username)
+    public async Task<UserEntity?> GetUserByUsername(string username, CancellationToken cancellationToken)
     {
         var query = """
             SELECT id, name, password
@@ -82,7 +82,7 @@ public class UserCommandRepository : IUserCommandRepository
             new NpgsqlParameter("username", username),
         };
 
-        using var reader = await _database.GetTable(query, queryParams);
+        using var reader = await _database.GetTable(query, cancellationToken, queryParams);
 
         if (reader.Rows.Count != 0)
         {
@@ -93,7 +93,8 @@ public class UserCommandRepository : IUserCommandRepository
         return null;
     }
 
-    public async Task StoreTemporaryTokenToUser(UserAuthentication userAuthentication)
+    public async Task StoreTemporaryTokenToUser(UserAuthentication userAuthentication,
+        CancellationToken cancellationToken)
     {
         var query = """
             INSERT INTO user_id_to_token (user_id, token, expires) VALUES
@@ -106,6 +107,6 @@ public class UserCommandRepository : IUserCommandRepository
             new NpgsqlParameter("expires", userAuthentication.Expiration),
         };
 
-        await _database.GetTable(query, queryParams);
+        await _database.GetTable(query, cancellationToken, queryParams);
     }
 }

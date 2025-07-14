@@ -24,35 +24,35 @@ public class CategoryService : ICategoryService
         _messageBus = messageBus;
     }
 
-    public async Task AddCategory(NewCategoryRequest newCategory)
+    public async Task AddCategory(NewCategoryRequest newCategory, CancellationToken cancellationToken)
     {
-        var newCategoryId = _idGenerator.NewInt(await _dbService.GetLastCategoryId());
+        var newCategoryId = _idGenerator.NewInt(await _dbService.GetLastCategoryId(cancellationToken));
         var dtoToDb = new CategoryEntity(newCategoryId, newCategory.Name);
 
-        await _dbService.AddCategory(dtoToDb);
+        await _dbService.AddCategory(dtoToDb, cancellationToken);
 
-        await _messageBus.PublishEvent(new EventUpdate(new AuthenticatedUser(-1), DataTypes.Category), CancellationToken.None);
+        await _messageBus.PublishEvent(new EventUpdate(new AuthenticatedUser(-1), DataTypes.Category), cancellationToken);
     }
 
-    public async Task EditCategory(EditCategoryRequest editCategory)
+    public async Task EditCategory(EditCategoryRequest editCategory, CancellationToken cancellationToken)
     {
         var dtoToDb = new EditCategoryEntity(editCategory.Id, editCategory.Name);
 
-        await _dbService.EditCategory(dtoToDb);
+        await _dbService.EditCategory(dtoToDb, cancellationToken);
 
-        await _messageBus.PublishEvent(new EventUpdate(new AuthenticatedUser(-1), DataTypes.Category), CancellationToken.None);
+        await _messageBus.PublishEvent(new EventUpdate(new AuthenticatedUser(-1), DataTypes.Category), cancellationToken);
     }
 
-    public async Task DeleteCategory(DeleteCategoryRequest deleteCategory)
+    public async Task DeleteCategory(DeleteCategoryRequest deleteCategory, CancellationToken cancellationToken)
     {
-        await _dbService.DeleteCategory(deleteCategory.Id);
+        await _dbService.DeleteCategory(deleteCategory.Id, cancellationToken);
 
-        await _messageBus.PublishEvent(new EventUpdate(new AuthenticatedUser(-1), DataTypes.Category), CancellationToken.None);
+        await _messageBus.PublishEvent(new EventUpdate(new AuthenticatedUser(-1), DataTypes.Category), cancellationToken);
     }
 
-    public async Task<bool> DoesCategoryExist(int categoryId)
+    public async Task<bool> DoesCategoryExist(int categoryId, CancellationToken cancellationToken)
     {
-        var category = await _dbService.GetCategory(categoryId);
+        var category = await _dbService.GetCategory(categoryId, cancellationToken);
 
         return category != null;
     }

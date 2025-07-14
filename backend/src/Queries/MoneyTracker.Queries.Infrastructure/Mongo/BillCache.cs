@@ -15,7 +15,8 @@ public class BillCache : IBillCache
         _billCollection = database.GetCollection<MongoBillEntity>("bill");
     }
 
-    public async Task<ResultT<List<BillEntity>>> GetAllBills(AuthenticatedUser user)
+    public async Task<ResultT<List<BillEntity>>> GetAllBills(AuthenticatedUser user,
+        CancellationToken cancellationToken)
     {
         var billsLisIterable = await _billCollection.FindAsync(Builders<MongoBillEntity>.Filter.Eq(x => x.User, user));
         var billsLis = await billsLisIterable.ToListAsync();
@@ -27,13 +28,14 @@ public class BillCache : IBillCache
         return billsLis[0].Bills;
     }
 
-    public async Task<Result> SaveBills(AuthenticatedUser user, List<BillEntity> bills)
+    public async Task<Result> SaveBills(AuthenticatedUser user, List<BillEntity> bills,
+        CancellationToken cancellationToken)
     {
         await _billCollection.InsertOneAsync(new MongoBillEntity()
         {
             User = user,
             Bills = bills,
-        });
+        }, cancellationToken: cancellationToken);
 
         return Result.Success();
     }

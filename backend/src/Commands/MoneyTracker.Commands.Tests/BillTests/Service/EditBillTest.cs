@@ -33,32 +33,32 @@ public sealed class EditBillTest : BillTestHelper
         var editBillEntity = new EditBillEntity(id, payeeId, amount, nextDueDate, monthDay, frequency, category, payerId);
 
         _mockUserService
-            .Setup(x => x.GetUserFromToken(tokenToDecode))
+            .Setup(x => x.GetUserFromToken(tokenToDecode, CancellationToken.None))
             .ReturnsAsync(authedUser);
 
         if (payerId != null)
         {
             _mockAccountService
-                .Setup(x => x.DoesUserOwnAccount(authedUser, (int)payerId))
+                .Setup(x => x.DoesUserOwnAccount(authedUser, (int)payerId, CancellationToken.None))
                 .ReturnsAsync(true);
         }
         if (payeeId != null)
         {
             _mockAccountDatabase
-                .Setup(x => x.GetAccountUserEntity((int)payeeId))
+                .Setup(x => x.GetAccountUserEntity((int)payeeId, CancellationToken.None))
                 .ReturnsAsync(new AccountUserEntity((int)payeeId, 1, userId, false));
         }
 
         _mockBillDatabase
-            .Setup(x => x.GetBillById(id))
+            .Setup(x => x.GetBillById(id, CancellationToken.None))
             .ReturnsAsync(new BillEntity(id, -1, -1, new DateOnly(), -1, "", -1, commonPayerId));
         _mockAccountDatabase
-            .Setup(x => x.GetAccountUserEntity(commonPayerId))
+            .Setup(x => x.GetAccountUserEntity(commonPayerId, CancellationToken.None))
             .ReturnsAsync(new AccountUserEntity(commonPayerId, -1, userId, true));
 
         if (category != null)
         {
-            _mockCategoryService.Setup(x => x.DoesCategoryExist((int)category)).Returns(Task.FromResult(true));
+            _mockCategoryService.Setup(x => x.DoesCategoryExist((int)category, CancellationToken.None)).Returns(Task.FromResult(true));
         }
 
         if (frequency != null)
@@ -71,25 +71,25 @@ public sealed class EditBillTest : BillTestHelper
             _mockMonthDayCalculator.Setup(x => x.Calculate((DateOnly)nextDueDate)).Returns(21); // constant!! :/
         }
 
-        await _billService.EditBill(tokenToDecode, editBillRequest);
+        await _billService.EditBill(tokenToDecode, editBillRequest, CancellationToken.None);
 
         Assert.Multiple(() =>
         {
-            _mockBillDatabase.Verify(x => x.GetBillById(id), Times.Once);
-            _mockUserService.Verify(x => x.GetUserFromToken(tokenToDecode), Times.Once);
-            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(commonPayerId), Times.Once);
+            _mockBillDatabase.Verify(x => x.GetBillById(id, CancellationToken.None), Times.Once);
+            _mockUserService.Verify(x => x.GetUserFromToken(tokenToDecode, CancellationToken.None), Times.Once);
+            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(commonPayerId, CancellationToken.None), Times.Once);
 
             if (payerId != null)
             {
-                _mockAccountService.Verify(x => x.DoesUserOwnAccount(authedUser, (int)payerId), Times.Once);
+                _mockAccountService.Verify(x => x.DoesUserOwnAccount(authedUser, (int)payerId, CancellationToken.None), Times.Once);
             }
             if (payeeId != null)
             {
-                _mockAccountDatabase.Verify(x => x.GetAccountUserEntity((int)payeeId), Times.Once);
+                _mockAccountDatabase.Verify(x => x.GetAccountUserEntity((int)payeeId, CancellationToken.None), Times.Once);
             }
             if (category != null)
             {
-                _mockCategoryService.Verify(x => x.DoesCategoryExist((int)category), Times.Once);
+                _mockCategoryService.Verify(x => x.DoesCategoryExist((int)category, CancellationToken.None), Times.Once);
             }
 
             if (frequency != null)
@@ -102,7 +102,7 @@ public sealed class EditBillTest : BillTestHelper
                 _mockMonthDayCalculator.Verify(x => x.Calculate((DateOnly)nextDueDate), Times.Once);
             }
 
-            _mockBillDatabase.Verify(x => x.EditBill(editBillEntity), Times.Once);
+            _mockBillDatabase.Verify(x => x.EditBill(editBillEntity, CancellationToken.None), Times.Once);
 
             _mockMessageBusClient.Verify(x => x.PublishEvent(new EventUpdate(authedUser, DataTypes.Bill), It.IsAny<CancellationToken>()), Times.Once);
 
@@ -125,20 +125,20 @@ public sealed class EditBillTest : BillTestHelper
         var payerId = 2;
         var editBillRequest = new EditBillRequest(billId, payeeId, amount, nextDueDate, frequency, category, payerId);
 
-        _mockUserService.Setup(x => x.GetUserFromToken(tokenToDecode))
+        _mockUserService.Setup(x => x.GetUserFromToken(tokenToDecode, CancellationToken.None))
             .ReturnsAsync(authedUser);
 
-        _mockBillDatabase.Setup(x => x.GetBillById(billId)).ReturnsAsync(new BillEntity(-1, -1, -1, new DateOnly(), -1, "", -1, payerId));
-        _mockAccountDatabase.Setup(x => x.GetAccountUserEntity(payerId)).ReturnsAsync((AccountUserEntity)null);
+        _mockBillDatabase.Setup(x => x.GetBillById(billId, CancellationToken.None)).ReturnsAsync(new BillEntity(-1, -1, -1, new DateOnly(), -1, "", -1, payerId));
+        _mockAccountDatabase.Setup(x => x.GetAccountUserEntity(payerId, CancellationToken.None)).ReturnsAsync((AccountUserEntity)null);
 
-        var result = await _billService.EditBill(tokenToDecode, editBillRequest);
+        var result = await _billService.EditBill(tokenToDecode, editBillRequest, CancellationToken.None);
         Assert.Multiple(() =>
         {
             Assert.Equal("Bill not found", result.Error.Description);
 
-            _mockBillDatabase.Verify(x => x.GetBillById(billId), Times.Once);
-            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(payerId), Times.Once);
-            _mockUserService.Verify(x => x.GetUserFromToken(tokenToDecode), Times.Once);
+            _mockBillDatabase.Verify(x => x.GetBillById(billId, CancellationToken.None), Times.Once);
+            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(payerId, CancellationToken.None), Times.Once);
+            _mockUserService.Verify(x => x.GetUserFromToken(tokenToDecode, CancellationToken.None), Times.Once);
 
             EnsureAllMocksHadNoOtherCalls();
         });
@@ -162,23 +162,23 @@ public sealed class EditBillTest : BillTestHelper
 
         var mockDateTime = new Mock<IDateTimeProvider>();
         mockDateTime.Setup(x => x.Now).Returns(new DateTime(2024, 6, 6, 10, 0, 0));
-        _mockUserService.Setup(x => x.GetUserFromToken(tokenToDecode))
+        _mockUserService.Setup(x => x.GetUserFromToken(tokenToDecode, CancellationToken.None))
             .ReturnsAsync(authedUser);
 
-        _mockAccountService.Setup(x => x.DoesUserOwnAccount(authedUser, payerId)).ReturnsAsync(false);
+        _mockAccountService.Setup(x => x.DoesUserOwnAccount(authedUser, payerId, CancellationToken.None)).ReturnsAsync(false);
 
-        _mockBillDatabase.Setup(x => x.GetBillById(billId)).ReturnsAsync(new BillEntity(-1, -1, -1, new DateOnly(), -1, "", -1, previousBillPayerId));
-        _mockAccountDatabase.Setup(x => x.GetAccountUserEntity(previousBillPayerId)).ReturnsAsync(new AccountUserEntity(previousBillPayerId, previousBillPayerId, userId, true));
+        _mockBillDatabase.Setup(x => x.GetBillById(billId, CancellationToken.None)).ReturnsAsync(new BillEntity(-1, -1, -1, new DateOnly(), -1, "", -1, previousBillPayerId));
+        _mockAccountDatabase.Setup(x => x.GetAccountUserEntity(previousBillPayerId, CancellationToken.None)).ReturnsAsync(new AccountUserEntity(previousBillPayerId, previousBillPayerId, userId, true));
 
-        var result = await _billService.EditBill(tokenToDecode, editBillRequest);
+        var result = await _billService.EditBill(tokenToDecode, editBillRequest, CancellationToken.None);
         Assert.Multiple(() =>
         {
             Assert.Equal("Payer account not found", result.Error.Description);
 
-            _mockAccountService.Verify(x => x.DoesUserOwnAccount(authedUser, payerId), Times.Once);
-            _mockBillDatabase.Verify(x => x.GetBillById(billId), Times.Once);
-            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(previousBillPayerId), Times.Once);
-            _mockUserService.Verify(x => x.GetUserFromToken(tokenToDecode), Times.Once);
+            _mockAccountService.Verify(x => x.DoesUserOwnAccount(authedUser, payerId, CancellationToken.None), Times.Once);
+            _mockBillDatabase.Verify(x => x.GetBillById(billId, CancellationToken.None), Times.Once);
+            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(previousBillPayerId, CancellationToken.None), Times.Once);
+            _mockUserService.Verify(x => x.GetUserFromToken(tokenToDecode, CancellationToken.None), Times.Once);
 
             EnsureAllMocksHadNoOtherCalls();
         });
@@ -205,33 +205,33 @@ public sealed class EditBillTest : BillTestHelper
             .Setup(x => x.Now)
             .Returns(new DateTime(2024, 6, 6, 10, 0, 0));
         _mockUserService
-            .Setup(x => x.GetUserFromToken(tokenToDecode))
+            .Setup(x => x.GetUserFromToken(tokenToDecode, CancellationToken.None))
             .ReturnsAsync(authedUser);
 
         _mockAccountService
-            .Setup(x => x.DoesUserOwnAccount(authedUser, payerId))
+            .Setup(x => x.DoesUserOwnAccount(authedUser, payerId, CancellationToken.None))
             .ReturnsAsync(true);
 
         _mockBillDatabase
-            .Setup(x => x.GetBillById(billId))
+            .Setup(x => x.GetBillById(billId, CancellationToken.None))
             .ReturnsAsync(new BillEntity(-1, -1, -1, new DateOnly(), -1, "", -1, previousBillPayerId));
         _mockAccountDatabase
-            .Setup(x => x.GetAccountUserEntity(previousBillPayerId))
+            .Setup(x => x.GetAccountUserEntity(previousBillPayerId, CancellationToken.None))
             .ReturnsAsync(new AccountUserEntity(previousBillPayerId, previousBillPayerId, userId, true));
         _mockAccountDatabase
-            .Setup(x => x.GetAccountUserEntity(payeeId))
+            .Setup(x => x.GetAccountUserEntity(payeeId, CancellationToken.None))
             .ReturnsAsync(new AccountUserEntity(previousBillPayerId, previousBillPayerId, userId + 1, true));
 
-        var result = await _billService.EditBill(tokenToDecode, editBillRequest);
+        var result = await _billService.EditBill(tokenToDecode, editBillRequest, CancellationToken.None);
         Assert.Multiple(() =>
         {
             Assert.Equal("Payee account not found", result.Error.Description);
 
-            _mockAccountService.Verify(x => x.DoesUserOwnAccount(authedUser, payerId), Times.Once);
-            _mockBillDatabase.Verify(x => x.GetBillById(billId), Times.Once);
-            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(previousBillPayerId), Times.Once);
-            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(payeeId), Times.Once);
-            _mockUserService.Verify(x => x.GetUserFromToken(tokenToDecode), Times.Once);
+            _mockAccountService.Verify(x => x.DoesUserOwnAccount(authedUser, payerId, CancellationToken.None), Times.Once);
+            _mockBillDatabase.Verify(x => x.GetBillById(billId, CancellationToken.None), Times.Once);
+            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(previousBillPayerId, CancellationToken.None), Times.Once);
+            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(payeeId, CancellationToken.None), Times.Once);
+            _mockUserService.Verify(x => x.GetUserFromToken(tokenToDecode, CancellationToken.None), Times.Once);
 
             EnsureAllMocksHadNoOtherCalls();
         });
@@ -248,16 +248,16 @@ public sealed class EditBillTest : BillTestHelper
 
         var mockDateTime = new Mock<IDateTimeProvider>();
         mockDateTime.Setup(x => x.Now).Returns(new DateTime(2024, 6, 6, 10, 0, 0));
-        _mockUserService.Setup(x => x.GetUserFromToken(tokenToDecode))
+        _mockUserService.Setup(x => x.GetUserFromToken(tokenToDecode, CancellationToken.None))
             .ReturnsAsync(authedUser);
 
-        var result = await _billService.EditBill(tokenToDecode, editBillRequest);
+        var result = await _billService.EditBill(tokenToDecode, editBillRequest, CancellationToken.None);
         Assert.Multiple(() =>
         {
             Assert.Equal("Must have at least one non-null value", result.Error!.Description);
 
-            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(It.IsAny<int>(), It.IsAny<int>()), Times.Never);
-            _mockUserService.Verify(x => x.GetUserFromToken(tokenToDecode), Times.Once);
+            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(It.IsAny<int>(), It.IsAny<int>(), CancellationToken.None), Times.Never);
+            _mockUserService.Verify(x => x.GetUserFromToken(tokenToDecode, CancellationToken.None), Times.Once);
 
             EnsureAllMocksHadNoOtherCalls();
         });
@@ -279,30 +279,30 @@ public sealed class EditBillTest : BillTestHelper
         var previousBillPayerId = 235;
         var editBillRequest = new EditBillRequest(billId, payeeId, amount, nextDueDate, frequency, category, payerId);
 
-        _mockUserService.Setup(x => x.GetUserFromToken(tokenToDecode))
+        _mockUserService.Setup(x => x.GetUserFromToken(tokenToDecode, CancellationToken.None))
             .ReturnsAsync(authedUser);
 
-        _mockAccountService.Setup(x => x.DoesUserOwnAccount(authedUser, payerId)).ReturnsAsync(true);
+        _mockAccountService.Setup(x => x.DoesUserOwnAccount(authedUser, payerId, CancellationToken.None)).ReturnsAsync(true);
 
-        _mockBillDatabase.Setup(x => x.GetBillById(billId)).ReturnsAsync(new BillEntity(-1, -1, -1, new DateOnly(), -1, "", -1, previousBillPayerId));
-        _mockAccountDatabase.Setup(x => x.GetAccountUserEntity(previousBillPayerId)).ReturnsAsync(new AccountUserEntity(previousBillPayerId, -1, userId, true));
-        _mockAccountDatabase.Setup(x => x.GetAccountUserEntity(payeeId)).ReturnsAsync(new AccountUserEntity(previousBillPayerId, -1, userId, true));
+        _mockBillDatabase.Setup(x => x.GetBillById(billId, CancellationToken.None)).ReturnsAsync(new BillEntity(-1, -1, -1, new DateOnly(), -1, "", -1, previousBillPayerId));
+        _mockAccountDatabase.Setup(x => x.GetAccountUserEntity(previousBillPayerId, CancellationToken.None)).ReturnsAsync(new AccountUserEntity(previousBillPayerId, -1, userId, true));
+        _mockAccountDatabase.Setup(x => x.GetAccountUserEntity(payeeId, CancellationToken.None)).ReturnsAsync(new AccountUserEntity(previousBillPayerId, -1, userId, true));
 
-        _mockCategoryService.Setup(x => x.DoesCategoryExist(category)).Returns(Task.FromResult(false));
+        _mockCategoryService.Setup(x => x.DoesCategoryExist(category, CancellationToken.None)).Returns(Task.FromResult(false));
 
         _mockFrequencyCalculation.Setup(x => x.DoesFrequencyExist(frequency)).Returns(true);
 
-        var result = await _billService.EditBill(tokenToDecode, editBillRequest);
+        var result = await _billService.EditBill(tokenToDecode, editBillRequest, CancellationToken.None);
         Assert.Multiple(() =>
         {
             Assert.Equal("Category not found", result.Error!.Description);
 
-            _mockUserService.Verify(x => x.GetUserFromToken(tokenToDecode), Times.AtMostOnce);
-            _mockAccountService.Verify(x => x.DoesUserOwnAccount(authedUser, payerId), Times.AtMostOnce);
-            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(payeeId), Times.AtMostOnce);
-            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(previousBillPayerId), Times.AtMostOnce);
-            _mockBillDatabase.Verify(x => x.GetBillById(billId), Times.AtMostOnce);
-            _mockCategoryService.Verify(x => x.DoesCategoryExist(category), Times.AtMostOnce);
+            _mockUserService.Verify(x => x.GetUserFromToken(tokenToDecode, CancellationToken.None), Times.AtMostOnce);
+            _mockAccountService.Verify(x => x.DoesUserOwnAccount(authedUser, payerId, CancellationToken.None), Times.AtMostOnce);
+            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(payeeId, CancellationToken.None), Times.AtMostOnce);
+            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(previousBillPayerId, CancellationToken.None), Times.AtMostOnce);
+            _mockBillDatabase.Verify(x => x.GetBillById(billId, CancellationToken.None), Times.AtMostOnce);
+            _mockCategoryService.Verify(x => x.DoesCategoryExist(category, CancellationToken.None), Times.AtMostOnce);
             _mockFrequencyCalculation.Verify(x => x.DoesFrequencyExist(frequency), Times.AtMostOnce);
 
             EnsureAllMocksHadNoOtherCalls();
@@ -325,27 +325,27 @@ public sealed class EditBillTest : BillTestHelper
         var previousBillPayerId = 8942;
         var editBillRequest = new EditBillRequest(billId, payeeId, amount, nextDueDate, frequency, category, payerId);
 
-        _mockUserService.Setup(x => x.GetUserFromToken(tokenToDecode))
+        _mockUserService.Setup(x => x.GetUserFromToken(tokenToDecode, CancellationToken.None))
             .ReturnsAsync(authedUser);
 
-        _mockAccountService.Setup(x => x.DoesUserOwnAccount(authedUser, payerId)).ReturnsAsync(true);
-        _mockAccountDatabase.Setup(x => x.GetAccountUserEntity(payeeId)).ReturnsAsync(new AccountUserEntity(35, 1, userId, false));
+        _mockAccountService.Setup(x => x.DoesUserOwnAccount(authedUser, payerId, CancellationToken.None)).ReturnsAsync(true);
+        _mockAccountDatabase.Setup(x => x.GetAccountUserEntity(payeeId, CancellationToken.None)).ReturnsAsync(new AccountUserEntity(35, 1, userId, false));
 
-        _mockBillDatabase.Setup(x => x.GetBillById(billId)).ReturnsAsync(new BillEntity(-1, -1, -1, new DateOnly(), -1, "", -1, previousBillPayerId));
-        _mockAccountDatabase.Setup(x => x.GetAccountUserEntity(previousBillPayerId)).ReturnsAsync(new AccountUserEntity(previousBillPayerId, -1, userId, true));
+        _mockBillDatabase.Setup(x => x.GetBillById(billId, CancellationToken.None)).ReturnsAsync(new BillEntity(-1, -1, -1, new DateOnly(), -1, "", -1, previousBillPayerId));
+        _mockAccountDatabase.Setup(x => x.GetAccountUserEntity(previousBillPayerId, CancellationToken.None)).ReturnsAsync(new AccountUserEntity(previousBillPayerId, -1, userId, true));
 
         _mockFrequencyCalculation.Setup(x => x.DoesFrequencyExist(frequency)).Returns(false);
 
-        var result = await _billService.EditBill(tokenToDecode, editBillRequest);
+        var result = await _billService.EditBill(tokenToDecode, editBillRequest, CancellationToken.None);
         Assert.Multiple(() =>
         {
             Assert.Equal("Frequency type not found", result.Error!.Description);
 
-            _mockUserService.Verify(x => x.GetUserFromToken(tokenToDecode), Times.AtMostOnce);
-            _mockAccountService.Verify(x => x.DoesUserOwnAccount(authedUser, payerId), Times.AtMostOnce);
-            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(payeeId), Times.AtMostOnce);
-            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(previousBillPayerId), Times.AtMostOnce);
-            _mockBillDatabase.Verify(x => x.GetBillById(billId), Times.AtMostOnce);
+            _mockUserService.Verify(x => x.GetUserFromToken(tokenToDecode, CancellationToken.None), Times.AtMostOnce);
+            _mockAccountService.Verify(x => x.DoesUserOwnAccount(authedUser, payerId, CancellationToken.None), Times.AtMostOnce);
+            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(payeeId, CancellationToken.None), Times.AtMostOnce);
+            _mockAccountDatabase.Verify(x => x.GetAccountUserEntity(previousBillPayerId, CancellationToken.None), Times.AtMostOnce);
+            _mockBillDatabase.Verify(x => x.GetBillById(billId, CancellationToken.None), Times.AtMostOnce);
             _mockFrequencyCalculation.Verify(x => x.DoesFrequencyExist(frequency), Times.AtMostOnce);
 
             EnsureAllMocksHadNoOtherCalls();

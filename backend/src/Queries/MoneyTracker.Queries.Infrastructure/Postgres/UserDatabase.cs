@@ -18,7 +18,7 @@ public class UserDatabase : IUserDatabase
         _dateTimeProvider = dateTimeProvider;
     }
 
-    public async Task<IUserAuthentication?> GetUserAuthFromToken(string token)
+    public async Task<IUserAuthentication?> GetUserAuthFromToken(string token, CancellationToken cancellationToken)
     {
         var query = """
             SELECT user_id, expires, name, password
@@ -31,7 +31,7 @@ public class UserDatabase : IUserDatabase
         {
             new NpgsqlParameter("token", token),
         };
-        using var reader = await _database.GetTable(query, queryParams);
+        using var reader = await _database.GetTable(query, cancellationToken, queryParams);
 
         if (reader.Rows.Count != 0)
         {
@@ -42,7 +42,7 @@ public class UserDatabase : IUserDatabase
 
         return null;
     }
-    public async Task<UserEntity?> GetUserByUsername(string username)
+    public async Task<UserEntity?> GetUserByUsername(string username, CancellationToken cancellationToken)
     {
         var query = """
             SELECT id, name, password
@@ -54,7 +54,7 @@ public class UserDatabase : IUserDatabase
             new NpgsqlParameter("username", username),
         };
 
-        using var reader = await _database.GetTable(query, queryParams);
+        using var reader = await _database.GetTable(query, cancellationToken, queryParams);
 
         if (reader.Rows.Count != 0)
         {
@@ -64,7 +64,7 @@ public class UserDatabase : IUserDatabase
 
         return null;
     }
-    public async Task<string?> GetLastUserTokenForUser(UserEntity user)
+    public async Task<string?> GetLastUserTokenForUser(UserEntity user, CancellationToken cancellationToken)
     {
         var query = """
             SELECT token
@@ -78,7 +78,7 @@ public class UserDatabase : IUserDatabase
             new NpgsqlParameter("userId", user.Id),
         };
 
-        using var reader = await _database.GetTable(query, queryParams);
+        using var reader = await _database.GetTable(query, cancellationToken, queryParams);
 
         if (reader.Rows.Count != 0)
         {

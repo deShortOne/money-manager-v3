@@ -24,6 +24,6 @@ public class GetAccountUserEntityTest : IClassFixture<PostgresDbFixture>
     public async Task GetUserAccountEntity(int id, int accountId, int userId, bool expectedUserOwnsAccount)
     {
         Assert.Equal(new AccountUserEntity(id, accountId, userId, expectedUserOwnsAccount),
-            await _accountRepo.GetAccountUserEntity(accountId, userId));
+            await _accountRepo.GetAccountUserEntity(accountId, userId, CancellationToken.None));
     }
 }

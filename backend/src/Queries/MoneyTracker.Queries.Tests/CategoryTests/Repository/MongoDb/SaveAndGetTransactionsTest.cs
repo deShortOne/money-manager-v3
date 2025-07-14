@@ -25,9 +25,9 @@ public sealed class SaveAndGetCategoriesTest : IClassFixture<MongoDbFixture>
             new(415, "zXdOgFqRCc"),
         };
 
-        await categoriesCache.SaveCategories(categories);
+        await categoriesCache.SaveCategories(categories, CancellationToken.None);
 
-        var result = await categoriesCache.GetAllCategories();
+        var result = await categoriesCache.GetAllCategories(CancellationToken.None);
 
         Assert.Equal(categories, result);
     }
@@ -38,7 +38,7 @@ public sealed class SaveAndGetCategoriesTest : IClassFixture<MongoDbFixture>
         var mongoDb = new MongoDatabase(_mongoDbFixture.ConnectionString);
         var categoriesCache = new CategoryCache(mongoDb);
 
-        var result = await categoriesCache.GetAllCategories();
+        var result = await categoriesCache.GetAllCategories(CancellationToken.None);
 
         Assert.False(result.IsSuccess);
     }

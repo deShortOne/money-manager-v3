@@ -1,13 +1,23 @@
 using System.Diagnostics.CodeAnalysis;
+using Amazon.S3;
+using Amazon.SQS;
 using Microsoft.OpenApi.Models;
 using MoneyTracker.Authentication;
 using MoneyTracker.Authentication.Authentication;
 using MoneyTracker.Authentication.Interfaces;
 using MoneyTracker.Commands.Application;
+using MoneyTracker.Commands.Application.BackgroundTask;
+using MoneyTracker.Commands.Application.BackgroundTask.ResultingObject;
+using MoneyTracker.Commands.Application.BackgroundTask.ResultingObject.Schemas;
+using MoneyTracker.Commands.Application.BackgroundTask.ResultingObject.Schemas.V1;
+using MoneyTracker.Commands.Application.BackgroundTask.ResultingObject.Schemas.V2;
+using MoneyTracker.Commands.Application.Fake;
 using MoneyTracker.Commands.DatabaseMigration;
 using MoneyTracker.Commands.DatabaseMigration.Models;
+using MoneyTracker.Commands.Domain.Entities.MessageQueuePolling;
 using MoneyTracker.Commands.Domain.Handlers;
 using MoneyTracker.Commands.Domain.Repositories;
+using MoneyTracker.Commands.Infrastructure.AWS;
 using MoneyTracker.Commands.Infrastructure.Postgres;
 using MoneyTracker.Common.Interfaces;
 using MoneyTracker.Common.Utilities.CalculationUtil;
@@ -85,6 +95,15 @@ internal class Program
             }
         }
 
+        if (true)
+        {
+            DoAmazonStuff(builder, args);
+        }
+        else
+        {
+            SetupFakes(builder, args);
+        }
+
         builder.Services
             .AddHttpContextAccessor()
             .AddSingleton<IDatabase>(_ => new PostgresDatabase(databaseConnectionString))
@@ -110,6 +129,7 @@ internal class Program
             .AddSingleton<ICategoryCommandRepository, CategoryCommandRepository>();
 
         builder.Services
+            .AddSingleton<IReceiptCommandRepository, ReceiptCommandRepository>()
             .AddSingleton<IRegisterService, RegisterService>()
             .AddSingleton<IRegisterCommandRepository, RegisterCommandRepository>();
 
@@ -151,5 +171,57 @@ internal class Program
     private static bool DoesCliArgumentExist(string[] args, string key)
     {
         return args.Any(x => x == key);
+    }
+
+    private static void SetStrategy(WebApplicationBuilder builder)
+    {
+        builder.Services.AddSingleton<IHandler, HandleObjectVersion1>();
+        builder.Services.AddSingleton<IHandler, HandleObjectVersion2>();
+        builder.Services.AddSingleton<StrategyContext>();
+    }
+
+    private static void DoAmazonStuff(WebApplicationBuilder builder, string[] args)
+    {
+        SetStrategy(builder);
+        builder.Services
+            .AddDefaultAWSOptions(builder.Configuration.GetAWSOptions())
+            .AddAWSService<IAmazonS3>()
+            .AddAWSService<IAmazonSQS>();
+
+        var preprocessBucketName = GetCliArgumentValue<string>(args, "--aws-preprocess-bucket") ?? builder.Configuration["AWS:PreprocessBucket"]!;
+        builder.Services
+            .AddSingleton<IFileUploadRepository>(provider =>
+            new S3Repository(provider.GetRequiredService<IAmazonS3>(), preprocessBucketName));
+
+        // Polling
+        var postprocessBucketName = GetCliArgumentValue<string>(args, "--aws-postprocess-bucket") ?? builder.Configuration["AWS:PostprocessBucket"]!;
+        var sqsUrl = GetCliArgumentValue<string>(args, "--aws-sqs-url") ?? builder.Configuration["AWS:SQSUrl"]!;
+        builder.Services
+            .AddSingleton<IPollingController, PollingController>()
+            .AddSingleton<IMessageQueueService>(provider => new MessageQueueService(
+                provider.GetRequiredService<IMessageQueueRepository>(),
+                provider.GetRequiredService<IReceiptCommandRepository>(),
+                new S3Repository(provider.GetRequiredService<IAmazonS3>(), postprocessBucketName),
+                provider.GetRequiredService<IPollingController>(),
+                provider.GetRequiredService<StrategyContext>()))
+            .AddSingleton<IMessageQueueRepository>(provider => new SQSRepository(provider.GetRequiredService<IAmazonSQS>(), sqsUrl, 5))
+            ;
+
+        builder.Services.AddHostedService<MessagePollingWorker>();
+    }
+
+    // For testing only until OCR is setup locally
+    private static void SetupFakes(WebApplicationBuilder builder, string[] args)
+    {
+        SetStrategy(builder);
+
+        builder.Services.AddSingleton<IFileUploadRepository, FakeFileUploadRepository>();
+
+        builder.Services
+            .AddSingleton<IPollingController, PollingController>()
+            .AddSingleton<IMessageQueueService, MessageQueueService>()
+            .AddSingleton<IMessageQueueRepository, FakeSQS>();
+
+        builder.Services.AddHostedService<MessagePollingWorker>();
     }
 }

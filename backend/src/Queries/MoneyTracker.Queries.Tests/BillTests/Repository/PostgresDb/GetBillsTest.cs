@@ -19,7 +19,7 @@ public sealed class GetBillsTest : IClassFixture<PostgresDbFixture>
         var db = new PostgresDatabase(_postgresFixture.ConnectionString);
         var billDb = new BillDatabase(db);
 
-        var actual = await billDb.GetAllBills(new AuthenticatedUser(1));
+        var actual = await billDb.GetAllBills(new AuthenticatedUser(1), CancellationToken.None);
 
         var expected = new List<BillEntity>()
         {
@@ -36,7 +36,7 @@ public sealed class GetBillsTest : IClassFixture<PostgresDbFixture>
         var db = new PostgresDatabase(_postgresFixture.ConnectionString);
         var billDb = new BillDatabase(db);
 
-        var actual = await billDb.GetAllBills(new AuthenticatedUser(2));
+        var actual = await billDb.GetAllBills(new AuthenticatedUser(2), CancellationToken.None);
 
         var expected = new List<BillEntity>()
         {

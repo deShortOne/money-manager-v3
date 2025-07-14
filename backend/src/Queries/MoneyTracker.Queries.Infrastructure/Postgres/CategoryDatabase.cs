@@ -14,17 +14,15 @@ public class CategoryDatabase : ICategoryDatabase
         _database = db;
     }
 
-    public async Task<ResultT<List<CategoryEntity>>> GetAllCategories()
+    public async Task<ResultT<List<CategoryEntity>>> GetAllCategories(CancellationToken cancellationToken)
     {
-        // UPSERTS!! and gets id
         var queryGetAllCategories = """
             SELECT id, name
             FROM category
             ORDER BY name;
          """;
 
-        // get category id
-        using var reader = await _database.GetTable(queryGetAllCategories);
+        using var reader = await _database.GetTable(queryGetAllCategories, cancellationToken);
 
         var res = new List<CategoryEntity>();
         foreach (DataRow row in reader.Rows)

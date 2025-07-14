@@ -26,17 +26,17 @@ public sealed class GetAllBillsTest : BudgetTestHelper
         var mockUserAuth = new Mock<IUserAuthentication>();
         mockUserAuth.Setup(x => x.CheckValidation()).Returns(Result.Success());
         mockUserAuth.Setup(x => x.User).Returns(new UserEntity(userId, "", ""));
-        _mockUserRepository.Setup(x => x.GetUserAuthFromToken(tokenToDecode))
+        _mockUserRepository.Setup(x => x.GetUserAuthFromToken(tokenToDecode, CancellationToken.None))
             .ReturnsAsync(mockUserAuth.Object);
 
-        _mockBudgetDatabase.Setup(x => x.GetBudget(authedUser)).ReturnsAsync(budgetDatabaseReturn);
+        _mockBudgetDatabase.Setup(x => x.GetBudget(authedUser, CancellationToken.None)).ReturnsAsync(budgetDatabaseReturn);
 
         Assert.Multiple(async () =>
         {
-            Assert.Equal(expected, await _budgetService.GetBudget(tokenToDecode));
+            Assert.Equal(expected, await _budgetService.GetBudget(tokenToDecode, CancellationToken.None));
 
-            _mockUserRepository.Verify(x => x.GetUserAuthFromToken(tokenToDecode), Times.Once);
-            _mockBudgetDatabase.Verify(x => x.GetBudget(authedUser), Times.Once);
+            _mockUserRepository.Verify(x => x.GetUserAuthFromToken(tokenToDecode, CancellationToken.None), Times.Once);
+            _mockBudgetDatabase.Verify(x => x.GetBudget(authedUser, CancellationToken.None), Times.Once);
 
             EnsureAllMocksHadNoOtherCalls();
         });

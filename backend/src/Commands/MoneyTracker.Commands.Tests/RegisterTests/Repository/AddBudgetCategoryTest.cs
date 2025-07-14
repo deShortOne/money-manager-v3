@@ -19,7 +19,7 @@ public sealed class AddBudgetCategoryTest : RegisterRespositoryTestHelper
         var payerId = 1;
         var newTransactionEntity = new TransactionEntity(id, payeeId, amount, datePaid, categoryId, payerId);
 
-        await _registerRepo.AddTransaction(newTransactionEntity);
+        await _registerRepo.AddTransaction(newTransactionEntity, CancellationToken.None);
 
         List<TransactionEntity> results = await GetAllTransactionEntities();
 

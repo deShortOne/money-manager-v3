@@ -20,9 +20,29 @@ public class RegisterController
 
     [HttpGet]
     [Route("get")]
-    public async Task<IActionResult> GetAllTransactions()
+    public async Task<IActionResult> GetAllTransactions(CancellationToken cancellationToken)
     {
-        var transactionsResult = await _registerService.GetAllTransactions(ControllerHelper.GetToken(_httpContextAccessor));
+        var transactionsResult = await _registerService.GetAllTransactions(ControllerHelper.GetToken(_httpContextAccessor), cancellationToken);
+
+        return ControllerHelper.Convert(transactionsResult);
+    }
+
+    [HttpPost]
+    [Route("get-temporary-transaction")]
+    public async Task<IActionResult> GetTemporaryTransactions(string filename, CancellationToken cancellationToken)
+    {
+        var token = ControllerHelper.GetToken(_httpContextAccessor);
+        var transactionsResult = await _registerService.GetTransactionFromReceipt(token, filename, cancellationToken);
+
+        return ControllerHelper.Convert(transactionsResult);
+    }
+
+    [HttpPost]
+    [Route("get-receipts-states")]
+    public async Task<IActionResult> GetReceiptStates(CancellationToken cancellationToken)
+    {
+        var token = ControllerHelper.GetToken(_httpContextAccessor);
+        var transactionsResult = await _registerService.GetReceiptsAndStatesForGivenUser(token, cancellationToken);
 
         return ControllerHelper.Convert(transactionsResult);
     }

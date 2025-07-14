@@ -13,12 +13,12 @@ public class GetAllCategoriesTest : DatabaseOnlyTestHelper
             new(3, "iolk,"),
             new(1, "iukhm"),
         };
-        _mockCategoryDatabase.Setup(x => x.GetAllCategories())
+        _mockCategoryDatabase.Setup(x => x.GetAllCategories(CancellationToken.None))
             .ReturnsAsync(categories);
 
-        await _categoryRepositoryService.GetAllCategories();
+        await _categoryRepositoryService.GetAllCategories(CancellationToken.None);
 
-        _mockCategoryDatabase.Verify(x => x.GetAllCategories());
+        _mockCategoryDatabase.Verify(x => x.GetAllCategories(CancellationToken.None));
         VerifyNoOtherCalls();
     }
 }

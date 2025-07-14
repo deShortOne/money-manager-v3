@@ -16,7 +16,7 @@ public sealed class EditCategoryTest : CategoryRespositoryTestHelper
         var editCategoryEntity = new EditCategoryEntity(id, name);
         var CategoryEntityToBe = new CategoryEntity(id, name);
 
-        await _categoryRepo.EditCategory(editCategoryEntity);
+        await _categoryRepo.EditCategory(editCategoryEntity, CancellationToken.None);
 
         List<CategoryEntity> results = await GetAllCategoryEntities();
 

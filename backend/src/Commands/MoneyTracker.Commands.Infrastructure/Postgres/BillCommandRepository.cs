@@ -14,7 +14,7 @@ public class BillCommandRepository : IBillCommandRepository
         _database = db;
     }
 
-    public async Task AddBill(BillEntity newBillDTO)
+    public async Task AddBill(BillEntity newBillDTO, CancellationToken cancellationToken)
     {
         string query = """
             INSERT INTO bill (id, payee_user_id, amount, nextduedate, frequency, category_id, monthday, payer_user_id)
@@ -32,10 +32,10 @@ public class BillCommandRepository : IBillCommandRepository
                 new NpgsqlParameter("payer_user_id", newBillDTO.PayerId),
             };
 
-        await _database.UpdateTable(query, queryParams);
+        await _database.UpdateTable(query, cancellationToken, queryParams);
     }
 
-    public async Task EditBill(EditBillEntity editBillDTO)
+    public async Task EditBill(EditBillEntity editBillDTO, CancellationToken cancellationToken)
     {
         var setParamsLis = new List<string>();
         var queryParams = new List<DbParameter>()
@@ -85,10 +85,10 @@ public class BillCommandRepository : IBillCommandRepository
             WHERE id = @id;
             """;
 
-        await _database.UpdateTable(query, queryParams);
+        await _database.UpdateTable(query, cancellationToken, queryParams);
     }
 
-    public async Task DeleteBill(int billIdToDelete)
+    public async Task DeleteBill(int billIdToDelete, CancellationToken cancellationToken)
     {
         string query = """
             DELETE FROM bill
@@ -99,10 +99,10 @@ public class BillCommandRepository : IBillCommandRepository
                 new NpgsqlParameter("id", billIdToDelete),
             };
 
-        await _database.UpdateTable(query, queryParams);
+        await _database.UpdateTable(query, cancellationToken, queryParams);
     }
 
-    public async Task<BillEntity?> GetBillById(int id)
+    public async Task<BillEntity?> GetBillById(int id, CancellationToken cancellationToken)
     {
         string query = """
             SELECT id,
@@ -120,7 +120,7 @@ public class BillCommandRepository : IBillCommandRepository
         {
             new NpgsqlParameter("id", id),
         };
-        using var reader = await _database.GetTable(query, queryParams);
+        using var reader = await _database.GetTable(query, cancellationToken, queryParams);
 
         if (reader.Rows.Count != 0)
         {
@@ -141,13 +141,13 @@ public class BillCommandRepository : IBillCommandRepository
         return null;
     }
 
-    public async Task<int> GetLastId()
+    public async Task<int> GetLastId(CancellationToken cancellationToken)
     {
         string query = """
             SELECT max(id) as last_id
             FROM bill;
         """;
-        using var reader = await _database.GetTable(query);
+        using var reader = await _database.GetTable(query, cancellationToken);
 
         var returnDefaultValue = reader.Rows.Count == 0 || reader.Rows[0].ItemArray[0] == DBNull.Value;
         return returnDefaultValue ? 0 : reader.Rows[0].Field<int>(0);

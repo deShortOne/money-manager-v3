@@ -10,6 +10,6 @@ public class ResetBillsCacheTest : DatabaseOnlyTestHelper
     public async Task RefetchDataFromDatabaseAndWriteIntoCache()
     {
         await Assert.ThrowsAsync<NotImplementedException>(async ()
-            => await _billRepositoryService.ResetBillsCache(It.IsAny<AuthenticatedUser>()));
+            => await _billRepositoryService.ResetBillsCache(It.IsAny<AuthenticatedUser>(), CancellationToken.None));
     }
 }

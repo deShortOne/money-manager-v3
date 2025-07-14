@@ -34,31 +34,31 @@ public sealed class EditRegisterTest : RegisterTestHelper
     {
         var commonTransactionId = 714;
 
-        _mockUserService.Setup(x => x.GetUserFromToken(_tokenToDecode))
+        _mockUserService.Setup(x => x.GetUserFromToken(_tokenToDecode, CancellationToken.None))
             .ReturnsAsync(_authedUser);
 
         if (payerId != null)
-            _mockAccountDatabase.Setup(x => x.GetAccountUserEntity((int)payerId, _userId)).ReturnsAsync(new AccountUserEntity(35, 1, _userId, true));
+            _mockAccountDatabase.Setup(x => x.GetAccountUserEntity((int)payerId, _userId, CancellationToken.None)).ReturnsAsync(new AccountUserEntity(35, 1, _userId, true));
 
         var editTransactionRequest = new EditTransactionRequest(_transactionId, payee, amount, datePaid, categoryId, payerId);
         var editTransaction = new EditTransactionEntity(_transactionId, payee, amount, datePaid, categoryId, payerId);
 
-        _mockRegisterDatabase.Setup(x => x.GetTransaction(_transactionId))
+        _mockRegisterDatabase.Setup(x => x.GetTransaction(_transactionId, CancellationToken.None))
             .ReturnsAsync(new TransactionEntity(commonTransactionId, -1, -1, new DateOnly(), -1, commonTransactionId));
-        _accountService.Setup(x => x.DoesUserOwnAccount(_authedUser, commonTransactionId))
+        _accountService.Setup(x => x.DoesUserOwnAccount(_authedUser, commonTransactionId, CancellationToken.None))
             .ReturnsAsync(true);
 
-        await _registerService.EditTransaction(_tokenToDecode, editTransactionRequest);
+        await _registerService.EditTransaction(_tokenToDecode, editTransactionRequest, CancellationToken.None);
 
         Assert.Multiple(() =>
         {
-            _mockUserService.Verify(x => x.GetUserFromToken(_tokenToDecode), Times.Once);
-            _mockRegisterDatabase.Verify(x => x.EditTransaction(editTransaction), Times.Once);
-            _mockRegisterDatabase.Verify(x => x.GetTransaction(_transactionId), Times.Once);
-            _accountService.Verify(x => x.DoesUserOwnAccount(_authedUser, commonTransactionId), Times.Once);
+            _mockUserService.Verify(x => x.GetUserFromToken(_tokenToDecode, CancellationToken.None), Times.Once);
+            _mockRegisterDatabase.Verify(x => x.EditTransaction(editTransaction, CancellationToken.None), Times.Once);
+            _mockRegisterDatabase.Verify(x => x.GetTransaction(_transactionId, CancellationToken.None), Times.Once);
+            _accountService.Verify(x => x.DoesUserOwnAccount(_authedUser, commonTransactionId, CancellationToken.None), Times.Once);
 
             if (payerId != null)
-                _mockAccountDatabase.Verify(x => x.GetAccountUserEntity((int)payerId, _userId), Times.Once);
+                _mockAccountDatabase.Verify(x => x.GetAccountUserEntity((int)payerId, _userId, CancellationToken.None), Times.Once);
 
             _mockMessageBusClient.Verify(x => x.PublishEvent(
                 new EventUpdate(_authedUser, DataTypes.Register), It.IsAny<CancellationToken>()

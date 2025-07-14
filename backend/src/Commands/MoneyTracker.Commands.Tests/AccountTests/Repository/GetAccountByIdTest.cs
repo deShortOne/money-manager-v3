@@ -17,24 +17,24 @@ public class GetAccountByIdTest : IClassFixture<PostgresDbFixture>
     [Fact]
     public async Task GetAccountId1()
     {
-        Assert.Equal(new AccountEntity(1, "Bank A"), await _accountRepo.GetAccountById(1));
+        Assert.Equal(new AccountEntity(1, "Bank A"), await _accountRepo.GetAccountById(1, CancellationToken.None));
     }
 
     [Fact]
     public async Task GetAccountId2()
     {
-        Assert.Equal(new AccountEntity(2, "Bank B"), await _accountRepo.GetAccountById(2));
+        Assert.Equal(new AccountEntity(2, "Bank B"), await _accountRepo.GetAccountById(2, CancellationToken.None));
     }
 
     [Fact]
     public async Task GetAccountId3()
     {
-        Assert.Equal(new AccountEntity(3, "Supermarket"), await _accountRepo.GetAccountById(3));
+        Assert.Equal(new AccountEntity(3, "Supermarket"), await _accountRepo.GetAccountById(3, CancellationToken.None));
     }
 
     [Fact]
     public async Task FailToGetInvalidAccount()
     {
-        Assert.Null(await _accountRepo.GetAccountById(-1));
+        Assert.Null(await _accountRepo.GetAccountById(-1, CancellationToken.None));
     }
 }

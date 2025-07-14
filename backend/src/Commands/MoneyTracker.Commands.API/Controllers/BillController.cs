@@ -22,25 +22,25 @@ public class BillController
     [HttpPost]
     [Route("add")]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IActionResult> AddBill(NewBillRequest newBill)
+    public async Task<IActionResult> AddBill(NewBillRequest newBill, CancellationToken cancellationToken)
     {
-        var result = await _billService.AddBill(ControllerHelper.GetToken(_httpContextAccessor), newBill);
+        var result = await _billService.AddBill(ControllerHelper.GetToken(_httpContextAccessor), newBill, cancellationToken);
         return ControllerHelper.Convert(result);
     }
 
     [HttpPatch]
     [Route("edit")]
-    public async Task<IActionResult> EditBill(EditBillRequest editBill)
+    public async Task<IActionResult> EditBill(EditBillRequest editBill, CancellationToken cancellationToken)
     {
-        var result = await _billService.EditBill(ControllerHelper.GetToken(_httpContextAccessor), editBill);
+        var result = await _billService.EditBill(ControllerHelper.GetToken(_httpContextAccessor), editBill, cancellationToken);
         return ControllerHelper.Convert(result);
     }
 
     [HttpDelete]
     [Route("delete")]
-    public async Task<IActionResult> DeleteBill(DeleteBillRequest deleteBill)
+    public async Task<IActionResult> DeleteBill(DeleteBillRequest deleteBill, CancellationToken cancellationToken)
     {
-        var result = await _billService.DeleteBill(ControllerHelper.GetToken(_httpContextAccessor), deleteBill);
+        var result = await _billService.DeleteBill(ControllerHelper.GetToken(_httpContextAccessor), deleteBill, cancellationToken);
         return ControllerHelper.Convert(result);
     }
 }

@@ -30,10 +30,10 @@ public sealed class GetAllBillsTest : BillTestHelper
         var mockUserAuth = new Mock<IUserAuthentication>();
         mockUserAuth.Setup(x => x.CheckValidation()).Returns(Result.Success());
         mockUserAuth.Setup(x => x.User).Returns(new UserEntity(userId, "", ""));
-        _mockUserRepository.Setup(x => x.GetUserAuthFromToken(tokenToDecode))
+        _mockUserRepository.Setup(x => x.GetUserAuthFromToken(tokenToDecode, CancellationToken.None))
             .ReturnsAsync(mockUserAuth.Object);
 
-        _mockBillDatabase.Setup(x => x.GetAllBills(authedUser)).ReturnsAsync(billDatabaseReturn);
+        _mockBillDatabase.Setup(x => x.GetAllBills(authedUser, CancellationToken.None)).ReturnsAsync(billDatabaseReturn);
 
         _mockFrequencyCalculation.Setup(x => x.CalculateOverDueBillInfo(8, "Daily", new DateOnly(2024, 10, 8)))
             .Returns((OverDueBillInfo?)null);
@@ -42,11 +42,11 @@ public sealed class GetAllBillsTest : BillTestHelper
 
         Assert.Multiple(async () =>
         {
-            var a = await _billService.GetAllBills(tokenToDecode);
+            var a = await _billService.GetAllBills(tokenToDecode, CancellationToken.None);
             Assert.Equal(expected, a);
 
-            _mockUserRepository.Verify(x => x.GetUserAuthFromToken(tokenToDecode), Times.Once);
-            _mockBillDatabase.Verify(x => x.GetAllBills(authedUser), Times.Once);
+            _mockUserRepository.Verify(x => x.GetUserAuthFromToken(tokenToDecode, CancellationToken.None), Times.Once);
+            _mockBillDatabase.Verify(x => x.GetAllBills(authedUser, CancellationToken.None), Times.Once);
             _mockFrequencyCalculation.Verify(x => x.CalculateOverDueBillInfo(8, "Daily", new DateOnly(2024, 10, 8)), Times.Once);
             _mockFrequencyCalculation.Verify(x => x.CalculateOverDueBillInfo(23, "Weekly", new DateOnly(2023, 4, 23)), Times.Once);
 
