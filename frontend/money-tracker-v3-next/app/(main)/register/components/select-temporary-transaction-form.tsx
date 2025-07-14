@@ -9,7 +9,7 @@ import {
     DialogTitle,
 } from "@/components/ui/dialog";
 import { useQuery } from "@tanstack/react-query";
-import { addNewTransactions, getReceiptStates } from "./action";
+import { addNewTransactionFromReceipt, getReceiptStates } from "./action";
 import { useUpdateTemporaryTransactionCounter } from "../hooks/useTemporaryTransactions";
 import { useRegisterModalSetting } from "../hooks/useEditRegisterForm";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
@@ -32,7 +32,9 @@ export function SelectTemporaryTransactionForm() {
                         <Button
                             key={data.id}
                             disabled={data.state === "Processing"}
-                            onClick={() => onOpen(addNewTransactions, undefined, data.id)}
+                            onClick={() => {
+                                onOpen((authToken, transactions) => addNewTransactionFromReceipt(authToken, data.id, transactions), undefined, data.id)
+                            }}
                         >
                             {data.id} {data.state === "Processing" && <LoadingSpinner />}
                         </Button>

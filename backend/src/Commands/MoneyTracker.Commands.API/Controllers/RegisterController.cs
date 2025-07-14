@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.AspNetCore.Mvc;
 using MoneyTracker.Commands.Domain.Handlers;
+using MoneyTracker.Common.Result;
 using MoneyTracker.Contracts.Requests.Transaction;
 
 namespace MoneyTracker.Commands.API.Controllers;
@@ -23,7 +24,7 @@ public class RegisterController
     [Route("add")]
     public async Task<IActionResult> AddTransactions(NewTransactionRequest newTransaction, CancellationToken cancellationToken)
     {
-        var result = await _registerService.AddTransaction(ControllerHelper.GetToken(_httpContextAccessor), newTransaction, cancellationToken);
+        Result result = await _registerService.AddTransaction(ControllerHelper.GetToken(_httpContextAccessor), newTransaction, cancellationToken);
         return ControllerHelper.Convert(result);
     }
 
@@ -48,6 +49,14 @@ public class RegisterController
     public async Task<IActionResult> UploadReceipt(IFormFile uploadReceipt, CancellationToken cancellationToken)
     {
         var result = await _registerService.CreateTransactionFromReceipt(ControllerHelper.GetToken(_httpContextAccessor), uploadReceipt, cancellationToken);
+        return ControllerHelper.Convert(result);
+    }
+
+    [HttpPost]
+    [Route("add-transaction-from-receipt")]
+    public async Task<IActionResult> AddTransactionFromReceipt(NewTransactionFromReceiptRequest newTransactionFromReceiptRequest, CancellationToken cancellationToken)
+    {
+        var result = await _registerService.AddTransactionFromReceipt(ControllerHelper.GetToken(_httpContextAccessor), newTransactionFromReceiptRequest, cancellationToken);
         return ControllerHelper.Convert(result);
     }
 }

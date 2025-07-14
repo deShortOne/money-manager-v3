@@ -115,3 +115,26 @@ export async function getReceiptStates(authToken: string): Promise<Result<Receip
 
     return JSON.parse(JSON.stringify(new ErrorResult(text, false)));
 }
+
+export async function addNewTransactionFromReceipt(authToken: string, fileId: string, transaction: Newtransaction): Promise<Result<Transaction[]>> {
+    const response = await fetch(process.env.COMMAND_SERVER_URL + `/Register/add-transaction-from-receipt`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + authToken,
+        },
+        body: JSON.stringify({
+            fileId: fileId,
+            payeeId: transaction.payeeId,
+            amount: transaction.amount,
+            datePaid: convertDateToString(transaction.datePaid),
+            categoryId: transaction.categoryId,
+            payerId: transaction.payerId,
+        }),
+    });
+    if (response.ok) {
+        return JSON.parse(JSON.stringify(new SuccessResult(await response.text())));
+    }
+    console.log("error returned adding new transaction");
+    return JSON.parse(JSON.stringify(new ErrorResult(await response.text(), false)));
+}
