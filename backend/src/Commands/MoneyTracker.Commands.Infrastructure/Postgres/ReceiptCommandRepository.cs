@@ -39,7 +39,7 @@ public class ReceiptCommandRepository : IReceiptCommandRepository
     public async Task<ReceiptEntity?> GetReceiptById(string id, CancellationToken cancellationToken)
     {
         var query = """
-            SELECT id, users_id, filename, url, state
+            SELECT id, users_id, filename, url, state, final_transaction_id
             FROM receipt_analysis_state
             WHERE id = @id;
         """;
@@ -58,7 +58,8 @@ public class ReceiptCommandRepository : IReceiptCommandRepository
             data.Field<int>("users_id"),
             data.Field<string>("filename")!,
             data.Field<string>("url")!,
-            data.Field<int>("state"));
+            data.Field<int>("state"),
+            data.Field<int?>("final_transaction_id"));
     }
 
     public async Task UpdateReceipt(ReceiptEntity receipt, CancellationToken cancellationToken)
