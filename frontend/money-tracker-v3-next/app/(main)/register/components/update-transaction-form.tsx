@@ -41,7 +41,6 @@ import { useRegisterModalSetting } from "../hooks/useEditRegisterForm";
 import { queryKeyAccounts, queryKeyCategories, queryKeyTransactions } from "@/app/data/queryKeys";
 import { Category } from "@/interface/category";
 import { Account } from "@/interface/account";
-import { Transaction } from "@/interface/transaction";
 
 export function UpdateTransactionForm() {
     const [cookies] = useCookies(['token']);
@@ -76,7 +75,7 @@ export function UpdateTransactionForm() {
         initialData: [],
     });
 
-    const { data } = useQuery<boolean>({
+    useQuery<boolean>({
         queryKey: ["register-receipt: " + receiptId],
         queryFn: () => fetch("api/register", {
             method: "POST",
