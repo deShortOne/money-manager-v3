@@ -41,6 +41,7 @@ import { useRegisterModalSetting } from "../hooks/useEditRegisterForm";
 import { queryKeyAccounts, queryKeyCategories, queryKeyTransactions } from "@/app/data/queryKeys";
 import { Category } from "@/interface/category";
 import { Account } from "@/interface/account";
+import { Transaction } from "@/interface/transaction";
 
 export function UpdateTransactionForm() {
     const [cookies] = useCookies(['token']);
@@ -92,7 +93,7 @@ export function UpdateTransactionForm() {
             defaultValues.payeeId = temporaryTransaction.payeeId;
             defaultValues.payerId = temporaryTransaction.payerId;
             defaultValues.amount = temporaryTransaction.amount;
-            defaultValues.datePaid = temporaryTransaction.datePaid;
+            defaultValues.datePaid = new Date(temporaryTransaction.datePaid);
             defaultValues.categoryId = temporaryTransaction.categoryId;
 
             SetFormToBeDefault();
