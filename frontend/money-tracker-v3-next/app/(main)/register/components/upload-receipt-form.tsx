@@ -17,21 +17,25 @@ export function UploadReceiptForm() {
     const open = useUploadReceiptModalSetting(state => state.isOpen);
     const closeUpdateTransactionForm = useUploadReceiptModalSetting(state => state.onClose);
     const registerAction = useUploadReceiptModalSetting(state => state.updateRegisterAction);
-    const [fileToUpload, setFileToUpload] = useState<string>("");
+    const [fileToUpload, setFileToUpload] = useState<File | null>(null);
     const [addNewBillButtonErrorMessage, setAddNewBillButtonErrorMessage] = useState("");
 
-    const handleImageUpload = async (event) => {
+
+    const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
         event.preventDefault();
 
-        const file = event.target.files[0];
-        setFileToUpload(file)
+        const fileInput = event.target;
+        const file = fileInput.files ? fileInput.files[0] : null;
+        if (file) {
+            setFileToUpload(file);
+        }
     };
 
     const onSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
 
         const form = new FormData();
-        form.append('uploadReceipt', fileToUpload);
+        form.append('uploadReceipt', fileToUpload!);
         const result = await registerAction(cookies.token, form)
         if (result.hasError) {
             setAddNewBillButtonErrorMessage(result.errorMessage);
