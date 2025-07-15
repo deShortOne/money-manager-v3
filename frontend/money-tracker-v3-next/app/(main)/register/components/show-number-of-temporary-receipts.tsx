@@ -13,7 +13,7 @@ export function PendingReceiptStates() {
     usePollingStatus();
 
     return (
-        <Button variant="outline" onClick={() => onOpen()}>
+        <Button variant="outline" onClick={() => onOpen()} disabled={numberOfTemporaryTransactions === 0}>
             <PlusCircleIcon />
             {numberOfTemporaryTransactions} Temporary Transactions
         </Button>
