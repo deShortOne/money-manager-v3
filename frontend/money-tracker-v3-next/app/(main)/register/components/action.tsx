@@ -1,6 +1,6 @@
 'use server'
 
-import { Newtransaction, ReceiptResponse, ReceiptStates, Transaction, UpdateTransaction } from "@/interface/transaction";
+import { Newtransaction, ReceiptStates, Transaction, UpdateTransaction } from "@/interface/transaction";
 import { ErrorResult, SuccessResult, Result } from "@/types/result";
 import { convertDateToString } from "@/utils/date-converter";
 

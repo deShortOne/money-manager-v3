@@ -1,14 +1,5 @@
-import { Newtransaction, Transaction } from "@/interface/transaction";
 import { ErrorResult, Result } from "@/types/result";
 import { create } from "zustand";
-
-interface defaultValuesProp {
-    payeeId: number | undefined,
-    amount: number,
-    datePaid: Date | undefined,
-    categoryId: number | undefined,
-    payerId: number | undefined,
-}
 
 const defaultDefaultValues = {
     payeeId: undefined,

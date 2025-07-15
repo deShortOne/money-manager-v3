@@ -6,6 +6,11 @@ import { PlusCircleIcon } from "lucide-react";
 import { getReceiptStates } from "./action";
 import { useCookies } from "react-cookie";
 import { useQuery } from "@tanstack/react-query";
+import {
+    HoverCard,
+    HoverCardContent,
+    HoverCardTrigger,
+} from "@/components/ui/hover-card"
 
 export function PendingReceiptStates() {
     const onOpen = useUpdateTemporaryTransactionCounter(state => state.onOpen);
@@ -13,10 +18,17 @@ export function PendingReceiptStates() {
     usePollingStatus();
 
     return (
-        <Button variant="outline" onClick={() => onOpen()}>
-            <PlusCircleIcon />
-            {numberOfTemporaryTransactions} Temporary Transactions
-        </Button>
+        <HoverCard>
+            <HoverCardTrigger asChild>
+                <Button variant="outline" onClick={() => onOpen()} disabled={numberOfTemporaryTransactions === 0}>
+                    <PlusCircleIcon />
+                    {numberOfTemporaryTransactions} Temporary Transactions
+                </Button>
+            </HoverCardTrigger>
+            <HoverCardContent>
+                Upload a receipt first to create a transaction from it
+            </HoverCardContent>
+        </HoverCard>
     )
 }
 

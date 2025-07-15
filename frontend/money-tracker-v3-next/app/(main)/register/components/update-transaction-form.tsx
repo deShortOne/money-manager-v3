@@ -75,7 +75,7 @@ export function UpdateTransactionForm() {
         initialData: [],
     });
 
-    const { data } = useQuery<boolean>({
+    useQuery<boolean>({
         queryKey: ["register-receipt: " + receiptId],
         queryFn: () => fetch("api/register", {
             method: "POST",
@@ -92,7 +92,7 @@ export function UpdateTransactionForm() {
             defaultValues.payeeId = temporaryTransaction.payeeId;
             defaultValues.payerId = temporaryTransaction.payerId;
             defaultValues.amount = temporaryTransaction.amount;
-            defaultValues.datePaid = temporaryTransaction.datePaid;
+            defaultValues.datePaid = new Date(temporaryTransaction.datePaid);
             defaultValues.categoryId = temporaryTransaction.categoryId;
 
             SetFormToBeDefault();
